@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Masuk Akun - MamangGS</title>
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  
+  <link rel="stylesheet" href="/css/global.css">
+  <link rel="stylesheet" href="/css/auth.css">
+</head>
+<body>
+
+  <!-- NAVBAR -->
+  <header class="navbar">
+    <div class="navbar-container">
+      <a href="/" class="brand-logo">
+        <span class="logo-badge"><i class="fa-solid fa-gamepad"></i></span>
+        Mamang<span>GS</span>
+      </a>
+
+      <div class="nav-actions">
+        <a href="/" class="btn-nav-login"><i class="fa-solid fa-house"></i> Beranda</a>
+        <a href="/auth/register.html" class="btn-nav-register">Daftar</a>
+      </div>
+    </div>
+  </header>
+
+  <!-- FORM LOGIN -->
+  <main class="auth-wrapper">
+    <div class="auth-card">
+      <div class="auth-header">
+        <h2>Selamat <span>Datang</span></h2>
+        <p>Masuk ke akun Member / Reseller MamangGS</p>
+      </div>
+
+      <form class="auth-form" id="loginForm">
+        <div class="form-group-auth">
+          <label for="loginEmail">Email</label>
+          <div class="input-icon-wrapper">
+            <i class="fa-solid fa-envelope"></i>
+            <input type="email" id="loginEmail" placeholder="nama@email.com" required>
+          </div>
+        </div>
+
+        <div class="form-group-auth">
+          <label for="loginPassword">Kata Sandi</label>
+          <div class="input-icon-wrapper">
+            <i class="fa-solid fa-lock"></i>
+            <input type="password" id="loginPassword" placeholder="••••••••" required>
+          </div>
+        </div>
+
+        <button type="submit" class="btn-auth-submit" id="btnLogin">
+          <i class="fa-solid fa-right-to-bracket"></i> Masuk Sekarang
+        </button>
+      </form>
+
+      <div class="auth-footer">
+        Belum punya akun? <a href="/auth/register.html">Daftar Mitra / Member</a>
+      </div>
+    </div>
+  </main>
+
+  <!-- JS MODULAR -->
+  <script src="/js/particles.js"></script>
+  <script src="/js/auth.js"></script>
+</body>
+</html>
