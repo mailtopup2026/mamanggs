@@ -139,42 +139,58 @@ document.addEventListener("DOMContentLoaded", () => {
     const randomDigits = Math.floor(1000 + Math.random() * 9000);
     const invoiceNumber = `MGS-${dateStr}-${randomDigits}`;
 
-    // Cek apakah pembeli sedang login
+    // Cek apakah ada session user Supabase aktif
     let userUuid = null;
-    const storedUser = localStorage.getItem("mgs_user");
-    if (storedUser) {
-      try {
-        const u = JSON.parse(storedUser);
-        userUuid = u.id || null;
-      } catch (e) {}
+    try {
+      if (window.supabase) {
+        const { data: sessionData } = await window.supabase.auth.getSession();
+        if (sessionData?.session?.user?.id) {
+          userUuid = sessionData.session.user.id;
+        }
+      }
+    } catch (e) {}
+
+    // Fallback dari localStorage jika session belum ready
+    if (!userUuid) {
+      const storedUser = localStorage.getItem("mgs_user");
+      if (storedUser) {
+        try {
+          const u = JSON.parse(storedUser);
+          userUuid = u.id || null;
+        } catch (e) {}
+      }
     }
 
     try {
       if (!window.supabase) throw new Error("Koneksi Supabase belum siap. Silakan refresh halaman.");
 
-      // Simpan data order ke tabel orders Supabase
-      const { error } = await window.supabase.from("orders").insert([
-        {
-          invoice: invoiceNumber,
-          user_id: userUuid,
-          game_code: currentGame.code,
-          game_title: currentGame.title,
-          account_id: userId,
-          zone_id: zoneId,
-          item_name: selectedItem.name,
-          price: selectedItem.price,
-          payment_method: selectedPayment,
-          whatsapp: whatsapp,
-          status: "PENDING"
-        }
-      ]);
+      // Siapkan payload data pesanan
+      const orderPayload = {
+        invoice: invoiceNumber,
+        game_code: currentGame.code,
+        game_title: currentGame.title,
+        account_id: userId,
+        zone_id: zoneId || null,
+        item_name: selectedItem.name,
+        price: selectedItem.price,
+        payment_method: selectedPayment,
+        whatsapp: whatsapp,
+        status: "PENDING"
+      };
+
+      // Hanya sematkan user_id jika valid
+      if (userUuid) {
+        orderPayload.user_id = userUuid;
+      }
+
+      const { error } = await window.supabase.from("orders").insert([orderPayload]);
 
       if (error) throw error;
 
-      // Alihkan pembeli ke halaman status order dengan membawa invoice
+      // Alihkan pembeli ke halaman status order dengan membawa nomor invoice
       window.location.href = `/order-status.html?inv=${encodeURIComponent(invoiceNumber)}`;
     } catch (err) {
-      console.error(err);
+      console.error("Error order:", err);
       alert("Gagal membuat pesanan: " + err.message);
       checkoutBtn.disabled = false;
       checkoutBtn.innerHTML = '<i class="fa-solid fa-bolt"></i> Beli Sekarang';
