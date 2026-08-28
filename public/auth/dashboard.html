@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard Member - MamangGS</title>
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  
+  <link rel="stylesheet" href="/css/global.css">
+  <link rel="stylesheet" href="/css/dashboard.css">
+</head>
+<body>
+
+  <!-- NAVBAR -->
+  <header class="navbar">
+    <div class="navbar-container">
+      <a href="/" class="brand-logo">
+        <span class="logo-badge"><i class="fa-solid fa-gamepad"></i></span>
+        Mamang<span>GS</span>
+      </a>
+
+      <div class="nav-actions">
+        <a href="/" class="btn-nav-login"><i class="fa-solid fa-house"></i> Beranda</a>
+        <a href="/order-status.html" class="btn-nav-login"><i class="fa-solid fa-magnifying-glass"></i> Lacak</a>
+      </div>
+    </div>
+  </header>
+
+  <!-- KONTEN DASHBOARD -->
+  <main class="dashboard-wrapper">
+    <!-- Header Akun -->
+    <div class="profile-overview-card">
+      <div class="profile-left">
+        <div class="user-avatar-circle">
+          <i class="fa-solid fa-user"></i>
+        </div>
+        <div class="user-details">
+          <h2><span id="profileName">Memuat...</span> <span class="role-badge" id="profileRole">MEMBER</span></h2>
+          <p id="profileEmail">user@email.com</p>
+        </div>
+      </div>
+      <button class="btn-logout" id="logoutBtn">
+        <i class="fa-solid fa-right-from-bracket"></i> Keluar Akun
+      </button>
+    </div>
+
+    <!-- Statistik Dompet & Transaksi -->
+    <div class="stats-grid">
+      <div class="stat-card wallet-card">
+        <div class="stat-header">
+          <span>SALDO DOMPET INTERNAL</span>
+          <i class="fa-solid fa-wallet"></i>
+        </div>
+        <div class="stat-value" id="walletBalance">Rp 0</div>
+        <button class="btn-deposit" id="btnDeposit">
+          <i class="fa-solid fa-plus-circle"></i> Isi Saldo
+        </button>
+      </div>
+
+      <div class="stat-card">
+        <div class="stat-header">
+          <span>TOTAL TRANSAKSI</span>
+          <i class="fa-solid fa-receipt"></i>
+        </div>
+        <div class="stat-value" id="totalOrdersCount">0</div>
+        <span style="font-size: 0.75rem; color: var(--text-muted);">Semua pesanan terdaftar</span>
+      </div>
+
+      <div class="stat-card">
+        <div class="stat-header">
+          <span>TIER KEANGGOTAAN</span>
+          <i class="fa-solid fa-crown" style="color: #f59e0b;"></i>
+        </div>
+        <div class="stat-value" style="font-size: 1.3rem;">Standard Rate</div>
+        <span style="font-size: 0.75rem; color: #10b981;">Hubungi CS untuk Upgrade VIP</span>
+      </div>
+    </div>
+
+    <!-- Riwayat Transaksi -->
+    <div class="history-section">
+      <div class="history-header">
+        <h3><i class="fa-solid fa-clock-rotate-left"></i> Riwayat Transaksi Terbaru</h3>
+      </div>
+
+      <div class="table-responsive">
+        <table class="history-table">
+          <thead>
+            <tr>
+              <th>No. Invoice</th>
+              <th>Game</th>
+              <th>Item Produk</th>
+              <th>Total Bayar</th>
+              <th>Status</th>
+              <th>Tanggal</th>
+            </tr>
+          </thead>
+          <tbody id="orderHistoryBody">
+            <!-- Data dari Supabase -->
+          </tbody>
+        </table>
+
+        <div class="empty-state" id="historyEmptyState">
+          <i class="fa-solid fa-box-open"></i>
+          <p>Belum ada riwayat transaksi. Yuk coba top up game favoritmu!</p>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- FOOTER -->
+  <footer class="footer">
+    <div class="footer-container">
+      <div class="footer-brand">
+        <div class="brand-logo">
+          <span class="logo-badge"><i class="fa-solid fa-gamepad"></i></span>
+          Mamang<span>GS</span>
+        </div>
+        <p>Platform top up game otomatis, murah, dan terpercaya 24 jam nonstop.</p>
+      </div>
+
+      <div class="footer-col">
+        <h4>Menu Navigasi</h4>
+        <ul class="footer-links">
+          <li><a href="/">Beranda</a></li>
+          <li><a href="/order-status.html">Lacak Pesanan</a></li>
+          <li><a href="/dashboard.html">Dashboard</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col">
+        <h4>Bantuan & Legal</h4>
+        <ul class="footer-links">
+          <li><a href="/privacy-policy.html">Kebijakan Privasi</a></li>
+          <li><a href="/terms.html">Syarat & Ketentuan</a></li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="footer-bottom">
+      <p>&copy; 2026 MamangGS. All rights reserved.</p>
+    </div>
+  </footer>
+
+  <!-- JS MODULAR -->
+  <script src="/js/particles.js"></script>
+  <script src="/js/supabase.js"></script>
+  <script src="/js/dashboard.js"></script>
+</body>
+</html>
