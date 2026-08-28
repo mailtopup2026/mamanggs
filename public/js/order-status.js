@@ -3,12 +3,18 @@ document.addEventListener("DOMContentLoaded", () => {
   const invoiceInput = document.getElementById("invoiceInput");
   const resultCard = document.getElementById("orderResultCard");
 
-  // Periksa apakah ada invoice yang dikirim lewat URL (contoh: ?inv=MGS12345)
+  // Periksa apakah ada invoice yang dikirim lewat URL (?inv=...)
   const urlParams = new URLSearchParams(window.location.search);
   const invFromUrl = urlParams.get("inv");
   if (invFromUrl) {
     invoiceInput.value = invFromUrl;
-    fetchOrderStatus(invFromUrl);
+    // Tunggu supabase client siap
+    const checkTimer = setInterval(() => {
+      if (window.supabase) {
+        clearInterval(checkTimer);
+        fetchOrderStatus(invFromUrl);
+      }
+    }, 100);
   }
 
   checkBtn.addEventListener("click", () => {
@@ -25,21 +31,42 @@ document.addEventListener("DOMContentLoaded", () => {
     checkBtn.disabled = true;
 
     try {
-      // Panggil backend API yang ada di serverless
-      const response = await fetch(`/api/check-order/${encodeURIComponent(invoice)}`);
-      const result = await response.json();
+      if (!window.supabase) throw new Error("Koneksi Supabase belum siap.");
 
-      if (result.success) {
-        document.getElementById("resInvoice").innerText = result.data.invoice;
-        document.getElementById("resStatus").innerHTML = '<i class="fa-solid fa-clock"></i> ' + result.data.status;
+      const { data: order, error } = await window.supabase
+        .from("orders")
+        .select("*")
+        .ilike("invoice", invoice)
+        .maybeSingle();
+
+      if (error) throw error;
+
+      if (order) {
+        // Tampilkan data hasil pencarian
+        document.getElementById("resInvoice").innerText = order.invoice;
+        
+        const statusBadge = document.getElementById("resStatus");
+        statusBadge.className = `status-badge ${order.status.toLowerCase()}`;
+        const icon = order.status === "SUCCESS" ? "fa-circle-check" : (order.status === "FAILED" ? "fa-circle-xmark" : "fa-clock");
+        statusBadge.innerHTML = `<i class="fa-solid ${icon}"></i> ${order.status}`;
+
+        // Render detail produk
+        const detailItems = document.querySelectorAll(".detail-item strong");
+        if (detailItems.length >= 4) {
+          detailItems[0].innerText = `${order.item_name} (${order.game_title})`;
+          detailItems[1].innerText = order.zone_id ? `${order.account_id} (${order.zone_id})` : order.account_id;
+          detailItems[2].innerText = order.payment_method;
+          detailItems[3].innerText = `Rp ${Number(order.price).toLocaleString("id-ID")}`;
+        }
+
         resultCard.classList.add("show");
       } else {
-        alert(result.message || "Pesanan tidak ditemukan!");
+        alert("Nomor invoice tidak ditemukan! Pastikan nomor invoice yang Anda masukkan benar.");
         resultCard.classList.remove("show");
       }
     } catch (err) {
       console.error(err);
-      alert("Terjadi kesalahan saat memeriksa transaksi. Coba lagi!");
+      alert("Terjadi kesalahan saat memeriksa transaksi: " + err.message);
     } finally {
       checkBtn.innerHTML = '<i class="fa-solid fa-magnifying-glass"></i> Cek Status';
       checkBtn.disabled = false;
