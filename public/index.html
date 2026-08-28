@@ -1,238 +1,40 @@
-<!DOCTYPE html>
-<html lang="id">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>MamangGS - Top Up Game Favoritmu Cepat & Murah</title>
+// ===================================================
+// MAMANGGS - BACKEND SERVERLESS API HANDLER
+// ===================================================
+const express = require('express');
+const cors = require('cors');
+
+const app = express();
+
+app.use(cors());
+app.use(express.json());
+
+// Endpoint Tes Status API
+app.get('/api', (req, res) => {
+  res.status(200).json({
+    status: 'success',
+    message: 'MamangGS API Service is running smoothly 🚀',
+    timestamp: new Date().toISOString()
+  });
+});
+
+// Endpoint Cek Transaksi / Invoice Sederhana
+app.get('/api/check-order/:invoice', async (req, res) => {
+  const { invoice } = req.params;
   
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-  
-  <link rel="stylesheet" href="/css/global.css">
-  <link rel="stylesheet" href="/css/home.css">
-</head>
-<body>
+  if (!invoice) {
+    return res.status(400).json({ success: false, message: 'Nomor invoice wajib diisi' });
+  }
 
-  <!-- NAVBAR -->
-  <header class="navbar">
-    <div class="navbar-container">
-      <a href="/" class="brand-logo">
-        <span class="logo-badge"><i class="fa-solid fa-gamepad"></i></span>
-        Mamang<span>GS</span>
-      </a>
+  // Respon placeholder sebelum terhubung penuh ke Supabase/Payment Gateway
+  res.status(200).json({
+    success: true,
+    data: {
+      invoice: invoice,
+      status: 'PENDING',
+      message: 'Menunggu pembayaran via QRIS'
+    }
+  });
+});
 
-      <div class="nav-search">
-        <i class="fa-solid fa-magnifying-glass"></i>
-        <input type="text" placeholder="Cari Game (MLBB, Free Fire, Genshin...)" id="searchInput">
-      </div>
-
-      <div class="nav-actions">
-        <a href="/auth/login.html" class="btn-nav-login"><i class="fa-solid fa-right-to-bracket"></i> Masuk</a>
-        <a href="/auth/register.html" class="btn-nav-register"><i class="fa-solid fa-user-plus"></i> Daftar</a>
-      </div>
-    </div>
-  </header>
-
-  <!-- SLIDE BANNER PROMO (3 SLIDE) -->
-  <section class="banner-section">
-    <div class="carousel-container">
-      <!-- Slide 1 -->
-      <div class="carousel-slide active" style="background-image: linear-gradient(to top, rgba(7, 13, 24, 0.95), rgba(7, 13, 24, 0.2)), url('https://images.unsplash.com/photo-1542751371-adc38448a05e?auto=format&fit=crop&w=1200&q=80');">
-        <div class="carousel-content">
-          <span class="badge-populer">PROMO SPESIAL</span>
-          <h2>Top Up Mobile Legends Diskon Kilat!</h2>
-          <p>Bonus diamond melimpah dan garansi proses instan 1-3 detik.</p>
-        </div>
-      </div>
-      <!-- Slide 2 -->
-      <div class="carousel-slide" style="background-image: linear-gradient(to top, rgba(7, 13, 24, 0.95), rgba(7, 13, 24, 0.2)), url('https://images.unsplash.com/photo-1538481199705-c710c4e965fc?auto=format&fit=crop&w=1200&q=80');">
-        <div class="carousel-content">
-          <span class="badge-populer" style="background: #10b981;">VIP RESELLER</span>
-          <h2>Gabung Jadi Reseller MamangGS</h2>
-          <p>Dapatkan harga modal termurah dan fitur top-up saldo tanpa biaya admin.</p>
-        </div>
-      </div>
-      <!-- Slide 3 -->
-      <div class="carousel-slide" style="background-image: linear-gradient(to top, rgba(7, 13, 24, 0.95), rgba(7, 13, 24, 0.2)), url('https://images.unsplash.com/photo-1511512578047-dfb367046420?auto=format&fit=crop&w=1200&q=80');">
-        <div class="carousel-content">
-          <span class="badge-populer" style="background: #3b82f6;">LAYANAN 24 JAM</span>
-          <h2>Sistem Pembayaran Otomatis & QRIS</h2>
-          <p>Mendukung semua bank dan E-Wallet (GoPay, DANA, OVO, ShopeePay).</p>
-        </div>
-      </div>
-
-      <!-- Navigasi Titik Slide -->
-      <div class="carousel-dots">
-        <span class="dot active"></span>
-        <span class="dot"></span>
-        <span class="dot"></span>
-      </div>
-    </div>
-  </section>
-
-  <!-- FILTER KATEGORI -->
-  <section class="tabs-section">
-    <button class="tab-btn active">Semua Produk</button>
-    <button class="tab-btn">Top Up Via ID</button>
-    <button class="tab-btn">Via Login</button>
-    <button class="tab-btn">Voucher</button>
-  </section>
-
-  <!-- KATALOG GAME -->
-  <section class="catalog-section">
-    <h3 class="section-label"><i class="fa-solid fa-fire"></i> Rekomendasi Terpopuler</h3>
-
-    <div class="game-grid">
-      <!-- 1. Whiteout Survival -->
-      <div class="game-card">
-        <div class="card-img-wrapper">
-          <span class="badge-populer">★ POPULER</span>
-          <img src="https://images.unsplash.com/photo-1542751371-adc38448a05e?auto=format&fit=crop&w=400&q=80" alt="Whiteout Survival" class="game-img">
-          <span class="badge-type">VIA ID</span>
-        </div>
-        <div class="game-body">
-          <div>
-            <h4 class="game-title">Whiteout Survival: Frost Star</h4>
-            <p class="game-dev">Century Games PTE. LTD.</p>
-          </div>
-          <a href="/order.html?game=whiteout" class="btn-topup">Top Up</a>
-        </div>
-      </div>
-
-      <!-- 2. Whiteout Survival Via Login -->
-      <div class="game-card">
-        <div class="card-img-wrapper">
-          <span class="badge-populer">★ POPULER</span>
-          <img src="https://images.unsplash.com/photo-1587202372775-e229f172b9d7?auto=format&fit=crop&w=400&q=80" alt="Whiteout Survival Login" class="game-img">
-          <span class="badge-type">VIA LOGIN</span>
-        </div>
-        <div class="game-body">
-          <div>
-            <h4 class="game-title">Whiteout Survival (Via Login)</h4>
-            <p class="game-dev">Century Games - Fast Gift</p>
-          </div>
-          <a href="/order.html?game=whiteout-login" class="btn-topup">Top Up</a>
-        </div>
-      </div>
-
-      <!-- 3. Mobile Legends -->
-      <div class="game-card">
-        <div class="card-img-wrapper">
-          <img src="https://images.unsplash.com/photo-1563089145-599997674d42?auto=format&fit=crop&w=400&q=80" alt="Mobile Legends" class="game-img">
-          <span class="badge-type">VIA ID</span>
-        </div>
-        <div class="game-body">
-          <div>
-            <h4 class="game-title">Mobile Legends: Bang Bang</h4>
-            <p class="game-dev">Moonton Games</p>
-          </div>
-          <a href="/order.html?game=mlbb" class="btn-topup">Top Up</a>
-        </div>
-      </div>
-
-      <!-- 4. Free Fire Max -->
-      <div class="game-card">
-        <div class="card-img-wrapper">
-          <img src="https://images.unsplash.com/photo-1579373903781-fd5c0c30c4cd?auto=format&fit=crop&w=400&q=80" alt="Free Fire" class="game-img">
-          <span class="badge-type">VIA ID</span>
-        </div>
-        <div class="game-body">
-          <div>
-            <h4 class="game-title">Free Fire Max</h4>
-            <p class="game-dev">Garena International</p>
-          </div>
-          <a href="/order.html?game=ff" class="btn-topup">Top Up</a>
-        </div>
-      </div>
-
-      <!-- 5. Genshin Impact -->
-      <div class="game-card">
-        <div class="card-img-wrapper">
-          <img src="https://images.unsplash.com/photo-1538481199705-c710c4e965fc?auto=format&fit=crop&w=400&q=80" alt="Genshin Impact" class="game-img">
-          <span class="badge-type">VIA ID</span>
-        </div>
-        <div class="game-body">
-          <div>
-            <h4 class="game-title">Genshin Impact</h4>
-            <p class="game-dev">HoYoverse</p>
-          </div>
-          <a href="/order.html?game=genshin" class="btn-topup">Top Up</a>
-        </div>
-      </div>
-
-      <!-- 6. Steam Wallet -->
-      <div class="game-card">
-        <div class="card-img-wrapper">
-          <img src="https://images.unsplash.com/photo-1612287233215-081498b8c5f5?auto=format&fit=crop&w=400&q=80" alt="Steam Wallet" class="game-img">
-          <span class="badge-type">VOUCHER</span>
-        </div>
-        <div class="game-body">
-          <div>
-            <h4 class="game-title">Steam Wallet Code (IDR)</h4>
-            <p class="game-dev">Valve Corporation</p>
-          </div>
-          <a href="/order.html?game=steam" class="btn-topup">Top Up</a>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- LIVE SALES POP-UP NOTIFICATION -->
-  <div class="live-sales-toast" id="liveSalesToast">
-    <div class="live-sales-icon">
-      <i class="fa-solid fa-circle-check"></i>
-    </div>
-    <div class="live-sales-text">
-      <h5 id="liveSalesUser">Pembeli</h5>
-      <p><span id="liveSalesItem">Item Game</span> &bull; <span id="liveSalesTime">Baru saja</span></p>
-    </div>
-  </div>
-
-  <!-- FLOATING REQUEST GAME BUTTON -->
-  <a href="https://wa.me/" target="_blank" class="btn-request-game">
-    <i class="fa-solid fa-comments"></i> Request Game
-  </a>
-
-  <!-- FOOTER -->
-  <footer class="footer">
-    <div class="footer-container">
-      <div class="footer-brand">
-        <div class="brand-logo">
-          <span class="logo-badge"><i class="fa-solid fa-gamepad"></i></span>
-          Mamang<span>GS</span>
-        </div>
-        <p>Platform top up game otomatis, murah, dan terpercaya 24 jam nonstop.</p>
-      </div>
-
-      <div class="footer-col">
-        <h4>Menu Navigasi</h4>
-        <ul class="footer-links">
-          <li><a href="/">Beranda</a></li>
-          <li><a href="/order-status.html">Lacak Pesanan</a></li>
-          <li><a href="/leaderboard.html">Leaderboard</a></li>
-        </ul>
-      </div>
-
-      <div class="footer-col">
-        <h4>Bantuan & Legal</h4>
-        <ul class="footer-links">
-          <li><a href="/privacy-policy.html">Kebijakan Privasi</a></li>
-          <li><a href="/terms.html">Syarat & Ketentuan</a></li>
-        </ul>
-      </div>
-    </div>
-
-    <div class="footer-bottom">
-      <p>&copy; 2026 MamangGS. All rights reserved.</p>
-    </div>
-  </footer>
-
-  <!-- JS MODULAR -->
-  <script src="/js/particles.js"></script>
-  <script src="/js/banner.js"></script>
-  <script src="/js/live-sales.js"></script>
-  <script src="/js/navbar.js"></script>
-</body>
-</html>
+module.exports = app;
