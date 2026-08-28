@@ -1,3 +1,39 @@
+// Fungsi Toast Kustom MamangGS
+function showToast(type, title, message) {
+  let container = document.querySelector(".mgs-toast-container");
+  if (!container) {
+    container = document.createElement("div");
+    container.className = "mgs-toast-container";
+    document.body.appendChild(container);
+  }
+
+  const toast = document.createElement("div");
+  toast.className = `mgs-toast ${type}`;
+  
+  const iconClass = type === "success" ? "fa-solid fa-circle-check" : "fa-solid fa-triangle-exclamation";
+
+  toast.innerHTML = `
+    <div class="mgs-toast-icon">
+      <i class="${iconClass}"></i>
+    </div>
+    <div class="mgs-toast-body">
+      <h5>${title}</h5>
+      <p>${message}</p>
+    </div>
+  `;
+
+  container.appendChild(toast);
+
+  // Animasi masuk
+  setTimeout(() => toast.classList.add("show"), 50);
+
+  // Otomatis hilang dalam 4 detik
+  setTimeout(() => {
+    toast.classList.remove("show");
+    setTimeout(() => toast.remove(), 400);
+  }, 4000);
+}
+
 // Toggle Show/Hide Password
 function togglePass(inputId, iconElement) {
   const input = document.getElementById(inputId);
@@ -18,7 +54,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const forgotForm = document.getElementById("forgotForm");
   const updatePasswordForm = document.getElementById("updatePasswordForm");
 
-  // Handler Register (Daftar Akun ke Supabase)
+  // Handler Register
   if (registerForm) {
     registerForm.addEventListener("submit", async (e) => {
       e.preventDefault();
@@ -42,7 +78,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
         if (error) throw error;
 
-        // Simpan ke tabel public.profiles
         if (data.user) {
           await window.supabase.from("profiles").insert([
             {
@@ -55,10 +90,12 @@ document.addEventListener("DOMContentLoaded", () => {
           ]);
         }
 
-        alert("Pendaftaran Berhasil! Silakan masuk dengan akun Anda.");
-        window.location.href = "/auth/login.html";
+        showToast("success", "Pendaftaran Berhasil!", "Silakan login menggunakan akun baru Anda.");
+        setTimeout(() => {
+          window.location.href = "/auth/login.html";
+        }, 1500);
       } catch (err) {
-        alert("Gagal mendaftar: " + err.message);
+        showToast("error", "Gagal Mendaftar", err.message);
       } finally {
         btn.disabled = false;
         btn.innerHTML = '<i class="fa-solid fa-wand-magic-sparkles"></i> Register';
@@ -66,7 +103,7 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  // Handler Login (Masuk dengan Supabase)
+  // Handler Login
   if (loginForm) {
     loginForm.addEventListener("submit", async (e) => {
       e.preventDefault();
@@ -86,10 +123,12 @@ document.addEventListener("DOMContentLoaded", () => {
         if (error) throw error;
 
         localStorage.setItem("mgs_user", JSON.stringify(data.user));
-        alert("Login Berhasil! Selamat datang kembali.");
-        window.location.href = "/";
+        showToast("success", "Login Berhasil!", "Selamat datang kembali di MamangGS.");
+        setTimeout(() => {
+          window.location.href = "/";
+        }, 1200);
       } catch (err) {
-        alert("Gagal masuk: " + err.message);
+        showToast("error", "Gagal Masuk", err.message);
       } finally {
         btn.disabled = false;
         btn.innerHTML = '<i class="fa-solid fa-wand-magic-sparkles"></i> Sign In';
@@ -97,7 +136,7 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  // Handler Forgot Password (Kirim Link Reset ke Email)
+  // Handler Forgot Password
   if (forgotForm) {
     forgotForm.addEventListener("submit", async (e) => {
       e.preventDefault();
@@ -112,9 +151,13 @@ document.addEventListener("DOMContentLoaded", () => {
           redirectTo: "https://mamanggs.vercel.app/auth/reset-password.html"
         });
         if (error) throw error;
-        alert("Instruksi reset kata sandi telah dikirimkan ke email Anda. Silakan periksa kotak masuk atau spam.");
+        showToast("success", "Email Terkirim!", "Tautan reset telah dikirim ke " + email);
       } catch (err) {
-        alert("Gagal mengirim email reset: " + err.message);
+        let msg = err.message;
+        if (msg.includes("rate limit")) {
+          msg = "Terlalu sering meminta email. Silakan tunggu 1-2 menit sebelum mencoba lagi.";
+        }
+        showToast("error", "Permintaan Gagal", msg);
       } finally {
         btn.disabled = false;
         btn.innerHTML = '<i class="fa-solid fa-wand-magic-sparkles"></i> Send Code';
@@ -122,7 +165,7 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  // Handler Update Password Baru (di reset-password.html)
+  // Handler Update Password Baru
   if (updatePasswordForm) {
     updatePasswordForm.addEventListener("submit", async (e) => {
       e.preventDefault();
@@ -139,10 +182,12 @@ document.addEventListener("DOMContentLoaded", () => {
 
         if (error) throw error;
 
-        alert("Kata sandi berhasil diubah! Silakan masuk dengan kata sandi baru.");
-        window.location.href = "/auth/login.html";
+        showToast("success", "Berhasil Diperbarui!", "Kata sandi telah diganti. Mengalihkan ke login...");
+        setTimeout(() => {
+          window.location.href = "/auth/login.html";
+        }, 1500);
       } catch (err) {
-        alert("Gagal memperbarui kata sandi: " + err.message);
+        showToast("error", "Gagal Update", err.message);
       } finally {
         btn.disabled = false;
         btn.innerHTML = '<i class="fa-solid fa-wand-magic-sparkles"></i> Update Password';
