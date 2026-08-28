@@ -411,4 +411,50 @@ a {
   .mgs-toast {
     max-width: 100%;
   }
+/* ===================================================
+   MAMANGGS - NAVBAR LOGGED IN STATE
+   =================================================== */
+.nav-user-logged {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.btn-nav-dashboard {
+  background: rgba(230, 57, 70, 0.15);
+  border: 1px solid rgba(230, 57, 70, 0.4);
+  color: #fff;
+  padding: 8px 16px;
+  border-radius: var(--radius-sm);
+  font-size: 0.85rem;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  transition: var(--transition);
+}
+
+.btn-nav-dashboard:hover {
+  background: var(--accent-red);
+  box-shadow: 0 0 12px var(--accent-glow);
+}
+
+.btn-nav-logout-mini {
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid var(--border-color);
+  color: var(--text-muted);
+  width: 36px;
+  height: 36px;
+  border-radius: var(--radius-sm);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: var(--transition);
+}
+
+.btn-nav-logout-mini:hover {
+  background: rgba(230, 57, 70, 0.2);
+  color: var(--accent-red);
+  border-color: var(--accent-red);
 }
