@@ -1,15 +1,18 @@
 document.addEventListener("DOMContentLoaded", () => {
-  // Cek apakah user sudah login
   const storedUser = localStorage.getItem("mgs_user");
   if (!storedUser) {
-    alert("Silakan login terlebih dahulu untuk mengakses Dashboard!");
     window.location.href = "/auth/login.html";
     return;
   }
 
   const user = JSON.parse(storedUser);
 
-  // Tunggu client Supabase aktif
+  // Pasang data awal dari metadata login agar tidak menunggu
+  const initialName = user.user_metadata?.full_name || user.email?.split("@")[0] || "Member";
+  document.getElementById("profileName").innerText = initialName;
+  document.getElementById("profileEmail").innerText = user.email || "";
+
+  // Sinkronisasi data real-time dengan Supabase
   const checkSupabase = setInterval(() => {
     if (window.supabase) {
       clearInterval(checkSupabase);
@@ -18,34 +21,35 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }, 100);
 
-  // Load Profil & Saldo dari Tabel profiles
+  // Ambil saldo dan role dari tabel profiles
   async function loadUserProfile(userId) {
     try {
       const { data, error } = await window.supabase
         .from("profiles")
         .select("*")
         .eq("id", userId)
-        .single();
+        .maybeSingle();
 
       if (error) throw error;
 
       if (data) {
-        document.getElementById("profileName").innerText = data.full_name || "Member MamangGS";
-        document.getElementById("profileEmail").innerText = data.email || user.email;
-        
+        if (data.full_name) document.getElementById("profileName").innerText = data.full_name;
+        if (data.email) document.getElementById("profileEmail").innerText = data.email;
+
         const balance = Number(data.balance || 0).toLocaleString("id-ID");
         document.getElementById("walletBalance").innerText = `Rp ${balance}`;
 
-        const roleBadge = document.getElementById("profileRole");
-        roleBadge.innerText = (data.role || "MEMBER").toUpperCase();
-        if (data.role === "reseller") roleBadge.classList.add("reseller");
+        const rolePill = document.getElementById("profileRole");
+        const role = (data.role || "MEMBER").toUpperCase();
+        rolePill.innerText = role;
+        if (data.role === "reseller") rolePill.classList.add("reseller");
       }
     } catch (err) {
-      console.error("Gagal memuat profil:", err.message);
+      console.error("Gagal sinkron profil:", err.message);
     }
   }
 
-  // Load Riwayat Pesanan dari Tabel orders
+  // Ambil riwayat pesanan
   async function loadOrderHistory(userId) {
     const tableBody = document.getElementById("orderHistoryBody");
     const emptyState = document.getElementById("historyEmptyState");
@@ -74,7 +78,7 @@ document.addEventListener("DOMContentLoaded", () => {
           const price = Number(ord.price).toLocaleString("id-ID");
 
           row.innerHTML = `
-            <td><strong>${ord.invoice}</strong></td>
+            <td><strong style="color: var(--accent-red);">${ord.invoice}</strong></td>
             <td>${ord.game_title}</td>
             <td>${ord.item_name}</td>
             <td>Rp ${price}</td>
@@ -88,21 +92,21 @@ document.addEventListener("DOMContentLoaded", () => {
         emptyState.style.display = "block";
       }
     } catch (err) {
-      console.error("Gagal memuat riwayat transaksi:", err.message);
+      console.error("Gagal load pesanan:", err.message);
     }
   }
 
-  // Handler Tombol Logout
+  // Tombol Logout
   document.getElementById("logoutBtn").addEventListener("click", async () => {
-    if (confirm("Apakah Anda yakin ingin keluar dari akun?")) {
+    if (confirm("Apakah Anda yakin ingin keluar?")) {
       if (window.supabase) await window.supabase.auth.signOut();
       localStorage.removeItem("mgs_user");
-      window.location.href = "/auth/login.html";
+      window.location.href = "/";
     }
   });
 
-  // Handler Deposit Saldo Sederhana
+  // Tombol Isi Saldo
   document.getElementById("btnDeposit").addEventListener("click", () => {
-    alert("Fitur Top-Up Saldo Otomatis QRIS akan aktif bersama integrasi Payment Gateway!");
+    alert("Fitur Deposit Saldo Instan QRIS akan aktif di Step Integrasi Payment Gateway!");
   });
 });

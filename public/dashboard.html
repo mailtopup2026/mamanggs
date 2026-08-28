@@ -32,80 +32,84 @@
 
   <!-- KONTEN DASHBOARD -->
   <main class="dashboard-wrapper">
-    <!-- Header Profil Akun -->
-    <div class="profile-overview-card">
-      <div class="profile-left">
-        <div class="user-avatar-circle">
-          <i class="fa-solid fa-user"></i>
+    <!-- Profil Banner -->
+    <div class="profile-banner-card">
+      <div class="profile-info-group">
+        <div class="avatar-cyber">
+          <i class="fa-solid fa-user-astronaut"></i>
         </div>
-        <div class="user-details">
-          <h2><span id="profileName">Memuat...</span> <span class="role-badge" id="profileRole">MEMBER</span></h2>
-          <p id="profileEmail">user@email.com</p>
+        <div class="user-meta">
+          <h2>
+            <span id="profileName">User</span> 
+            <span class="role-pill" id="profileRole">MEMBER</span>
+          </h2>
+          <p><i class="fa-solid fa-envelope"></i> <span id="profileEmail">user@email.com</span></p>
         </div>
       </div>
-      <button class="btn-logout" id="logoutBtn">
+      <button class="btn-header-logout" id="logoutBtn">
         <i class="fa-solid fa-right-from-bracket"></i> Keluar Akun
       </button>
     </div>
 
-    <!-- Statistik Dompet & Transaksi -->
+    <!-- Grid Statistik & Dompet -->
     <div class="stats-grid">
-      <div class="stat-card wallet-card">
-        <div class="stat-header">
-          <span>SALDO DOMPET INTERNAL</span>
-          <i class="fa-solid fa-wallet"></i>
+      <div class="card-stat featured">
+        <div class="stat-top">
+          <span class="stat-label">Saldo Dompet Internal</span>
+          <div class="stat-icon"><i class="fa-solid fa-wallet"></i></div>
         </div>
-        <div class="stat-value" id="walletBalance">Rp 0</div>
-        <button class="btn-deposit" id="btnDeposit">
-          <i class="fa-solid fa-plus-circle"></i> Isi Saldo
+        <div class="stat-number" id="walletBalance">Rp 0</div>
+        <button class="btn-topup-wallet" id="btnDeposit">
+          <i class="fa-solid fa-circle-plus"></i> Isi Saldo QRIS
         </button>
       </div>
 
-      <div class="stat-card">
-        <div class="stat-header">
-          <span>TOTAL TRANSAKSI</span>
-          <i class="fa-solid fa-receipt"></i>
+      <div class="card-stat">
+        <div class="stat-top">
+          <span class="stat-label">Total Pesanan</span>
+          <div class="stat-icon"><i class="fa-solid fa-receipt"></i></div>
         </div>
-        <div class="stat-value" id="totalOrdersCount">0</div>
-        <span style="font-size: 0.75rem; color: var(--text-muted);">Semua pesanan terdaftar</span>
+        <div class="stat-number" id="totalOrdersCount">0</div>
+        <span class="stat-subtext">Semua transaksi terdata</span>
       </div>
 
-      <div class="stat-card">
-        <div class="stat-header">
-          <span>TIER KEANGGOTAAN</span>
-          <i class="fa-solid fa-crown" style="color: #f59e0b;"></i>
+      <div class="card-stat">
+        <div class="stat-top">
+          <span class="stat-label">Tier Keanggotaan</span>
+          <div class="stat-icon" style="color: #f59e0b;"><i class="fa-solid fa-crown"></i></div>
         </div>
-        <div class="stat-value" style="font-size: 1.3rem;">Standard Rate</div>
-        <span style="font-size: 0.75rem; color: #10b981;">Hubungi CS untuk Upgrade VIP</span>
+        <div class="stat-number" style="font-size: 1.35rem;">Standard Rate</div>
+        <span class="stat-subtext" style="color: #10b981;"><i class="fa-solid fa-circle-check"></i> Akun Terverifikasi</span>
       </div>
     </div>
 
     <!-- Riwayat Transaksi -->
-    <div class="history-section">
-      <div class="history-header">
-        <h3><i class="fa-solid fa-clock-rotate-left"></i> Riwayat Transaksi Terbaru</h3>
+    <div class="history-card-wrapper">
+      <div class="history-title-row">
+        <h3><i class="fa-solid fa-clock-rotate-left"></i> Riwayat Transaksi</h3>
       </div>
 
       <div class="table-responsive">
-        <table class="history-table">
+        <table class="table-cyber">
           <thead>
             <tr>
               <th>No. Invoice</th>
               <th>Game</th>
-              <th>Item Produk</th>
-              <th>Total Bayar</th>
+              <th>Item</th>
+              <th>Total Tagihan</th>
               <th>Status</th>
               <th>Tanggal</th>
             </tr>
           </thead>
           <tbody id="orderHistoryBody">
-            <!-- Data dari Supabase -->
+            <!-- Data dimasukkan via JS -->
           </tbody>
         </table>
 
-        <div class="empty-state" id="historyEmptyState">
-          <i class="fa-solid fa-box-open"></i>
-          <p>Belum ada riwayat transaksi. Yuk coba top up game favoritmu!</p>
+        <div class="empty-state-cyber" id="historyEmptyState">
+          <i class="fa-solid fa-ghost"></i>
+          <p>Belum ada riwayat pesanan yang dilakukan.</p>
+          <a href="/" class="btn-empty-order"><i class="fa-solid fa-bolt"></i> Mulai Top Up Sekarang</a>
         </div>
       </div>
     </div>
