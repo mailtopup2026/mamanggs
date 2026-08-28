@@ -7,21 +7,22 @@ document.addEventListener("DOMContentLoaded", () => {
       const user = JSON.parse(storedUser);
       const displayName = user.user_metadata?.full_name || user.email?.split("@")[0] || "Member";
 
-      // Ganti tombol Masuk & Daftar menjadi tombol Dashboard & Logout
+      // Render Cyber User Capsule
       navActions.innerHTML = `
         <div class="nav-user-logged">
-          <a href="/dashboard.html" class="btn-nav-dashboard">
-            <i class="fa-solid fa-user-gear"></i> ${displayName}
+          <a href="/dashboard.html" class="btn-nav-user-profile" title="Buka Dashboard">
+            <div class="nav-mini-avatar"><i class="fa-solid fa-user-astronaut"></i></div>
+            <span class="nav-user-name">${displayName}</span>
           </a>
-          <button class="btn-nav-logout-mini" id="navLogoutBtn" title="Keluar Akun">
-            <i class="fa-solid fa-right-from-bracket"></i>
+          <button class="btn-nav-logout-capsule" id="navLogoutBtn" title="Keluar Akun">
+            <i class="fa-solid fa-power-off"></i>
           </button>
         </div>
       `;
 
-      // Event Logout langsung dari Navbar
+      // Event Logout
       document.getElementById("navLogoutBtn").addEventListener("click", async () => {
-        if (confirm("Apakah Anda yakin ingin keluar?")) {
+        if (confirm("Apakah Anda yakin ingin keluar dari akun?")) {
           if (window.supabase) await window.supabase.auth.signOut();
           localStorage.removeItem("mgs_user");
           window.location.reload();
