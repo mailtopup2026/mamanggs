@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Top Up Game - MamangGS</title>
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  
+  <link rel="stylesheet" href="/css/global.css">
+  <link rel="stylesheet" href="/css/order.css">
+</head>
+<body>
+
+  <!-- NAVBAR -->
+  <header class="navbar">
+    <div class="navbar-container">
+      <a href="/" class="brand-logo">
+        <span class="logo-badge"><i class="fa-solid fa-gamepad"></i></span>
+        Mamang<span>GS</span>
+      </a>
+
+      <div class="nav-search">
+        <i class="fa-solid fa-magnifying-glass"></i>
+        <input type="text" placeholder="Cari Game Lainnya...">
+      </div>
+
+      <div class="nav-actions">
+        <a href="/auth/login.html" class="btn-nav-login"><i class="fa-solid fa-right-to-bracket"></i> Masuk</a>
+        <a href="/auth/register.html" class="btn-nav-register"><i class="fa-solid fa-user-plus"></i> Daftar</a>
+      </div>
+    </div>
+  </header>
+
+  <!-- KONTEN ORDER FORM -->
+  <main class="order-wrapper">
+    <!-- SIDEBAR KIRI: INFO GAME -->
+    <aside class="game-info-sidebar">
+      <img src="" alt="Game Banner" class="game-banner-img" id="gameBanner">
+      <h2 id="gameTitle">Nama Game</h2>
+      <p id="gameDev">Publisher</p>
+
+      <div class="instruction-box">
+        <h4><i class="fa-solid fa-circle-info"></i> Petunjuk Pengisian:</h4>
+        <ol>
+          <li>Masukkan User ID & Zone ID akun Anda.</li>
+          <li>Pilih paket item / nominal yang diinginkan.</li>
+          <li>Pilih jalur pembayaran (QRIS / Bank).</li>
+          <li>Masukkan nomor WhatsApp untuk notifikasi invoice.</li>
+          <li>Klik tombol <strong>Beli Sekarang</strong>.</li>
+        </ol>
+      </div>
+    </aside>
+
+    <!-- KOLOM KANAN: STEP BY STEP FORM -->
+    <div class="order-steps-container">
+      <!-- Step 1: Data Akun -->
+      <section class="step-card">
+        <div class="step-header">
+          <div class="step-number">1</div>
+          <h3>Masukkan Data Akun</h3>
+        </div>
+        <div class="form-grid-account">
+          <div class="form-group">
+            <label for="userIdInput">User ID Game</label>
+            <input type="text" id="userIdInput" placeholder="Contoh: 12345678">
+          </div>
+          <div class="form-group" id="zoneGroup">
+            <label for="zoneIdInput">Zone ID / Server</label>
+            <input type="text" id="zoneIdInput" placeholder="Contoh: (2026)">
+          </div>
+        </div>
+      </section>
+
+      <!-- Step 2: Pilih Nominal -->
+      <section class="step-card">
+        <div class="step-header">
+          <div class="step-number">2</div>
+          <h3>Pilih Nominal Item</h3>
+        </div>
+        <div class="nominal-grid" id="nominalContainer">
+          <!-- Dynamic Render by JS -->
+        </div>
+      </section>
+
+      <!-- Step 3: Pilih Pembayaran -->
+      <section class="step-card">
+        <div class="step-header">
+          <div class="step-number">3</div>
+          <h3>Pilih Metode Pembayaran</h3>
+        </div>
+        <div class="payment-grid">
+          <div class="payment-card selected">
+            <div class="payment-brand">
+              <i class="fa-solid fa-qrcode payment-icon"></i>
+              <span>QRIS (Semua E-Wallet)</span>
+            </div>
+            <span class="payment-fee">Instan</span>
+          </div>
+
+          <div class="payment-card">
+            <div class="payment-brand">
+              <i class="fa-solid fa-wallet payment-icon" style="color: #3b82f6;"></i>
+              <span>DANA / OVO / GoPay</span>
+            </div>
+            <span class="payment-fee">Instan</span>
+          </div>
+
+          <div class="payment-card">
+            <div class="payment-brand">
+              <i class="fa-solid fa-building-columns payment-icon" style="color: #10b981;"></i>
+              <span>Virtual Account Bank</span>
+            </div>
+            <span class="payment-fee">Otomatis</span>
+          </div>
+
+          <div class="payment-card">
+            <div class="payment-brand">
+              <i class="fa-solid fa-crown payment-icon" style="color: #f59e0b;"></i>
+              <span>Saldo Akun MamangGS</span>
+            </div>
+            <span class="payment-fee">Bebas Admin</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- Step 4: Kontak WhatsApp & Checkout -->
+      <section class="step-card">
+        <div class="step-header">
+          <div class="step-number">4</div>
+          <h3>Nomor WhatsApp & Konfirmasi</h3>
+        </div>
+        <div class="form-group">
+          <label for="whatsappInput">Nomor WhatsApp Aktif</label>
+          <input type="tel" id="whatsappInput" placeholder="08xxxxxxxxxx">
+        </div>
+        <button class="btn-checkout" id="checkoutBtn">
+          <i class="fa-solid fa-bolt"></i> Beli Sekarang
+        </button>
+      </section>
+    </div>
+  </main>
+
+  <!-- FOOTER -->
+  <footer class="footer">
+    <div class="footer-container">
+      <div class="footer-brand">
+        <div class="brand-logo">
+          <span class="logo-badge"><i class="fa-solid fa-gamepad"></i></span>
+          Mamang<span>GS</span>
+        </div>
+        <p>Platform top up game otomatis, murah, dan terpercaya 24 jam nonstop.</p>
+      </div>
+
+      <div class="footer-col">
+        <h4>Menu Navigasi</h4>
+        <ul class="footer-links">
+          <li><a href="/">Beranda</a></li>
+          <li><a href="/order-status.html">Lacak Pesanan</a></li>
+          <li><a href="/leaderboard.html">Leaderboard</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col">
+        <h4>Bantuan & Legal</h4>
+        <ul class="footer-links">
+          <li><a href="/privacy-policy.html">Kebijakan Privasi</a></li>
+          <li><a href="/terms.html">Syarat & Ketentuan</a></li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="footer-bottom">
+      <p>&copy; 2026 MamangGS. All rights reserved.</p>
+    </div>
+  </footer>
+
+  <!-- JS MODULAR -->
+  <script src="/js/particles.js"></script>
+  <script src="/js/navbar.js"></script>
+  <script src="/js/order.js"></script>
+</body>
+</html>
