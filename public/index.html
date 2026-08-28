@@ -1,841 +1,195 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-  <title>topupmamang - Top Up Game Murah, Cepat & Terpercaya</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MamangGS - Top Up Game Cepat, Murah & Terpercaya</title>
   
+  <!-- Font Google & FontAwesome Icons -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com">
-  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
-
-  <style>
-    :root {
-      --navy-dark: #070d18;
-      --navy-base: #0c182b;
-      --navy-card: #13243d;
-      --navy-card-hover: #1b3254;
-      --navy-border: #203a60;
-      --cream-light: #fdfbf7;
-      --cream-soft: #f4ede2;
-      --cream-muted: #c9bfaf;
-      --red-primary: #e63946;
-      --red-hover: #c92a37;
-      --red-glow: rgba(230, 57, 70, 0.4);
-      --red-subtle: rgba(230, 57, 70, 0.12);
-    }
-
-    *, *::before, *::after {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-      font-family: 'Plus Jakarta Sans', sans-serif;
-    }
-
-    body {
-      background-color: var(--navy-dark);
-      color: var(--cream-soft);
-      min-height: 100vh;
-      overflow-x: hidden;
-      position: relative;
-    }
-
-    h1, h2, h3, h4, .brand-font {
-      font-family: 'Outfit', sans-serif;
-    }
-
-    #antigravity-canvas {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100vw;
-      height: 100vh;
-      z-index: 0;
-      pointer-events: none;
-    }
-
-    .ambient-glow {
-      position: fixed;
-      width: 400px;
-      height: 400px;
-      background: radial-gradient(circle, var(--red-glow) 0%, rgba(12, 24, 43, 0) 70%);
-      top: -120px;
-      right: -80px;
-      z-index: 0;
-      pointer-events: none;
-      opacity: 0.5;
-    }
-
-    .navbar {
-      background: rgba(12, 24, 43, 0.92);
-      backdrop-filter: blur(14px);
-      -webkit-backdrop-filter: blur(14px);
-      border-bottom: 1px solid var(--navy-border);
-      position: sticky;
-      top: 0;
-      z-index: 100;
-      width: 100%;
-    }
-
-    .nav-container {
-      max-width: 1240px;
-      margin: 0 auto;
-      padding: 12px 16px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 12px;
-    }
-
-    .logo {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      text-decoration: none;
-      color: var(--cream-light);
-      font-size: 1.25rem;
-      font-weight: 800;
-      white-space: nowrap;
-      flex-shrink: 0;
-    }
-
-    .logo-badge {
-      background: var(--red-primary);
-      color: var(--cream-light);
-      width: 32px;
-      height: 32px;
-      display: grid;
-      place-items: center;
-      border-radius: 8px;
-      box-shadow: 0 4px 12px var(--red-glow);
-      font-size: 0.9rem;
-    }
-
-    .logo span.mamang {
-      color: var(--red-primary);
-    }
-
-    .search-box {
-      flex: 1;
-      max-width: 420px;
-      background: rgba(7, 13, 24, 0.75);
-      border: 1px solid var(--navy-border);
-      border-radius: 8px;
-      display: flex;
-      align-items: center;
-      padding: 6px 12px;
-      transition: border-color 0.2s;
-    }
-
-    .search-box:focus-within {
-      border-color: var(--red-primary);
-    }
-
-    .search-box i {
-      color: var(--cream-muted);
-      font-size: 0.85rem;
-    }
-
-    .search-box input {
-      background: transparent;
-      border: none;
-      outline: none;
-      color: var(--cream-light);
-      font-size: 0.85rem;
-      margin-left: 8px;
-      width: 100%;
-    }
-
-    .nav-auth {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      flex-shrink: 0;
-    }
-
-    .btn {
-      padding: 7px 14px;
-      border-radius: 8px;
-      font-weight: 600;
-      font-size: 0.85rem;
-      cursor: pointer;
-      border: none;
-      transition: all 0.2s ease;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      gap: 6px;
-      white-space: nowrap;
-    }
-
-    .btn-red {
-      background: var(--red-primary);
-      color: var(--cream-light);
-      box-shadow: 0 4px 12px var(--red-glow);
-    }
-
-    .btn-red:hover {
-      background: var(--red-hover);
-    }
-
-    .btn-outline {
-      background: transparent;
-      color: var(--cream-soft);
-      border: 1px solid var(--navy-border);
-    }
-
-    .btn-outline:hover {
-      background: var(--navy-card);
-      border-color: var(--cream-muted);
-    }
-
-    .main-container {
-      max-width: 1240px;
-      margin: 0 auto;
-      padding: 16px 16px 80px;
-      position: relative;
-      z-index: 1;
-    }
-
-    .hero-banner {
-      background: linear-gradient(135deg, #10213a 0%, #1a0f16 100%);
-      border: 1px solid var(--navy-border);
-      border-radius: 14px;
-      padding: 24px;
-      margin-bottom: 24px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      box-shadow: 0 10px 25px rgba(7, 13, 24, 0.5);
-    }
-
-    .badge-hero {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      background: var(--red-subtle);
-      border: 1px solid var(--red-primary);
-      color: #ff7b87;
-      padding: 4px 10px;
-      border-radius: 20px;
-      font-size: 0.75rem;
-      font-weight: 700;
-      margin-bottom: 12px;
-      text-transform: uppercase;
-    }
-
-    .hero-content h1 {
-      font-size: 1.6rem;
-      line-height: 1.25;
-      color: var(--cream-light);
-      margin-bottom: 8px;
-    }
-
-    .hero-content h1 span {
-      color: var(--red-primary);
-    }
-
-    .hero-content p {
-      color: var(--cream-muted);
-      font-size: 0.88rem;
-      margin-bottom: 16px;
-    }
-
-    .hero-features {
-      display: flex;
-      gap: 14px;
-      flex-wrap: wrap;
-    }
-
-    .feature-item {
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      font-size: 0.8rem;
-      color: var(--cream-soft);
-      font-weight: 600;
-    }
-
-    .feature-item i {
-      color: var(--red-primary);
-    }
-
-    .floating-shield {
-      width: 90px;
-      height: 90px;
-      background: linear-gradient(135deg, var(--red-primary) 0%, #800f1c 100%);
-      border-radius: 22px;
-      display: grid;
-      place-items: center;
-      font-size: 2.6rem;
-      color: var(--cream-light);
-      box-shadow: 0 10px 20px var(--red-glow);
-      animation: floatShield 4s ease-in-out infinite;
-      flex-shrink: 0;
-      margin-left: 20px;
-    }
-
-    @keyframes floatShield {
-      0%, 100% { transform: translateY(0); }
-      50% { transform: translateY(-8px); }
-    }
-
-    .filter-bar {
-      display: flex;
-      gap: 8px;
-      overflow-x: auto;
-      padding-bottom: 8px;
-      margin-bottom: 20px;
-      -webkit-overflow-scrolling: touch;
-      scrollbar-width: none;
-    }
-    .filter-bar::-webkit-scrollbar { display: none; }
-
-    .tab-pill {
-      background: var(--navy-card);
-      border: 1px solid var(--navy-border);
-      color: var(--cream-muted);
-      padding: 8px 14px;
-      border-radius: 8px;
-      font-size: 0.82rem;
-      font-weight: 600;
-      cursor: pointer;
-      white-space: nowrap;
-      transition: all 0.2s ease;
-      flex-shrink: 0;
-    }
-
-    .tab-pill.active {
-      background: var(--red-primary);
-      color: var(--cream-light);
-      border-color: var(--red-primary);
-    }
-
-    .section-heading {
-      font-size: 1.15rem;
-      color: var(--cream-light);
-      margin-bottom: 16px;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-
-    .section-heading i {
-      color: var(--red-primary);
-    }
-
-    .games-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-      gap: 14px;
-      margin-bottom: 40px;
-    }
-
-    .game-card {
-      background: var(--navy-card);
-      border: 1px solid var(--navy-border);
-      border-radius: 12px;
-      overflow: hidden;
-      cursor: pointer;
-      position: relative;
-      transition: transform 0.3s cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 0.3s ease, border-color 0.3s ease;
-      display: flex;
-      flex-direction: column;
-    }
-
-    .game-card.priority-card {
-      border-color: rgba(230, 57, 70, 0.7);
-    }
-
-    .game-card.priority-card::before {
-      content: '★ POPULER';
-      position: absolute;
-      top: 8px;
-      left: 8px;
-      background: var(--red-primary);
-      color: var(--cream-light);
-      font-size: 0.62rem;
-      font-weight: 800;
-      padding: 2px 6px;
-      border-radius: 4px;
-      z-index: 3;
-    }
-
-    .game-card:hover {
-      transform: translateY(-6px);
-      border-color: var(--red-primary);
-      box-shadow: 0 10px 20px rgba(230, 57, 70, 0.25);
-      background: var(--navy-card-hover);
-    }
-
-    .game-img-wrapper {
-      width: 100%;
-      height: 130px;
-      position: relative;
-      background: #091321;
-      overflow: hidden;
-    }
-
-    .game-img-wrapper img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-    }
-
-    .game-type-badge {
-      position: absolute;
-      bottom: 6px;
-      right: 6px;
-      background: rgba(7, 13, 24, 0.85);
-      border: 1px solid var(--navy-border);
-      color: var(--cream-light);
-      font-size: 0.65rem;
-      font-weight: 600;
-      padding: 2px 6px;
-      border-radius: 4px;
-    }
-
-    .game-meta {
-      padding: 10px;
-      flex: 1;
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
-    }
-
-    .game-title {
-      font-size: 0.85rem;
-      font-weight: 700;
-      color: var(--cream-light);
-      line-height: 1.25;
-      margin-bottom: 2px;
-      display: -webkit-box;
-      -webkit-line-clamp: 2;
-      -webkit-box-orient: vertical;
-      overflow: hidden;
-    }
-
-    .game-publisher {
-      font-size: 0.7rem;
-      color: var(--cream-muted);
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
-
-    .wa-floating-btn {
-      position: fixed;
-      bottom: 20px;
-      left: 20px;
-      right: auto;
-      background: #25d366;
-      color: #fff;
-      padding: 10px 16px;
-      border-radius: 30px;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      text-decoration: none;
-      font-weight: 700;
-      font-size: 0.85rem;
-      box-shadow: 0 6px 20px rgba(37, 211, 102, 0.4);
-      z-index: 99;
-      transition: transform 0.2s, box-shadow 0.2s;
-    }
-
-    .wa-floating-btn i {
-      font-size: 1.25rem;
-    }
-
-    .wa-floating-btn:hover {
-      transform: scale(1.05);
-      box-shadow: 0 8px 25px rgba(37, 211, 102, 0.6);
-      color: #fff;
-    }
-
-    .modal-backdrop {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: rgba(4, 8, 15, 0.85);
-      backdrop-filter: blur(6px);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      opacity: 0;
-      pointer-events: none;
-      transition: opacity 0.25s ease;
-      z-index: 200;
-      padding: 14px;
-    }
-
-    .modal-backdrop.active {
-      opacity: 1;
-      pointer-events: auto;
-    }
-
-    .modal-window {
-      background: var(--navy-base);
-      border: 1px solid var(--navy-border);
-      border-radius: 14px;
-      width: 100%;
-      max-width: 520px;
-      max-height: 90vh;
-      overflow-y: auto;
-      padding: 20px;
-      position: relative;
-    }
-
-    .btn-close-modal {
-      position: absolute;
-      top: 14px;
-      right: 14px;
-      background: transparent;
-      border: none;
-      color: var(--cream-muted);
-      font-size: 1.4rem;
-      cursor: pointer;
-    }
-
-    .modal-header {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      margin-bottom: 16px;
-      padding-bottom: 12px;
-      border-bottom: 1px solid var(--navy-border);
-    }
-
-    .modal-header img {
-      width: 48px;
-      height: 48px;
-      border-radius: 8px;
-      object-fit: cover;
-    }
-
-    .step-box {
-      background: var(--navy-card);
-      border: 1px solid var(--navy-border);
-      border-radius: 10px;
-      padding: 12px;
-      margin-bottom: 12px;
-    }
-
-    .step-title {
-      font-size: 0.88rem;
-      font-weight: 700;
-      color: var(--cream-light);
-      margin-bottom: 10px;
-      display: flex;
-      align-items: center;
-      gap: 6px;
-    }
-
-    .step-number {
-      background: var(--red-primary);
-      color: var(--cream-light);
-      width: 20px;
-      height: 20px;
-      border-radius: 50%;
-      display: grid;
-      place-items: center;
-      font-size: 0.7rem;
-      font-weight: 800;
-    }
-
-    .form-row {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 8px;
-    }
-
-    .form-input {
-      width: 100%;
-      padding: 8px 12px;
-      background: #08101c;
-      border: 1px solid var(--navy-border);
-      border-radius: 6px;
-      color: var(--cream-light);
-      font-size: 0.85rem;
-      outline: none;
-      margin-top: 4px;
-    }
-
-    .form-input:focus {
-      border-color: var(--red-primary);
-    }
-
-    .item-options {
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 8px;
-    }
-
-    .item-pill {
-      background: #08101c;
-      border: 1px solid var(--navy-border);
-      border-radius: 6px;
-      padding: 8px 10px;
-      cursor: pointer;
-      transition: 0.15s ease;
-    }
-
-    .item-pill.selected, .item-pill:hover {
-      border-color: var(--red-primary);
-      background: var(--red-subtle);
-    }
-
-    .item-name {
-      font-size: 0.8rem;
-      font-weight: 700;
-      color: var(--cream-light);
-    }
-
-    .item-price {
-      font-size: 0.75rem;
-      color: #ff7b87;
-      margin-top: 2px;
-    }
-
-    .auth-tabs-nav {
-      display: flex;
-      border-bottom: 1px solid var(--navy-border);
-      margin-bottom: 16px;
-    }
-
-    .auth-tab-item {
-      flex: 1;
-      padding: 10px;
-      text-align: center;
-      background: transparent;
-      border: none;
-      color: var(--cream-muted);
-      font-weight: 700;
-      cursor: pointer;
-      font-size: 0.9rem;
-    }
-
-    .auth-tab-item.active {
-      color: var(--red-primary);
-      border-bottom: 2px solid var(--red-primary);
-    }
-
-    @media (max-width: 640px) {
-      .nav-container {
-        padding: 10px 12px;
-        gap: 8px;
-      }
-      .logo {
-        font-size: 1.05rem;
-      }
-      .logo-badge {
-        width: 28px;
-        height: 28px;
-      }
-      .search-box {
-        display: none;
-      }
-      .mobile-search-bar {
-        display: flex !important;
-        margin-bottom: 16px;
-      }
-      .btn {
-        padding: 6px 10px;
-        font-size: 0.78rem;
-      }
-      .hero-banner {
-        padding: 16px;
-      }
-      .hero-content h1 {
-        font-size: 1.35rem;
-      }
-      .floating-shield {
-        display: none;
-      }
-      .form-row {
-        grid-template-columns: 1fr;
-      }
-      .games-grid {
-        grid-template-columns: repeat(2, 1fr);
-        gap: 10px;
-      }
-      .wa-floating-btn {
-        bottom: 16px;
-        left: 16px;
-      }
-    }
-
-    .mobile-search-bar {
-      display: none;
-      background: rgba(7, 13, 24, 0.85);
-      border: 1px solid var(--navy-border);
-      border-radius: 8px;
-      align-items: center;
-      padding: 8px 14px;
-    }
-  </style>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  
+  <!-- CSS Modular -->
+  <link rel="stylesheet" href="/css/global.css">
+  <link rel="stylesheet" href="/css/home.css">
 </head>
 <body>
 
-  <canvas id="antigravity-canvas"></canvas>
-  <div class="ambient-glow"></div>
-
+  <!-- NAVBAR / HEADER -->
   <header class="navbar">
-    <div class="nav-container">
-      <a href="#" class="logo">
-        <div class="logo-badge"><i class="fa-solid fa-gamepad"></i></div>
-        <span>topup<span class="mamang">mamang</span></span>
+    <div class="navbar-container">
+      <a href="/" class="brand-logo">
+        <i class="fa-solid fa-gamepad" style="color: var(--primary);"></i>
+        Mamang<span>GS</span>
       </a>
 
-      <div class="search-box">
-        <i class="fa-solid fa-magnifying-glass"></i>
-        <input type="text" class="gameSearchInput" placeholder="Cari Whiteout Survival, MLBB..." />
-      </div>
+      <ul class="nav-menu">
+        <li><a href="/" class="nav-link active"><i class="fa-solid fa-house"></i> Beranda</a></li>
+        <li><a href="/order-status.html" class="nav-link"><i class="fa-solid fa-magnifying-glass"></i> Lacak Pesanan</a></li>
+        <li><a href="/leaderboard.html" class="nav-link"><i class="fa-solid fa-trophy"></i> Leaderboard</a></li>
+      </ul>
 
-      <div class="nav-auth" id="navAuthArea">
-        <button class="btn btn-outline" id="btnOpenLogin">Masuk</button>
-        <button class="btn btn-red" id="btnOpenRegister">Daftar</button>
+      <div class="nav-actions">
+        <a href="/auth/login.html" class="btn btn-outline"><i class="fa-solid fa-right-to-bracket"></i> Masuk</a>
+        <a href="/auth/register.html" class="btn btn-primary"><i class="fa-solid fa-user-plus"></i> Daftar</a>
       </div>
     </div>
   </header>
 
-  <main class="main-container">
-    <div class="mobile-search-bar">
-      <i class="fa-solid fa-magnifying-glass" style="color: var(--cream-muted);"></i>
-      <input type="text" class="gameSearchInput" style="background: transparent; border: none; outline: none; color: #fff; width: 100%; margin-left: 8px; font-size: 0.85rem;" placeholder="Cari game favoritmu..." />
+  <!-- BANNER SECTION (3 SLIDE AUTO-SLIDE) -->
+  <section class="banner-section">
+    <div class="carousel-container">
+      <!-- Slide 1 -->
+      <div class="carousel-slide active" style="background-image: linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.7)), url('https://images.unsplash.com/photo-1542751371-adc38448a05e?auto=format&fit=crop&w=1200&q=80');">
+        <div class="carousel-content">
+          <h2>Diskon Kilat Mobile Legends!</h2>
+          <p>Dapatkan bonus diamond dan harga termurah se-Indonesia hanya di MamangGS.</p>
+        </div>
+      </div>
+      <!-- Slide 2 -->
+      <div class="carousel-slide" style="background-image: linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.7)), url('https://images.unsplash.com/photo-1538481199705-c710c4e965fc?auto=format&fit=crop&w=1200&q=80');">
+        <div class="carousel-content">
+          <h2>Gabung Reseller VIP MamangGS</h2>
+          <p>Deposit saldo sekarang dan nikmati harga khusus reseller tanpa biaya admin.</p>
+        </div>
+      </div>
+      <!-- Slide 3 -->
+      <div class="carousel-slide" style="background-image: linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.7)), url('https://images.unsplash.com/photo-1511512578047-dfb367046420?auto=format&fit=crop&w=1200&q=80');">
+        <div class="carousel-content">
+          <h2>Transaksi Aman & Instan 24 Jam</h2>
+          <p>Proses otomatis dalam hitungan detik via QRIS, Bank, dan E-Wallet.</p>
+        </div>
+      </div>
+
+      <!-- Carousel Navigation Dots -->
+      <div class="carousel-dots">
+        <span class="dot active"></span>
+        <span class="dot"></span>
+        <span class="dot"></span>
+      </div>
+    </div>
+  </section>
+
+  <!-- KATALOG GAME SECTION -->
+  <section class="catalog-section">
+    <div class="section-header">
+      <h3 class="section-title"><i class="fa-solid fa-fire"></i> Game Populer</h3>
+      <div class="category-filter">
+        <button class="filter-btn active">Semua</button>
+        <button class="filter-btn">Mobile Games</button>
+        <button class="filter-btn">PC Games</button>
+        <button class="filter-btn">Voucher</button>
+      </div>
     </div>
 
-    <section class="hero-banner">
-      <div class="hero-content">
-        <div class="badge-hero"><i class="fa-solid fa-bolt"></i> Instant & Legal 100%</div>
-        <h1>Top Up Game Favoritmu di <span>topupmamang</span></h1>
-        <p>Layanan top up cepat, harga termurah, legal dan garansi anti-minus.</p>
-        
-        <div class="hero-features">
-          <div class="feature-item"><i class="fa-solid fa-shield-halved"></i> 100% Aman</div>
-          <div class="feature-item"><i class="fa-solid fa-stopwatch"></i> Proses 1-3 Menit</div>
-          <div class="feature-item"><i class="fa-solid fa-headset"></i> CS 24/7</div>
+    <!-- Grid Card Game -->
+    <div class="game-grid">
+      <!-- Card 1 -->
+      <div class="game-card">
+        <img src="https://images.unsplash.com/photo-1563089145-599997674d42?auto=format&fit=crop&w=400&q=80" alt="Mobile Legends" class="game-thumbnail">
+        <div class="game-info">
+          <div>
+            <h4 class="game-title">Mobile Legends</h4>
+            <p class="game-publisher">Moonton</p>
+          </div>
+          <a href="/order.html?game=mlbb" class="game-btn">Top Up Sekarang</a>
         </div>
       </div>
 
-      <div class="floating-shield">
-        <i class="fa-solid fa-cube"></i>
+      <!-- Card 2 -->
+      <div class="game-card">
+        <img src="https://images.unsplash.com/photo-1579373903781-fd5c0c30c4cd?auto=format&fit=crop&w=400&q=80" alt="Free Fire" class="game-thumbnail">
+        <div class="game-info">
+          <div>
+            <h4 class="game-title">Free Fire Max</h4>
+            <p class="game-publisher">Garena</p>
+          </div>
+          <a href="/order.html?game=ff" class="game-btn">Top Up Sekarang</a>
+        </div>
       </div>
-    </section>
 
-    <div class="filter-bar" id="games">
-      <button class="tab-pill active" data-filter="all">Semua Produk</button>
-      <button class="tab-pill" data-filter="id">Top Up Via ID</button>
-      <button class="tab-pill" data-filter="login">Via Login</button>
-      <button class="tab-pill" data-filter="voucher">Voucher</button>
+      <!-- Card 3 -->
+      <div class="game-card">
+        <img src="https://images.unsplash.com/photo-1518709268805-4e9042af9f23?auto=format&fit=crop&w=400&q=80" alt="Genshin Impact" class="game-thumbnail">
+        <div class="game-info">
+          <div>
+            <h4 class="game-title">Genshin Impact</h4>
+            <p class="game-publisher">HoYoverse</p>
+          </div>
+          <a href="/order.html?game=genshin" class="game-btn">Top Up Sekarang</a>
+        </div>
+      </div>
+
+      <!-- Card 4 -->
+      <div class="game-card">
+        <img src="https://images.unsplash.com/photo-1612287233215-081498b8c5f5?auto=format&fit=crop&w=400&q=80" alt="Valorant" class="game-thumbnail">
+        <div class="game-info">
+          <div>
+            <h4 class="game-title">Valorant</h4>
+            <p class="game-publisher">Riot Games</p>
+          </div>
+          <a href="/order.html?game=valorant" class="game-btn">Top Up Sekarang</a>
+        </div>
+      </div>
     </div>
+  </section>
 
-    <h2 class="section-heading">
-      <i class="fa-solid fa-fire-flame-curved"></i> Rekomendasi Terpopuler
-    </h2>
-
-    <div class="games-grid" id="gamesContainer"></div>
-  </main>
-
-  <a href="https://wa.me/6282121616716?text=Halo%20admin%20saya%20mau%20request%20game%20lain" target="_blank" class="wa-floating-btn">
-    <i class="fa-brands fa-whatsapp"></i>
-    <span>Request Game</span>
-  </a>
-
-  <div class="modal-backdrop" id="orderModal">
-    <div class="modal-window">
-      <button class="btn-close-modal" id="closeOrderModal">&times;</button>
-      
-      <div class="modal-header">
-        <img id="orderGameImg" src="" alt="Game Logo" />
-        <div>
-          <h3 id="orderGameTitle" style="color: var(--cream-light); font-size: 1rem;">Game Title</h3>
-          <p id="orderGameCategory" style="font-size: 0.75rem; color: var(--cream-muted);">Top Up Instant</p>
-        </div>
-      </div>
-
-      <div class="step-box">
-        <div class="step-title"><span class="step-number">1</span> Data Akun Game</div>
-        <div class="form-row">
-          <div>
-            <label style="font-size: 0.75rem; color: var(--cream-muted);">User ID / Player ID</label>
-            <input type="text" class="form-input" id="playerUserId" placeholder="Contoh: 10492842" required />
-          </div>
-          <div>
-            <label style="font-size: 0.75rem; color: var(--cream-muted);">Server / State ID</label>
-            <input type="text" class="form-input" id="playerServerId" placeholder="Contoh: State #1024" />
-          </div>
-        </div>
-      </div>
-
-      <div class="step-box">
-        <div class="step-title"><span class="step-number">2</span> Pilih Nominal Item</div>
-        <div class="item-options" id="itemOptionsContainer"></div>
-      </div>
-
-      <div class="step-box">
-        <div class="step-title"><span class="step-number">3</span> Metode Pembayaran</div>
-        <select class="form-input" id="paymentMethod" style="cursor: pointer;">
-          <option value="QRIS (Instant All E-Wallet / Bank)">⚡ QRIS (DANA, GoPay, OVO, BCA, Mandiri)</option>
-          <option value="Transfer Bank BCA">🏦 Transfer Bank BCA</option>
-          <option value="Transfer Bank Mandiri">🏦 Transfer Bank Mandiri</option>
-          <option value="DANA E-Wallet">📱 DANA E-Wallet</option>
-        </select>
-      </div>
-
-      <div class="step-box">
-        <div class="step-title"><span class="step-number">4</span> No WhatsApp Kamu</div>
-        <input type="tel" class="form-input" id="buyerWhatsapp" placeholder="Contoh: 081234567890" required />
-      </div>
-
-      <button class="btn btn-red" id="btnSubmitOrder" style="width: 100%; padding: 12px; font-size: 0.95rem;">
-        <i class="fa-solid fa-cart-shopping"></i> Order Sekarang
-      </button>
+  <!-- LIVE SALES POP-UP NOTIFICATION -->
+  <div class="live-sales-toast" id="liveSalesToast">
+    <div class="live-sales-icon">
+      <i class="fa-solid fa-circle-check"></i>
+    </div>
+    <div class="live-sales-text">
+      <h5 id="liveSalesUser">Pembeli</h5>
+      <p><span id="liveSalesItem">Item Game</span> &bull; <span id="liveSalesTime">Baru saja</span></p>
     </div>
   </div>
 
-  <div class="modal-backdrop" id="authModal">
-    <div class="modal-window" style="max-width: 380px;">
-      <button class="btn-close-modal" id="closeAuthModal">&times;</button>
-      
-      <div class="auth-tabs-nav">
-        <button class="auth-tab-item active" id="tabNavLogin">Masuk</button>
-        <button class="auth-tab-item" id="tabNavRegister">Daftar</button>
+  <!-- FOOTER -->
+  <footer class="footer">
+    <div class="footer-container">
+      <div class="footer-brand">
+        <div class="brand-logo">
+          <i class="fa-solid fa-gamepad" style="color: var(--primary);"></i>
+          Mamang<span>GS</span>
+        </div>
+        <p>Platform top-up game otomatis, murah, dan terpercaya nomor 1 di Indonesia. Layanan transaksi 24 jam nonstop.</p>
+        <div class="social-links">
+          <a href="#" class="social-icon" title="WhatsApp"><i class="fa-brands fa-whatsapp"></i></a>
+          <a href="#" class="social-icon" title="Instagram"><i class="fa-brands fa-instagram"></i></a>
+          <a href="#" class="social-icon" title="TikTok"><i class="fa-brands fa-tiktok"></i></a>
+        </div>
       </div>
 
-      <form id="formLogin">
-        <div style="margin-bottom: 12px;">
-          <label style="font-size: 0.78rem; color: var(--cream-muted);">Username / No WhatsApp</label>
-          <input type="text" class="form-input" id="inputLoginUser" placeholder="Masukkan username" required />
-        </div>
-        <div style="margin-bottom: 16px;">
-          <label style="font-size: 0.78rem; color: var(--cream-muted);">Password</label>
-          <input type="password" class="form-input" id="inputLoginPass" placeholder="••••••••" required />
-        </div>
-        <button type="submit" class="btn btn-red" style="width: 100%; padding: 10px;">Masuk ke topupmamang</button>
-      </form>
+      <div class="footer-col">
+        <h4>Menu Navigasi</h4>
+        <ul class="footer-links">
+          <li><a href="/">Beranda</a></li>
+          <li><a href="/order-status.html">Lacak Pesanan</a></li>
+          <li><a href="/leaderboard.html">Leaderboard</a></li>
+        </ul>
+      </div>
 
-      <form id="formRegister" style="display: none;">
-        <div style="margin-bottom: 10px;">
-          <label style="font-size: 0.78rem; color: var(--cream-muted);">Nama Lengkap</label>
-          <input type="text" class="form-input" id="inputRegName" placeholder="Nama Anda" required />
-        </div>
-        <div style="margin-bottom: 10px;">
-          <label style="font-size: 0.78rem; color: var(--cream-muted);">No WhatsApp Aktif</label>
-          <input type="tel" class="form-input" id="inputRegWa" placeholder="08xxxxxxxxxx" required />
-        </div>
-        <div style="margin-bottom: 16px;">
-          <label style="font-size: 0.78rem; color: var(--cream-muted);">Password</label>
-          <input type="password" class="form-input" id="inputRegPass" placeholder="Buat password" required />
-        </div>
-        <button type="submit" class="btn btn-red" style="width: 100%; padding: 10px;">Buat Akun</button>
-      </form>
+      <div class="footer-col">
+        <h4>Legalitas & Bantuan</h4>
+        <ul class="footer-links">
+          <li><a href="/privacy-policy.html">Kebijakan Privasi</a></li>
+          <li><a href="/terms.html">Syarat & Ketentuan</a></li>
+          <li><a href="https://wa.me/" target="_blank">Hubungi Admin CS</a></li>
+        </ul>
+      </div>
     </div>
-  </div>
 
-  <script src="script.js"></script>
+    <div class="footer-bottom">
+      <p>&copy; 2026 MamangGS. All rights reserved.</p>
+    </div>
+  </footer>
+
+  <!-- JS Modular -->
+  <script src="/js/navbar.js"></script>
+  <script src="/js/banner.js"></script>
+  <script src="/js/live-sales.js"></script>
 </body>
 </html>
