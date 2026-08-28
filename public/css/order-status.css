@@ -1,0 +1,205 @@
+/* ===================================================
+   MAMANGGS - ORDER STATUS PAGE
+   =================================================== */
+
+.status-wrapper {
+  max-width: 800px;
+  margin: 40px auto 80px;
+  padding: 0 20px;
+  width: 100%;
+}
+
+.status-header {
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+.status-header h1 {
+  font-size: 1.8rem;
+  font-weight: 800;
+  margin-bottom: 8px;
+}
+
+.status-header h1 span {
+  color: var(--accent-red);
+}
+
+.status-header p {
+  color: var(--text-muted);
+  font-size: 0.95rem;
+}
+
+/* Card Form Pencarian */
+.search-card {
+  background: var(--navy-base);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-lg);
+  padding: 24px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+  margin-bottom: 30px;
+}
+
+.search-input-group {
+  display: flex;
+  gap: 12px;
+}
+
+.search-input-group input {
+  flex: 1;
+  padding: 12px 16px;
+  background: var(--navy-dark);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-sm);
+  color: #fff;
+  font-size: 0.95rem;
+  outline: none;
+  transition: var(--transition);
+}
+
+.search-input-group input:focus {
+  border-color: var(--accent-red);
+  box-shadow: 0 0 12px var(--accent-glow);
+}
+
+.search-input-group button {
+  padding: 12px 24px;
+  background: var(--accent-red);
+  color: #fff;
+  border: none;
+  border-radius: var(--radius-sm);
+  font-size: 0.95rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: var(--transition);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.search-input-group button:hover {
+  background: var(--accent-red-hover);
+  box-shadow: 0 4px 15px var(--accent-glow);
+}
+
+/* Hasil Detail Pesanan (Card Hasil) */
+.result-card {
+  background: var(--navy-base);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-lg);
+  padding: 28px;
+  display: none; /* Muncul jika dicari */
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+}
+
+.result-card.show {
+  display: block;
+  animation: fadeIn 0.4s ease-in-out;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.result-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-bottom: 20px;
+  border-bottom: 1px solid var(--border-color);
+  margin-bottom: 20px;
+}
+
+.result-invoice-no {
+  font-size: 1.1rem;
+  font-weight: 800;
+}
+
+.status-badge {
+  padding: 6px 14px;
+  border-radius: 50px;
+  font-size: 0.8rem;
+  font-weight: 700;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.status-badge.pending {
+  background: rgba(245, 158, 11, 0.15);
+  border: 1px solid rgba(245, 158, 11, 0.4);
+  color: #f59e0b;
+}
+
+.status-badge.success {
+  background: rgba(16, 185, 129, 0.15);
+  border: 1px solid rgba(16, 185, 129, 0.4);
+  color: #10b981;
+}
+
+.detail-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.detail-item span {
+  display: block;
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  margin-bottom: 4px;
+}
+
+.detail-item strong {
+  font-size: 0.95rem;
+  color: var(--text-main);
+}
+
+.result-actions {
+  display: flex;
+  gap: 12px;
+}
+
+.btn-action {
+  flex: 1;
+  padding: 10px;
+  border-radius: var(--radius-sm);
+  font-size: 0.88rem;
+  font-weight: 700;
+  text-align: center;
+  cursor: pointer;
+  transition: var(--transition);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.btn-pay {
+  background: var(--accent-red);
+  color: #fff;
+  border: none;
+}
+
+.btn-pay:hover {
+  background: var(--accent-red-hover);
+  box-shadow: 0 4px 12px var(--accent-glow);
+}
+
+.btn-cs {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid var(--border-color);
+  color: var(--text-main);
+}
+
+.btn-cs:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+@media (max-width: 768px) {
+  .status-wrapper { margin-top: 20px; }
+  .search-input-group { flex-direction: column; }
+  .detail-grid { grid-template-columns: 1fr; }
+  .result-actions { flex-direction: column; }
+}

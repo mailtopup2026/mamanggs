@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Lacak Pesanan - MamangGS</title>
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  
+  <link rel="stylesheet" href="/css/global.css">
+  <link rel="stylesheet" href="/css/order-status.css">
+</head>
+<body>
+
+  <!-- NAVBAR -->
+  <header class="navbar">
+    <div class="navbar-container">
+      <a href="/" class="brand-logo">
+        <span class="logo-badge"><i class="fa-solid fa-gamepad"></i></span>
+        Mamang<span>GS</span>
+      </a>
+
+      <div class="nav-search">
+        <i class="fa-solid fa-magnifying-glass"></i>
+        <input type="text" placeholder="Cari Game Favoritmu...">
+      </div>
+
+      <div class="nav-actions">
+        <a href="/auth/login.html" class="btn-nav-login"><i class="fa-solid fa-right-to-bracket"></i> Masuk</a>
+        <a href="/auth/register.html" class="btn-nav-register"><i class="fa-solid fa-user-plus"></i> Daftar</a>
+      </div>
+    </div>
+  </header>
+
+  <!-- KONTEN UTAMA LACAK PESANAN -->
+  <main class="status-wrapper">
+    <div class="status-header">
+      <h1>Lacak Status <span>Pesanan</span></h1>
+      <p>Cek status pembayaran dan proses pengisian top-up game kamu secara real-time.</p>
+    </div>
+
+    <!-- Form Input Pencarian -->
+    <div class="search-card">
+      <div class="search-input-group">
+        <input type="text" id="invoiceInput" placeholder="Contoh: MGS-20260301-8971">
+        <button id="checkOrderBtn"><i class="fa-solid fa-magnifying-glass"></i> Cek Status</button>
+      </div>
+    </div>
+
+    <!-- Kartu Hasil Transaksi -->
+    <div class="result-card" id="orderResultCard">
+      <div class="result-top">
+        <div>
+          <span style="font-size: 0.8rem; color: var(--text-muted); display: block;">Nomor Invoice</span>
+          <strong class="result-invoice-no" id="resInvoice">MGS-2026-XXXX</strong>
+        </div>
+        <div class="status-badge pending" id="resStatus">
+          <i class="fa-solid fa-clock"></i> PENDING
+        </div>
+      </div>
+
+      <div class="detail-grid">
+        <div class="detail-item">
+          <span>Item Produk</span>
+          <strong>86 Diamonds Mobile Legends</strong>
+        </div>
+        <div class="detail-item">
+          <span>Tujuan Akun (User ID / Server)</span>
+          <strong>12345678 (2026)</strong>
+        </div>
+        <div class="detail-item">
+          <span>Metode Pembayaran</span>
+          <strong>QRIS (Semua E-Wallet)</strong>
+        </div>
+        <div class="detail-item">
+          <span>Total Tagihan</span>
+          <strong style="color: var(--accent-red);">Rp 21.500</strong>
+        </div>
+      </div>
+
+      <div class="result-actions">
+        <a href="#" class="btn-action btn-pay"><i class="fa-solid fa-wallet"></i> Bayar Sekarang</a>
+        <a href="https://wa.me/" target="_blank" class="btn-action btn-cs"><i class="fa-brands fa-whatsapp"></i> Bantuan CS</a>
+      </div>
+    </div>
+  </main>
+
+  <!-- FOOTER -->
+  <footer class="footer">
+    <div class="footer-container">
+      <div class="footer-brand">
+        <div class="brand-logo">
+          <span class="logo-badge"><i class="fa-solid fa-gamepad"></i></span>
+          Mamang<span>GS</span>
+        </div>
+        <p>Platform top up game otomatis, murah, dan terpercaya 24 jam nonstop.</p>
+      </div>
+
+      <div class="footer-col">
+        <h4>Menu Navigasi</h4>
+        <ul class="footer-links">
+          <li><a href="/">Beranda</a></li>
+          <li><a href="/order-status.html">Lacak Pesanan</a></li>
+          <li><a href="/leaderboard.html">Leaderboard</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col">
+        <h4>Bantuan & Legal</h4>
+        <ul class="footer-links">
+          <li><a href="/privacy-policy.html">Kebijakan Privasi</a></li>
+          <li><a href="/terms.html">Syarat & Ketentuan</a></li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="footer-bottom">
+      <p>&copy; 2026 MamangGS. All rights reserved.</p>
+    </div>
+  </footer>
+
+  <!-- JS MODULAR -->
+  <script src="/js/particles.js"></script>
+  <script src="/js/navbar.js"></script>
+  <script src="/js/order-status.js"></script>
+</body>
+</html>

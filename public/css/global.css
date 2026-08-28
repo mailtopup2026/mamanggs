@@ -255,7 +255,74 @@ a {
   color: var(--text-muted);
 }
 
+/* Responsif Mobile Khusus Layar HP */
 @media (max-width: 768px) {
-  .nav-search { display: none; }
-  .footer-container { grid-template-columns: 1fr; }
+  .navbar {
+    padding: 10px 14px;
+  }
+
+  .navbar-container {
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    gap: 8px;
+    align-items: center;
+  }
+
+  .brand-logo {
+    font-size: 1.05rem;
+    gap: 6px;
+  }
+
+  .brand-logo .logo-badge {
+    padding: 2px 6px;
+    font-size: 0.85rem;
+  }
+
+  .nav-search {
+    display: block;
+    max-width: 100%;
+    margin: 0 4px;
+  }
+
+  .nav-search input {
+    padding: 6px 8px 6px 28px;
+    font-size: 0.75rem;
+    border-radius: 8px;
+  }
+
+  .nav-search i {
+    left: 8px;
+    font-size: 0.72rem;
+  }
+
+  .nav-actions {
+    gap: 4px;
+  }
+
+  .btn-nav-login, .btn-nav-register {
+    padding: 6px 8px;
+    font-size: 0.72rem;
+    border-radius: 6px;
+  }
+
+  .btn-request-game {
+    bottom: 14px;
+    left: 14px;
+    padding: 8px 12px;
+    font-size: 0.72rem;
+  }
+
+  .footer-container {
+    grid-template-columns: 1fr;
+    gap: 20px;
+    text-align: center;
+  }
+
+  .footer-brand p {
+    margin: 10px auto 0;
+  }
+
+  .footer-links {
+    align-items: center;
+  }
 }
