@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Masuk Akun - MamangGS</title>
+  <title>Welcome Back - MamangGS</title>
   
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -13,60 +13,74 @@
   <link rel="stylesheet" href="/css/global.css">
   <link rel="stylesheet" href="/css/auth.css">
 </head>
-<body>
+<body class="auth-page">
 
-  <!-- NAVBAR -->
-  <header class="navbar">
-    <div class="navbar-container">
-      <a href="/" class="brand-logo">
-        <span class="logo-badge"><i class="fa-solid fa-gamepad"></i></span>
-        Mamang<span>GS</span>
-      </a>
-
-      <div class="nav-actions">
-        <a href="/" class="btn-nav-login"><i class="fa-solid fa-house"></i> Beranda</a>
-        <a href="/auth/register.html" class="btn-nav-register">Daftar</a>
-      </div>
+  <div class="auth-mobile-card">
+    <!-- Topbar -->
+    <div class="auth-topbar">
+      <a href="/" class="btn-back-circle"><i class="fa-solid fa-arrow-left"></i></a>
+      <div class="top-icon-circle"><i class="fa-solid fa-gamepad"></i></div>
     </div>
-  </header>
 
-  <!-- FORM LOGIN -->
-  <main class="auth-wrapper">
-    <div class="auth-card">
-      <div class="auth-header">
-        <h2>Selamat <span>Datang</span></h2>
-        <p>Masuk ke akun Member / Reseller MamangGS</p>
+    <!-- Glowing Sphere Orb -->
+    <div class="orb-container">
+      <div class="glowing-orb"></div>
+    </div>
+
+    <!-- Title Header -->
+    <div class="auth-title-section">
+      <h1>Welcome Back!</h1>
+      <p>Sign in to access your reseller discount and instant order history.</p>
+    </div>
+
+    <!-- Form -->
+    <form id="loginForm">
+      <div class="auth-form-group">
+        <label for="loginEmail">Email address<span>*</span></label>
+        <div class="auth-input-box">
+          <input type="email" id="loginEmail" placeholder="example@gmail.com" required>
+        </div>
       </div>
 
-      <form class="auth-form" id="loginForm">
-        <div class="form-group-auth">
-          <label for="loginEmail">Email</label>
-          <div class="input-icon-wrapper">
-            <i class="fa-solid fa-envelope"></i>
-            <input type="email" id="loginEmail" placeholder="nama@email.com" required>
-          </div>
+      <div class="auth-form-group">
+        <label for="loginPassword">Password<span>*</span></label>
+        <div class="auth-input-box">
+          <input type="password" id="loginPassword" placeholder="@Password123#" required>
+          <i class="fa-regular fa-eye-slash toggle-password" onclick="togglePass('loginPassword', this)"></i>
         </div>
+      </div>
 
-        <div class="form-group-auth">
-          <label for="loginPassword">Kata Sandi</label>
-          <div class="input-icon-wrapper">
-            <i class="fa-solid fa-lock"></i>
-            <input type="password" id="loginPassword" placeholder="••••••••" required>
-          </div>
-        </div>
+      <div class="form-options-row">
+        <label class="remember-label">
+          <input type="checkbox" id="rememberMe">
+          <span>Remember me</span>
+        </label>
+        <a href="/auth/forgot-password.html" class="forgot-link">Forgot Password?</a>
+      </div>
 
-        <button type="submit" class="btn-auth-submit" id="btnLogin">
-          <i class="fa-solid fa-right-to-bracket"></i> Masuk Sekarang
+      <button type="submit" class="btn-auth-main">
+        <i class="fa-solid fa-wand-magic-sparkles"></i> Sign In
+      </button>
+
+      <div class="social-divider">
+        <span>Or continue with</span>
+      </div>
+
+      <div class="social-btn-grid">
+        <button type="button" class="btn-social" onclick="alert('Google Auth Siap Dihubungkan ke Supabase!')">
+          <i class="fa-brands fa-google"></i> Google
         </button>
-      </form>
-
-      <div class="auth-footer">
-        Belum punya akun? <a href="/auth/register.html">Daftar Mitra / Member</a>
+        <button type="button" class="btn-social" onclick="alert('Apple ID Siap Dihubungkan!')">
+          <i class="fa-brands fa-apple"></i> Apple
+        </button>
       </div>
-    </div>
-  </main>
 
-  <!-- JS MODULAR -->
+      <div class="auth-switch-text">
+        Don't have an account? <a href="/auth/register.html">Sign up</a>
+      </div>
+    </form>
+  </div>
+
   <script src="/js/particles.js"></script>
   <script src="/js/auth.js"></script>
 </body>

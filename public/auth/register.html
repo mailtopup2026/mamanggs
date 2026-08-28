@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Daftar Akun Mitra - MamangGS</title>
+  <title>Create Your Account - MamangGS</title>
   
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -13,76 +13,73 @@
   <link rel="stylesheet" href="/css/global.css">
   <link rel="stylesheet" href="/css/auth.css">
 </head>
-<body>
+<body class="auth-page">
 
-  <!-- NAVBAR -->
-  <header class="navbar">
-    <div class="navbar-container">
-      <a href="/" class="brand-logo">
-        <span class="logo-badge"><i class="fa-solid fa-gamepad"></i></span>
-        Mamang<span>GS</span>
-      </a>
-
-      <div class="nav-actions">
-        <a href="/" class="btn-nav-login"><i class="fa-solid fa-house"></i> Beranda</a>
-        <a href="/auth/login.html" class="btn-nav-register">Masuk</a>
-      </div>
+  <div class="auth-mobile-card">
+    <!-- Topbar -->
+    <div class="auth-topbar">
+      <a href="/" class="btn-back-circle"><i class="fa-solid fa-arrow-left"></i></a>
+      <div class="top-icon-circle"><i class="fa-solid fa-crown"></i></div>
     </div>
-  </header>
 
-  <!-- FORM REGISTER -->
-  <main class="auth-wrapper">
-    <div class="auth-card">
-      <div class="auth-header">
-        <h2>Daftar <span>Akun</span></h2>
-        <p>Gabung jadi Member & Reseller VIP MamangGS</p>
+    <!-- Glowing Sphere Orb -->
+    <div class="orb-container">
+      <div class="glowing-orb"></div>
+    </div>
+
+    <!-- Title Header -->
+    <div class="auth-title-section">
+      <h1>Create Your Account?</h1>
+      <p>Create your account to explore exciting reseller deals and auto transactions.</p>
+    </div>
+
+    <!-- Form -->
+    <form id="registerForm">
+      <div class="auth-form-group">
+        <label for="regName">Full Name<span>*</span></label>
+        <div class="auth-input-box">
+          <input type="text" id="regName" placeholder="Alex Smith" required>
+        </div>
       </div>
 
-      <form class="auth-form" id="registerForm">
-        <div class="form-group-auth">
-          <label for="regName">Nama Lengkap</label>
-          <div class="input-icon-wrapper">
-            <i class="fa-solid fa-user"></i>
-            <input type="text" id="regName" placeholder="Nama lengkap Anda" required>
-          </div>
+      <div class="auth-form-group">
+        <label for="regEmail">Email address<span>*</span></label>
+        <div class="auth-input-box">
+          <input type="email" id="regEmail" placeholder="example@gmail.com" required>
         </div>
+      </div>
 
-        <div class="form-group-auth">
-          <label for="regWhatsapp">Nomor WhatsApp</label>
-          <div class="input-icon-wrapper">
-            <i class="fa-brands fa-whatsapp"></i>
-            <input type="tel" id="regWhatsapp" placeholder="08xxxxxxxxxx" required>
-          </div>
+      <div class="auth-form-group">
+        <label for="regPassword">Password<span>*</span></label>
+        <div class="auth-input-box">
+          <input type="password" id="regPassword" placeholder="@Password123#" required>
+          <i class="fa-regular fa-eye-slash toggle-password" onclick="togglePass('regPassword', this)"></i>
         </div>
+      </div>
 
-        <div class="form-group-auth">
-          <label for="regEmail">Email Aktif</label>
-          <div class="input-icon-wrapper">
-            <i class="fa-solid fa-envelope"></i>
-            <input type="email" id="regEmail" placeholder="nama@email.com" required>
-          </div>
-        </div>
+      <button type="submit" class="btn-auth-main">
+        <i class="fa-solid fa-wand-magic-sparkles"></i> Register
+      </button>
 
-        <div class="form-group-auth">
-          <label for="regPassword">Kata Sandi</label>
-          <div class="input-icon-wrapper">
-            <i class="fa-solid fa-lock"></i>
-            <input type="password" id="regPassword" placeholder="Minimal 6 karakter" required>
-          </div>
-        </div>
+      <div class="social-divider">
+        <span>Or continue with</span>
+      </div>
 
-        <button type="submit" class="btn-auth-submit" id="btnRegister">
-          <i class="fa-solid fa-user-plus"></i> Buat Akun Sekarang
+      <div class="social-btn-grid">
+        <button type="button" class="btn-social" onclick="alert('Google Auth Siap Dihubungkan!')">
+          <i class="fa-brands fa-google"></i> Google
         </button>
-      </form>
-
-      <div class="auth-footer">
-        Sudah punya akun? <a href="/auth/login.html">Masuk di sini</a>
+        <button type="button" class="btn-social" onclick="alert('Apple ID Siap Dihubungkan!')">
+          <i class="fa-brands fa-apple"></i> Apple
+        </button>
       </div>
-    </div>
-  </main>
 
-  <!-- JS MODULAR -->
+      <div class="auth-switch-text">
+        Already have an account? <a href="/auth/login.html">Sign In</a>
+      </div>
+    </form>
+  </div>
+
   <script src="/js/particles.js"></script>
   <script src="/js/auth.js"></script>
 </body>
