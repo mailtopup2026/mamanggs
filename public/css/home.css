@@ -1,5 +1,5 @@
 /* ===================================================
-   MAMANGGS - HOME PAGE (BANNER, CATALOG, POP-UP)
+   MAMANGGS - HOME PAGE (CAROUSEL & CARDS GLOW)
    =================================================== */
 
 /* --- 1. BANNER CAROUSEL --- */
@@ -12,10 +12,10 @@
 .carousel-container {
   position: relative;
   width: 100%;
-  height: 320px;
+  height: 340px;
   border-radius: var(--radius-lg);
   overflow: hidden;
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.7);
   border: 1px solid var(--border);
 }
 
@@ -26,7 +26,8 @@
   width: 100%;
   height: 100%;
   opacity: 0;
-  transition: opacity 0.8s ease-in-out;
+  transition: opacity 0.8s ease-in-out, transform 0.8s ease;
+  transform: scale(1.03);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -36,6 +37,7 @@
 
 .carousel-slide.active {
   opacity: 1;
+  transform: scale(1);
 }
 
 .carousel-content {
@@ -43,26 +45,26 @@
   bottom: 0;
   left: 0;
   right: 0;
-  padding: 30px 24px 24px;
-  background: linear-gradient(to top, rgba(11, 15, 25, 0.95), transparent);
+  padding: 40px 30px 30px;
+  background: linear-gradient(to top, rgba(7, 7, 9, 0.95) 10%, rgba(7, 7, 9, 0.6) 60%, transparent);
 }
 
 .carousel-content h2 {
-  font-size: 1.5rem;
-  font-weight: 700;
+  font-size: 1.65rem;
+  font-weight: 800;
   margin-bottom: 6px;
+  color: #fff;
 }
 
 .carousel-content p {
   color: var(--text-muted);
-  font-size: 0.9rem;
+  font-size: 0.95rem;
 }
 
-/* Navigasi Dot Banner */
 .carousel-dots {
   position: absolute;
-  bottom: 16px;
-  right: 24px;
+  bottom: 20px;
+  right: 28px;
   display: flex;
   gap: 8px;
   z-index: 10;
@@ -72,21 +74,22 @@
   width: 10px;
   height: 10px;
   border-radius: 50%;
-  background: rgba(255, 255, 255, 0.3);
+  background: rgba(255, 255, 255, 0.25);
   cursor: pointer;
   transition: var(--transition);
 }
 
 .dot.active {
   background: var(--primary);
-  width: 24px;
+  width: 28px;
   border-radius: 6px;
+  box-shadow: 0 0 10px var(--primary-glow);
 }
 
 /* --- 2. KATALOG GAME --- */
 .catalog-section {
   max-width: 1200px;
-  margin: 40px auto 60px;
+  margin: 45px auto 70px;
   padding: 0 24px;
 }
 
@@ -94,55 +97,59 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: 24px;
+  margin-bottom: 28px;
 }
 
 .section-title {
-  font-size: 1.4rem;
-  font-weight: 700;
+  font-size: 1.5rem;
+  font-weight: 800;
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 12px;
 }
 
 .section-title i {
   color: var(--primary);
+  text-shadow: 0 0 10px var(--primary-glow);
 }
 
 .category-filter {
   display: flex;
-  gap: 8px;
+  gap: 10px;
   overflow-x: auto;
   padding-bottom: 6px;
 }
 
 .filter-btn {
-  padding: 6px 14px;
+  padding: 8px 18px;
   border-radius: var(--radius-sm);
   background: var(--bg-card);
+  backdrop-filter: blur(10px);
   border: 1px solid var(--border);
   color: var(--text-muted);
   font-size: 0.85rem;
-  font-weight: 600;
+  font-weight: 700;
   cursor: pointer;
   transition: var(--transition);
   white-space: nowrap;
 }
 
 .filter-btn.active, .filter-btn:hover {
-  background: var(--primary);
+  background: linear-gradient(135deg, var(--primary), #b91c1c);
   color: #fff;
   border-color: var(--primary);
+  box-shadow: 0 4px 12px var(--primary-glow);
 }
 
 .game-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
-  gap: 20px;
+  grid-template-columns: repeat(auto-fill, minmax(190px, 1fr));
+  gap: 24px;
 }
 
 .game-card {
   background: var(--bg-card);
+  backdrop-filter: blur(12px);
   border: 1px solid var(--border);
   border-radius: var(--radius-md);
   overflow: hidden;
@@ -152,29 +159,36 @@
 }
 
 .game-card:hover {
-  transform: translateY(-5px);
-  border-color: var(--border-focus);
-  box-shadow: 0 8px 20px rgba(59, 130, 246, 0.15);
+  transform: translateY(-8px);
+  border-color: var(--border-glow);
+  box-shadow: 0 12px 25px rgba(255, 30, 66, 0.2);
 }
 
 .game-thumbnail {
   width: 100%;
-  height: 190px;
+  height: 200px;
   object-fit: cover;
   display: block;
+  transition: var(--transition);
+}
+
+.game-card:hover .game-thumbnail {
+  transform: scale(1.05);
 }
 
 .game-info {
-  padding: 14px;
+  padding: 16px;
   flex: 1;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
+  background: var(--bg-card);
+  z-index: 2;
 }
 
 .game-title {
-  font-size: 1rem;
-  font-weight: 700;
+  font-size: 1.05rem;
+  font-weight: 800;
   margin-bottom: 4px;
   color: var(--text-main);
 }
@@ -182,18 +196,18 @@
 .game-publisher {
   font-size: 0.8rem;
   color: var(--text-muted);
-  margin-bottom: 12px;
+  margin-bottom: 14px;
 }
 
 .game-btn {
   width: 100%;
-  padding: 8px;
-  background: rgba(59, 130, 246, 0.1);
+  padding: 10px;
+  background: rgba(255, 30, 66, 0.1);
   color: var(--primary);
-  border: 1px solid rgba(59, 130, 246, 0.3);
+  border: 1px solid rgba(255, 30, 66, 0.3);
   border-radius: var(--radius-sm);
   font-size: 0.85rem;
-  font-weight: 600;
+  font-weight: 700;
   text-align: center;
   transition: var(--transition);
 }
@@ -201,28 +215,30 @@
 .game-card:hover .game-btn {
   background: var(--primary);
   color: #fff;
+  border-color: var(--primary);
+  box-shadow: 0 0 12px var(--primary-glow);
 }
 
-/* --- 3. LIVE SALES POP-UP NOTIFICATION --- */
+/* --- 3. LIVE SALES TOAST --- */
 .live-sales-toast {
   position: fixed;
   bottom: 24px;
   left: 24px;
-  background: rgba(19, 27, 46, 0.95);
-  backdrop-filter: blur(10px);
+  background: rgba(14, 14, 18, 0.9);
+  backdrop-filter: blur(16px);
   border: 1px solid var(--border);
-  border-left: 4px solid #10b981;
+  border-left: 4px solid var(--primary);
   border-radius: var(--radius-sm);
-  padding: 12px 16px;
+  padding: 12px 18px;
   display: flex;
   align-items: center;
-  gap: 12px;
-  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.4);
+  gap: 14px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6);
   transform: translateY(120px);
   opacity: 0;
-  transition: all 0.4s ease-out;
+  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
   z-index: 999;
-  max-width: 320px;
+  max-width: 340px;
 }
 
 .live-sales-toast.show {
@@ -231,20 +247,20 @@
 }
 
 .live-sales-icon {
-  width: 36px;
-  height: 36px;
+  width: 38px;
+  height: 38px;
   border-radius: 50%;
-  background: rgba(16, 185, 129, 0.15);
-  color: #10b981;
+  background: rgba(255, 30, 66, 0.15);
+  color: var(--primary);
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 1.1rem;
+  font-size: 1.15rem;
 }
 
 .live-sales-text h5 {
   font-size: 0.85rem;
-  font-weight: 600;
+  font-weight: 700;
   color: var(--text-main);
 }
 
@@ -254,9 +270,9 @@
 }
 
 @media (max-width: 768px) {
-  .carousel-container { height: 200px; }
-  .carousel-content h2 { font-size: 1.1rem; }
-  .game-grid { grid-template-columns: repeat(2, 1fr); gap: 12px; }
+  .carousel-container { height: 210px; }
+  .carousel-content h2 { font-size: 1.15rem; }
+  .game-grid { grid-template-columns: repeat(2, 1fr); gap: 14px; }
   .game-thumbnail { height: 140px; }
   .live-sales-toast { bottom: 16px; left: 16px; right: 16px; max-width: none; }
 }
