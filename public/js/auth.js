@@ -16,6 +16,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const loginForm = document.getElementById("loginForm");
   const registerForm = document.getElementById("registerForm");
   const forgotForm = document.getElementById("forgotForm");
+  const updatePasswordForm = document.getElementById("updatePasswordForm");
 
   // Handler Register (Daftar Akun ke Supabase)
   if (registerForm) {
@@ -34,7 +35,8 @@ document.addEventListener("DOMContentLoaded", () => {
           email: email,
           password: password,
           options: {
-            data: { full_name: name }
+            data: { full_name: name },
+            emailRedirectTo: "https://mamanggs.vercel.app/auth/login.html"
           }
         });
 
@@ -95,7 +97,7 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  // Handler Forgot Password
+  // Handler Forgot Password (Kirim Link Reset ke Email)
   if (forgotForm) {
     forgotForm.addEventListener("submit", async (e) => {
       e.preventDefault();
@@ -106,14 +108,44 @@ document.addEventListener("DOMContentLoaded", () => {
       btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Mengirim...';
 
       try {
-        const { error } = await window.supabase.auth.resetPasswordForEmail(email);
+        const { error } = await window.supabase.auth.resetPasswordForEmail(email, {
+          redirectTo: "https://mamanggs.vercel.app/auth/reset-password.html"
+        });
         if (error) throw error;
-        alert("Instruksi reset kata sandi telah dikirimkan ke email Anda.");
+        alert("Instruksi reset kata sandi telah dikirimkan ke email Anda. Silakan periksa kotak masuk atau spam.");
       } catch (err) {
         alert("Gagal mengirim email reset: " + err.message);
       } finally {
         btn.disabled = false;
         btn.innerHTML = '<i class="fa-solid fa-wand-magic-sparkles"></i> Send Code';
+      }
+    });
+  }
+
+  // Handler Update Password Baru (di reset-password.html)
+  if (updatePasswordForm) {
+    updatePasswordForm.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const newPassword = document.getElementById("newPassword").value;
+      const btn = updatePasswordForm.querySelector('button[type="submit"]');
+
+      btn.disabled = true;
+      btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Memperbarui...';
+
+      try {
+        const { error } = await window.supabase.auth.updateUser({
+          password: newPassword
+        });
+
+        if (error) throw error;
+
+        alert("Kata sandi berhasil diubah! Silakan masuk dengan kata sandi baru.");
+        window.location.href = "/auth/login.html";
+      } catch (err) {
+        alert("Gagal memperbarui kata sandi: " + err.message);
+      } finally {
+        btn.disabled = false;
+        btn.innerHTML = '<i class="fa-solid fa-wand-magic-sparkles"></i> Update Password';
       }
     });
   }
