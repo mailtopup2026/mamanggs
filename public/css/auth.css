@@ -292,3 +292,91 @@
 .auth-switch-text a:hover {
   color: var(--accent-red);
 }
+/* ===================================================
+   MAMANGGS - CYBER TOAST NOTIFICATION (AUTH OVERRIDE)
+   =================================================== */
+.mgs-toast-container {
+  position: fixed !important;
+  top: 24px !important;
+  left: 50% !important;
+  transform: translateX(-50%) !important;
+  z-index: 999999 !important;
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 10px !important;
+  width: 90% !important;
+  max-width: 380px !important;
+  pointer-events: none !important;
+}
+
+.mgs-toast {
+  width: 100% !important;
+  background: rgba(12, 24, 43, 0.95) !important;
+  backdrop-filter: blur(16px) !important;
+  -webkit-backdrop-filter: blur(16px) !important;
+  border: 1px solid rgba(255, 255, 255, 0.1) !important;
+  border-radius: 14px !important;
+  padding: 14px 18px !important;
+  display: flex !important;
+  align-items: center !important;
+  gap: 14px !important;
+  box-shadow: 0 12px 35px rgba(0, 0, 0, 0.8) !important;
+  pointer-events: auto !important;
+  transform: translateY(-40px) scale(0.95) !important;
+  opacity: 0 !important;
+  transition: all 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275) !important;
+}
+
+.mgs-toast.show {
+  transform: translateY(0) scale(1) !important;
+  opacity: 1 !important;
+}
+
+.mgs-toast-icon {
+  width: 36px !important;
+  height: 36px !important;
+  border-radius: 50% !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  font-size: 1.1rem !important;
+  flex-shrink: 0 !important;
+}
+
+.mgs-toast.error {
+  border-left: 4px solid var(--accent-red) !important;
+  box-shadow: 0 8px 25px rgba(230, 57, 70, 0.25) !important;
+}
+
+.mgs-toast.error .mgs-toast-icon {
+  background: rgba(230, 57, 70, 0.15) !important;
+  color: var(--accent-red) !important;
+}
+
+.mgs-toast.success {
+  border-left: 4px solid #10b981 !important;
+  box-shadow: 0 8px 25px rgba(16, 185, 129, 0.25) !important;
+}
+
+.mgs-toast.success .mgs-toast-icon {
+  background: rgba(16, 185, 129, 0.15) !important;
+  color: #10b981 !important;
+}
+
+.mgs-toast-body {
+  flex: 1 !important;
+}
+
+.mgs-toast-body h5 {
+  font-size: 0.88rem !important;
+  font-weight: 700 !important;
+  color: #fff !important;
+  margin-bottom: 2px !important;
+}
+
+.mgs-toast-body p {
+  font-size: 0.78rem !important;
+  color: var(--text-muted) !important;
+  line-height: 1.35 !important;
+  margin: 0 !important;
+}
