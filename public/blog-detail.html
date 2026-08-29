@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title id="pageTitle">Membaca Artikel - MamangGS</title>
+  <meta name="description" id="pageMetaDesc" content="Baca tips game, build hero, dan panduan promo top up di MamangGS.">
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  
+  <link rel="stylesheet" href="/css/global.css">
+  <link rel="stylesheet" href="/css/blog.css">
+</head>
+<body>
+
+  <!-- NAVBAR -->
+  <header class="navbar">
+    <div class="navbar-container">
+      <a href="/" class="brand-logo">
+        <span class="logo-badge"><i class="fa-solid fa-gamepad"></i></span>
+        Mamang<span>GS</span>
+      </a>
+
+      <div class="nav-actions">
+        <a href="/blog.html" class="btn-nav-login"><i class="fa-solid fa-arrow-left"></i> Semua Artikel</a>
+        <a href="/" class="btn-nav-register"><i class="fa-solid fa-house"></i> Beranda</a>
+      </div>
+    </div>
+  </header>
+
+  <!-- KONTEN ARTIKEL DETAIL -->
+  <main class="article-detail-wrapper">
+    <article class="article-reader-card" id="articleReaderCard">
+      <!-- Loading State -->
+      <div style="text-align: center; padding: 60px 20px; color: var(--text-muted);">
+        <i class="fa-solid fa-spinner fa-spin fa-2x"></i>
+        <p style="margin-top: 12px; font-weight: 600;">Menyiapkan artikel terbaik...</p>
+      </div>
+    </article>
+  </main>
+
+  <!-- FOOTER -->
+  <footer class="footer">
+    <div class="footer-container">
+      <div class="footer-brand">
+        <div class="brand-logo">
+          <span class="logo-badge"><i class="fa-solid fa-gamepad"></i></span>
+          Mamang<span>GS</span>
+        </div>
+        <p>Platform top up game otomatis, murah, dan terpercaya 24 jam nonstop.</p>
+      </div>
+
+      <div class="footer-col">
+        <h4>Menu Navigasi</h4>
+        <ul class="footer-links">
+          <li><a href="/">Beranda</a></li>
+          <li><a href="/order-status.html">Lacak Pesanan</a></li>
+          <li><a href="/leaderboard.html">Leaderboard</a></li>
+          <li><a href="/blog.html">Berita & Blog</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col">
+        <h4>Bantuan & Legal</h4>
+        <ul class="footer-links">
+          <li><a href="/privacy-policy.html">Kebijakan Privasi</a></li>
+          <li><a href="/terms.html">Syarat & Ketentuan</a></li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="footer-bottom">
+      <p>&copy; 2026 MamangGS. All rights reserved.</p>
+    </div>
+  </footer>
+
+  <!-- JS -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="/js/supabase.js"></script>
+  <script src="/js/navbar.js"></script>
+  <script src="/js/blog-detail.js"></script>
+</body>
+</html>
