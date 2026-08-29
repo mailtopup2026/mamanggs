@@ -1,4 +1,4 @@
-document.addEventListener("DOMContentLoaded", () => {
+document.addEventListener("DOMContentLoaded", async () => {
   function getClient() {
     if (window.supabaseClient) return window.supabaseClient;
     if (window.supabase && typeof window.supabase.from === "function") return window.supabase;
@@ -6,12 +6,84 @@ document.addEventListener("DOMContentLoaded", () => {
     return null;
   }
 
-  const storedUser = localStorage.getItem("mgs_user");
-  let user = storedUser ? JSON.parse(storedUser) : null;
+  // 1. INJEKSI OTOMATIS TEMPLATE NAVBAR STANDAR KE SEMUA HALAMAN
+  const header = document.querySelector("header.navbar");
+  if (header) {
+    header.innerHTML = `
+      <div class="navbar-container">
+        <a href="/" class="brand-logo">
+          <span class="logo-badge"><i class="fa-solid fa-gamepad"></i></span>
+          Mamang<span>GS</span>
+        </a>
 
-  // ===================================================
-  // 1. EVENT TOGGLE MOBILE MENU & SEARCH
-  // ===================================================
+        <!-- Search Desktop (hanya tampil jika di homepage) -->
+        <div class="nav-search desktop-only" style="${window.location.pathname === '/' || window.location.pathname === '/index.html' ? '' : 'display: none;'}">
+          <i class="fa-solid fa-magnifying-glass"></i>
+          <input type="text" placeholder="Cari Game (MLBB, Free Fire, Genshin...)" id="searchInput">
+        </div>
+
+        <!-- Desktop Action Buttons -->
+        <div class="nav-actions desktop-only" id="desktopNavActions">
+          <a href="/blog.html" class="btn-nav-login" style="background: rgba(56, 189, 248, 0.15); border-color: rgba(56, 189, 248, 0.4); color: #38bdf8;">
+            <i class="fa-solid fa-newspaper"></i> Blog
+          </a>
+          <a href="/leaderboard.html" class="btn-nav-login" style="background: rgba(245, 158, 11, 0.15); border-color: rgba(245, 158, 11, 0.4); color: #f59e0b;">
+            <i class="fa-solid fa-crown"></i> Leaderboard
+          </a>
+          <a href="/auth/login.html" class="btn-nav-login" id="navLoginBtn"><i class="fa-solid fa-right-to-bracket"></i> Masuk</a>
+          <a href="/auth/register.html" class="btn-nav-register" id="navRegisterBtn"><i class="fa-solid fa-user-plus"></i> Daftar</a>
+        </div>
+
+        <!-- Mobile Kebab (Titik Tiga) Trigger -->
+        <div class="mobile-nav-toggle-group">
+          ${(window.location.pathname === '/' || window.location.pathname === '/index.html') ? `
+            <button id="btnMobileSearchToggle" class="btn-mobile-icon" title="Cari Game">
+              <i class="fa-solid fa-magnifying-glass"></i>
+            </button>
+          ` : ''}
+          <button id="btnMobileMenuToggle" class="btn-mobile-icon" title="Menu Lengkap">
+            <i class="fa-solid fa-ellipsis-vertical"></i>
+          </button>
+        </div>
+      </div>
+
+      <!-- Mobile Search Bar Expander (Khusus Homepage) -->
+      ${(window.location.pathname === '/' || window.location.pathname === '/index.html') ? `
+        <div id="mobileSearchBar" class="mobile-search-dropdown">
+          <input type="text" placeholder="Ketik nama game..." id="mobileSearchInput">
+        </div>
+      ` : ''}
+
+      <!-- Mobile Drawer Modal Kebab -->
+      <div id="mobileMenuDropdown" class="mobile-menu-drawer">
+        <div class="mobile-menu-header">
+          <span style="font-weight: 800; font-size: 0.88rem; color: #fff;">Menu MamangGS</span>
+          <button id="btnCloseMobileMenu" style="background: none; border: none; color: #94a3b8; font-size: 1.1rem; cursor: pointer;">✕</button>
+        </div>
+        <div id="mobileMenuList" class="mobile-menu-items">
+          <a href="/" class="mobile-menu-link">
+            <i class="fa-solid fa-house" style="color: #3b82f6;"></i> Beranda
+          </a>
+          <a href="/leaderboard.html" class="mobile-menu-link">
+            <i class="fa-solid fa-crown" style="color: #f59e0b;"></i> Leaderboard Sultan
+          </a>
+          <a href="/blog.html" class="mobile-menu-link">
+            <i class="fa-solid fa-newspaper" style="color: #38bdf8;"></i> Blog & Tips Game
+          </a>
+          <a href="/order-status.html" class="mobile-menu-link">
+            <i class="fa-solid fa-receipt" style="color: #10b981;"></i> Lacak Pesanan
+          </a>
+          <hr style="border: none; border-top: 1px solid rgba(255,255,255,0.08); margin: 8px 0;">
+          <div id="mobileAuthSlot">
+            <a href="/auth/login.html" class="mobile-menu-link"><i class="fa-solid fa-right-to-bracket"></i> Masuk Akun</a>
+            <a href="/auth/register.html" class="mobile-menu-link" style="color: #f59e0b;"><i class="fa-solid fa-user-plus"></i> Daftar Member</a>
+          </div>
+        </div>
+      </div>
+    `;
+  }
+
+  // 2. TOGGLE EVENT CONTROLLERS
   const btnMobileSearch = document.getElementById("btnMobileSearchToggle");
   const mobileSearchBar = document.getElementById("mobileSearchBar");
   const mobileSearchInput = document.getElementById("mobileSearchInput");
@@ -24,7 +96,6 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  // Live search sync untuk input mobile
   if (mobileSearchInput) {
     mobileSearchInput.addEventListener("input", () => {
       const desktopSearch = document.getElementById("searchInput");
@@ -58,37 +129,28 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   });
 
-  // ===================================================
-  // 2. RENDER NAVBAR (DESKTOP & MOBILE DRAWER)
-  // ===================================================
-  function renderNavbarUser(userData, profileData) {
-    const navActions = document.querySelector(".nav-actions");
+  // 3. RENDER SESSION & AUTH STATE (DESKTOP + MOBILE)
+  function renderAuthNav(userData, profileData) {
+    const desktopNav = document.getElementById("desktopNavActions");
     const mobileAuthSlot = document.getElementById("mobileAuthSlot");
 
-    const blogLink = `<a href="/blog.html" class="btn-nav-login" style="color: #38bdf8; border-color: rgba(56, 189, 248, 0.3);"><i class="fa-solid fa-newspaper"></i> Blog</a>`;
-    const leaderLink = `<a href="/leaderboard.html" class="btn-nav-login" style="color: #f59e0b; border-color: rgba(245, 158, 11, 0.4);"><i class="fa-solid fa-crown"></i> Leaderboard</a>`;
+    const blogLink = `<a href="/blog.html" class="btn-nav-login" style="background: rgba(56, 189, 248, 0.15); border-color: rgba(56, 189, 248, 0.4); color: #38bdf8;"><i class="fa-solid fa-newspaper"></i> Blog</a>`;
+    const leaderLink = `<a href="/leaderboard.html" class="btn-nav-login" style="background: rgba(245, 158, 11, 0.15); border-color: rgba(245, 158, 11, 0.4); color: #f59e0b;"><i class="fa-solid fa-crown"></i> Leaderboard</a>`;
 
     const isAdmin = profileData?.role === "admin";
-    const adminSecretLink = isAdmin
-      ? `
-      <a href="/admin.html" class="btn-nav-login" style="color: #ef4444; border-color: rgba(239, 68, 68, 0.5); background: rgba(239, 68, 68, 0.1);">
-        <i class="fa-solid fa-shield-halved"></i> Admin Secret
-      </a>
-    `
+    const adminLink = isAdmin
+      ? `<a href="/admin.html" class="btn-nav-login" style="color: #ef4444; border-color: rgba(239, 68, 68, 0.5); background: rgba(239, 68, 68, 0.1);"><i class="fa-solid fa-shield-halved"></i> Admin Secret</a>`
       : "";
 
-    // A. KONDISI TAMU / BELUM LOGIN
     if (!userData) {
-      if (navActions) {
-        navActions.innerHTML = `
-          ${adminSecretLink}
+      if (desktopNav) {
+        desktopNav.innerHTML = `
           ${blogLink}
           ${leaderLink}
           <a href="/auth/login.html" class="btn-nav-login" id="navLoginBtn"><i class="fa-solid fa-right-to-bracket"></i> Masuk</a>
           <a href="/auth/register.html" class="btn-nav-register" id="navRegisterBtn"><i class="fa-solid fa-user-plus"></i> Daftar</a>
         `;
       }
-
       if (mobileAuthSlot) {
         mobileAuthSlot.innerHTML = `
           <a href="/auth/login.html" class="mobile-menu-link"><i class="fa-solid fa-right-to-bracket"></i> Masuk Akun</a>
@@ -98,19 +160,17 @@ document.addEventListener("DOMContentLoaded", () => {
       return;
     }
 
-    // B. KONDISI SUDAH LOGIN
     const name = profileData?.full_name || userData.user_metadata?.full_name || userData.email?.split("@")[0] || "Member";
     const avatarUrl = profileData?.avatar_url || `https://api.dicebear.com/7.x/adventurer/svg?seed=${encodeURIComponent(name)}&radius=50`;
 
-    // Render Desktop Actions
-    if (navActions) {
-      navActions.innerHTML = `
-        ${adminSecretLink}
+    if (desktopNav) {
+      desktopNav.innerHTML = `
+        ${adminLink}
         ${blogLink}
         ${leaderLink}
         <div class="user-nav-capsule" style="display: inline-flex; align-items: center; background: rgba(15, 23, 42, 0.85); border: 1px solid rgba(255, 255, 255, 0.12); border-radius: 50px; padding: 4px 6px 4px 5px; gap: 8px; backdrop-filter: blur(8px);">
           <a href="/dashboard.html" style="display: inline-flex; align-items: center; gap: 8px; text-decoration: none; color: #fff;">
-            <img src="${avatarUrl}" alt="${name}" style="width: 30px; height: 30px; border-radius: 50%; object-fit: cover; border: 1.5px solid ${isAdmin ? "#ef4444" : "#f59e0b"}; background: #1e293b;">
+            <img src="${avatarUrl}" alt="${name}" style="width: 30px; height: 30px; border-radius: 50%; object-fit: cover; border: 1.5px solid ${isAdmin ? '#ef4444' : '#f59e0b'}; background: #1e293b;">
             <span style="font-weight: 800; font-size: 0.85rem; max-width: 100px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: #ffffff;">${name}</span>
           </a>
           <button id="navLogoutBtn" title="Keluar Akun" style="background: transparent; border: none; color: var(--text-muted, #94a3b8); cursor: pointer; padding: 4px 8px; font-size: 0.95rem; border-left: 1px solid rgba(255, 255, 255, 0.1); transition: color 0.2s ease;">
@@ -120,7 +180,6 @@ document.addEventListener("DOMContentLoaded", () => {
       `;
     }
 
-    // Render Mobile Slot
     if (mobileAuthSlot) {
       mobileAuthSlot.innerHTML = `
         <div style="padding: 6px 10px; font-size: 0.82rem; color: #fbbf24; font-weight: 800; display: flex; align-items: center; gap: 8px;">
@@ -140,58 +199,41 @@ document.addEventListener("DOMContentLoaded", () => {
       `;
     }
 
-    // Event Logout Desktop
-    const logoutBtn = document.getElementById("navLogoutBtn");
-    if (logoutBtn) {
-      logoutBtn.addEventListener("click", async () => {
-        if (confirm("Yakin ingin keluar akun?")) {
-          const client = getClient();
-          if (client) await client.auth.signOut();
-          localStorage.removeItem("mgs_user");
-          window.location.href = "/";
-        }
-      });
-      logoutBtn.addEventListener("mouseenter", () => (logoutBtn.style.color = "#ef4444"));
-      logoutBtn.addEventListener("mouseleave", () => (logoutBtn.style.color = "#94a3b8"));
-    }
+    document.getElementById("navLogoutBtn")?.addEventListener("click", async () => {
+      if (confirm("Yakin ingin keluar akun?")) {
+        const client = getClient();
+        if (client) await client.auth.signOut();
+        localStorage.removeItem("mgs_user");
+        window.location.href = "/";
+      }
+    });
 
-    // Event Logout Mobile
-    const mobileLogoutBtn = document.getElementById("btnMobileLogout");
-    if (mobileLogoutBtn) {
-      mobileLogoutBtn.addEventListener("click", async () => {
-        if (confirm("Yakin ingin keluar akun?")) {
-          const client = getClient();
-          if (client) await client.auth.signOut();
-          localStorage.removeItem("mgs_user");
-          window.location.href = "/";
-        }
-      });
-    }
+    document.getElementById("btnMobileLogout")?.addEventListener("click", async () => {
+      if (confirm("Yakin ingin keluar akun?")) {
+        const client = getClient();
+        if (client) await client.auth.signOut();
+        localStorage.removeItem("mgs_user");
+        window.location.href = "/";
+      }
+    });
   }
 
-  // Render Cepat Awal
-  renderNavbarUser(user, null);
+  // 4. SYNC DATA SUPABASE
+  const storedUser = localStorage.getItem("mgs_user");
+  let user = storedUser ? JSON.parse(storedUser) : null;
+  renderAuthNav(user, null);
 
-  // ===================================================
-  // 3. SINKRONISASI PROFILE DARI SUPABASE
-  // ===================================================
-  async function syncNavbarProfile() {
-    const client = getClient();
-    if (!client) {
-      setTimeout(syncNavbarProfile, 200);
-      return;
-    }
-
+  const client = getClient();
+  if (client) {
     try {
       const { data: { session } } = await client.auth.getSession();
       if (!session) {
         if (user) {
           localStorage.removeItem("mgs_user");
-          renderNavbarUser(null, null);
+          renderAuthNav(null, null);
         }
         return;
       }
-
       user = session.user;
       localStorage.setItem("mgs_user", JSON.stringify(user));
 
@@ -201,11 +243,9 @@ document.addEventListener("DOMContentLoaded", () => {
         .eq("id", user.id)
         .maybeSingle();
 
-      renderNavbarUser(user, profile);
+      renderAuthNav(user, profile);
     } catch (e) {
       console.warn("Navbar sync issue:", e);
     }
   }
-
-  syncNavbarProfile();
 });
