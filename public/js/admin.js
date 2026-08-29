@@ -194,7 +194,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     }).join("");
   }
 
-  // Update Status Pesanan
+  // Update Status Pesanan & Trigger Notifikasi WA
   window.updateOrderStatus = async (orderId, newStatus) => {
     if (!confirm(`Ubah status pesanan ini menjadi ${newStatus}?`)) return;
 
@@ -206,6 +206,14 @@ document.addEventListener("DOMContentLoaded", async () => {
     if (error) {
       alert("Gagal update status: " + error.message);
     } else {
+      // Jika status diubah ke SUCCESS, picu notifikasi WhatsApp otomatis
+      if (newStatus === "SUCCESS" && window.notifyOrderSuccess) {
+        const orderData = allOrders.find((o) => o.id === orderId);
+        if (orderData && orderData.whatsapp) {
+          window.notifyOrderSuccess(orderData);
+        }
+      }
+      alert(`Status pesanan berhasil diubah ke ${newStatus}!`);
       loadDashboardData();
     }
   };
