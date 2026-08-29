@@ -29,8 +29,11 @@
       </div>
 
       <div class="nav-actions">
-        <a href="/auth/login.html" class="btn-nav-login"><i class="fa-solid fa-right-to-bracket"></i> Masuk</a>
-        <a href="/auth/register.html" class="btn-nav-register"><i class="fa-solid fa-user-plus"></i> Daftar</a>
+        <a href="/leaderboard.html" class="btn-nav-login" style="background: rgba(245, 158, 11, 0.15); border-color: rgba(245, 158, 11, 0.4); color: #f59e0b;">
+          <i class="fa-solid fa-crown"></i> Leaderboard
+        </a>
+        <a href="/auth/login.html" class="btn-nav-login" id="navLoginBtn"><i class="fa-solid fa-right-to-bracket"></i> Masuk</a>
+        <a href="/auth/register.html" class="btn-nav-register" id="navRegisterBtn"><i class="fa-solid fa-user-plus"></i> Daftar</a>
       </div>
     </div>
   </header>
@@ -201,8 +204,10 @@
     </div>
   </footer>
 
-  <!-- JS MODULAR -->
+  <!-- SUPABASE & JS MODULAR -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="/js/particles.js"></script>
+  <script src="/js/supabase.js"></script>
   <script src="/js/banner.js"></script>
   <script src="/js/live-sales.js"></script>
   <script src="/js/navbar.js"></script>

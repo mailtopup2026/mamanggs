@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Leaderboard Top Spender - MamangGS</title>
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  
+  <link rel="stylesheet" href="/css/global.css">
+  <link rel="stylesheet" href="/css/leaderboard.css">
+</head>
+<body>
+
+  <!-- NAVBAR -->
+  <header class="navbar">
+    <div class="navbar-container">
+      <a href="/" class="brand-logo">
+        <span class="logo-badge"><i class="fa-solid fa-gamepad"></i></span>
+        Mamang<span>GS</span>
+      </a>
+
+      <div class="nav-actions">
+        <a href="/auth/login.html" class="btn-nav-login" id="navLoginBtn"><i class="fa-solid fa-right-to-bracket"></i> Masuk</a>
+        <a href="/dashboard.html" class="btn-nav-register" id="navDashboardBtn" style="display: none;"><i class="fa-solid fa-gauge-high"></i> Dashboard</a>
+      </div>
+    </div>
+  </header>
+
+  <!-- KONTEN LEADERBOARD -->
+  <main class="leaderboard-wrapper">
+    <!-- HERO TITLE -->
+    <div class="leaderboard-hero">
+      <div class="badge-trophy"><i class="fa-solid fa-crown"></i> Hall of Fame</div>
+      <h1>Top Spender Gamers</h1>
+      <p>Peringkat member dengan total transaksi tertinggi di platform MamangGS. Jadilah sultan teratas!</p>
+    </div>
+
+    <!-- PODIUM TOP 3 -->
+    <section class="podium-grid" id="podiumContainer">
+      <div class="podium-card rank-2" id="podiumRank2">
+        <div class="podium-rank">2</div>
+        <div class="podium-avatar"><i class="fa-solid fa-shield"></i></div>
+        <h4 class="podium-name">-</h4>
+        <span class="podium-spent">Rp 0</span>
+      </div>
+
+      <div class="podium-card rank-1" id="podiumRank1">
+        <div class="crown-icon"><i class="fa-solid fa-crown"></i></div>
+        <div class="podium-rank">1</div>
+        <div class="podium-avatar"><i class="fa-solid fa-fire"></i></div>
+        <h4 class="podium-name">-</h4>
+        <span class="podium-spent">Rp 0</span>
+      </div>
+
+      <div class="podium-card rank-3" id="podiumRank3">
+        <div class="podium-rank">3</div>
+        <div class="podium-avatar"><i class="fa-solid fa-medal"></i></div>
+        <h4 class="podium-name">-</h4>
+        <span class="podium-spent">Rp 0</span>
+      </div>
+    </section>
+
+    <!-- TABEL PERINGKAT 4-10 -->
+    <section class="leaderboard-table-card">
+      <div class="table-header-bar">
+        <h3><i class="fa-solid fa-list-ol"></i> Daftar Peringkat Sultan</h3>
+        <span class="badge-auto-update"><i class="fa-solid fa-bolt"></i> Realtime Update</span>
+      </div>
+
+      <div class="table-responsive">
+        <table class="leaderboard-table">
+          <thead>
+            <tr>
+              <th>Peringkat</th>
+              <th>Nama Gamers</th>
+              <th>Total Transaksi Sukses</th>
+              <th>Total Belanja</th>
+            </tr>
+          </thead>
+          <tbody id="leaderboardTbody">
+            <tr>
+              <td colspan="4" style="text-align: center; padding: 30px; color: var(--text-muted);">
+                <i class="fa-solid fa-spinner fa-spin"></i> Menghitung peringkat sultan...
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+  </main>
+
+  <!-- FOOTER -->
+  <footer class="footer">
+    <div class="footer-container">
+      <div class="footer-brand">
+        <div class="brand-logo">
+          <span class="logo-badge"><i class="fa-solid fa-gamepad"></i></span>
+          Mamang<span>GS</span>
+        </div>
+        <p>Platform top up game otomatis, murah, dan terpercaya 24 jam nonstop.</p>
+      </div>
+
+      <div class="footer-col">
+        <h4>Menu Navigasi</h4>
+        <ul class="footer-links">
+          <li><a href="/">Beranda</a></li>
+          <li><a href="/order-status.html">Lacak Pesanan</a></li>
+          <li><a href="/leaderboard.html">Leaderboard</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col">
+        <h4>Bantuan & Legal</h4>
+        <ul class="footer-links">
+          <li><a href="/privacy-policy.html">Kebijakan Privasi</a></li>
+          <li><a href="/terms.html">Syarat & Ketentuan</a></li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="footer-bottom">
+      <p>&copy; 2026 MamangGS. All rights reserved.</p>
+    </div>
+  </footer>
+
+  <!-- SUPABASE CDN & JS -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="/js/particles.js"></script>
+  <script src="/js/supabase.js"></script>
+  <script src="/js/navbar.js"></script>
+  <script src="/js/leaderboard.js"></script>
+</body>
+</html>
