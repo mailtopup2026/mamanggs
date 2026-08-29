@@ -1,7 +1,5 @@
 document.addEventListener("DOMContentLoaded", async () => {
   const authLoader = document.getElementById("adminAuthLoader");
-  const mainContent = document.getElementById("adminMainContent");
-  const adminNavbar = document.getElementById("adminNavbar");
 
   if (!window.supabase) {
     alert("Koneksi Supabase belum siap.");
@@ -9,7 +7,12 @@ document.addEventListener("DOMContentLoaded", async () => {
     return;
   }
 
-  // Fungsi Verifikasi & Load Seluruh Data Sebelum Tampilan Dibuka
+  // Sembunyikan Loader
+  function hideLoader() {
+    if (authLoader) authLoader.style.display = "none";
+  }
+
+  // Inisialisasi Auth Admin
   async function initAdmin() {
     try {
       const { data: sessionData } = await window.supabase.auth.getSession();
@@ -21,7 +24,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         return;
       }
 
-      // Verifikasi role akun
+      // Cek Role di Supabase
       const { data: profile, error: profErr } = await window.supabase
         .from("profiles")
         .select("role")
@@ -34,22 +37,12 @@ document.addEventListener("DOMContentLoaded", async () => {
         return;
       }
 
-      // Ambil dan render data sebelum membuka layar
+      // Load Semua Data
       await loadDashboardData();
-
-      // Buka tampilan setelah data 100% siap
-      if (authLoader) authLoader.style.display = "none";
-      if (adminNavbar) {
-        adminNavbar.style.visibility = "visible";
-        adminNavbar.style.opacity = "1";
-      }
-      if (mainContent) {
-        mainContent.style.visibility = "visible";
-        mainContent.style.opacity = "1";
-      }
+      hideLoader();
     } catch (e) {
       console.error("Admin init error:", e);
-      if (authLoader) authLoader.style.display = "none";
+      hideLoader();
     }
   }
 
@@ -101,12 +94,13 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     if (!userErr && users) {
       allUsers = users;
-      document.getElementById("statTotalUsers").innerText = users.length;
+      const statTotalUsers = document.getElementById("statTotalUsers");
+      if (statTotalUsers) statTotalUsers.innerText = users.length;
       renderUsersTable(users);
     }
   }
 
- function renderStats(orders) {
+  function renderStats(orders) {
     let totalRev = 0;
     let pendingCount = 0;
     const gameSalesMap = {};
@@ -116,8 +110,6 @@ document.addEventListener("DOMContentLoaded", async () => {
       if (o.status === "SUCCESS") {
         totalRev += Number(o.price || 0);
         totalSuccessCount++;
-
-        // Hitung akumulasi order per game
         const gameName = o.game_title || o.game_code || "Lainnya";
         gameSalesMap[gameName] = (gameSalesMap[gameName] || 0) + 1;
       } else if (o.status === "PENDING") {
@@ -125,11 +117,14 @@ document.addEventListener("DOMContentLoaded", async () => {
       }
     });
 
-    document.getElementById("statTotalRevenue").innerText = `Rp ${totalRev.toLocaleString("id-ID")}`;
-    document.getElementById("statTotalOrders").innerText = orders.length;
-    document.getElementById("statPendingOrders").innerText = pendingCount;
+    const elRev = document.getElementById("statTotalRevenue");
+    const elOrders = document.getElementById("statTotalOrders");
+    const elPending = document.getElementById("statPendingOrders");
 
-    // Render Widget Peringkat Game Terlaris
+    if (elRev) elRev.innerText = `Rp ${totalRev.toLocaleString("id-ID")}`;
+    if (elOrders) elOrders.innerText = orders.length;
+    if (elPending) elPending.innerText = pendingCount;
+
     renderTopGames(gameSalesMap, totalSuccessCount);
   }
 
@@ -162,6 +157,43 @@ document.addEventListener("DOMContentLoaded", async () => {
     }).join("");
   }
 
+  function renderOrdersTable(orders) {
+    const tbody = document.getElementById("ordersTableBody");
+    if (!tbody) return;
+    const filter = document.getElementById("filterStatus").value;
+
+    const filtered = filter === "ALL" ? orders : orders.filter((o) => o.status === filter);
+
+    if (filtered.length === 0) {
+      tbody.innerHTML = `<tr><td colspan="8" style="text-align: center; color: var(--text-muted); padding: 25px;">Tidak ada transaksi ditemukan.</td></tr>`;
+      return;
+    }
+
+    tbody.innerHTML = filtered.map((o) => {
+      const statusClass = (o.status || "PENDING").toLowerCase();
+      const dateStr = new Date(o.created_at).toLocaleString("id-ID", { dateStyle: "short", timeStyle: "short" });
+      const targetAcc = o.zone_id ? `${o.account_id} (${o.zone_id})` : o.account_id;
+
+      return `
+        <tr>
+          <td><strong style="color: #fff;">${o.invoice}</strong></td>
+          <td>${dateStr}</td>
+          <td>${o.game_title || o.game_code} - ${o.item_name}</td>
+          <td><code>${targetAcc}</code></td>
+          <td>Rp ${Number(o.price).toLocaleString("id-ID")}</td>
+          <td>${o.payment_method}</td>
+          <td><span class="badge-status ${statusClass}">${o.status}</span></td>
+          <td>
+            <div class="btn-action-group">
+              ${o.status !== "SUCCESS" ? `<button class="btn-action-sm btn-success" title="Tandai Sukses" onclick="updateOrderStatus('${o.id}', 'SUCCESS')"><i class="fa-solid fa-check"></i></button>` : ""}
+              ${o.status !== "CANCELLED" ? `<button class="btn-action-sm btn-cancel" title="Batalkan Pesanan" onclick="updateOrderStatus('${o.id}', 'CANCELLED')"><i class="fa-solid fa-xmark"></i></button>` : ""}
+            </div>
+          </td>
+        </tr>
+      `;
+    }).join("");
+  }
+
   // Update Status Pesanan
   window.updateOrderStatus = async (orderId, newStatus) => {
     if (!confirm(`Ubah status pesanan ini menjadi ${newStatus}?`)) return;
@@ -179,15 +211,23 @@ document.addEventListener("DOMContentLoaded", async () => {
   };
 
   // Filter & Refresh Event
-  document.getElementById("filterStatus").addEventListener("change", () => renderOrdersTable(allOrders));
-  document.getElementById("btnRefreshOrders").addEventListener("click", loadDashboardData);
+  const filterStatusEl = document.getElementById("filterStatus");
+  if (filterStatusEl) {
+    filterStatusEl.addEventListener("change", () => renderOrdersTable(allOrders));
+  }
+
+  const btnRefresh = document.getElementById("btnRefreshOrders");
+  if (btnRefresh) {
+    btnRefresh.addEventListener("click", loadDashboardData);
+  }
 
   // ==========================================
   // MANAJEMEN SALDO MEMBER
   // ==========================================
   function renderUsersTable(users) {
     const tbody = document.getElementById("usersTableBody");
-    const keyword = document.getElementById("searchUser").value.toLowerCase();
+    if (!tbody) return;
+    const keyword = (document.getElementById("searchUser")?.value || "").toLowerCase();
 
     const filtered = users.filter((u) => 
       (u.full_name && u.full_name.toLowerCase().includes(keyword)) ||
@@ -217,7 +257,10 @@ document.addEventListener("DOMContentLoaded", async () => {
     }).join("");
   }
 
-  document.getElementById("searchUser").addEventListener("input", () => renderUsersTable(allUsers));
+  const searchUserEl = document.getElementById("searchUser");
+  if (searchUserEl) {
+    searchUserEl.addEventListener("input", () => renderUsersTable(allUsers));
+  }
 
   // Modal Balance Logic
   const balanceModal = document.getElementById("balanceModal");
@@ -228,31 +271,35 @@ document.addEventListener("DOMContentLoaded", async () => {
     balanceModal.classList.add("show");
   };
 
-  document.getElementById("btnCloseBalModal").addEventListener("click", () => {
-    balanceModal.classList.remove("show");
-  });
+  const btnCloseBal = document.getElementById("btnCloseBalModal");
+  if (btnCloseBal) {
+    btnCloseBal.addEventListener("click", () => balanceModal.classList.remove("show"));
+  }
 
-  document.getElementById("btnSubmitBalance").addEventListener("click", async () => {
-    const amount = Number(document.getElementById("modalAmountInput").value);
-    if (!amount || isNaN(amount)) {
-      alert("Masukkan nominal penambahan / pengurangan yang valid!");
-      return;
-    }
+  const btnSubmitBal = document.getElementById("btnSubmitBalance");
+  if (btnSubmitBal) {
+    btnSubmitBal.addEventListener("click", async () => {
+      const amount = Number(document.getElementById("modalAmountInput").value);
+      if (!amount || isNaN(amount)) {
+        alert("Masukkan nominal penambahan / pengurangan yang valid!");
+        return;
+      }
 
-    const { error } = await window.supabase.rpc("admin_adjust_balance", {
-      target_user_id: selectedTargetUser,
-      amount: amount
+      const { error } = await window.supabase.rpc("admin_adjust_balance", {
+        target_user_id: selectedTargetUser,
+        amount: amount
+      });
+
+      if (error) {
+        alert("Gagal update saldo: " + error.message);
+      } else {
+        alert("Saldo member berhasil diperbarui!");
+        balanceModal.classList.remove("show");
+        loadDashboardData();
+      }
     });
+  }
 
-    if (error) {
-      alert("Gagal update saldo: " + error.message);
-    } else {
-      alert("Saldo member berhasil diperbarui!");
-      balanceModal.classList.remove("show");
-      loadDashboardData();
-    }
-  });
-
-  // Eksekusi inisialisasi
+  // Eksekusi
   initAdmin();
 });
