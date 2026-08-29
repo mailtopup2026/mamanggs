@@ -1,5 +1,5 @@
 document.addEventListener("DOMContentLoaded", () => {
-  // Database mock katalog game & nominal
+  // Mock katalog game & nominal
   const gamesData = {
     mlbb: {
       code: "mlbb",
@@ -61,12 +61,10 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   };
 
-  // Baca parameter game dari URL (?game=...)
   const params = new URLSearchParams(window.location.search);
   const gameKey = params.get("game") || "mlbb";
   const currentGame = gamesData[gameKey] || gamesData["mlbb"];
 
-  // Render info game sidebar
   document.getElementById("gameTitle").innerText = currentGame.title;
   document.getElementById("gameDev").innerText = currentGame.dev;
   document.getElementById("gameBanner").src = currentGame.banner;
@@ -76,11 +74,9 @@ document.addEventListener("DOMContentLoaded", () => {
     zoneGroup.style.display = "none";
   }
 
-  // State Pilihan User
   let selectedItem = currentGame.items[0];
   let selectedPayment = "QRIS (Semua E-Wallet)";
 
-  // Render Pilihan Nominal
   const nominalContainer = document.getElementById("nominalContainer");
   nominalContainer.innerHTML = "";
 
@@ -100,17 +96,15 @@ document.addEventListener("DOMContentLoaded", () => {
     nominalContainer.appendChild(card);
   });
 
-  // Pilih Metode Pembayaran
   document.querySelectorAll(".payment-card").forEach((card) => {
     card.addEventListener("click", () => {
       document.querySelectorAll(".payment-card").forEach((c) => c.classList.remove("selected"));
       card.classList.add("selected");
       const spanTitle = card.querySelector(".payment-brand span");
-      if (spanTitle) selectedPayment = spanTitle.innerText;
+      if (spanTitle) selectedPayment = spanTitle.innerText.trim();
     });
   });
 
-  // Handle Checkout & Simpan ke Supabase
   const checkoutBtn = document.getElementById("checkoutBtn");
   checkoutBtn.addEventListener("click", async () => {
     const userId = document.getElementById("userIdInput").value.trim();
@@ -126,20 +120,18 @@ document.addEventListener("DOMContentLoaded", () => {
       return;
     }
     if (!whatsapp) {
-      alert("Harap masukkan nomor WhatsApp aktif untuk konfirmasi invoice!");
+      alert("Harap masukkan nomor WhatsApp aktif!");
       return;
     }
 
     checkoutBtn.disabled = true;
     checkoutBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Memproses Pesanan...';
 
-    // Buat nomor invoice unik (Contoh: MGS-2026-98124)
     const now = new Date();
     const dateStr = now.getFullYear().toString() + String(now.getMonth() + 1).padStart(2, "0") + String(now.getDate()).padStart(2, "0");
     const randomDigits = Math.floor(1000 + Math.random() * 9000);
     const invoiceNumber = `MGS-${dateStr}-${randomDigits}`;
 
-    // Cek apakah ada session user Supabase aktif
     let userUuid = null;
     try {
       if (window.supabase) {
@@ -150,7 +142,6 @@ document.addEventListener("DOMContentLoaded", () => {
       }
     } catch (e) {}
 
-    // Fallback dari localStorage jika session belum ready
     if (!userUuid) {
       const storedUser = localStorage.getItem("mgs_user");
       if (storedUser) {
@@ -161,10 +152,63 @@ document.addEventListener("DOMContentLoaded", () => {
       }
     }
 
-    try {
-      if (!window.supabase) throw new Error("Koneksi Supabase belum siap. Silakan refresh halaman.");
+    // LOGIKA KHUSUS SALDO INTERNAL MAMANGGS
+    const isUsingWallet = selectedPayment.toLowerCase().includes("saldo");
+    let orderStatus = "PENDING";
 
-      // Siapkan payload data pesanan
+    if (isUsingWallet) {
+      if (!userUuid) {
+        alert("Metode pembayaran Saldo Akun hanya berlaku untuk member yang sudah login. Silakan Login terlebih dahulu!");
+        checkoutBtn.disabled = false;
+        checkoutBtn.innerHTML = '<i class="fa-solid fa-bolt"></i> Beli Sekarang';
+        return;
+      }
+
+      // Cek saldo user langsung ke Supabase
+      try {
+        const { data: profile, error: profileErr } = await window.supabase
+          .from("profiles")
+          .select("balance")
+          .eq("id", userUuid)
+          .single();
+
+        if (profileErr || !profile) throw new Error("Gagal mengambil data saldo akun.");
+
+        const currentBal = Number(profile.balance) || 0;
+        const totalCost = Number(selectedItem.price);
+
+        if (currentBal < totalCost) {
+          alert(`Saldo Akun Anda tidak mencukupi!\nSaldo Anda: Rp ${currentBal.toLocaleString("id-ID")}\nTotal Bayar: Rp ${totalCost.toLocaleString("id-ID")}\n\nSilakan isi saldo akun Anda terlebih dahulu.`);
+          checkoutBtn.disabled = false;
+          checkoutBtn.innerHTML = '<i class="fa-solid fa-bolt"></i> Beli Sekarang';
+          return;
+        }
+
+        // Eksekusi potong saldo secara atomic
+        const { data: deductSuccess, error: deductErr } = await window.supabase.rpc("deduct_user_balance", {
+          user_uuid: userUuid,
+          amount: totalCost
+        });
+
+        if (deductErr || !deductSuccess) {
+          throw new Error("Gagal memproses pemotongan saldo. Silakan coba lagi.");
+        }
+
+        // Jika berhasil potong saldo, status pesanan langsung SUCCESS
+        orderStatus = "SUCCESS";
+      } catch (err) {
+        console.error("Wallet error:", err);
+        alert(err.message);
+        checkoutBtn.disabled = false;
+        checkoutBtn.innerHTML = '<i class="fa-solid fa-bolt"></i> Beli Sekarang';
+        return;
+      }
+    }
+
+    // SIMPAN TRANSAKSI KE SUPABASE
+    try {
+      if (!window.supabase) throw new Error("Koneksi Supabase belum siap.");
+
       const orderPayload = {
         invoice: invoiceNumber,
         game_code: currentGame.code,
@@ -175,10 +219,9 @@ document.addEventListener("DOMContentLoaded", () => {
         price: selectedItem.price,
         payment_method: selectedPayment,
         whatsapp: whatsapp,
-        status: "PENDING"
+        status: orderStatus
       };
 
-      // Hanya sematkan user_id jika valid
       if (userUuid) {
         orderPayload.user_id = userUuid;
       }
@@ -187,7 +230,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
       if (error) throw error;
 
-      // Alihkan pembeli ke halaman status order dengan membawa nomor invoice
+      if (isUsingWallet) {
+        alert("Pembayaran Berhasil! Saldo akun Anda telah dipotong dan pesanan langsung diproses.");
+      }
+
       window.location.href = `/order-status.html?inv=${encodeURIComponent(invoiceNumber)}`;
     } catch (err) {
       console.error("Error order:", err);
