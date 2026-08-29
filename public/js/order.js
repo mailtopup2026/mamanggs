@@ -78,7 +78,116 @@ document.addEventListener("DOMContentLoaded", () => {
   let selectedPayment = "QRIS (Semua E-Wallet)";
   let verifiedNickname = null;
 
-  // Render Pilihan Nominal
+  // Variabel Kupon Promo
+  let appliedPromo = null;
+  let currentDiscountAmount = 0;
+  let finalCalculatedPrice = selectedItem.price;
+
+  // ==========================================
+  // KALKULASI HARGA & PROMO
+  // ==========================================
+  function updateCheckoutPricing() {
+    const originalPriceEl = document.getElementById("summaryOriginalPrice");
+    const discountRow = document.getElementById("rowDiscount");
+    const discountValEl = document.getElementById("summaryDiscountValue");
+    const promoCodeEl = document.getElementById("summaryPromoCode");
+    const finalPriceEl = document.getElementById("summaryFinalPrice");
+
+    const basePrice = Number(selectedItem.price || 0);
+    currentDiscountAmount = 0;
+
+    if (appliedPromo) {
+      if (basePrice < Number(appliedPromo.min_order)) {
+        appliedPromo = null;
+        showPromoFeedback(`Kupon dibatalkan: Syarat minimal belanja Rp ${Number(appliedPromo?.min_order || 0).toLocaleString("id-ID")}`, false);
+      } else {
+        if (appliedPromo.discount_type === "FIXED") {
+          currentDiscountAmount = Number(appliedPromo.discount_value);
+        } else if (appliedPromo.discount_type === "PERCENT") {
+          let calc = (basePrice * Number(appliedPromo.discount_value)) / 100;
+          if (appliedPromo.max_discount && calc > Number(appliedPromo.max_discount)) {
+            calc = Number(appliedPromo.max_discount);
+          }
+          currentDiscountAmount = calc;
+        }
+      }
+    }
+
+    finalCalculatedPrice = Math.max(0, basePrice - currentDiscountAmount);
+
+    if (originalPriceEl) originalPriceEl.innerText = `Rp ${basePrice.toLocaleString("id-ID")}`;
+
+    if (currentDiscountAmount > 0 && appliedPromo) {
+      if (discountRow) discountRow.style.display = "flex";
+      if (promoCodeEl) promoCodeEl.innerText = appliedPromo.code;
+      if (discountValEl) discountValEl.innerText = `- Rp ${Number(currentDiscountAmount).toLocaleString("id-ID")}`;
+    } else {
+      if (discountRow) discountRow.style.display = "none";
+    }
+
+    if (finalPriceEl) finalPriceEl.innerText = `Rp ${Number(finalCalculatedPrice).toLocaleString("id-ID")}`;
+  }
+
+  function showPromoFeedback(message, isSuccess) {
+    const msgEl = document.getElementById("promoMessage");
+    if (!msgEl) return;
+    msgEl.style.display = "block";
+    msgEl.style.color = isSuccess ? "#10b981" : "#e63946";
+    msgEl.innerText = message;
+  }
+
+  // Listener Klaim Voucher Promo
+  const btnApplyPromo = document.getElementById("btnApplyPromo");
+  if (btnApplyPromo) {
+    btnApplyPromo.addEventListener("click", async () => {
+      const codeInput = document.getElementById("inputPromoCode");
+      const code = codeInput?.value.trim().toUpperCase();
+
+      if (!code) {
+        showPromoFeedback("Ketik kode promo terlebih dahulu!", false);
+        return;
+      }
+
+      const basePrice = Number(selectedItem.price || 0);
+
+      try {
+        const { data: promo, error } = await window.supabase
+          .from("promos")
+          .select("*")
+          .eq("code", code)
+          .eq("is_active", true)
+          .single();
+
+        if (error || !promo) {
+          appliedPromo = null;
+          showPromoFeedback("Kode promo tidak valid atau telah berakhir.", false);
+          updateCheckoutPricing();
+          return;
+        }
+
+        if (basePrice < Number(promo.min_order)) {
+          appliedPromo = null;
+          showPromoFeedback(`Minimal belanja untuk kupon ini adalah Rp ${Number(promo.min_order).toLocaleString("id-ID")}`, false);
+          updateCheckoutPricing();
+          return;
+        }
+
+        appliedPromo = promo;
+        const infoDiskon = promo.discount_type === "FIXED" 
+          ? `Rp ${Number(promo.discount_value).toLocaleString("id-ID")}` 
+          : `${promo.discount_value}%`;
+
+        showPromoFeedback(`🎉 Promo diterapkan! Hemat ${infoDiskon}`, true);
+        updateCheckoutPricing();
+      } catch (err) {
+        showPromoFeedback("Terjadi kesalahan memeriksa kupon.", false);
+      }
+    });
+  }
+
+  // ==========================================
+  // RENDER NOMINAL ITEM
+  // ==========================================
   const nominalContainer = document.getElementById("nominalContainer");
   nominalContainer.innerHTML = "";
 
@@ -94,9 +203,13 @@ document.addEventListener("DOMContentLoaded", () => {
       document.querySelectorAll(".nominal-card").forEach((c) => c.classList.remove("selected"));
       card.classList.add("selected");
       selectedItem = item;
+      updateCheckoutPricing();
     });
     nominalContainer.appendChild(card);
   });
+
+  // Hitung awal saat load halaman
+  updateCheckoutPricing();
 
   // Handle Pilih Metode Bayar
   document.querySelectorAll(".payment-card").forEach((card) => {
@@ -136,7 +249,6 @@ document.addEventListener("DOMContentLoaded", () => {
     try {
       let resultNick = null;
 
-      // Cek Real Nickname Mobile Legends
       if (currentGame.code === "mlbb") {
         const res = await fetch(`https://api.isan.eu.org/nickname/ml?id=${encodeURIComponent(uid)}&zone=${encodeURIComponent(zid)}`);
         const data = await res.json();
@@ -146,9 +258,7 @@ document.addEventListener("DOMContentLoaded", () => {
         } else {
           throw new Error("ID atau Zone ID Mobile Legends tidak ditemukan.");
         }
-      } 
-      // Cek Real Nickname Free Fire
-      else if (currentGame.code === "ff") {
+      } else if (currentGame.code === "ff") {
         const res = await fetch(`https://api.isan.eu.org/nickname/ff?id=${encodeURIComponent(uid)}`);
         const data = await res.json();
         
@@ -157,9 +267,7 @@ document.addEventListener("DOMContentLoaded", () => {
         } else {
           throw new Error("User ID Free Fire tidak valid.");
         }
-      } 
-      // Game lainnya (Genshin / Whiteout)
-      else {
+      } else {
         resultNick = `Player_${uid.slice(-4)}`;
       }
 
@@ -249,6 +357,7 @@ document.addEventListener("DOMContentLoaded", () => {
     // LOGIKA PEMBAYARAN SALDO DOMPET MAMANGGS
     const isUsingWallet = selectedPayment.toLowerCase().includes("saldo");
     let orderStatus = "PENDING";
+    const totalToPay = Number(finalCalculatedPrice);
 
     if (isUsingWallet) {
       if (!userUuid) {
@@ -268,10 +377,9 @@ document.addEventListener("DOMContentLoaded", () => {
         if (profileErr || !profile) throw new Error("Gagal mengambil data saldo akun.");
 
         const currentBal = Number(profile.balance) || 0;
-        const totalCost = Number(selectedItem.price);
 
-        if (currentBal < totalCost) {
-          alert(`Saldo Akun Anda tidak mencukupi!\nSaldo Anda: Rp ${currentBal.toLocaleString("id-ID")}\nTotal Bayar: Rp ${totalCost.toLocaleString("id-ID")}\n\nSilakan isi saldo akun Anda terlebih dahulu.`);
+        if (currentBal < totalToPay) {
+          alert(`Saldo Akun Anda tidak mencukupi!\nSaldo Anda: Rp ${currentBal.toLocaleString("id-ID")}\nTotal Bayar: Rp ${totalToPay.toLocaleString("id-ID")}\n\nSilakan isi saldo akun Anda terlebih dahulu.`);
           checkoutBtn.disabled = false;
           checkoutBtn.innerHTML = '<i class="fa-solid fa-bolt"></i> Beli Sekarang';
           return;
@@ -279,7 +387,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
         const { data: deductSuccess, error: deductErr } = await window.supabase.rpc("deduct_user_balance", {
           user_uuid: userUuid,
-          amount: totalCost
+          amount: totalToPay
         });
 
         if (deductErr || !deductSuccess) {
@@ -307,7 +415,7 @@ document.addEventListener("DOMContentLoaded", () => {
         account_id: userId,
         zone_id: zoneId || null,
         item_name: selectedItem.name,
-        price: selectedItem.price,
+        price: totalToPay, // Harga yang sudah dipotong diskon
         payment_method: selectedPayment,
         whatsapp: whatsapp,
         status: orderStatus
