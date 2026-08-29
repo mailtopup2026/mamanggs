@@ -262,6 +262,42 @@ a {
 }
 
 /* ===================================================
+   GRID POPULER SEKARANG (3 KOLOM DESKTOP / 2 KOLOM HP)
+   =================================================== */
+.popular-grid-layout {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 14px;
+}
+
+.popular-compact-card {
+  background: #1e293b;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 12px;
+  padding: 10px 14px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  text-decoration: none;
+  color: #fff;
+  transition: all 0.2s ease;
+}
+
+.popular-compact-card:hover {
+  background: #24334a;
+  border-color: #f59e0b;
+  transform: translateY(-2px);
+}
+
+.popular-compact-card img {
+  width: 44px;
+  height: 44px;
+  border-radius: 10px;
+  object-fit: cover;
+  flex-shrink: 0;
+}
+
+/* ===================================================
    FOOTER
    =================================================== */
 .footer {
@@ -601,9 +637,31 @@ a {
     padding: 10px !important;
   }
 
+  /* POPULER SEKARANG: 2 Kolom di Tablet & HP */
   .popular-grid-layout {
-    grid-template-columns: 1fr !important;
+    grid-template-columns: repeat(2, 1fr) !important;
     gap: 10px !important;
+  }
+
+  .popular-compact-card {
+    padding: 8px 10px !important;
+    gap: 10px !important;
+  }
+
+  .popular-compact-card img {
+    width: 38px !important;
+    height: 38px !important;
+  }
+
+  .popular-compact-card h4 {
+    font-size: 0.78rem !important;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .popular-compact-card p {
+    font-size: 0.65rem !important;
   }
 
   .catalog-tab-pill {
