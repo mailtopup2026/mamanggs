@@ -66,12 +66,20 @@
         <div class="form-grid-account">
           <div class="form-group">
             <label for="userIdInput">User ID Game</label>
-            <input type="text" id="userIdInput" placeholder="Contoh: 12345678">
+            <div class="input-with-loader">
+              <input type="text" id="userIdInput" placeholder="Contoh: 12345678">
+              <span class="input-spinner" id="idCheckSpinner" style="display: none;"><i class="fa-solid fa-spinner fa-spin"></i></span>
+            </div>
           </div>
           <div class="form-group" id="zoneGroup">
             <label for="zoneIdInput">Zone ID / Server</label>
             <input type="text" id="zoneIdInput" placeholder="Contoh: (2026)">
           </div>
+        </div>
+        <!-- Wadah Tampilan Nickname Akun -->
+        <div class="nickname-result-box" id="nicknameBox" style="display: none;">
+          <i class="fa-solid fa-circle-check"></i>
+          <span>Nickname Akun: <strong id="nicknameText">-</strong></span>
         </div>
       </section>
 

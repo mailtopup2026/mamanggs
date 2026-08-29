@@ -1,5 +1,5 @@
 document.addEventListener("DOMContentLoaded", () => {
-  // Mock katalog game & nominal
+  // Mock data katalog game & nominal
   const gamesData = {
     mlbb: {
       code: "mlbb",
@@ -76,7 +76,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
   let selectedItem = currentGame.items[0];
   let selectedPayment = "QRIS (Semua E-Wallet)";
+  let verifiedNickname = null;
 
+  // Render Pilihan Nominal
   const nominalContainer = document.getElementById("nominalContainer");
   nominalContainer.innerHTML = "";
 
@@ -96,6 +98,7 @@ document.addEventListener("DOMContentLoaded", () => {
     nominalContainer.appendChild(card);
   });
 
+  // Handle Pilih Metode Bayar
   document.querySelectorAll(".payment-card").forEach((card) => {
     card.addEventListener("click", () => {
       document.querySelectorAll(".payment-card").forEach((c) => c.classList.remove("selected"));
@@ -105,10 +108,86 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   });
 
+  // ==========================================
+  // FITUR AUTO CEK NICKNAME ID GAME
+  // ==========================================
+  const userIdInput = document.getElementById("userIdInput");
+  const zoneIdInput = document.getElementById("zoneIdInput");
+  const idCheckSpinner = document.getElementById("idCheckSpinner");
+  const nicknameBox = document.getElementById("nicknameBox");
+  const nicknameText = document.getElementById("nicknameText");
+
+  let checkTimeout = null;
+
+  async function checkNickname() {
+    const uid = userIdInput.value.trim();
+    const zid = currentGame.hasZone ? zoneIdInput.value.trim() : null;
+
+    if (!uid || (currentGame.hasZone && !zid)) {
+      nicknameBox.style.display = "none";
+      verifiedNickname = null;
+      return;
+    }
+
+    if (uid.length < 4) return;
+
+    idCheckSpinner.style.display = "block";
+    nicknameBox.style.display = "none";
+
+    try {
+      // Mock / Public Validation Logic
+      await new Promise((res) => setTimeout(res, 600));
+
+      // Contoh mock nickname berdasarkan kombinasi ID
+      const mockNicknames = {
+        mlbb: `MamangSultan_${uid.slice(-3)}`,
+        ff: `FF_ProPlayer_${uid.slice(-3)}`,
+        whiteout: `Chief_Frost_${uid.slice(-3)}`,
+        genshin: `Traveler_${uid.slice(-3)}`
+      };
+
+      const resultNick = mockNicknames[currentGame.code] || `Player_${uid.slice(-4)}`;
+      verifiedNickname = resultNick;
+
+      nicknameBox.className = "nickname-result-box";
+      nicknameBox.innerHTML = `
+        <i class="fa-solid fa-circle-check"></i>
+        <span>Nickname Akun: <strong>${resultNick}</strong> (Terverifikasi)</span>
+      `;
+      nicknameBox.style.display = "flex";
+    } catch (err) {
+      console.error(err);
+      nicknameBox.className = "nickname-result-box error";
+      nicknameBox.innerHTML = `
+        <i class="fa-solid fa-circle-xmark"></i>
+        <span>User ID tidak ditemukan. Periksa kembali ID Anda.</span>
+      `;
+      nicknameBox.style.display = "flex";
+      verifiedNickname = null;
+    } finally {
+      idCheckSpinner.style.display = "none";
+    }
+  }
+
+  userIdInput.addEventListener("input", () => {
+    clearTimeout(checkTimeout);
+    checkTimeout = setTimeout(checkNickname, 600);
+  });
+
+  if (zoneIdInput) {
+    zoneIdInput.addEventListener("input", () => {
+      clearTimeout(checkTimeout);
+      checkTimeout = setTimeout(checkNickname, 600);
+    });
+  }
+
+  // ==========================================
+  // CHECKOUT HANDLER
+  // ==========================================
   const checkoutBtn = document.getElementById("checkoutBtn");
   checkoutBtn.addEventListener("click", async () => {
-    const userId = document.getElementById("userIdInput").value.trim();
-    const zoneId = currentGame.hasZone ? document.getElementById("zoneIdInput").value.trim() : null;
+    const userId = userIdInput.value.trim();
+    const zoneId = currentGame.hasZone ? zoneIdInput.value.trim() : null;
     const whatsapp = document.getElementById("whatsappInput").value.trim();
 
     if (!userId) {
@@ -152,7 +231,7 @@ document.addEventListener("DOMContentLoaded", () => {
       }
     }
 
-    // LOGIKA KHUSUS SALDO INTERNAL MAMANGGS
+    // LOGIKA PEMBAYARAN SALDO DOMPET MAMANGGS
     const isUsingWallet = selectedPayment.toLowerCase().includes("saldo");
     let orderStatus = "PENDING";
 
@@ -164,7 +243,6 @@ document.addEventListener("DOMContentLoaded", () => {
         return;
       }
 
-      // Cek saldo user langsung ke Supabase
       try {
         const { data: profile, error: profileErr } = await window.supabase
           .from("profiles")
@@ -184,7 +262,6 @@ document.addEventListener("DOMContentLoaded", () => {
           return;
         }
 
-        // Eksekusi potong saldo secara atomic
         const { data: deductSuccess, error: deductErr } = await window.supabase.rpc("deduct_user_balance", {
           user_uuid: userUuid,
           amount: totalCost
@@ -194,7 +271,6 @@ document.addEventListener("DOMContentLoaded", () => {
           throw new Error("Gagal memproses pemotongan saldo. Silakan coba lagi.");
         }
 
-        // Jika berhasil potong saldo, status pesanan langsung SUCCESS
         orderStatus = "SUCCESS";
       } catch (err) {
         console.error("Wallet error:", err);
@@ -205,7 +281,7 @@ document.addEventListener("DOMContentLoaded", () => {
       }
     }
 
-    // SIMPAN TRANSAKSI KE SUPABASE
+    // SIMPAN KE TABEL ORDERS SUPABASE
     try {
       if (!window.supabase) throw new Error("Koneksi Supabase belum siap.");
 
