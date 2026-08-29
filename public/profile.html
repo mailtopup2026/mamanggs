@@ -27,20 +27,22 @@
         <a href="/leaderboard.html" class="btn-nav-login" style="background: rgba(245, 158, 11, 0.15); border-color: rgba(245, 158, 11, 0.4); color: #f59e0b;">
           <i class="fa-solid fa-crown"></i> Leaderboard
         </a>
-        <a href="/" class="btn-nav-register"><i class="fa-solid fa-house"></i> Beranda</a>
+        <a href="/dashboard.html" class="btn-nav-register"><i class="fa-solid fa-gauge-high"></i> Dashboard</a>
       </div>
     </div>
   </header>
 
-  <!-- FORM CONTAINER -->
+  <!-- PROFILE WRAPPER -->
   <main class="profile-wrapper">
     <div class="profile-card">
       
-      <!-- HEADER PROFIL & PREVIEW BADGE -->
+      <!-- HEADER PREVIEW -->
       <div class="profile-header">
         <div class="current-avatar-preview-wrap">
-          <img id="currentAvatarPreview" src="https://api.dicebear.com/7.x/adventurer/svg?seed=Jordyn" alt="Avatar Gamers" class="current-avatar-preview">
-          <span class="avatar-badge-tag"><i class="fa-solid fa-shield-halved"></i></span>
+          <img id="currentAvatarPreview" src="https://api.dicebear.com/7.x/adventurer/svg?seed=Jordyn" alt="Avatar" class="current-avatar-preview">
+          <label for="customAvatarFileInput" class="btn-upload-avatar-floating" title="Upload Foto Custom">
+            <i class="fa-solid fa-camera"></i>
+          </label>
         </div>
         <h2 id="profileDisplayName">Gamers Sultan</h2>
         <p id="profileDisplayEmail" class="profile-email-text">user@email.com</p>
@@ -51,29 +53,41 @@
         </div>
       </div>
 
-      <!-- AVATAR 3D SELECTOR -->
+      <!-- SECTION 1: PILIH AVATAR 3D / UPLOAD CUSTOM -->
       <div class="section-group">
-        <label class="section-label-title"><i class="fa-solid fa-face-smile"></i> 1. Pilih Karakter Avatar 3D</label>
-        <p class="section-sub-desc">Avatar ini akan tampil di profil, riwayat order, dan Hall of Fame Leaderboard.</p>
+        <label class="section-label-title"><i class="fa-solid fa-face-smile"></i> 1. Pilih Avatar 3D atau Upload Foto</label>
+        <p class="section-sub-desc">Pilih karakter 3D di bawah ini atau upload foto kustom kamu sendiri (Format JPG/PNG/WebP, Maks. 2MB).</p>
         
-        <div class="avatar-picker-grid" id="avatarPickerGrid"></div>
+        <!-- Upload Custom Input -->
+        <div class="custom-upload-box">
+          <input type="file" id="customAvatarFileInput" accept="image/png, image/jpeg, image/webp" style="display: none;">
+          <label for="customAvatarFileInput" class="btn-custom-upload">
+            <i class="fa-solid fa-cloud-arrow-up"></i> Upload Foto Sendiri (Maks 2MB)
+          </label>
+          <span id="uploadStatusText" class="upload-status-hint"></span>
+        </div>
+
+        <!-- 3D Avatar Grid -->
+        <div class="avatar-picker-grid" id="avatarPickerGrid">
+          <!-- Diisi via JS -->
+        </div>
         <input type="hidden" id="selectedAvatarInput" value="">
       </div>
 
-      <!-- FAVORITE GAME BADGES SELECTOR (MAX 3) -->
+      <!-- SECTION 2: PILIH GAME FAVORIT (MAKS 3) -->
       <div class="section-group">
         <div class="badge-selection-header">
           <label class="section-label-title"><i class="fa-solid fa-gamepad"></i> 2. Pilih Game Favorit (Maksimal 3)</label>
           <span class="badge-counter-pill" id="badgeCounter">0/3 Terpilih</span>
         </div>
-        <p class="section-sub-desc">Badge game yang dipilih akan terpajang di profil publik dan interaksi komunitas.</p>
+        <p class="section-sub-desc">Klik ikon game di bawah untuk memajang badge di profil publik & leaderboard.</p>
         
         <div class="game-badges-grid" id="gameBadgesGrid">
-          <!-- Game Badges Render via JS -->
+          <!-- Diisi via JS -->
         </div>
       </div>
 
-      <!-- FORM BIODATA -->
+      <!-- SECTION 3: FORM BIODATA -->
       <form id="profileForm" class="profile-form">
         <div class="form-group">
           <label for="fullNameInput"><i class="fa-solid fa-user"></i> 3. Nama Lengkap / Nickname</label>
@@ -86,8 +100,9 @@
         </div>
 
         <div class="form-group">
-          <label for="emailInput"><i class="fa-solid fa-envelope"></i> Email Terdaftar (Permanen)</label>
+          <label for="emailInput"><i class="fa-solid fa-envelope"></i> Email Akun (Terkunci)</label>
           <input type="email" id="emailInput" class="form-control" disabled style="opacity: 0.6; cursor: not-allowed;">
+          <small style="color: var(--text-muted); font-size: 0.72rem; margin-top: 3px;">Email terikat permanen dengan keamanan otentikasi login kamu.</small>
         </div>
 
         <div id="profileAlert" class="alert-box" style="display: none;"></div>
