@@ -30,85 +30,88 @@
     </div>
   </header>
 
-  <!-- KONTEN LEADERBOARD -->
-  <main class="leaderboard-wrapper">
-    <!-- HERO TITLE EVENT BANNER -->
-    <div class="leaderboard-hero-banner">
-      <div class="hero-top-badge">
-        <span class="live-dot"></span>
-        <i class="fa-solid fa-crown"></i> SEASON 1 EVENT SULTAN
-      </div>
+  <!-- KONTEN LEADERBOARD APP-LIKE CONTAINER -->
+  <main class="leaderboard-app-frame">
+    
+    <!-- HEADER TITLE & REWARD PILL -->
+    <div class="leaderboard-top-header">
+      <h2 class="app-screen-title">Leaderboard</h2>
       
-      <h1 class="hero-title-gradient">Top Spender Gamers</h1>
-      <p class="hero-subtitle">
-        Tunjukkan siapa penguasa arena MamangGS! Raih peringkat puncak dan klaim hadiah eksklusifnya.
-      </p>
-
-      <!-- REWARD SHOWCASE CARD -->
       <div class="reward-event-pill">
-        <div class="reward-icon-sparkle">
-          <i class="fa-solid fa-gift"></i>
-        </div>
+        <div class="reward-icon-sparkle"><i class="fa-solid fa-gift"></i></div>
         <div class="reward-content">
           <span class="reward-label">HADIAH JUARA 1</span>
           <span class="reward-val">Voucher Belanja Rp 500.000</span>
         </div>
-        <span class="reward-tag-badge">GRATIS</span>
       </div>
     </div>
 
-    <!-- PODIUM TOP 3 -->
-    <section class="podium-grid" id="podiumContainer">
-      <div class="podium-card rank-2" id="podiumRank2">
-        <div class="podium-rank">2</div>
-        <div class="podium-avatar"><i class="fa-solid fa-shield"></i></div>
-        <h4 class="podium-name">-</h4>
-        <span class="podium-spent">Rp 0</span>
+    <!-- PODIUM PILLARS TOP 3 -->
+    <section class="podium-stage-container">
+      
+      <!-- RANK 2 (KIRI) -->
+      <div class="podium-column rank-2" id="colRank2">
+        <div class="podium-pillar pillar-2">
+          <div class="laurel-wreath laurel-silver">
+            <span class="wreath-text">2<sup>nd</sup></span>
+          </div>
+          <div class="avatar-3d-wrapper">
+            <img src="https://api.dicebear.com/7.x/adventurer/svg?seed=Alena&backgroundColor=b6e3f4" alt="Rank 2" class="avatar-3d-img" id="avatarRank2">
+          </div>
+        </div>
+        <h4 class="pillar-name" id="nameRank2">-</h4>
+        <div class="pillar-score">
+          <i class="fa-solid fa-gem gem-icon"></i>
+          <span id="scoreRank2">Rp 0</span>
+        </div>
       </div>
 
-      <div class="podium-card rank-1" id="podiumRank1">
-        <div class="crown-icon"><i class="fa-solid fa-crown"></i></div>
-        <div class="podium-rank">1</div>
-        <div class="podium-avatar"><i class="fa-solid fa-fire"></i></div>
-        <h4 class="podium-name">-</h4>
-        <span class="podium-spent">Rp 0</span>
+      <!-- RANK 1 (TENGAH - LEBIH TINGGI & EMAS) -->
+      <div class="podium-column rank-1" id="colRank1">
+        <div class="podium-pillar pillar-1">
+          <div class="laurel-wreath laurel-gold">
+            <span class="wreath-text">1<sup>st</sup></span>
+          </div>
+          <div class="avatar-3d-wrapper">
+            <img src="https://api.dicebear.com/7.x/adventurer/svg?seed=Jordyn&backgroundColor=ffd5dc" alt="Rank 1" class="avatar-3d-img" id="avatarRank1">
+          </div>
+        </div>
+        <h4 class="pillar-name" id="nameRank1">-</h4>
+        <div class="pillar-score">
+          <i class="fa-solid fa-gem gem-icon"></i>
+          <span id="scoreRank1">Rp 0</span>
+        </div>
       </div>
 
-      <div class="podium-card rank-3" id="podiumRank3">
-        <div class="podium-rank">3</div>
-        <div class="podium-avatar"><i class="fa-solid fa-medal"></i></div>
-        <h4 class="podium-name">-</h4>
-        <span class="podium-spent">Rp 0</span>
+      <!-- RANK 3 (KANAN) -->
+      <div class="podium-column rank-3" id="colRank3">
+        <div class="podium-pillar pillar-3">
+          <div class="laurel-wreath laurel-bronze">
+            <span class="wreath-text">3<sup>rd</sup></span>
+          </div>
+          <div class="avatar-3d-wrapper">
+            <img src="https://api.dicebear.com/7.x/adventurer/svg?seed=Carl&backgroundColor=c0aede" alt="Rank 3" class="avatar-3d-img" id="avatarRank3">
+          </div>
+        </div>
+        <h4 class="pillar-name" id="nameRank3">-</h4>
+        <div class="pillar-score">
+          <i class="fa-solid fa-gem gem-icon"></i>
+          <span id="scoreRank3">Rp 0</span>
+        </div>
+      </div>
+
+    </section>
+
+    <!-- LIST CARD PERINGKAT 4-10 (BOTTOM SHEET STYLE) -->
+    <section class="rankings-sheet-card">
+      <div class="sheet-drag-notch"></div>
+      <div class="rankings-list" id="rankingsList">
+        <div style="text-align: center; padding: 40px; color: var(--text-muted);">
+          <i class="fa-solid fa-spinner fa-spin"></i> Menghitung peringkat sultan...
+        </div>
       </div>
     </section>
 
-    <!-- TABEL PERINGKAT 4-10 -->
-    <section class="leaderboard-table-card">
-      <div class="table-header-bar">
-        <h3><i class="fa-solid fa-list-ol"></i> Daftar Peringkat Sultan</h3>
-        <span class="badge-auto-update"><i class="fa-solid fa-bolt"></i> Realtime Update</span>
-      </div>
-
-      <div class="table-responsive">
-        <table class="leaderboard-table">
-          <thead>
-            <tr>
-              <th>Peringkat</th>
-              <th>Nama Gamers</th>
-              <th>Total Transaksi Sukses</th>
-              <th>Total Belanja</th>
-            </tr>
-          </thead>
-          <tbody id="leaderboardTbody">
-            <tr>
-              <td colspan="4" style="text-align: center; padding: 30px; color: var(--text-muted);">
-                <i class="fa-solid fa-spinner fa-spin"></i> Menghitung peringkat sultan...
-              </td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-    </section>
   </main>
 
   <!-- FOOTER -->

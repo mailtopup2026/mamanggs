@@ -1,108 +1,48 @@
 /* ===================================================
-   MAMANGGS - LEADERBOARD STYLING
+   MAMANGGS - MOBILE APP STYLE 3D LEADERBOARD
    =================================================== */
 
-.leaderboard-wrapper {
-  max-width: 1100px;
-  margin: 30px auto 80px;
-  padding: 0 20px;
+.leaderboard-app-frame {
+  max-width: 600px;
+  margin: 20px auto 60px;
+  padding: 0 16px;
 }
 
-/* ===================================================
-   HERO EVENT BANNER MODERN & REWARD CAPSULE
-   =================================================== */
-.leaderboard-hero-banner {
+.leaderboard-top-header {
   text-align: center;
-  margin-bottom: 40px;
-  position: relative;
-  background: radial-gradient(circle at 50% 0%, rgba(245, 158, 11, 0.12) 0%, rgba(7, 13, 24, 0) 70%);
-  padding: 10px 10px 20px;
+  margin-bottom: 25px;
 }
 
-.hero-top-badge {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  background: rgba(245, 158, 11, 0.12);
-  border: 1px solid rgba(245, 158, 11, 0.35);
-  color: #f59e0b;
-  padding: 6px 16px;
-  border-radius: 50px;
-  font-size: 0.78rem;
+.app-screen-title {
+  font-size: 1.8rem;
   font-weight: 800;
-  letter-spacing: 0.8px;
-  margin-bottom: 14px;
-}
-
-.live-dot {
-  width: 7px;
-  height: 7px;
-  background: #10b981;
-  border-radius: 50%;
-  box-shadow: 0 0 10px #10b981;
-  display: inline-block;
-  animation: livePulse 1.5s infinite;
-}
-
-@keyframes livePulse {
-  0%, 100% { opacity: 1; transform: scale(1); }
-  50% { opacity: 0.4; transform: scale(1.3); }
-}
-
-.hero-title-gradient {
-  font-size: 2.5rem;
-  font-weight: 900;
-  background: linear-gradient(135deg, #ffffff 30%, #fcd34d 70%, #f59e0b 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  margin-bottom: 10px;
+  color: #fff;
   letter-spacing: -0.5px;
-}
-
-.hero-subtitle {
-  color: var(--text-muted);
-  font-size: 0.92rem;
-  max-width: 580px;
-  margin: 0 auto 20px;
-  line-height: 1.6;
+  margin-bottom: 12px;
 }
 
 /* REWARD EVENT PILL */
 .reward-event-pill {
   display: inline-flex;
   align-items: center;
-  gap: 14px;
-  background: linear-gradient(135deg, rgba(30, 41, 59, 0.9), rgba(15, 23, 42, 0.95));
+  gap: 12px;
+  background: linear-gradient(135deg, rgba(30, 41, 59, 0.95), rgba(15, 23, 42, 0.95));
   border: 1px solid rgba(245, 158, 11, 0.5);
-  padding: 10px 20px;
+  padding: 8px 18px;
   border-radius: 50px;
-  box-shadow: 0 8px 30px rgba(245, 158, 11, 0.25), inset 0 0 15px rgba(245, 158, 11, 0.1);
-  transition: var(--transition);
-  animation: floatReward 3s ease-in-out infinite;
-}
-
-.reward-event-pill:hover {
-  transform: translateY(-3px) scale(1.02);
-  border-color: #fbbf24;
-  box-shadow: 0 12px 35px rgba(245, 158, 11, 0.4);
-}
-
-@keyframes floatReward {
-  0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-4px); }
+  box-shadow: 0 6px 25px rgba(245, 158, 11, 0.2);
 }
 
 .reward-icon-sparkle {
-  width: 40px;
-  height: 40px;
+  width: 32px;
+  height: 32px;
   border-radius: 50%;
   background: linear-gradient(135deg, #f59e0b, #d97706);
   color: #fff;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 1.15rem;
-  box-shadow: 0 0 15px rgba(245, 158, 11, 0.6);
+  font-size: 0.95rem;
 }
 
 .reward-content {
@@ -112,258 +52,243 @@
 }
 
 .reward-label {
-  font-size: 0.7rem;
+  font-size: 0.65rem;
   font-weight: 800;
   color: #f59e0b;
-  letter-spacing: 0.8px;
 }
 
 .reward-val {
-  font-size: 0.95rem;
+  font-size: 0.85rem;
   font-weight: 800;
   color: #ffffff;
 }
 
-.reward-tag-badge {
-  background: rgba(16, 185, 129, 0.2);
-  border: 1px solid #10b981;
-  color: #10b981;
-  font-size: 0.68rem;
-  font-weight: 800;
-  padding: 3px 8px;
-  border-radius: 12px;
-}
-
-/* ==========================================
-   PODIUM SECTION & ANIMASI SULTAN JUARA 1
-   ========================================== */
-.podium-grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 20px;
+/* ===================================================
+   PODIUM PILLARS STAGE (TOP 3)
+   =================================================== */
+.podium-stage-container {
+  display: flex;
   align-items: flex-end;
-  margin-bottom: 40px;
+  justify-content: center;
+  gap: 12px;
+  margin-bottom: 20px;
+  padding-top: 15px;
 }
 
-.podium-card {
-  background: var(--navy-card);
-  border: 1px solid var(--border-color);
-  border-radius: var(--radius-md);
-  padding: 24px 16px;
-  text-align: center;
+.podium-column {
+  flex: 1;
   display: flex;
   flex-direction: column;
   align-items: center;
+  text-align: center;
+}
+
+.podium-pillar {
+  width: 100%;
+  border-radius: 18px 18px 12px 12px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  padding: 18px 8px 10px;
   position: relative;
-  transition: var(--transition);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+  transition: transform 0.3s ease;
 }
 
-.podium-card:hover {
-  transform: translateY(-5px);
+.podium-pillar:hover {
+  transform: translateY(-4px);
 }
 
-.podium-avatar {
-  width: 60px;
-  height: 60px;
-  border-radius: 50%;
+/* Pillar 1 (Tengah - Emas) */
+.podium-column.rank-1 {
+  order: 2;
+  z-index: 2;
+}
+.pillar-1 {
+  height: 240px;
+  background: linear-gradient(180deg, #382405 0%, #b47816 50%, #eab308 100%);
+  border: 1.5px solid rgba(250, 204, 21, 0.6);
+  box-shadow: 0 0 30px rgba(234, 179, 8, 0.35);
+}
+
+/* Pillar 2 (Kiri - Biru / Silver) */
+.podium-column.rank-2 {
+  order: 1;
+}
+.pillar-2 {
+  height: 200px;
+  background: linear-gradient(180deg, #091a38 0%, #1e3a8a 60%, #3b82f6 100%);
+  border: 1.5px solid rgba(147, 197, 253, 0.4);
+}
+
+/* Pillar 3 (Kanan - Bronze / Ungu) */
+.podium-column.rank-3 {
+  order: 3;
+}
+.pillar-3 {
+  height: 180px;
+  background: linear-gradient(180deg, #2b0e24 0%, #701a75 60%, #c026d3 100%);
+  border: 1.5px solid rgba(244, 114, 182, 0.4);
+}
+
+/* LAUREL WREATH CROWN */
+.laurel-wreath {
+  font-weight: 900;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 1.5rem;
-  margin-bottom: 12px;
 }
 
-.podium-name {
-  font-size: 1.05rem;
+.laurel-wreath .wreath-text {
+  font-size: 1.15rem;
+  letter-spacing: -0.5px;
+}
+
+.laurel-gold {
+  color: #fef08a;
+  text-shadow: 0 0 12px rgba(234, 179, 8, 0.8);
+}
+.laurel-gold::before { content: "🌿 "; }
+.laurel-gold::after { content: " 🌿"; }
+
+.laurel-silver {
+  color: #e2e8f0;
+  text-shadow: 0 0 10px rgba(226, 232, 240, 0.6);
+}
+.laurel-silver::before { content: "🌿 "; }
+.laurel-silver::after { content: " 🌿"; }
+
+.laurel-bronze {
+  color: #fbcfe8;
+  text-shadow: 0 0 10px rgba(244, 114, 182, 0.6);
+}
+.laurel-bronze::before { content: "🌿 "; }
+.laurel-bronze::after { content: " 🌿"; }
+
+/* AVATAR 3D */
+.avatar-3d-wrapper {
+  width: 70px;
+  height: 70px;
+  border-radius: 50%;
+  overflow: hidden;
+  border: 3px solid rgba(255, 255, 255, 0.85);
+  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.4);
+  background: #1e293b;
+}
+
+.avatar-3d-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.pillar-name {
+  font-size: 0.88rem;
   font-weight: 800;
   color: #fff;
-  margin-bottom: 6px;
-  max-width: 90%;
+  margin: 10px 0 4px;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  max-width: 100px;
 }
 
-.podium-spent {
-  font-size: 0.9rem;
-  font-weight: 800;
-  padding: 4px 12px;
-  border-radius: 20px;
-}
-
-/* Efek Juara 1 (Golden Sultan Aura) */
-@keyframes goldenGlow {
-  0% {
-    box-shadow: 0 0 15px rgba(245, 158, 11, 0.4), inset 0 0 10px rgba(245, 158, 11, 0.2);
-    border-color: rgba(245, 158, 11, 0.6);
-  }
-  50% {
-    box-shadow: 0 0 35px rgba(245, 158, 11, 0.85), 0 0 60px rgba(245, 158, 11, 0.4), inset 0 0 20px rgba(245, 158, 11, 0.4);
-    border-color: #fbbf24;
-  }
-  100% {
-    box-shadow: 0 0 15px rgba(245, 158, 11, 0.4), inset 0 0 10px rgba(245, 158, 11, 0.2);
-    border-color: rgba(245, 158, 11, 0.6);
-  }
-}
-
-@keyframes crownBounce {
-  0%, 100% { transform: translateY(0) rotate(0deg); }
-  50% { transform: translateY(-6px) rotate(3deg); }
-}
-
-.podium-card.rank-1 {
-  animation: goldenGlow 2.5s infinite ease-in-out;
-  border-width: 2px !important;
-  background: linear-gradient(180deg, rgba(245, 158, 11, 0.18) 0%, rgba(15, 23, 42, 0.95) 100%) !important;
-  padding-top: 36px;
-  order: 2;
-}
-
-.podium-card.rank-1 .crown-icon {
-  position: absolute;
-  top: -18px;
-  font-size: 1.8rem;
-  color: #f59e0b;
-  animation: crownBounce 2s infinite ease-in-out;
-  filter: drop-shadow(0 0 15px #f59e0b) drop-shadow(0 0 30px #f59e0b);
-}
-
-.podium-card.rank-1 .podium-avatar {
-  background: rgba(245, 158, 11, 0.2);
-  color: #f59e0b;
-  border: 2px solid #f59e0b;
-  box-shadow: 0 0 20px rgba(245, 158, 11, 0.6);
-}
-
-.podium-card.rank-1 .podium-spent {
-  background: rgba(245, 158, 11, 0.2);
-  color: #f59e0b;
-}
-
-/* Rank 2 */
-.podium-card.rank-2 {
-  border-color: rgba(148, 163, 184, 0.3);
-  order: 1;
-}
-.podium-card.rank-2 .podium-avatar {
-  background: rgba(148, 163, 184, 0.2);
-  color: #94a3b8;
-  border: 2px solid #94a3b8;
-}
-.podium-card.rank-2 .podium-spent {
-  background: rgba(148, 163, 184, 0.15);
-  color: #94a3b8;
-}
-
-/* Rank 3 */
-.podium-card.rank-3 {
-  border-color: rgba(217, 119, 6, 0.3);
-  order: 3;
-}
-.podium-card.rank-3 .podium-avatar {
-  background: rgba(217, 119, 6, 0.2);
-  color: #d97706;
-  border: 2px solid #d97706;
-}
-.podium-card.rank-3 .podium-spent {
-  background: rgba(217, 119, 6, 0.15);
-  color: #d97706;
-}
-
-.podium-rank {
-  position: absolute;
-  top: 10px;
-  left: 14px;
-  font-size: 0.85rem;
-  font-weight: 800;
-  color: var(--text-muted);
-}
-
-/* ==========================================
-   TABLE SECTION
-   ========================================== */
-.leaderboard-table-card {
-  background: var(--navy-card);
-  border: 1px solid var(--border-color);
-  border-radius: var(--radius-md);
-  padding: 24px;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
-}
-
-.table-header-bar {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 20px;
-}
-
-.table-header-bar h3 {
-  font-size: 1.1rem;
-  font-weight: 800;
-  color: #fff;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.badge-auto-update {
-  font-size: 0.75rem;
-  color: #10b981;
-  background: rgba(16, 185, 129, 0.15);
-  padding: 4px 10px;
-  border-radius: 20px;
-  font-weight: 700;
-}
-
-.leaderboard-table {
-  width: 100%;
-  border-collapse: collapse;
-  text-align: left;
-  font-size: 0.88rem;
-}
-
-.leaderboard-table th {
-  background: rgba(7, 13, 24, 0.6);
-  padding: 12px 16px;
-  color: var(--text-muted);
-  font-weight: 700;
-  border-bottom: 1px solid var(--border-color);
-}
-
-.leaderboard-table td {
-  padding: 14px 16px;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.04);
-  color: #e2e8f0;
-}
-
-.leaderboard-table tbody tr:hover {
-  background: rgba(255, 255, 255, 0.02);
-}
-
-.rank-number-badge {
+.pillar-score {
   display: inline-flex;
   align-items: center;
-  justify-content: center;
-  width: 28px;
-  height: 28px;
-  border-radius: 8px;
-  background: var(--navy-base);
-  border: 1px solid var(--border-color);
+  gap: 5px;
+  font-size: 0.82rem;
   font-weight: 800;
-  font-size: 0.8rem;
+  color: #34d399;
 }
 
-@media (max-width: 768px) {
-  .hero-title-gradient { font-size: 2rem; }
-  .reward-event-pill {
-    padding: 8px 14px;
-    gap: 10px;
-  }
-  .podium-grid {
-    grid-template-columns: 1fr;
-  }
-  .podium-card.rank-1 { order: 1; }
-  .podium-card.rank-2 { order: 2; }
-  .podium-card.rank-3 { order: 3; }
+.gem-icon {
+  font-size: 0.75rem;
+  color: #10b981;
 }
+
+/* ===================================================
+   BOTTOM RANKINGS SHEET (PERINGKAT 4-10)
+   =================================================== */
+.rankings-sheet-card {
+  background: #0d1527;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 28px 28px 20px 20px;
+  padding: 16px;
+  box-shadow: 0 -10px 30px rgba(0, 0, 0, 0.6);
+  position: relative;
+}
+
+.sheet-drag-notch {
+  width: 38px;
+  height: 4px;
+  background: #10b981;
+  border-radius: 4px;
+  margin: 0 auto 16px;
+  box-shadow: 0 0 10px #10b981;
+}
+
+.rankings-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.rank-row-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: rgba(18, 28, 48, 0.7);
+  border: 1px solid rgba(255, 255, 255, 0.04);
+  padding: 10px 14px;
+  border-radius: 16px;
+  transition: background 0.2s ease;
+}
+
+.rank-row-item:hover {
+  background: rgba(30, 41, 59, 0.9);
+}
+
+.rank-user-info {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.rank-avatar-sm {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  border: 2px solid rgba(255, 255, 255, 0.1);
+  background: #1e293b;
+}
+
+.rank-user-text {
+  display: flex;
+  flex-direction: column;
+}
+
+.rank-user-text .player-name {
+  font-size: 0.9rem;
+  font-weight: 800;
+  color: #fff;
+}
+
+.rank-user-text .player-score {
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: #34d399;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.wreath-badge-sm {
+  font-size: 0.85rem;
+  font-weight: 800;
+  color: #f59e0b;
+  letter-spacing: -0.5px;
+}
+.wreath-badge-sm::before { content: "🌿 "; }
+.wreath-badge-sm::after { content: " 🌿"; }
