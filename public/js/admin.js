@@ -1,32 +1,46 @@
 document.addEventListener("DOMContentLoaded", async () => {
-  // 1. CEK AUTORISASI ROLE ADMIN
   if (!window.supabase) {
     alert("Koneksi Supabase belum siap.");
     window.location.href = "/auth/login.html";
     return;
   }
 
-  const { data: sessionData } = await window.supabase.auth.getSession();
-  const user = sessionData?.session?.user;
+  // Fungsi Verifikasi & Load Data
+  async function initAdmin() {
+    const { data: sessionData } = await window.supabase.auth.getSession();
+    const user = sessionData?.session?.user;
 
-  if (!user) {
-    alert("Silakan login sebagai Admin terlebih dahulu!");
-    window.location.href = "/auth/login.html";
-    return;
+    if (!user) {
+      alert("Silakan login sebagai Admin terlebih dahulu!");
+      window.location.href = "/auth/login.html";
+      return;
+    }
+
+    const { data: profile, error: profErr } = await window.supabase
+      .from("profiles")
+      .select("role")
+      .eq("id", user.id)
+      .single();
+
+    if (profErr || !profile || profile.role !== "admin") {
+      alert("Akses Ditolak! Anda bukan Administrator.");
+      window.location.href = "/dashboard.html";
+      return;
+    }
+
+    // Load data dashboard jika terverifikasi admin
+    loadDashboardData();
   }
 
-  // Verifikasi role di tabel profiles
-  const { data: profile, error: profErr } = await window.supabase
-    .from("profiles")
-    .select("role")
-    .eq("id", user.id)
-    .single();
+  // Jalankan inisialisasi awal
+  initAdmin();
 
-  if (profErr || !profile || profile.role !== "admin") {
-    alert("Akses Ditolak! Anda bukan Administrator.");
-    window.location.href = "/dashboard.html";
-    return;
-  }
+  // Dengarkan jika sesi baru saja dimuat/diperbarui oleh browser
+  window.supabase.auth.onAuthStateChange((event, session) => {
+    if (event === "SIGNED_IN" || event === "INITIAL_SESSION") {
+      if (session?.user) initAdmin();
+    }
+  });
 
   // Logout Handler
   document.getElementById("btnAdminLogout").addEventListener("click", async () => {
@@ -105,7 +119,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     const filtered = filter === "ALL" ? orders : orders.filter((o) => o.status === filter);
 
     if (filtered.length === 0) {
-      tbody.innerHTML = `<tr><td colspan="8" style="text-align: center; color: var(--text-muted);">Tidak ada transaksi ditemukan.</td></tr>`;
+      tbody.innerHTML = `<tr><td colspan="8" style="text-align: center; color: var(--text-muted); padding: 25px;">Tidak ada transaksi ditemukan.</td></tr>`;
       return;
     }
 
@@ -125,8 +139,8 @@ document.addEventListener("DOMContentLoaded", async () => {
           <td><span class="badge-status ${statusClass}">${o.status}</span></td>
           <td>
             <div class="btn-action-group">
-              ${o.status !== "SUCCESS" ? `<button class="btn-action-sm btn-success" onclick="updateOrderStatus('${o.id}', 'SUCCESS')"><i class="fa-solid fa-check"></i></button>` : ""}
-              ${o.status !== "CANCELLED" ? `<button class="btn-action-sm btn-cancel" onclick="updateOrderStatus('${o.id}', 'CANCELLED')"><i class="fa-solid fa-xmark"></i></button>` : ""}
+              ${o.status !== "SUCCESS" ? `<button class="btn-action-sm btn-success" title="Tandai Sukses" onclick="updateOrderStatus('${o.id}', 'SUCCESS')"><i class="fa-solid fa-check"></i></button>` : ""}
+              ${o.status !== "CANCELLED" ? `<button class="btn-action-sm btn-cancel" title="Batalkan Pesanan" onclick="updateOrderStatus('${o.id}', 'CANCELLED')"><i class="fa-solid fa-xmark"></i></button>` : ""}
             </div>
           </td>
         </tr>
@@ -134,7 +148,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     }).join("");
   }
 
-  // Update Status Pesanan Handler
+  // Update Status Pesanan
   window.updateOrderStatus = async (orderId, newStatus) => {
     if (!confirm(`Ubah status pesanan ini menjadi ${newStatus}?`)) return;
 
@@ -167,7 +181,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     );
 
     if (filtered.length === 0) {
-      tbody.innerHTML = `<tr><td colspan="5" style="text-align: center; color: var(--text-muted);">Member tidak ditemukan.</td></tr>`;
+      tbody.innerHTML = `<tr><td colspan="5" style="text-align: center; color: var(--text-muted); padding: 25px;">Member tidak ditemukan.</td></tr>`;
       return;
     }
 
@@ -224,7 +238,4 @@ document.addEventListener("DOMContentLoaded", async () => {
       loadDashboardData();
     }
   });
-
-  // Inisialisasi awal
-  loadDashboardData();
 });
