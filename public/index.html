@@ -6,12 +6,166 @@
   <title>MamangGS - Top Up Game Favoritmu Cepat & Murah</title>
   
   <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="preconnect" href="https://fonts.gstatic.com">
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
   
   <link rel="stylesheet" href="/css/global.css">
   <link rel="stylesheet" href="/css/home.css">
+
+  <style>
+    /* ===================================================
+       1. INFINITE AUTO-SCROLL MARQUEE / TICKER PROMO
+       =================================================== */
+    .flash-marquee-wrapper {
+      position: relative;
+      width: 100%;
+      overflow: hidden;
+      padding: 10px 0;
+      mask-image: linear-gradient(to right, transparent, black 4%, black 96%, transparent);
+      -webkit-mask-image: linear-gradient(to right, transparent, black 4%, black 96%, transparent);
+    }
+
+    .flash-marquee-track {
+      display: flex;
+      gap: 16px;
+      width: max-content;
+      animation: scrollLeftLoop 28s linear infinite;
+    }
+
+    /* Berhenti jalan saat user arahkan mouse ke kartu */
+    .flash-marquee-wrapper:hover .flash-marquee-track {
+      animation-play-state: paused;
+    }
+
+    @keyframes scrollLeftLoop {
+      0% {
+        transform: translateX(0);
+      }
+      100% {
+        transform: translateX(-50%);
+      }
+    }
+
+    .flash-promo-card {
+      width: 250px;
+      min-width: 250px;
+      background: #1e293b;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 14px;
+      padding: 14px;
+      position: relative;
+      overflow: hidden;
+      text-decoration: none;
+      color: #fff;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      transition: transform 0.2s ease, border-color 0.2s ease;
+      box-sizing: border-box;
+    }
+
+    .flash-promo-card:hover {
+      transform: translateY(-4px);
+      border-color: #f59e0b;
+      background: #24334a;
+    }
+
+    .ribbon-save {
+      position: absolute;
+      top: 10px;
+      right: -28px;
+      background: #f59e0b;
+      color: #000;
+      font-size: 0.62rem;
+      font-weight: 900;
+      padding: 2px 30px;
+      transform: rotate(45deg);
+      box-shadow: 0 2px 6px rgba(0,0,0,0.4);
+      letter-spacing: 0.5px;
+    }
+
+    /* ===================================================
+       2. CARD POPULER LANDSCAPE RAMPING
+       =================================================== */
+    .popular-grid-layout {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 14px;
+    }
+
+    .popular-compact-card {
+      background: #1e293b;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 12px;
+      padding: 12px 14px;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      text-decoration: none;
+      color: #fff;
+      transition: all 0.2s ease;
+    }
+
+    .popular-compact-card:hover {
+      background: #24334a;
+      border-color: #f59e0b;
+      transform: translateY(-2px);
+    }
+
+    /* ===================================================
+       3. TAB PILLS & POSTER VERTIKAL KATALOG
+       =================================================== */
+    .catalog-tab-pill {
+      background: #1e293b;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      color: #94a3b8;
+      padding: 8px 20px;
+      border-radius: 8px;
+      font-size: 0.82rem;
+      font-weight: 800;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .catalog-tab-pill:hover,
+    .catalog-tab-pill.active {
+      background: #f59e0b;
+      color: #0b1120;
+      border-color: #f59e0b;
+    }
+
+    .catalog-poster-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));
+      gap: 18px;
+    }
+
+    .catalog-poster-card {
+      background: #111827;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 14px;
+      overflow: hidden;
+      text-decoration: none;
+      color: #fff;
+      display: flex;
+      flex-direction: column;
+      transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .catalog-poster-card:hover {
+      transform: translateY(-5px);
+      border-color: #f59e0b;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6);
+    }
+
+    .catalog-poster-card img {
+      width: 100%;
+      height: 220px;
+      object-fit: cover;
+      display: block;
+    }
+  </style>
 </head>
 <body>
 
@@ -82,75 +236,295 @@
     </div>
   </section>
 
-  <!-- FILTER KATEGORI -->
-  <section class="tabs-section">
-    <button class="tab-btn active">Semua Produk</button>
-    <button class="tab-btn">Top Up Via ID</button>
-    <button class="tab-btn">Via Login</button>
-    <button class="tab-btn">Voucher</button>
+  <!-- ========================================== -->
+  <!-- 1. SECTION PROMO FLASH SALE (INFINITE RUNNING TO LEFT) -->
+  <!-- ========================================== -->
+  <section class="home-section" style="max-width: 1200px; margin: 30px auto 40px; padding: 0 16px;">
+    <div style="background: #111827; border: 1px solid rgba(245, 158, 11, 0.35); border-radius: 18px; padding: 22px 20px;">
+      
+      <!-- Header Flash Sale + Countdown -->
+      <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px; margin-bottom: 14px; padding: 0 6px;">
+        <div>
+          <h2 style="font-size: 1.25rem; font-weight: 900; color: #fff; margin: 0 0 4px; display: flex; align-items: center; gap: 8px;">
+            🔥 <span style="color: #fbbf24;">PASTI TER-MURAAHH</span>
+          </h2>
+          <p style="font-size: 0.8rem; color: #94a3b8; margin: 0;">Bandingkan dan Buktikan Sendiri! Harga termurah otomatis 24 Jam.</p>
+        </div>
+
+        <!-- Timer -->
+        <div style="display: flex; align-items: center; gap: 8px; background: rgba(15, 23, 42, 0.8); border: 1px solid rgba(255, 255, 255, 0.08); padding: 6px 14px; border-radius: 30px;">
+          <span style="font-size: 0.75rem; font-weight: 700; color: #94a3b8;"><i class="fa-solid fa-clock" style="color: #f59e0b;"></i> Berakhir:</span>
+          <div style="display: flex; gap: 4px; font-weight: 900; font-size: 0.85rem; color: #fbbf24;">
+            <span id="flashHours">08</span> :
+            <span id="flashMinutes">30</span> :
+            <span id="flashSeconds">00</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Ticker Marquee Container (Jalan ke kiri terus nyambung lagi) -->
+      <div class="flash-marquee-wrapper">
+        <div class="flash-marquee-track" id="flashTrack">
+          
+          <!-- ITEM 1 -->
+          <a href="/order.html?game=ff" class="flash-promo-card">
+            <span class="ribbon-save">HEMAT 39RB</span>
+            <div style="display: flex; gap: 10px; align-items: center; margin-bottom: 8px;">
+              <img src="https://images.unsplash.com/photo-1579373903781-fd5c0c30c4cd?auto=format&fit=crop&w=120&q=80" style="width: 42px; height: 42px; border-radius: 8px; object-fit: cover;">
+              <div style="overflow: hidden;">
+                <h4 style="font-size: 0.82rem; font-weight: 800; margin: 0; white-space: nowrap; text-overflow: ellipsis; overflow: hidden;">Membership FF Bulanan</h4>
+                <p style="font-size: 0.7rem; color: #94a3b8; margin: 0;">Garena Free Fire</p>
+              </div>
+            </div>
+            <div>
+              <span style="font-size: 0.72rem; color: #64748b; text-decoration: line-through;">Rp 99.000</span>
+              <div style="font-size: 0.95rem; font-weight: 900; color: #fbbf24;">Rp 65.285</div>
+            </div>
+          </a>
+
+          <!-- ITEM 2 -->
+          <a href="/order.html?game=mlbb" class="flash-promo-card">
+            <span class="ribbon-save">HEMAT 6RB</span>
+            <div style="display: flex; gap: 10px; align-items: center; margin-bottom: 8px;">
+              <img src="https://images.unsplash.com/photo-1563089145-599997674d42?auto=format&fit=crop&w=120&q=80" style="width: 42px; height: 42px; border-radius: 8px; object-fit: cover;">
+              <div style="overflow: hidden;">
+                <h4 style="font-size: 0.82rem; font-weight: 800; margin: 0; white-space: nowrap; text-overflow: ellipsis; overflow: hidden;">Weekly Diamond Pass</h4>
+                <p style="font-size: 0.7rem; color: #94a3b8; margin: 0;">Mobile Legends</p>
+              </div>
+            </div>
+            <div>
+              <span style="font-size: 0.72rem; color: #64748b; text-decoration: line-through;">Rp 33.000</span>
+              <div style="font-size: 0.95rem; font-weight: 900; color: #fbbf24;">Rp 27.200</div>
+            </div>
+          </a>
+
+          <!-- ITEM 3 -->
+          <a href="/order.html?game=ff" class="flash-promo-card">
+            <span class="ribbon-save">HEMAT 13RB</span>
+            <div style="display: flex; gap: 10px; align-items: center; margin-bottom: 8px;">
+              <img src="https://images.unsplash.com/photo-1579373903781-fd5c0c30c4cd?auto=format&fit=crop&w=120&q=80" style="width: 42px; height: 42px; border-radius: 8px; object-fit: cover;">
+              <div style="overflow: hidden;">
+                <h4 style="font-size: 0.82rem; font-weight: 800; margin: 0; white-space: nowrap; text-overflow: ellipsis; overflow: hidden;">Membership Mingguan FF</h4>
+                <p style="font-size: 0.7rem; color: #94a3b8; margin: 0;">Garena Free Fire</p>
+              </div>
+            </div>
+            <div>
+              <span style="font-size: 0.72rem; color: #64748b; text-decoration: line-through;">Rp 29.000</span>
+              <div style="font-size: 0.95rem; font-weight: 900; color: #fbbf24;">Rp 16.285</div>
+            </div>
+          </a>
+
+          <!-- ITEM 4 -->
+          <a href="/order.html?game=genshin" class="flash-promo-card">
+            <span class="ribbon-save">HEMAT 15RB</span>
+            <div style="display: flex; gap: 10px; align-items: center; margin-bottom: 8px;">
+              <img src="https://images.unsplash.com/photo-1538481199705-c710c4e965fc?auto=format&fit=crop&w=120&q=80" style="width: 42px; height: 42px; border-radius: 8px; object-fit: cover;">
+              <div style="overflow: hidden;">
+                <h4 style="font-size: 0.82rem; font-weight: 800; margin: 0; white-space: nowrap; text-overflow: ellipsis; overflow: hidden;">Blessing Welkin Moon</h4>
+                <p style="font-size: 0.7rem; color: #94a3b8; margin: 0;">Genshin Impact</p>
+              </div>
+            </div>
+            <div>
+              <span style="font-size: 0.72rem; color: #64748b; text-decoration: line-through;">Rp 79.000</span>
+              <div style="font-size: 0.95rem; font-weight: 900; color: #fbbf24;">Rp 64.000</div>
+            </div>
+          </a>
+
+          <!-- DUPLIKAT UNTUK EFEK INFINITE LOOP SEAMLESS -->
+          <a href="/order.html?game=ff" class="flash-promo-card">
+            <span class="ribbon-save">HEMAT 39RB</span>
+            <div style="display: flex; gap: 10px; align-items: center; margin-bottom: 8px;">
+              <img src="https://images.unsplash.com/photo-1579373903781-fd5c0c30c4cd?auto=format&fit=crop&w=120&q=80" style="width: 42px; height: 42px; border-radius: 8px; object-fit: cover;">
+              <div style="overflow: hidden;">
+                <h4 style="font-size: 0.82rem; font-weight: 800; margin: 0; white-space: nowrap; text-overflow: ellipsis; overflow: hidden;">Membership FF Bulanan</h4>
+                <p style="font-size: 0.7rem; color: #94a3b8; margin: 0;">Garena Free Fire</p>
+              </div>
+            </div>
+            <div>
+              <span style="font-size: 0.72rem; color: #64748b; text-decoration: line-through;">Rp 99.000</span>
+              <div style="font-size: 0.95rem; font-weight: 900; color: #fbbf24;">Rp 65.285</div>
+            </div>
+          </a>
+
+          <a href="/order.html?game=mlbb" class="flash-promo-card">
+            <span class="ribbon-save">HEMAT 6RB</span>
+            <div style="display: flex; gap: 10px; align-items: center; margin-bottom: 8px;">
+              <img src="https://images.unsplash.com/photo-1563089145-599997674d42?auto=format&fit=crop&w=120&q=80" style="width: 42px; height: 42px; border-radius: 8px; object-fit: cover;">
+              <div style="overflow: hidden;">
+                <h4 style="font-size: 0.82rem; font-weight: 800; margin: 0; white-space: nowrap; text-overflow: ellipsis; overflow: hidden;">Weekly Diamond Pass</h4>
+                <p style="font-size: 0.7rem; color: #94a3b8; margin: 0;">Mobile Legends</p>
+              </div>
+            </div>
+            <div>
+              <span style="font-size: 0.72rem; color: #64748b; text-decoration: line-through;">Rp 33.000</span>
+              <div style="font-size: 0.95rem; font-weight: 900; color: #fbbf24;">Rp 27.200</div>
+            </div>
+          </a>
+
+          <a href="/order.html?game=ff" class="flash-promo-card">
+            <span class="ribbon-save">HEMAT 13RB</span>
+            <div style="display: flex; gap: 10px; align-items: center; margin-bottom: 8px;">
+              <img src="https://images.unsplash.com/photo-1579373903781-fd5c0c30c4cd?auto=format&fit=crop&w=120&q=80" style="width: 42px; height: 42px; border-radius: 8px; object-fit: cover;">
+              <div style="overflow: hidden;">
+                <h4 style="font-size: 0.82rem; font-weight: 800; margin: 0; white-space: nowrap; text-overflow: ellipsis; overflow: hidden;">Membership Mingguan FF</h4>
+                <p style="font-size: 0.7rem; color: #94a3b8; margin: 0;">Garena Free Fire</p>
+              </div>
+            </div>
+            <div>
+              <span style="font-size: 0.72rem; color: #64748b; text-decoration: line-through;">Rp 29.000</span>
+              <div style="font-size: 0.95rem; font-weight: 900; color: #fbbf24;">Rp 16.285</div>
+            </div>
+          </a>
+
+          <a href="/order.html?game=genshin" class="flash-promo-card">
+            <span class="ribbon-save">HEMAT 15RB</span>
+            <div style="display: flex; gap: 10px; align-items: center; margin-bottom: 8px;">
+              <img src="https://images.unsplash.com/photo-1538481199705-c710c4e965fc?auto=format&fit=crop&w=120&q=80" style="width: 42px; height: 42px; border-radius: 8px; object-fit: cover;">
+              <div style="overflow: hidden;">
+                <h4 style="font-size: 0.82rem; font-weight: 800; margin: 0; white-space: nowrap; text-overflow: ellipsis; overflow: hidden;">Blessing Welkin Moon</h4>
+                <p style="font-size: 0.7rem; color: #94a3b8; margin: 0;">Genshin Impact</p>
+              </div>
+            </div>
+            <div>
+              <span style="font-size: 0.72rem; color: #64748b; text-decoration: line-through;">Rp 79.000</span>
+              <div style="font-size: 0.95rem; font-weight: 900; color: #fbbf24;">Rp 64.000</div>
+            </div>
+          </a>
+
+        </div>
+      </div>
+    </div>
   </section>
 
-  <!-- KATALOG GAME -->
-  <section class="catalog-section">
-    <h3 class="section-label"><i class="fa-solid fa-fire"></i> Rekomendasi Terpopuler</h3>
+  <!-- ========================================== -->
+  <!-- 2. SECTION POPULER SEKARANG (LANDSCAPE RAMPING) -->
+  <!-- ========================================== -->
+  <section class="home-section" style="max-width: 1200px; margin: 0 auto 45px; padding: 0 16px;">
+    <div style="margin-bottom: 16px;">
+      <h2 style="font-size: 1.25rem; font-weight: 900; color: #fff; margin: 0 0 4px; display: flex; align-items: center; gap: 8px;">
+        🔥 POPULER SEKARANG!
+      </h2>
+      <p style="font-size: 0.82rem; color: #94a3b8; margin: 0;">Berikut adalah beberapa produk yang paling sering di-top up gamers saat ini.</p>
+    </div>
 
-    <div class="game-grid">
-      <div class="game-card">
-        <div class="card-img-wrapper">
-          <span class="badge-populer">★ POPULER</span>
-          <img src="https://images.unsplash.com/photo-1542751371-adc38448a05e?auto=format&fit=crop&w=400&q=80" alt="Whiteout Survival" class="game-img">
-          <span class="badge-type">VIA ID</span>
+    <div class="popular-grid-layout">
+      
+      <a href="/order.html?game=ff" class="popular-compact-card">
+        <img src="https://images.unsplash.com/photo-1579373903781-fd5c0c30c4cd?auto=format&fit=crop&w=120&q=80" alt="Free Fire" style="width: 48px; height: 48px; border-radius: 10px; object-fit: cover;">
+        <div>
+          <h4 style="font-size: 0.88rem; font-weight: 800; margin: 0 0 2px;">Top Up Free Fire</h4>
+          <p style="font-size: 0.72rem; color: #94a3b8; margin: 0;">Garena</p>
         </div>
-        <div class="game-body">
-          <div>
-            <h4 class="game-title">Whiteout Survival</h4>
-            <p class="game-dev">Century Games PTE. LTD.</p>
-          </div>
-          <a href="/order.html?game=whiteout" class="btn-topup">Top Up</a>
-        </div>
-      </div>
+      </a>
 
-      <div class="game-card">
-        <div class="card-img-wrapper">
-          <img src="https://images.unsplash.com/photo-1563089145-599997674d42?auto=format&fit=crop&w=400&q=80" alt="Mobile Legends" class="game-img">
-          <span class="badge-type">VIA ID</span>
+      <a href="/order.html?game=mlbb" class="popular-compact-card">
+        <img src="https://images.unsplash.com/photo-1563089145-599997674d42?auto=format&fit=crop&w=120&q=80" alt="Mobile Legends" style="width: 48px; height: 48px; border-radius: 10px; object-fit: cover;">
+        <div>
+          <h4 style="font-size: 0.88rem; font-weight: 800; margin: 0 0 2px;">Mobile Legends</h4>
+          <p style="font-size: 0.72rem; color: #94a3b8; margin: 0;">Moonton</p>
         </div>
-        <div class="game-body">
-          <div>
-            <h4 class="game-title">Mobile Legends: Bang Bang</h4>
-            <p class="game-dev">Moonton Games</p>
-          </div>
-          <a href="/order.html?game=mlbb" class="btn-topup">Top Up</a>
-        </div>
-      </div>
+      </a>
 
-      <div class="game-card">
-        <div class="card-img-wrapper">
-          <img src="https://images.unsplash.com/photo-1579373903781-fd5c0c30c4cd?auto=format&fit=crop&w=400&q=80" alt="Free Fire" class="game-img">
-          <span class="badge-type">VIA ID</span>
+      <a href="/order.html?game=pubgm" class="popular-compact-card">
+        <img src="https://images.unsplash.com/photo-1542751371-adc38448a05e?auto=format&fit=crop&w=120&q=80" alt="PUBG Mobile" style="width: 48px; height: 48px; border-radius: 10px; object-fit: cover;">
+        <div>
+          <h4 style="font-size: 0.88rem; font-weight: 800; margin: 0 0 2px;">PUBG Mobile | UC</h4>
+          <p style="font-size: 0.72rem; color: #94a3b8; margin: 0;">Level Infinite</p>
         </div>
-        <div class="game-body">
-          <div>
-            <h4 class="game-title">Free Fire Max</h4>
-            <p class="game-dev">Garena International</p>
-          </div>
-          <a href="/order.html?game=ff" class="btn-topup">Top Up</a>
-        </div>
-      </div>
+      </a>
 
-      <div class="game-card">
-        <div class="card-img-wrapper">
-          <img src="https://images.unsplash.com/photo-1538481199705-c710c4e965fc?auto=format&fit=crop&w=400&q=80" alt="Genshin Impact" class="game-img">
-          <span class="badge-type">VIA ID</span>
+      <a href="/order.html?game=genshin" class="popular-compact-card">
+        <img src="https://images.unsplash.com/photo-1538481199705-c710c4e965fc?auto=format&fit=crop&w=120&q=80" alt="Genshin Impact" style="width: 48px; height: 48px; border-radius: 10px; object-fit: cover;">
+        <div>
+          <h4 style="font-size: 0.88rem; font-weight: 800; margin: 0 0 2px;">Genshin Impact</h4>
+          <p style="font-size: 0.72rem; color: #94a3b8; margin: 0;">HoYoverse</p>
         </div>
-        <div class="game-body">
-          <div>
-            <h4 class="game-title">Genshin Impact</h4>
-            <p class="game-dev">HoYoverse</p>
-          </div>
-          <a href="/order.html?game=genshin" class="btn-topup">Top Up</a>
+      </a>
+
+      <a href="/order.html?game=valorant" class="popular-compact-card">
+        <img src="https://images.unsplash.com/photo-1550745165-9bc0b252726f?auto=format&fit=crop&w=120&q=80" alt="Valorant" style="width: 48px; height: 48px; border-radius: 10px; object-fit: cover;">
+        <div>
+          <h4 style="font-size: 0.88rem; font-weight: 800; margin: 0 0 2px;">Valorant Points</h4>
+          <p style="font-size: 0.72rem; color: #94a3b8; margin: 0;">Riot Games</p>
         </div>
-      </div>
+      </a>
+
+      <a href="/order.html?game=hok" class="popular-compact-card">
+        <img src="https://images.unsplash.com/photo-1560253023-3ec5d502959f?auto=format&fit=crop&w=120&q=80" alt="Honor of Kings" style="width: 48px; height: 48px; border-radius: 10px; object-fit: cover;">
+        <div>
+          <h4 style="font-size: 0.88rem; font-weight: 800; margin: 0 0 2px;">Honor of Kings</h4>
+          <p style="font-size: 0.72rem; color: #94a3b8; margin: 0;">Level Infinite</p>
+        </div>
+      </a>
+
+    </div>
+  </section>
+
+  <!-- ========================================== -->
+  <!-- 3. SECTION KATALOG LENGKAP SEMUA PRODUK (POSTER GAMING) -->
+  <!-- ========================================== -->
+  <section id="games-section" class="home-section" style="max-width: 1200px; margin: 0 auto 60px; padding: 0 16px;">
+    
+    <!-- Tab Filter Kategori Persis Foto -->
+    <div style="display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 24px;">
+      <button class="catalog-tab-pill active" data-filter="all">Top Up Game</button>
+      <button class="catalog-tab-pill" data-filter="reseller">Reseller</button>
+      <button class="catalog-tab-pill" data-filter="stream">Live Streaming</button>
+      <button class="catalog-tab-pill" data-filter="voucher">Voucher</button>
+      <button class="catalog-tab-pill" data-filter="pulsa">Paket Data</button>
+    </div>
+
+    <!-- Grid Poster Vertikal -->
+    <div class="catalog-poster-grid" id="mainCatalogGrid">
+      
+      <a href="/order.html?game=twilight" class="catalog-poster-card">
+        <img src="https://images.unsplash.com/photo-1542751371-adc38448a05e?auto=format&fit=crop&w=400&q=80" alt="Twilight Chronicle">
+        <div style="padding: 12px; text-align: center;">
+          <h4 style="font-size: 0.85rem; font-weight: 800; margin: 0 0 4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">Twilight Chronicle</h4>
+          <p style="font-size: 0.72rem; color: #94a3b8; margin: 0;">IGG.COM</p>
+        </div>
+      </a>
+
+      <a href="/order.html?game=tnt" class="catalog-poster-card">
+        <img src="https://images.unsplash.com/photo-1511512578047-dfb367046420?auto=format&fit=crop&w=400&q=80" alt="TNT Bomb Saga">
+        <div style="padding: 12px; text-align: center;">
+          <h4 style="font-size: 0.85rem; font-weight: 800; margin: 0 0 4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">TNT Bomb-Saga</h4>
+          <p style="font-size: 0.72rem; color: #94a3b8; margin: 0;">Game Studio</p>
+        </div>
+      </a>
+
+      <a href="/order.html?game=gangstar" class="catalog-poster-card">
+        <img src="https://images.unsplash.com/photo-1538481199705-c710c4e965fc?auto=format&fit=crop&w=400&q=80" alt="Gangstar Mirage City">
+        <div style="padding: 12px; text-align: center;">
+          <h4 style="font-size: 0.85rem; font-weight: 800; margin: 0 0 4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">Gangstar Mirage</h4>
+          <p style="font-size: 0.72rem; color: #94a3b8; margin: 0;">Gameloft</p>
+        </div>
+      </a>
+
+      <a href="/order.html?game=ragnarok" class="catalog-poster-card">
+        <img src="https://images.unsplash.com/photo-1563089145-599997674d42?auto=format&fit=crop&w=400&q=80" alt="Ragnarok Zero">
+        <div style="padding: 12px; text-align: center;">
+          <h4 style="font-size: 0.85rem; font-weight: 800; margin: 0 0 4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">Ragnarok Zero</h4>
+          <p style="font-size: 0.72rem; color: #94a3b8; margin: 0;">Gravity Corp</p>
+        </div>
+      </a>
+
+      <a href="/order.html?game=gunbound" class="catalog-poster-card">
+        <img src="https://images.unsplash.com/photo-1579373903781-fd5c0c30c4cd?auto=format&fit=crop&w=400&q=80" alt="Gunbound">
+        <div style="padding: 12px; text-align: center;">
+          <h4 style="font-size: 0.85rem; font-weight: 800; margin: 0 0 4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">Gunbound M</h4>
+          <p style="font-size: 0.72rem; color: #94a3b8; margin: 0;">Softnyx</p>
+        </div>
+      </a>
+
+      <a href="/order.html?game=zula" class="catalog-poster-card">
+        <img src="https://images.unsplash.com/photo-1550745165-9bc0b252726f?auto=format&fit=crop&w=400&q=80" alt="Zula Strike">
+        <div style="padding: 12px; text-align: center;">
+          <h4 style="font-size: 0.85rem; font-weight: 800; margin: 0 0 4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">Zula Strike</h4>
+          <p style="font-size: 0.72rem; color: #94a3b8; margin: 0;">Madbyte Games</p>
+        </div>
+      </a>
+
     </div>
   </section>
 
@@ -223,6 +597,26 @@
     </div>
   </footer>
 
+  <!-- SCRIPT TIMER FLASH SALE -->
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      let totalSeconds = 8 * 3600 + 30 * 60;
+      setInterval(() => {
+        if (totalSeconds <= 0) totalSeconds = 24 * 3600;
+        totalSeconds--;
+        const h = Math.floor(totalSeconds / 3600);
+        const m = Math.floor((totalSeconds % 3600) / 60);
+        const s = totalSeconds % 60;
+        const elH = document.getElementById("flashHours");
+        const elM = document.getElementById("flashMinutes");
+        const elS = document.getElementById("flashSeconds");
+        if (elH) elH.innerText = String(h).padStart(2, "0");
+        if (elM) elM.innerText = String(m).padStart(2, "0");
+        if (elS) elS.innerText = String(s).padStart(2, "0");
+      }, 1000);
+    });
+  </script>
+
   <!-- SUPABASE & JS MODULAR -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="/js/particles.js"></script>
@@ -231,5 +625,6 @@
   <script src="/js/live-sales.js"></script>
   <script src="/js/navbar.js"></script>
   <script src="/js/floating-hub.js"></script>
+  <script src="/js/home.js"></script>
 </body>
 </html>

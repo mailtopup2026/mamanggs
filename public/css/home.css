@@ -319,3 +319,54 @@
   .game-grid { grid-template-columns: repeat(2, 1fr); gap: 12px; }
   .card-img-wrapper { height: 135px; }
 }
+/* ==========================================
+   PENYESUAIAN KHUSUS LAYAR HP (MOBILE < 768px)
+   ========================================== */
+@media (max-width: 768px) {
+  /* 1. Flash Sale Ticker di HP */
+  .flash-promo-card {
+    width: 210px !important;
+    min-width: 210px !important;
+    padding: 10px !important;
+  }
+  .flash-promo-card img {
+    width: 36px !important;
+    height: 36px !important;
+  }
+
+  /* 2. Populer Sekarang: Jadi 2 Kolom atau 1 Kolom Ramping di HP */
+  .popular-grid-layout {
+    grid-template-columns: 1fr !important;
+    gap: 10px !important;
+  }
+  .popular-compact-card {
+    padding: 10px 12px !important;
+  }
+
+  /* 3. Tab Filter Kategori di HP */
+  .catalog-tab-pill {
+    padding: 6px 14px !important;
+    font-size: 0.75rem !important;
+  }
+
+  /* 4. Katalog Poster Game: Pas 2 Kolom di Layar HP */
+  .catalog-poster-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 12px !important;
+  }
+  .catalog-poster-card img {
+    height: 160px !important; /* Tinggi poster pas untuk HP */
+  }
+  .catalog-poster-card h4 {
+    font-size: 0.78rem !important;
+  }
+  .catalog-poster-card p {
+    font-size: 0.68rem !important;
+  }
+
+  /* 5. Banner Leaderboard Hall of Fame di HP */
+  .home-section {
+    padding: 0 12px !important;
+    margin-bottom: 30px !important;
+  }
+}
