@@ -62,22 +62,52 @@ document.addEventListener("DOMContentLoaded", async () => {
       const votedKey = `voted_art_${art.id}`;
       const userVotes = JSON.parse(localStorage.getItem(votedKey) || "{}");
 
-      // Smart CTA Text
+      // SMART CTA ENGINE: Deteksi Game dari Judul & Kategori
+      const checkText = `${art.title} ${art.category} ${art.summary}`.toLowerCase();
+      
       let ctaHeadline = "🎮 Mau Top Up Game Murah & Kilat?";
       let ctaSub = "Dapatkan diskon spesial diamond & voucher otomatis 24 jam hanya di MamangGS!";
-      let ctaLink = "/";
+      let ctaBtnText = "Top Up Sekarang";
+      let ctaLink = "/#games-section";
 
-      if (art.category.toUpperCase().includes("MLBB")) {
-        ctaHeadline = "🛡️ Top Up Diamond Mobile Legends Murah";
-        ctaSub = "Beli diamond MLBB resmi 100% legal, proses otomatis 1 detik langsung masuk!";
+      if (checkText.includes("mlbb") || checkText.includes("mobile legends") || checkText.includes("diamond kuning")) {
+        ctaHeadline = "🛡️ Top Up Diamond Mobile Legends Resmi";
+        ctaSub = "Beli diamond MLBB 100% legal, proses otomatis 1 detik langsung masuk ke akun!";
+        ctaBtnText = "Beli Diamond MLBB";
+        ctaLink = "/order.html?game=mlbb";
+      } else if (checkText.includes("free fire") || checkText.includes("ff") || checkText.includes("headshot")) {
+        ctaHeadline = "🔥 Top Up Diamond Free Fire Murah";
+        ctaSub = "Top up diamond FF instan tanpa antre, cocok untuk gacha event bundle terbaru!";
+        ctaBtnText = "Beli Diamond FF";
+        ctaLink = "/order.html?game=freefire";
+      } else if (checkText.includes("pubg") || checkText.includes("uc pubg")) {
+        ctaHeadline = "🎯 Top Up UC PUBG Mobile Fast Delivery";
+        ctaSub = "Dapatkan UC PUBG harga distributor resmi untuk Royale Pass & Lucky Spin!";
+        ctaBtnText = "Beli UC PUBG";
+        ctaLink = "/order.html?game=pubgm";
+      } else if (checkText.includes("genshin") || checkText.includes("primogem") || checkText.includes("welkin")) {
+        ctaHeadline = "✨ Top Up Genesis Crystal & Welkin Moon";
+        ctaSub = "Gacha karakter impianmu dengan harga kristal Genshin Impact paling terjangkau!";
+        ctaBtnText = "Beli Crystal Genshin";
+        ctaLink = "/order.html?game=genshin";
+      } else if (checkText.includes("valorant") || checkText.includes("vp")) {
+        ctaHeadline = "⚡ Top Up Valorant Points (VP) Indonesia";
+        ctaSub = "Sikat bundle skin favoritmu di Night Market sekarang dengan VP termurah!";
+        ctaBtnText = "Beli Valorant Points";
+        ctaLink = "/order.html?game=valorant";
+      } else if (checkText.includes("promo") || checkText.includes("diskon") || checkText.includes("flash sale")) {
+        ctaHeadline = "🎁 Klaim Voucher Promo MamangGS";
+        ctaSub = "Gunakan kode promo dan manfaatkan flash sale weekend sebelum kuota habis!";
+        ctaBtnText = "Lihat Promo Aktif";
         ctaLink = "/#games-section";
-      } else if (art.category.toUpperCase().includes("PROMO")) {
-        ctaHeadline = "🔥 Klaim Diskon Top Up Spesial Event";
-        ctaSub = "Manfaatkan flash sale promo sekarang sebelum kuota voucher habis!";
-        ctaLink = "/#games-section";
+      } else if (checkText.includes("leaderboard") || checkText.includes("sultan") || checkText.includes("hall of fame")) {
+        ctaHeadline = "🏆 Rebut Juara Top Spender Season Ini!";
+        ctaSub = "Tingkatkan akumulasi transaksi top up dan klaim Hadiah Voucher Saldo 500K!";
+        ctaBtnText = "Cek Leaderboard";
+        ctaLink = "/leaderboard.html";
       }
 
-      // Render Layout Pembaca Kompak & Rapi
+      // Render Layout Pembaca Kompak
       articleCard.innerHTML = `
         <!-- HEADER ARTIKEL -->
         <div style="margin-bottom: 20px;">
@@ -94,7 +124,7 @@ document.addEventListener("DOMContentLoaded", async () => {
           </div>
         </div>
 
-        <!-- GAMBAR COVER ARTIKEL (TERKUNCI TINGGI MAKS 360PX) -->
+        <!-- GAMBAR COVER ARTIKEL -->
         <div style="width: 100%; height: 340px; overflow: hidden; border-radius: 14px; margin: 20px 0; background: #0f172a; border: 1px solid rgba(255, 255, 255, 0.06);">
           <img src="${art.thumbnail_url}" alt="${art.title}" style="width: 100%; height: 100%; object-fit: cover; display: block;">
         </div>
@@ -104,13 +134,13 @@ document.addEventListener("DOMContentLoaded", async () => {
           ${art.content}
         </div>
 
-        <!-- SLOT IKLAN MINI / SPONSORED BANNER -->
+        <!-- SLOT IKLAN MINI / SPONSORED PROMO BANNER -->
         <div style="margin: 30px 0; background: rgba(10, 15, 29, 0.9); border: 1px dashed rgba(245, 158, 11, 0.35); border-radius: 12px; padding: 12px 16px; text-align: center;">
           <span style="display: inline-block; font-size: 0.65rem; font-weight: 800; color: #94a3b8; letter-spacing: 1px; margin-bottom: 6px;"><i class="fa-solid fa-rectangle-ad"></i> SPONSORED PROMO</span>
           <a href="/leaderboard.html" style="display: flex; align-items: center; justify-content: space-between; gap: 12px; background: linear-gradient(135deg, rgba(30, 41, 59, 0.9), rgba(15, 23, 42, 0.95)); border: 1px solid rgba(255, 255, 255, 0.06); border-radius: 8px; padding: 10px 14px; text-decoration: none; color: #fff;">
             <div style="text-align: left;">
-              <p style="font-size: 0.85rem; font-weight: 800; color: #fbbf24; margin: 0 0 2px;">🏆 Ikuti Season 1 Leaderboard Sultan MamangGS</p>
-              <p style="font-size: 0.75rem; color: #94a3b8; margin: 0;">Top up game favoritmu dan rebut Hadiah Voucher 500K!</p>
+              <p style="font-size: 0.85rem; font-weight: 800; color: #fbbf24; margin: 0 0 2px;">🏆 Season 1 Leaderboard Sultan MamangGS</p>
+              <p style="font-size: 0.75rem; color: #94a3b8; margin: 0;">Top up game favoritmu dan raih Hadiah Voucher 500K!</p>
             </div>
             <span style="background: #f59e0b; color: #000; font-weight: 800; font-size: 0.72rem; padding: 5px 12px; border-radius: 20px; white-space: nowrap;">Lihat Ranking <i class="fa-solid fa-chevron-right"></i></span>
           </a>
@@ -145,23 +175,23 @@ document.addEventListener("DOMContentLoaded", async () => {
             <a href="https://twitter.com/intent/tweet?text=${articleTitleEncoded}&url=${currentUrl}" target="_blank" style="width: 36px; height: 36px; border-radius: 50%; border: 1px solid rgba(255, 255, 255, 0.1); background: rgba(15, 23, 42, 0.8); color: #38bdf8; display: flex; align-items: center; justify-content: center; font-size: 0.9rem; text-decoration: none;" title="Share X/Twitter">
               <i class="fa-brands fa-x-twitter"></i>
             </a>
-            <button id="btnCopyArticleLink" style="width: 36px; height: 36px; border-radius: 50%; border: 1px solid rgba(255, 255, 255, 0.1); background: rgba(15, 23, 42, 0.8); color: #f59e0b; display: flex; align-items: center; justify-content: center; font-size: 0.9rem; cursor: pointer;" title="Salin Link">
+            <button id="btnCopyArticleLink" style="width: 36px; height: 36px; border-radius: 50%; border: 1px solid rgba(255, 255, 255, 0.1); background: rgba(15, 23, 42, 0.8); color: #f59e0b; display: flex; align-items: center; justify-content: center; font-size: 0.9rem; cursor: pointer; border: none;" title="Salin Link">
               <i class="fa-solid fa-link"></i>
             </button>
           </div>
         </div>
 
-        <!-- SMART CTA ORDER BOX -->
+        <!-- SMART CTA BOX DINAMIS SESUAI GAME -->
         <div style="background: linear-gradient(135deg, rgba(245, 158, 11, 0.15), rgba(15, 23, 42, 0.95)); border: 1.5px solid rgba(245, 158, 11, 0.4); padding: 24px; border-radius: 16px; text-align: center; box-shadow: 0 8px 25px rgba(0, 0, 0, 0.4);">
           <h3 style="font-size: 1.25rem; font-weight: 900; color: #fff; margin: 0 0 6px;">${ctaHeadline}</h3>
           <p style="font-size: 0.86rem; color: #94a3b8; margin: 0 0 16px;">${ctaSub}</p>
           <a href="${ctaLink}" style="display: inline-flex; align-items: center; gap: 8px; background: linear-gradient(135deg, #f59e0b, #d97706); color: #fff; padding: 12px 28px; border-radius: 50px; font-weight: 800; text-decoration: none; font-size: 0.92rem; box-shadow: 0 4px 15px rgba(245, 158, 11, 0.4);">
-            <i class="fa-solid fa-bolt"></i> Top Up Sekarang
+            <i class="fa-solid fa-bolt"></i> ${ctaBtnText}
           </a>
         </div>
       `;
 
-      // Event Copy Link
+      // Event Salin Link
       document.getElementById("btnCopyArticleLink").addEventListener("click", () => {
         navigator.clipboard.writeText(window.location.href);
         alert("Link artikel berhasil disalin ke clipboard!");
@@ -171,7 +201,7 @@ document.addEventListener("DOMContentLoaded", async () => {
       document.querySelectorAll(".reaction-btn").forEach(btn => {
         btn.addEventListener("click", async () => {
           const type = btn.getAttribute("data-type");
-          if (userVotes[type]) return; // Cegah spam vote ganda
+          if (userVotes[type]) return;
 
           btn.style.background = "rgba(245, 158, 11, 0.2)";
           btn.style.borderColor = "#f59e0b";
