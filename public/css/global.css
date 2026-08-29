@@ -435,63 +435,158 @@ a {
 }
 
 /* ===================================================
-   FLOATING SOCIAL HUB (KANAN BAWAH)
+   FLOATING SOCIAL HUB - RADIAL CIRCULAR FAN-OUT
    =================================================== */
 .floating-hub-container {
   position: fixed;
   bottom: 24px;
   right: 24px;
-  z-index: 9999;
+  z-index: 999999;
+  width: 54px;
+  height: 54px;
   display: flex;
-  flex-direction: column-reverse;
-  align-items: flex-end;
-  gap: 12px;
+  align-items: center;
+  justify-content: center;
 }
 
+/* Tombol Utama (Pusat Lingkaran) */
 .btn-hub-main {
-  background: linear-gradient(135deg, var(--accent-red), #b91c1c);
-  color: #fff;
-  font-size: 1.15rem;
+  position: absolute;
+  z-index: 10;
   width: 52px;
   height: 52px;
   border-radius: 50%;
-  border: 1px solid rgba(255, 255, 255, 0.2);
+  background: linear-gradient(135deg, var(--accent-red, #e63946), #991b1b);
+  color: #fff;
+  font-size: 1.25rem;
+  border: 2px solid rgba(255, 255, 255, 0.2);
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
-  box-shadow: 0 8px 25px var(--accent-glow);
-  transition: var(--transition);
+  box-shadow: 0 8px 25px rgba(230, 57, 70, 0.45);
+  transition: all 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
 
 .btn-hub-main:hover {
-  transform: translateY(-3px) scale(1.06);
-  box-shadow: 0 12px 30px rgba(230, 57, 70, 0.6);
+  transform: scale(1.08);
+  box-shadow: 0 12px 30px rgba(230, 57, 70, 0.65);
 }
 
-.btn-hub-main i.hub-icon-main {
-  transition: transform 0.3s ease;
+.floating-hub-container.active .btn-hub-main {
+  transform: rotate(135deg);
+  background: linear-gradient(135deg, #475569, #1e293b);
+  border-color: rgba(255, 255, 255, 0.3);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.6);
 }
 
-.floating-hub-container.active .btn-hub-main i.hub-icon-main {
-  transform: rotate(90deg);
-}
-
-.hub-menu-list {
+/* Item Menu Lingkaran (Default Sembunyi di Tengah) */
+.hub-radial-item {
+  position: absolute;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
   display: flex;
-  flex-direction: column;
-  align-items: flex-end;
-  gap: 10px;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  font-size: 1.2rem;
+  text-decoration: none;
+  transform: translate(0, 0) scale(0);
   opacity: 0;
   pointer-events: none;
-  transform: translateY(15px) scale(0.95);
-  transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  transition: all 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  z-index: 5;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.5);
+  border: 1.5px solid rgba(255, 255, 255, 0.2);
 }
 
-.floating-hub-container.active .hub-menu-list {
+/* MEKAR MELINGKAR SAAT ACTIVE */
+/* Item 1 (WhatsApp) -> Arah Jam 9 (Kiri) */
+.floating-hub-container.active .hub-radial-item.whatsapp {
+  transform: translate(-76px, 0px) scale(1);
   opacity: 1;
   pointer-events: auto;
-  transform: translateY(0) scale(1);
+  background: #25D366;
+  box-shadow: 0 0 16px rgba(37, 211, 102, 0.5);
+  transition-delay: 0.04s;
+}
+
+/* Item 2 (TikTok) -> Arah Jam 10:30 (Serong Kiri-Atas) */
+.floating-hub-container.active .hub-radial-item.tiktok {
+  transform: translate(-55px, -55px) scale(1);
+  opacity: 1;
+  pointer-events: auto;
+  background: #000000;
+  border-color: rgba(255, 255, 255, 0.35);
+  box-shadow: 0 0 16px rgba(255, 255, 255, 0.25);
+  transition-delay: 0.08s;
+}
+
+/* Item 3 (Instagram) -> Arah Jam 12 (Atas) */
+.floating-hub-container.active .hub-radial-item.instagram {
+  transform: translate(0px, -76px) scale(1);
+  opacity: 1;
+  pointer-events: auto;
+  background: linear-gradient(45deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888);
+  box-shadow: 0 0 16px rgba(225, 48, 108, 0.5);
+  transition-delay: 0.12s;
+}
+
+.hub-radial-item:hover {
+  transform: scale(1.15) !important;
+}
+
+/* Tooltip Badge saat Hover */
+.hub-radial-item .hub-tooltip {
+  position: absolute;
+  bottom: -22px;
+  background: rgba(15, 23, 42, 0.9);
+  color: #fff;
+  font-size: 0.65rem;
+  font-weight: 800;
+  padding: 2px 6px;
+  border-radius: 4px;
+  white-space: nowrap;
+  opacity: 0;
+  transform: translateY(-4px);
+  transition: all 0.2s ease;
+  pointer-events: none;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.hub-radial-item:hover .hub-tooltip {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Responsif HP */
+@media (max-width: 640px) {
+  .floating-hub-container {
+    bottom: 20px;
+    right: 20px;
+    width: 48px;
+    height: 48px;
+  }
+  .btn-hub-main {
+    width: 48px;
+    height: 48px;
+    font-size: 1.1rem;
+  }
+  .hub-radial-item {
+    width: 40px;
+    height: 40px;
+    font-size: 1.05rem;
+  }
+  .floating-hub-container.active .hub-radial-item.whatsapp {
+    transform: translate(-68px, 0px) scale(1);
+  }
+  .floating-hub-container.active .hub-radial-item.tiktok {
+    transform: translate(-48px, -48px) scale(1);
+  }
+  .floating-hub-container.active .hub-radial-item.instagram {
+    transform: translate(0px, -68px) scale(1);
+  }
 }
 
 .hub-menu-item {
