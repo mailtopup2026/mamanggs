@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pengaturan Profil - MamangGS</title>
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  
+  <link rel="stylesheet" href="/css/global.css">
+  <link rel="stylesheet" href="/css/profile.css">
+</head>
+<body>
+
+  <!-- NAVBAR -->
+  <header class="navbar">
+    <div class="navbar-container">
+      <a href="/" class="brand-logo">
+        <span class="logo-badge"><i class="fa-solid fa-gamepad"></i></span>
+        Mamang<span>GS</span>
+      </a>
+
+      <div class="nav-actions">
+        <a href="/leaderboard.html" class="btn-nav-login" style="background: rgba(245, 158, 11, 0.15); border-color: rgba(245, 158, 11, 0.4); color: #f59e0b;">
+          <i class="fa-solid fa-crown"></i> Leaderboard
+        </a>
+        <a href="/" class="btn-nav-register"><i class="fa-solid fa-house"></i> Beranda</a>
+      </div>
+    </div>
+  </header>
+
+  <!-- FORM CONTAINER -->
+  <main class="profile-wrapper">
+    <div class="profile-card">
+      
+      <!-- HEADER PROFIL & PREVIEW BADGE -->
+      <div class="profile-header">
+        <div class="current-avatar-preview-wrap">
+          <img id="currentAvatarPreview" src="https://api.dicebear.com/7.x/adventurer/svg?seed=Jordyn" alt="Avatar Gamers" class="current-avatar-preview">
+          <span class="avatar-badge-tag"><i class="fa-solid fa-shield-halved"></i></span>
+        </div>
+        <h2 id="profileDisplayName">Gamers Sultan</h2>
+        <p id="profileDisplayEmail" class="profile-email-text">user@email.com</p>
+
+        <!-- BADGES GAME PREVIEW DI PROFIL -->
+        <div class="profile-badges-container" id="profileBadgesPreview">
+          <span class="empty-badge-text">Belum memilih game favorit</span>
+        </div>
+      </div>
+
+      <!-- AVATAR 3D SELECTOR -->
+      <div class="section-group">
+        <label class="section-label-title"><i class="fa-solid fa-face-smile"></i> 1. Pilih Karakter Avatar 3D</label>
+        <p class="section-sub-desc">Avatar ini akan tampil di profil, riwayat order, dan Hall of Fame Leaderboard.</p>
+        
+        <div class="avatar-picker-grid" id="avatarPickerGrid"></div>
+        <input type="hidden" id="selectedAvatarInput" value="">
+      </div>
+
+      <!-- FAVORITE GAME BADGES SELECTOR (MAX 3) -->
+      <div class="section-group">
+        <div class="badge-selection-header">
+          <label class="section-label-title"><i class="fa-solid fa-gamepad"></i> 2. Pilih Game Favorit (Maksimal 3)</label>
+          <span class="badge-counter-pill" id="badgeCounter">0/3 Terpilih</span>
+        </div>
+        <p class="section-sub-desc">Badge game yang dipilih akan terpajang di profil publik dan interaksi komunitas.</p>
+        
+        <div class="game-badges-grid" id="gameBadgesGrid">
+          <!-- Game Badges Render via JS -->
+        </div>
+      </div>
+
+      <!-- FORM BIODATA -->
+      <form id="profileForm" class="profile-form">
+        <div class="form-group">
+          <label for="fullNameInput"><i class="fa-solid fa-user"></i> 3. Nama Lengkap / Nickname</label>
+          <input type="text" id="fullNameInput" class="form-control" placeholder="Masukkan nama gamers..." required>
+        </div>
+
+        <div class="form-group">
+          <label for="whatsappInput"><i class="fa-brands fa-whatsapp"></i> Nomor WhatsApp</label>
+          <input type="tel" id="whatsappInput" class="form-control" placeholder="Contoh: 081234567890" required>
+        </div>
+
+        <div class="form-group">
+          <label for="emailInput"><i class="fa-solid fa-envelope"></i> Email Terdaftar (Permanen)</label>
+          <input type="email" id="emailInput" class="form-control" disabled style="opacity: 0.6; cursor: not-allowed;">
+        </div>
+
+        <div id="profileAlert" class="alert-box" style="display: none;"></div>
+
+        <button type="submit" class="btn-save-profile" id="btnSaveProfile">
+          <i class="fa-solid fa-floppy-disk"></i> Simpan Perubahan Profil
+        </button>
+      </form>
+    </div>
+  </main>
+
+  <!-- FOOTER -->
+  <footer class="footer">
+    <div class="footer-container">
+      <div class="footer-brand">
+        <div class="brand-logo">
+          <span class="logo-badge"><i class="fa-solid fa-gamepad"></i></span>
+          Mamang<span>GS</span>
+        </div>
+        <p>Platform top up game otomatis, murah, dan terpercaya 24 jam nonstop.</p>
+      </div>
+      <div class="footer-bottom">
+        <p>&copy; 2026 MamangGS. All rights reserved.</p>
+      </div>
+    </div>
+  </footer>
+
+  <!-- SUPABASE CDN & JS -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="/js/supabase.js"></script>
+  <script src="/js/profile.js"></script>
+</body>
+</html>

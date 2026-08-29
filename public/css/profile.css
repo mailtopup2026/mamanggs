@@ -1,0 +1,346 @@
+/* ===================================================
+   MAMANGGS - USER PROFILE SETTINGS STYLING
+   =================================================== */
+
+.profile-wrapper {
+  max-width: 600px;
+  margin: 30px auto 80px;
+  padding: 0 16px;
+}
+
+.profile-card {
+  background: var(--navy-card);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  padding: 30px 24px;
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5);
+}
+
+.profile-header {
+  text-align: center;
+  margin-bottom: 28px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.current-avatar-preview-wrap {
+  position: relative;
+  width: 90px;
+  height: 90px;
+  margin: 0 auto 12px;
+}
+
+.current-avatar-preview {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 3px solid #f59e0b;
+  background: #1e293b;
+  box-shadow: 0 0 20px rgba(245, 158, 11, 0.35);
+}
+
+.avatar-badge-tag {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  background: #f59e0b;
+  color: #fff;
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.75rem;
+  border: 2px solid var(--navy-card);
+}
+
+.profile-header h2 {
+  font-size: 1.35rem;
+  font-weight: 800;
+  color: #fff;
+  margin-bottom: 2px;
+}
+
+.profile-email-text {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+}
+
+/* AVATAR PICKER GRID */
+.section-group {
+  margin-bottom: 24px;
+}
+
+.section-label-title {
+  display: block;
+  font-size: 0.92rem;
+  font-weight: 800;
+  color: #fff;
+  margin-bottom: 4px;
+}
+
+.section-sub-desc {
+  font-size: 0.78rem;
+  color: var(--text-muted);
+  margin-bottom: 14px;
+}
+
+.avatar-picker-grid {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 10px;
+}
+
+.avatar-choice-item {
+  width: 100%;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  border: 2px solid rgba(255, 255, 255, 0.1);
+  background: #1e293b;
+  cursor: pointer;
+  overflow: hidden;
+  transition: var(--transition);
+  padding: 2px;
+}
+
+.avatar-choice-item img {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.avatar-choice-item:hover {
+  transform: scale(1.08);
+  border-color: rgba(245, 158, 11, 0.6);
+}
+
+.avatar-choice-item.active {
+  border-color: #f59e0b;
+  box-shadow: 0 0 15px rgba(245, 158, 11, 0.5);
+  transform: scale(1.1);
+}
+
+/* FORM STYLES */
+.profile-form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.form-group label {
+  font-size: 0.84rem;
+  font-weight: 700;
+  color: var(--text-muted);
+}
+
+.form-control {
+  width: 100%;
+  background: var(--navy-base);
+  border: 1px solid var(--border-color);
+  color: #fff;
+  padding: 12px 14px;
+  border-radius: var(--radius-sm);
+  font-size: 0.9rem;
+  font-family: inherit;
+  outline: none;
+  transition: var(--transition);
+}
+
+.form-control:focus {
+  border-color: #f59e0b;
+  box-shadow: 0 0 10px rgba(245, 158, 11, 0.2);
+}
+
+.alert-box {
+  padding: 10px 14px;
+  border-radius: var(--radius-sm);
+  font-size: 0.85rem;
+  font-weight: 700;
+}
+
+.alert-success {
+  background: rgba(16, 185, 129, 0.15);
+  border: 1px solid #10b981;
+  color: #10b981;
+}
+
+.alert-error {
+  background: rgba(239, 68, 68, 0.15);
+  border: 1px solid #ef4444;
+  color: #ef4444;
+}
+
+.btn-save-profile {
+  background: linear-gradient(135deg, #f59e0b, #d97706);
+  color: #fff;
+  border: none;
+  padding: 13px;
+  border-radius: var(--radius-sm);
+  font-size: 0.95rem;
+  font-weight: 800;
+  cursor: pointer;
+  transition: var(--transition);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.btn-save-profile:hover {
+  box-shadow: 0 4px 15px rgba(245, 158, 11, 0.4);
+  transform: translateY(-2px);
+}
+
+@media (max-width: 480px) {
+  .avatar-picker-grid {
+    grid-template-columns: repeat(4, 1fr);
+  }
+/* ===================================================
+   GAME BADGES PREVIEW & SELECTOR STYLING
+   =================================================== */
+
+/* PREVIEW DI PROFILE HEADER */
+.profile-badges-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 14px;
+}
+
+.empty-badge-text {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  font-style: italic;
+}
+
+.user-game-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(30, 41, 59, 0.8);
+  border: 1px solid rgba(245, 158, 11, 0.4);
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 0.75rem;
+  font-weight: 800;
+  color: #fff;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+.user-game-pill i {
+  color: #f59e0b;
+  font-size: 0.8rem;
+}
+
+/* GAME SELECTOR GRID */
+.badge-selection-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 4px;
+}
+
+.badge-counter-pill {
+  font-size: 0.72rem;
+  font-weight: 800;
+  padding: 3px 10px;
+  border-radius: 12px;
+  background: rgba(59, 130, 246, 0.15);
+  border: 1px solid #3b82f6;
+  color: #60a5fa;
+}
+
+.badge-counter-pill.full {
+  background: rgba(16, 185, 129, 0.15);
+  border-color: #10b981;
+  color: #34d399;
+}
+
+.game-badges-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.game-badge-select-item {
+  background: var(--navy-base);
+  border: 1.5px solid var(--border-color);
+  border-radius: 12px;
+  padding: 10px 8px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  position: relative;
+  user-select: none;
+}
+
+.game-badge-select-item:hover {
+  border-color: rgba(245, 158, 11, 0.5);
+  transform: translateY(-2px);
+}
+
+.game-badge-select-item i {
+  font-size: 1.35rem;
+  color: var(--text-muted);
+  transition: color 0.25s ease;
+}
+
+.game-badge-select-item span {
+  font-size: 0.74rem;
+  font-weight: 700;
+  color: #cbd5e1;
+  text-align: center;
+  line-height: 1.2;
+}
+
+/* Status Active / Terpilih */
+.game-badge-select-item.selected {
+  background: linear-gradient(135deg, rgba(245, 158, 11, 0.15), rgba(15, 23, 42, 0.9));
+  border-color: #f59e0b;
+  box-shadow: 0 0 15px rgba(245, 158, 11, 0.3);
+}
+
+.game-badge-select-item.selected i {
+  color: #f59e0b;
+}
+
+.game-badge-select-item.selected span {
+  color: #ffffff;
+  font-weight: 800;
+}
+
+.badge-check-icon {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  font-size: 0.65rem !important;
+  color: #10b981 !important;
+  display: none;
+}
+
+.game-badge-select-item.selected .badge-check-icon {
+  display: block;
+}
+
+@media (max-width: 480px) {
+  .game-badges-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
