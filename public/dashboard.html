@@ -7,7 +7,7 @@
   
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
   
   <link rel="stylesheet" href="/css/global.css">
@@ -25,6 +25,7 @@
 
       <div class="nav-actions">
         <a href="/" class="btn-nav-login"><i class="fa-solid fa-house"></i> Beranda</a>
+        <a href="/leaderboard.html" class="btn-nav-login" style="color: #f59e0b; border-color: rgba(245, 158, 11, 0.4);"><i class="fa-solid fa-crown"></i> Leaderboard</a>
         <a href="/order-status.html" class="btn-nav-login"><i class="fa-solid fa-magnifying-glass"></i> Lacak</a>
       </div>
     </div>
@@ -36,7 +37,8 @@
     <div class="profile-banner-card">
       <div class="profile-info-group">
         <div class="avatar-cyber">
-          <i class="fa-solid fa-user-astronaut"></i>
+          <!-- Avatar 3D Dynamic / Fallback -->
+          <img id="userAvatarImg" src="https://api.dicebear.com/7.x/adventurer/svg?seed=Jordyn" alt="Avatar" style="width: 100%; height: 100%; object-fit: cover; border-radius: 50%;">
         </div>
         <div class="user-meta">
           <h2>
@@ -44,11 +46,21 @@
             <span class="role-pill" id="profileRole">MEMBER</span>
           </h2>
           <p><i class="fa-solid fa-envelope"></i> <span id="profileEmail">user@email.com</span></p>
+          
+          <!-- Wadah Badges Game Favorit di Dashboard -->
+          <div id="dashboardBadges" style="display: flex; gap: 6px; flex-wrap: wrap; margin-top: 8px;"></div>
         </div>
       </div>
-      <button class="btn-header-logout" id="logoutBtn">
-        <i class="fa-solid fa-right-from-bracket"></i> Keluar Akun
-      </button>
+
+      <!-- Action Buttons (Edit Profil + Logout) -->
+      <div class="profile-header-actions" style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap;">
+        <a href="/profile.html" class="btn-edit-profile-action" style="background: rgba(245, 158, 11, 0.15); border: 1px solid rgba(245, 158, 11, 0.4); color: #f59e0b; padding: 10px 16px; border-radius: 8px; font-weight: 800; font-size: 0.85rem; text-decoration: none; display: inline-flex; align-items: center; gap: 8px; transition: all 0.2s ease;">
+          <i class="fa-solid fa-user-pen"></i> Edit Profil
+        </a>
+        <button class="btn-header-logout" id="logoutBtn">
+          <i class="fa-solid fa-right-from-bracket"></i> Keluar Akun
+        </button>
+      </div>
     </div>
 
     <!-- Grid Statistik & Dompet -->
@@ -131,6 +143,7 @@
         <ul class="footer-links">
           <li><a href="/">Beranda</a></li>
           <li><a href="/order-status.html">Lacak Pesanan</a></li>
+          <li><a href="/leaderboard.html">Leaderboard</a></li>
           <li><a href="/dashboard.html">Dashboard</a></li>
         </ul>
       </div>
