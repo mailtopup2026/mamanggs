@@ -6,84 +6,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     return null;
   }
 
-  // 1. INJEKSI OTOMATIS TEMPLATE NAVBAR STANDAR KE SEMUA HALAMAN
-  const header = document.querySelector("header.navbar");
-  if (header) {
-    header.innerHTML = `
-      <div class="navbar-container">
-        <a href="/" class="brand-logo">
-          <span class="logo-badge"><i class="fa-solid fa-gamepad"></i></span>
-          Mamang<span>GS</span>
-        </a>
-
-        <!-- Search Desktop (hanya tampil jika di homepage) -->
-        <div class="nav-search desktop-only" style="${window.location.pathname === '/' || window.location.pathname === '/index.html' ? '' : 'display: none;'}">
-          <i class="fa-solid fa-magnifying-glass"></i>
-          <input type="text" placeholder="Cari Game (MLBB, Free Fire, Genshin...)" id="searchInput">
-        </div>
-
-        <!-- Desktop Action Buttons -->
-        <div class="nav-actions desktop-only" id="desktopNavActions">
-          <a href="/blog.html" class="btn-nav-login" style="background: rgba(56, 189, 248, 0.15); border-color: rgba(56, 189, 248, 0.4); color: #38bdf8;">
-            <i class="fa-solid fa-newspaper"></i> Blog
-          </a>
-          <a href="/leaderboard.html" class="btn-nav-login" style="background: rgba(245, 158, 11, 0.15); border-color: rgba(245, 158, 11, 0.4); color: #f59e0b;">
-            <i class="fa-solid fa-crown"></i> Leaderboard
-          </a>
-          <a href="/auth/login.html" class="btn-nav-login" id="navLoginBtn"><i class="fa-solid fa-right-to-bracket"></i> Masuk</a>
-          <a href="/auth/register.html" class="btn-nav-register" id="navRegisterBtn"><i class="fa-solid fa-user-plus"></i> Daftar</a>
-        </div>
-
-        <!-- Mobile Kebab (Titik Tiga) Trigger -->
-        <div class="mobile-nav-toggle-group">
-          ${(window.location.pathname === '/' || window.location.pathname === '/index.html') ? `
-            <button id="btnMobileSearchToggle" class="btn-mobile-icon" title="Cari Game">
-              <i class="fa-solid fa-magnifying-glass"></i>
-            </button>
-          ` : ''}
-          <button id="btnMobileMenuToggle" class="btn-mobile-icon" title="Menu Lengkap">
-            <i class="fa-solid fa-ellipsis-vertical"></i>
-          </button>
-        </div>
-      </div>
-
-      <!-- Mobile Search Bar Expander (Khusus Homepage) -->
-      ${(window.location.pathname === '/' || window.location.pathname === '/index.html') ? `
-        <div id="mobileSearchBar" class="mobile-search-dropdown">
-          <input type="text" placeholder="Ketik nama game..." id="mobileSearchInput">
-        </div>
-      ` : ''}
-
-      <!-- Mobile Drawer Modal Kebab -->
-      <div id="mobileMenuDropdown" class="mobile-menu-drawer">
-        <div class="mobile-menu-header">
-          <span style="font-weight: 800; font-size: 0.88rem; color: #fff;">Menu MamangGS</span>
-          <button id="btnCloseMobileMenu" style="background: none; border: none; color: #94a3b8; font-size: 1.1rem; cursor: pointer;">✕</button>
-        </div>
-        <div id="mobileMenuList" class="mobile-menu-items">
-          <a href="/" class="mobile-menu-link">
-            <i class="fa-solid fa-house" style="color: #3b82f6;"></i> Beranda
-          </a>
-          <a href="/leaderboard.html" class="mobile-menu-link">
-            <i class="fa-solid fa-crown" style="color: #f59e0b;"></i> Leaderboard Sultan
-          </a>
-          <a href="/blog.html" class="mobile-menu-link">
-            <i class="fa-solid fa-newspaper" style="color: #38bdf8;"></i> Blog & Tips Game
-          </a>
-          <a href="/order-status.html" class="mobile-menu-link">
-            <i class="fa-solid fa-receipt" style="color: #10b981;"></i> Lacak Pesanan
-          </a>
-          <hr style="border: none; border-top: 1px solid rgba(255,255,255,0.08); margin: 8px 0;">
-          <div id="mobileAuthSlot">
-            <a href="/auth/login.html" class="mobile-menu-link"><i class="fa-solid fa-right-to-bracket"></i> Masuk Akun</a>
-            <a href="/auth/register.html" class="mobile-menu-link" style="color: #f59e0b;"><i class="fa-solid fa-user-plus"></i> Daftar Member</a>
-          </div>
-        </div>
-      </div>
-    `;
-  }
-
-  // 2. TOGGLE EVENT CONTROLLERS
+  // 1. EVENT LISTENER UNTUK MOBILE TOGGLE (Aman jika elemen HTML-nya ada)
   const btnMobileSearch = document.getElementById("btnMobileSearchToggle");
   const mobileSearchBar = document.getElementById("mobileSearchBar");
   const mobileSearchInput = document.getElementById("mobileSearchInput");
@@ -129,9 +52,10 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
   });
 
-  // 3. RENDER SESSION & AUTH STATE (DESKTOP + MOBILE)
+  // 2. RENDER RAPI (FOKUS DI TOMBOL LOGIN / PROFILE SAJA)
   function renderAuthNav(userData, profileData) {
-    const desktopNav = document.getElementById("desktopNavActions");
+    // Cari kontainer aksi di navbar (bisa ID baru atau Class lama)
+    const desktopNav = document.getElementById("desktopNavActions") || document.querySelector(".nav-actions");
     const mobileAuthSlot = document.getElementById("mobileAuthSlot");
 
     const blogLink = `<a href="/blog.html" class="btn-nav-login" style="background: rgba(56, 189, 248, 0.15); border-color: rgba(56, 189, 248, 0.4); color: #38bdf8;"><i class="fa-solid fa-newspaper"></i> Blog</a>`;
@@ -142,6 +66,7 @@ document.addEventListener("DOMContentLoaded", async () => {
       ? `<a href="/admin.html" class="btn-nav-login" style="color: #ef4444; border-color: rgba(239, 68, 68, 0.5); background: rgba(239, 68, 68, 0.1);"><i class="fa-solid fa-shield-halved"></i> Admin Secret</a>`
       : "";
 
+    // JIKA USER BELUM LOGIN
     if (!userData) {
       if (desktopNav) {
         desktopNav.innerHTML = `
@@ -160,6 +85,7 @@ document.addEventListener("DOMContentLoaded", async () => {
       return;
     }
 
+    // JIKA USER SUDAH LOGIN
     const name = profileData?.full_name || userData.user_metadata?.full_name || userData.email?.split("@")[0] || "Member";
     const avatarUrl = profileData?.avatar_url || `https://api.dicebear.com/7.x/adventurer/svg?seed=${encodeURIComponent(name)}&radius=50`;
 
@@ -199,6 +125,7 @@ document.addEventListener("DOMContentLoaded", async () => {
       `;
     }
 
+    // EVENT LOGOUT
     document.getElementById("navLogoutBtn")?.addEventListener("click", async () => {
       if (confirm("Yakin ingin keluar akun?")) {
         const client = getClient();
@@ -218,7 +145,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     });
   }
 
-  // 4. SYNC DATA SUPABASE
+  // 3. SINKRONISASI SESSION SUPABASE
   const storedUser = localStorage.getItem("mgs_user");
   let user = storedUser ? JSON.parse(storedUser) : null;
   renderAuthNav(user, null);
