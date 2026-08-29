@@ -31,6 +31,9 @@
 
       <div class="nav-actions">
         <span class="admin-badge"><i class="fa-solid fa-crown"></i> Super Admin</span>
+        <a href="/admin/blog-editor.html" class="btn-nav-login" style="background: rgba(245, 158, 11, 0.15); border-color: #f59e0b; color: #fbbf24;">
+          <i class="fa-solid fa-pen-nib"></i> Tulis Berita
+        </a>
         <button id="btnAdminLogout" class="btn-nav-login" style="background: rgba(230, 57, 70, 0.2); border-color: var(--accent-red); color: #fff;">
           <i class="fa-solid fa-power-off"></i> Keluar
         </button>
@@ -75,6 +78,29 @@
       </div>
     </section>
 
+    <!-- PINTASAN CEPAT CMS BLOG & SEO -->
+    <section class="section-card" style="margin-bottom: 24px; background: linear-gradient(135deg, rgba(30, 41, 59, 0.7), rgba(15, 23, 42, 0.9)); border: 1px solid rgba(245, 158, 11, 0.3);">
+      <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 14px;">
+        <div style="display: flex; align-items: center; gap: 14px;">
+          <div style="width: 44px; height: 44px; border-radius: 10px; background: rgba(245, 158, 11, 0.15); color: #f59e0b; display: flex; align-items: center; justify-content: center; font-size: 1.2rem;">
+            <i class="fa-solid fa-newspaper"></i>
+          </div>
+          <div>
+            <h3 style="color: #fff; font-size: 1rem; margin: 0 0 2px;">Pusat Konten Blog & SEO Google</h3>
+            <p style="color: var(--text-muted); font-size: 0.8rem; margin: 0;">Buat artikel tips hero, bocoran event, dan promo untuk datangkan pengunjung.</p>
+          </div>
+        </div>
+        <div style="display: flex; gap: 10px;">
+          <a href="/blog.html" target="_blank" class="btn-refresh" style="text-decoration: none; display: inline-flex; align-items: center; gap: 6px;">
+            <i class="fa-solid fa-eye"></i> Lihat Blog Live
+          </a>
+          <a href="/admin/blog-editor.html" class="btn-submit-action" style="padding: 8px 16px; font-size: 0.85rem; text-decoration: none; display: inline-flex; align-items: center; gap: 6px;">
+            <i class="fa-solid fa-plus"></i> Buat Artikel Baru
+          </a>
+        </div>
+      </div>
+    </section>
+
     <!-- WIDGET GAME TERLARIS -->
     <section class="section-card" style="margin-bottom: 24px;">
       <div class="table-header-bar">
@@ -90,6 +116,7 @@
     <div class="admin-tabs">
       <button class="tab-btn active" data-tab="ordersTab"><i class="fa-solid fa-list-check"></i> Kelola Transaksi</button>
       <button class="tab-btn" data-tab="balanceTab"><i class="fa-solid fa-wallet"></i> Kelola Saldo Member</button>
+      <button class="tab-btn" data-tab="articlesTab"><i class="fa-solid fa-file-pen"></i> Kelola Artikel Blog</button>
     </div>
 
     <!-- SECTION 1: KELOLA TRANSAKSI -->
@@ -154,6 +181,38 @@
             <tbody id="usersTableBody">
               <tr>
                 <td colspan="5" style="text-align: center; padding: 25px;">Memuat data member...</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION 3: KELOLA ARTIKEL BLOG -->
+    <section id="articlesTab" class="tab-content">
+      <div class="section-card">
+        <div class="table-header-bar">
+          <h3><i class="fa-solid fa-newspaper"></i> Daftar Artikel Terbit & Draft</h3>
+          <a href="/admin/blog-editor.html" class="btn-submit-action" style="text-decoration: none; padding: 8px 14px; font-size: 0.82rem;">
+            <i class="fa-solid fa-plus"></i> Tulis Baru
+          </a>
+        </div>
+
+        <div class="table-responsive">
+          <table class="admin-table">
+            <thead>
+              <tr>
+                <th>Judul Artikel</th>
+                <th>Kategori</th>
+                <th>Views</th>
+                <th>Status</th>
+                <th>Tanggal</th>
+                <th>Aksi</th>
+              </tr>
+            </thead>
+            <tbody id="adminArticlesTableBody">
+              <tr>
+                <td colspan="6" style="text-align: center; padding: 25px;">Memuat artikel blog...</td>
               </tr>
             </tbody>
           </table>
