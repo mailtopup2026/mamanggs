@@ -262,7 +262,7 @@ a {
 }
 
 /* ===================================================
-   GRID POPULER SEKARANG (3 KOLOM DESKTOP / 2 KOLOM HP)
+   GRID POPULER SEKARANG
    =================================================== */
 .popular-grid-layout {
   display: grid;
@@ -434,8 +434,20 @@ a {
   line-height: 1.3;
 }
 
+@media (max-width: 480px) {
+  .mgs-toast-container {
+    top: 16px;
+    left: 16px;
+    right: 16px;
+  }
+  .mgs-toast {
+    max-width: 100%;
+  }
+} 
+/* <-- KEMARIN KURUNG TUTUP INI YANG HILANG BRO! */
+
 /* ===================================================
-   FLOATING SOCIAL HUB - RADIAL CIRCULAR FAN-OUT
+   FLOATING SOCIAL HUB
    =================================================== */
 .floating-hub-container {
   position: fixed;
@@ -449,7 +461,6 @@ a {
   justify-content: center;
 }
 
-/* Tombol Utama (Pusat Lingkaran) */
 .btn-hub-main {
   position: absolute;
   z-index: 10;
@@ -480,7 +491,6 @@ a {
   box-shadow: 0 6px 20px rgba(0, 0, 0, 0.6);
 }
 
-/* Item Menu Lingkaran (Default Sembunyi di Tengah) */
 .hub-radial-item {
   position: absolute;
   width: 44px;
@@ -501,425 +511,51 @@ a {
   border: 1.5px solid rgba(255, 255, 255, 0.2);
 }
 
-/* MEKAR MELINGKAR SAAT ACTIVE */
-/* Item 1 (WhatsApp) -> Arah Jam 9 (Kiri) */
 .floating-hub-container.active .hub-radial-item.whatsapp {
   transform: translate(-76px, 0px) scale(1);
-  opacity: 1;
-  pointer-events: auto;
-  background: #25D366;
-  box-shadow: 0 0 16px rgba(37, 211, 102, 0.5);
-  transition-delay: 0.04s;
+  opacity: 1; pointer-events: auto; background: #25D366; box-shadow: 0 0 16px rgba(37, 211, 102, 0.5); transition-delay: 0.04s;
 }
 
-/* Item 2 (TikTok) -> Arah Jam 10:30 (Serong Kiri-Atas) */
 .floating-hub-container.active .hub-radial-item.tiktok {
   transform: translate(-55px, -55px) scale(1);
-  opacity: 1;
-  pointer-events: auto;
-  background: #000000;
-  border-color: rgba(255, 255, 255, 0.35);
-  box-shadow: 0 0 16px rgba(255, 255, 255, 0.25);
-  transition-delay: 0.08s;
+  opacity: 1; pointer-events: auto; background: #000000; border-color: rgba(255, 255, 255, 0.35); box-shadow: 0 0 16px rgba(255, 255, 255, 0.25); transition-delay: 0.08s;
 }
 
-/* Item 3 (Instagram) -> Arah Jam 12 (Atas) */
 .floating-hub-container.active .hub-radial-item.instagram {
   transform: translate(0px, -76px) scale(1);
-  opacity: 1;
-  pointer-events: auto;
-  background: linear-gradient(45deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888);
-  box-shadow: 0 0 16px rgba(225, 48, 108, 0.5);
-  transition-delay: 0.12s;
+  opacity: 1; pointer-events: auto; background: linear-gradient(45deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888); box-shadow: 0 0 16px rgba(225, 48, 108, 0.5); transition-delay: 0.12s;
 }
 
-.hub-radial-item:hover {
-  transform: scale(1.15) !important;
-}
+.hub-radial-item:hover { transform: scale(1.15) !important; }
 
-/* Tooltip Badge saat Hover */
 .hub-radial-item .hub-tooltip {
-  position: absolute;
-  bottom: -22px;
-  background: rgba(15, 23, 42, 0.9);
-  color: #fff;
-  font-size: 0.65rem;
-  font-weight: 800;
-  padding: 2px 6px;
-  border-radius: 4px;
-  white-space: nowrap;
-  opacity: 0;
-  transform: translateY(-4px);
-  transition: all 0.2s ease;
-  pointer-events: none;
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  position: absolute; bottom: -22px; background: rgba(15, 23, 42, 0.9); color: #fff; font-size: 0.65rem; font-weight: 800; padding: 2px 6px; border-radius: 4px; white-space: nowrap; opacity: 0; transform: translateY(-4px); transition: all 0.2s ease; pointer-events: none; border: 1px solid rgba(255, 255, 255, 0.1);
 }
+.hub-radial-item:hover .hub-tooltip { opacity: 1; transform: translateY(0); }
 
-.hub-radial-item:hover .hub-tooltip {
-  opacity: 1;
-  transform: translateY(0);
-}
 
-/* Responsif HP */
-@media (max-width: 640px) {
-  .floating-hub-container {
-    bottom: 20px;
-    right: 20px;
-    width: 48px;
-    height: 48px;
+/* ===================================================
+   FIX MUTLAK: MATIKAN MENU MOBILE DI TABLET & DESKTOP (> 768px)
+   =================================================== */
+@media (min-width: 769px) {
+  .mobile-nav-toggle-group,
+  .mobile-search-dropdown,
+  .mobile-menu-drawer,
+  #mobileMenuDropdown {
+    display: none !important;
   }
-  .btn-hub-main {
-    width: 48px;
-    height: 48px;
-    font-size: 1.1rem;
-  }
-  .hub-radial-item {
-    width: 40px;
-    height: 40px;
-    font-size: 1.05rem;
-  }
-  .floating-hub-container.active .hub-radial-item.whatsapp {
-    transform: translate(-68px, 0px) scale(1);
-  }
-  .floating-hub-container.active .hub-radial-item.tiktok {
-    transform: translate(-48px, -48px) scale(1);
-  }
-  .floating-hub-container.active .hub-radial-item.instagram {
-    transform: translate(0px, -68px) scale(1);
-  }
-}
-
-.hub-menu-item {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  background: rgba(12, 24, 43, 0.95);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  border-radius: 50px;
-  padding: 6px 14px 6px 8px;
-  color: #fff;
-  font-size: 0.82rem;
-  font-weight: 700;
-  text-decoration: none;
-  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.5);
-  transition: var(--transition);
-}
-
-.hub-menu-item:hover {
-  transform: translateX(-4px);
-  border-color: rgba(255, 255, 255, 0.3);
-}
-
-.hub-icon-circle {
-  width: 32px;
-  height: 32px;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 1rem;
-  color: #fff;
-}
-
-.hub-menu-item.whatsapp .hub-icon-circle { 
-  background: #25D366; 
-  box-shadow: 0 0 10px rgba(37, 211, 102, 0.4);
-}
-
-.hub-menu-item.tiktok .hub-icon-circle { 
-  background: #000000; 
-  border: 1px solid rgba(255, 255, 255, 0.25);
-  box-shadow: 0 0 10px rgba(255, 255, 255, 0.2);
-}
-
-.hub-menu-item.instagram .hub-icon-circle { 
-  background: linear-gradient(45deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888); 
-  box-shadow: 0 0 10px rgba(225, 48, 108, 0.4);
 }
 
 /* ===================================================
-   RESPONSIF MOBILE / HP (max-width: 768px)
+   ATURAN RESPONSIVE KHUSUS MOBILE / HP (< 768px)
    =================================================== */
 @media (max-width: 768px) {
-  .navbar {
-    padding: 10px 14px;
-  }
-
-  .navbar-container {
-    display: grid;
-    grid-template-columns: auto 1fr auto;
-    gap: 8px;
-    align-items: center;
-  }
-
-  .brand-logo {
-    font-size: 1.05rem;
-    gap: 6px;
-  }
-
-  .brand-logo .logo-badge {
-    padding: 2px 6px;
-    font-size: 0.85rem;
-  }
-
-  .nav-search {
-    display: block;
-    max-width: 100%;
-    margin: 0 4px;
-  }
-
-  .nav-search input {
-    padding: 6px 8px 6px 28px;
-    font-size: 0.75rem;
-    border-radius: 8px;
-  }
-
-  .nav-search i {
-    left: 8px;
-    font-size: 0.72rem;
-  }
-
-  .nav-actions {
-    gap: 4px;
-  }
-
-  .btn-nav-login, .btn-nav-register {
-    padding: 6px 8px;
-    font-size: 0.72rem;
-    border-radius: 6px;
-  }
-
-  .nav-user-name {
-    display: none;
-  }
-
-  .nav-user-logged {
-    padding: 4px 6px;
-    gap: 6px;
-  }
-
-  .footer-container {
-    grid-template-columns: 1fr;
-    gap: 20px;
-    text-align: center;
-  }
-
-  .footer-brand p {
-    margin: 10px auto 0;
-  }
-
-  .footer-links {
-    align-items: center;
-  }
-
-  .floating-hub-container {
-    bottom: 18px;
-    right: 18px;
-  }
-
-  .btn-hub-main {
-    width: 46px;
-    height: 46px;
-    font-size: 1rem;
-  }
-
-  /* Penyesuaian Komponen Beranda di HP */
-  .flash-promo-card {
-    width: 210px !important;
-    min-width: 210px !important;
-    padding: 10px !important;
-  }
-
-  /* POPULER SEKARANG: 2 Kolom di Tablet & HP */
-  .popular-grid-layout {
-    grid-template-columns: repeat(2, 1fr) !important;
-    gap: 10px !important;
-  }
-
-  .popular-compact-card {
-    padding: 8px 10px !important;
-    gap: 10px !important;
-  }
-
-  .popular-compact-card img {
-    width: 38px !important;
-    height: 38px !important;
-  }
-
-  .popular-compact-card h4 {
-    font-size: 0.78rem !important;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-  }
-
-  .popular-compact-card p {
-    font-size: 0.65rem !important;
-  }
-
-  .catalog-tab-pill {
-    padding: 6px 14px !important;
-    font-size: 0.75rem !important;
-  }
-
-  .catalog-poster-grid {
-    grid-template-columns: repeat(2, 1fr) !important;
-    gap: 12px !important;
-  }
-
-  .catalog-poster-card img {
-    height: 160px !important;
-  }
-
-  .home-section {
-    padding: 0 12px !important;
-    margin-bottom: 30px !important;
-  }
-}
-
-@media (max-width: 480px) {
-  .mgs-toast-container {
-    top: 16px;
-    left: 16px;
-    right: 16px;
-  }
-  .mgs-toast {
-    max-width: 100%;
-  }
-/* ==========================================
-   DESKTOP VS MOBILE DISPLAY TOGGLE
-   ========================================== */
-.mobile-nav-toggle-group {
-  display: none;
-}
-
-.mobile-search-dropdown {
-  display: none;
-  padding: 10px 0 4px;
-}
-
-.mobile-search-dropdown input {
-  width: 100%;
-  padding: 8px 14px;
-  background: rgba(12, 24, 43, 0.95);
-  border: 1.5px solid rgba(245, 158, 11, 0.4);
-  border-radius: 8px;
-  color: #fff;
-  font-size: 0.85rem;
-  outline: none;
-}
-
-.mobile-menu-drawer {
-  display: none;
-  position: absolute;
-  top: 100%;
-  right: 14px;
-  width: 240px;
-  background: #0f172a;
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  border-radius: 14px;
-  box-shadow: 0 15px 35px rgba(0,0,0,0.8);
-  padding: 14px;
-  z-index: 9999;
-}
-
-.mobile-menu-drawer.show {
-  display: block;
-  animation: slideDownMenu 0.2s ease-out;
-}
-
-@keyframes slideDownMenu {
-  from { opacity: 0; transform: translateY(-10px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-
-.mobile-menu-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 10px;
-  padding-bottom: 6px;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-}
-
-.mobile-menu-link {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  padding: 8px 10px;
-  color: #cbd5e1;
-  font-size: 0.82rem;
-  font-weight: 700;
-  text-decoration: none;
-  border-radius: 8px;
-  transition: all 0.2s ease;
-}
-
-.mobile-menu-link:hover {
-  background: rgba(255, 255, 255, 0.06);
-  color: #fff;
-}
-
-/* ==========================================
-   RESPONSIF MOBILE / HP (< 768px)
-   ========================================== */
-@media (max-width: 768px) {
+  /* Hilangkan tombol menu desktop di HP */
   .desktop-only {
     display: none !important;
   }
 
-  .mobile-nav-toggle-group {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-  }
-
-  .btn-mobile-icon {
-    width: 36px;
-    height: 36px;
-    background: #1e293b;
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    border-radius: 8px;
-    color: #fff;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 0.95rem;
-    cursor: pointer;
-  }
-
-  .btn-mobile-icon:hover {
-    border-color: #f59e0b;
-    color: #f59e0b;
-  }
-
-  /* PASTIKAN FLOATING HUB SELALU MUNCUL DI HP */
-  .floating-hub-container {
-    position: fixed !important;
-    bottom: 20px !important;
-    right: 20px !important;
-    z-index: 999999 !important;
-    display: flex !important;
-  }
-/* ===================================================
-   NAVBAR RESPONSIVE & MOBILE DRAWER (GLOBAL FIX)
-   =================================================== */
-.mobile-nav-toggle-group,
-.mobile-search-dropdown,
-.mobile-menu-drawer {
-  display: none !important;
-}
-
-/* ===================================================
-   KHUSUS TAMPILAN MOBILE / HP (< 768px)
-   =================================================== */
-@media (max-width: 768px) {
-  .desktop-only {
-    display: none !important;
-  }
-
+  /* NAVBAR KEBAB (TITIK TIGA) */
   .mobile-nav-toggle-group {
     display: flex !important;
     align-items: center;
@@ -945,44 +581,25 @@ a {
     color: #f59e0b;
   }
 
-  .mobile-search-dropdown {
-    width: 100%;
-    padding: 8px 0;
-  }
-
-  .mobile-search-dropdown input {
-    width: 100%;
-    padding: 8px 14px;
-    background: rgba(12, 24, 43, 0.95);
-    border: 1.5px solid rgba(245, 158, 11, 0.4);
-    border-radius: 8px;
-    color: #fff;
-    font-size: 0.85rem;
-    outline: none;
-    box-sizing: border-box;
-  }
-
+  /* DRAWER (LACI MENU) DEFAULT SEMBUNYI */
   .mobile-menu-drawer {
-    position: absolute;
-    top: calc(100% + 4px);
-    right: 14px;
-    width: 230px;
-    background: #0f172a;
-    border: 1px solid rgba(255, 255, 255, 0.12);
-    border-radius: 14px;
-    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.8);
-    padding: 14px;
-    z-index: 99999;
+    display: none !important;
+    position: absolute !important;
+    top: calc(100% + 4px) !important;
+    right: 14px !important;
+    width: 240px !important;
+    background: #0f172a !important;
+    border: 1px solid rgba(255, 255, 255, 0.12) !important;
+    border-radius: 14px !important;
+    box-shadow: 0 15px 35px rgba(0,0,0,0.8) !important;
+    padding: 14px !important;
+    z-index: 99999 !important;
   }
 
+  /* Laci hanya muncul jika punya class .show (ditekan) */
   .mobile-menu-drawer.show {
     display: block !important;
     animation: slideDownMenu 0.2s ease-out;
-  }
-
-  @keyframes slideDownMenu {
-    from { opacity: 0; transform: translateY(-10px); }
-    to { opacity: 1; transform: translateY(0); }
   }
 
   .mobile-menu-header {
@@ -1011,49 +628,43 @@ a {
     background: rgba(255, 255, 255, 0.06);
     color: #fff;
   }
-/* ===================================================
-   FIX ANTI-BOCOR NAVIGASI (TABLET & DESKTOP)
-   =================================================== */
-/* 1. Kunci rapat elemen mobile agar TIDAK BOCOR di Tablet & PC */
-.mobile-nav-toggle-group,
-.mobile-search-dropdown,
-.mobile-menu-drawer {
-  display: none !important;
+
+  /* MOBILE LAYOUT UMUM */
+  .navbar { padding: 10px 14px; }
+  .navbar-container { display: grid; grid-template-columns: auto 1fr auto; gap: 8px; align-items: center; }
+  .brand-logo { font-size: 1.05rem; gap: 6px; }
+  .brand-logo .logo-badge { padding: 2px 6px; font-size: 0.85rem; }
+  .nav-search { display: block; max-width: 100%; margin: 0 4px; }
+  .nav-search input { padding: 6px 8px 6px 28px; font-size: 0.75rem; border-radius: 8px; }
+  .nav-search i { left: 8px; font-size: 0.72rem; }
+  
+  .mobile-search-dropdown { width: 100%; padding: 8px 0; }
+  .mobile-search-dropdown input { width: 100%; padding: 8px 14px; background: rgba(12, 24, 43, 0.95); border: 1.5px solid rgba(245, 158, 11, 0.4); border-radius: 8px; color: #fff; font-size: 0.85rem; outline: none; box-sizing: border-box; }
+
+  .footer-container { grid-template-columns: 1fr; gap: 20px; text-align: center; }
+  .footer-brand p { margin: 10px auto 0; }
+  .footer-links { align-items: center; }
+  
+  .floating-hub-container { bottom: 18px; right: 18px; position: fixed !important; display: flex !important; z-index: 999999 !important;}
+  .btn-hub-main { width: 46px; height: 46px; font-size: 1rem; }
+  .floating-hub-container.active .hub-radial-item.whatsapp { transform: translate(-68px, 0px) scale(1); }
+  .floating-hub-container.active .hub-radial-item.tiktok { transform: translate(-48px, -48px) scale(1); }
+  .floating-hub-container.active .hub-radial-item.instagram { transform: translate(0px, -68px) scale(1); }
+  .hub-radial-item { width: 40px; height: 40px; font-size: 1.05rem; }
+
+  .flash-promo-card { width: 210px !important; min-width: 210px !important; padding: 10px !important; }
+  .popular-grid-layout { grid-template-columns: repeat(2, 1fr) !important; gap: 10px !important; }
+  .popular-compact-card { padding: 8px 10px !important; gap: 10px !important; }
+  .popular-compact-card img { width: 38px !important; height: 38px !important; }
+  .popular-compact-card h4 { font-size: 0.78rem !important; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .popular-compact-card p { font-size: 0.65rem !important; }
+  .catalog-tab-pill { padding: 6px 14px !important; font-size: 0.75rem !important; }
+  .catalog-poster-grid { grid-template-columns: repeat(2, 1fr) !important; gap: 12px !important; }
+  .catalog-poster-card img { height: 160px !important; }
+  .home-section { padding: 0 12px !important; margin-bottom: 30px !important; }
 }
 
-/* ===================================================
-   ATURAN RESPONSIVE KHUSUS MOBILE / HP (< 768px)
-   =================================================== */
-@media (max-width: 768px) {
-  /* Sembunyikan tombol-tombol lebar (Desktop) di HP */
-  .desktop-only {
-    display: none !important;
-  }
-
-  /* Munculkan kembali tombol titik tiga di HP */
-  .mobile-nav-toggle-group {
-    display: flex !important;
-    align-items: center;
-    gap: 8px;
-  }
-
-  /* Munculkan laci menu HANYA SAAT titik tiga di-klik (class .show) */
-  .mobile-menu-drawer.show {
-    display: block !important;
-    animation: slideDownMenu 0.2s ease-out;
-  }
-
-  /* Pastikan posisi laci menu melayang cantik (popup drawer) */
-  .mobile-menu-drawer {
-    position: absolute !important;
-    top: calc(100% + 4px) !important;
-    right: 14px !important;
-    width: 240px !important;
-    background: #0f172a !important;
-    border: 1px solid rgba(255, 255, 255, 0.12) !important;
-    border-radius: 14px !important;
-    box-shadow: 0 15px 35px rgba(0,0,0,0.8) !important;
-    padding: 14px !important;
-    z-index: 99999 !important;
-  }
+@keyframes slideDownMenu {
+  from { opacity: 0; transform: translateY(-10px); }
+  to { opacity: 1; transform: translateY(0); }
 }
