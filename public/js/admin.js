@@ -1,5 +1,7 @@
 document.addEventListener("DOMContentLoaded", async () => {
   const authLoader = document.getElementById("adminAuthLoader");
+  const mainContent = document.getElementById("adminMainContent");
+  const adminNavbar = document.getElementById("adminNavbar");
 
   if (!window.supabase) {
     alert("Koneksi Supabase belum siap.");
@@ -7,7 +9,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     return;
   }
 
-  // Fungsi Verifikasi & Load Data
+  // Fungsi Verifikasi & Load Seluruh Data Sebelum Tampilan Dibuka
   async function initAdmin() {
     try {
       const { data: sessionData } = await window.supabase.auth.getSession();
@@ -19,6 +21,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         return;
       }
 
+      // Verifikasi role akun
       const { data: profile, error: profErr } = await window.supabase
         .from("profiles")
         .select("role")
@@ -31,23 +34,24 @@ document.addEventListener("DOMContentLoaded", async () => {
         return;
       }
 
-      // Load data dashboard jika terverifikasi admin
+      // Ambil dan render data sebelum membuka layar
       await loadDashboardData();
 
-      // Sembunyikan loader dengan efek fade
-      if (authLoader) {
-        authLoader.style.opacity = "0";
-        authLoader.style.transition = "opacity 0.25s ease";
-        setTimeout(() => authLoader.style.display = "none", 250);
+      // Buka tampilan setelah data 100% siap
+      if (authLoader) authLoader.style.display = "none";
+      if (adminNavbar) {
+        adminNavbar.style.visibility = "visible";
+        adminNavbar.style.opacity = "1";
+      }
+      if (mainContent) {
+        mainContent.style.visibility = "visible";
+        mainContent.style.opacity = "1";
       }
     } catch (e) {
       console.error("Admin init error:", e);
       if (authLoader) authLoader.style.display = "none";
     }
   }
-
-  // Jalankan inisialisasi awal
-  initAdmin();
 
   // Logout Handler
   document.getElementById("btnAdminLogout").addEventListener("click", async () => {
@@ -245,4 +249,7 @@ document.addEventListener("DOMContentLoaded", async () => {
       loadDashboardData();
     }
   });
+
+  // Eksekusi inisialisasi
+  initAdmin();
 });

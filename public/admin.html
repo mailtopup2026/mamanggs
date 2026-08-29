@@ -13,16 +13,16 @@
   <link rel="stylesheet" href="/css/global.css">
   <link rel="stylesheet" href="/css/admin.css">
 </head>
-<body>
+<body style="background: #070d18;">
 
-  <!-- FULLSCREEN ADMIN AUTH LOADER -->
-  <div id="adminAuthLoader" style="position: fixed; inset: 0; background: var(--navy-dark); z-index: 99999; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 16px;">
-    <i class="fa-solid fa-shield-halved fa-spin" style="font-size: 2.5rem; color: #10b981;"></i>
-    <p style="color: var(--text-muted); font-size: 0.9rem; font-weight: 600;">Memverifikasi Otorisasi Super Admin...</p>
+  <!-- FULLSCREEN LOADER SCREEN -->
+  <div id="adminAuthLoader" style="position: fixed; inset: 0; background: #070d18; z-index: 999999; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 14px;">
+    <i class="fa-solid fa-shield-halved fa-spin" style="font-size: 2.4rem; color: #10b981;"></i>
+    <p style="color: #8e9bb0; font-size: 0.88rem; font-weight: 600; letter-spacing: 0.3px;">Memuat Dashboard MamangGS...</p>
   </div>
 
   <!-- NAVBAR ADMIN -->
-  <header class="navbar">
+  <header class="navbar" id="adminNavbar" style="visibility: hidden; opacity: 0; transition: opacity 0.25s ease;">
     <div class="navbar-container">
       <a href="/" class="brand-logo">
         <span class="logo-badge" style="background: #10b981;"><i class="fa-solid fa-shield-halved"></i></span>
@@ -38,8 +38,8 @@
     </div>
   </header>
 
-  <!-- KONTEN UTAMA ADMIN -->
-  <main class="admin-wrapper">
+  <!-- KONTEN UTAMA ADMIN (Disembunyikan saat render pertama) -->
+  <main class="admin-wrapper" id="adminMainContent" style="visibility: hidden; opacity: 0; transition: opacity 0.25s ease;">
     <!-- STATISTIK RINGKASAN -->
     <section class="admin-stats-grid">
       <div class="stat-card">
