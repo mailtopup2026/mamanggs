@@ -67,37 +67,40 @@
       background: #24334a;
     }
 
-    /* Badge Diskon Ramping di Sudut Kanan */
+    /* Badge Diskon Pita Miring 45 Derajat (Opsi A) */
     .ribbon-save {
       position: absolute;
-      top: 0;
-      right: 0;
+      top: 14px;
+      right: -30px;
       background: #f59e0b;
       color: #0b1120;
-      font-size: 0.62rem;
+      font-size: 0.65rem;
       font-weight: 900;
-      padding: 3px 8px;
-      border-bottom-left-radius: 8px;
-      letter-spacing: 0.3px;
+      padding: 3px 35px;
+      transform: rotate(45deg);
       box-shadow: 0 2px 6px rgba(0,0,0,0.3);
-      z-index: 2;
+      z-index: 10;
+      letter-spacing: 0.5px;
+      text-align: center;
     }
 
     /* Khusus Layar HP (< 640px) */
     @media (max-width: 640px) {
       .flash-promo-card {
-        width: 175px !important;
-        min-width: 175px !important;
-        padding: 10px !important;
+        width: 185px !important;
+        min-width: 185px !important;
+        padding: 10px 12px !important;
       }
       .flash-promo-card img {
-        width: 32px !important;
-        height: 32px !important;
+        width: 34px !important;
+        height: 34px !important;
         border-radius: 6px !important;
       }
       .ribbon-save {
+        top: 12px !important;
+        right: -32px !important;
         font-size: 0.55rem !important;
-        padding: 2px 6px !important;
+        padding: 2px 35px !important;
       }
     }
 
@@ -324,42 +327,6 @@
         height: 160px !important;
       }
     }
-
-    /* KHUSUS FLASH SALE DI HP (< 640px) */
-    @media (max-width: 640px) {
-      .flash-marquee-wrapper {
-        padding: 4px 0;
-      }
-      
-      .flash-promo-card {
-        width: 200px !important;
-        min-width: 200px !important;
-        padding: 10px 12px !important;
-        border-radius: 12px !important;
-      }
-
-      .flash-promo-card img {
-        width: 34px !important;
-        height: 34px !important;
-        border-radius: 6px !important;
-      }
-
-      .flash-promo-card h4 {
-        font-size: 0.76rem !important;
-        line-height: 1.2 !important;
-      }
-
-      .flash-promo-card p {
-        font-size: 0.65rem !important;
-      }
-
-      .ribbon-save {
-        top: 8px !important;
-        right: -30px !important;
-        font-size: 0.55rem !important;
-        padding: 1px 28px !important;
-      }
-    }
   </style>
 </head>
 <body>
@@ -484,11 +451,12 @@
     <div style="background: #111827; border: 1px solid rgba(245, 158, 11, 0.35); border-radius: 18px; padding: 22px 20px;">
       
       <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px; margin-bottom: 14px; padding: 0 6px;">
-        <div>
+        <!-- KUNCI FLEXBOX AGAR TEKS TURUN BARIS DI HP, BUKAN MELEBAR TEMBUS -->
+        <div style="flex: 1 1 240px;">
           <h2 style="font-size: 1.25rem; font-weight: 900; color: #fff; margin: 0 0 4px; display: flex; align-items: center; gap: 8px;">
             🔥 <span style="color: #fbbf24;">PASTI TER-MURAAHH</span>
           </h2>
-          <p style="font-size: 0.8rem; color: #94a3b8; margin: 0;">Bandingkan dan Buktikan Sendiri! Harga termurah otomatis 24 Jam.</p>
+          <p style="font-size: 0.8rem; color: #94a3b8; margin: 0; line-height: 1.4;">Bandingkan dan Buktikan Sendiri! Harga termurah otomatis 24 Jam.</p>
         </div>
 
         <div style="display: flex; align-items: center; gap: 8px; background: rgba(15, 23, 42, 0.8); border: 1px solid rgba(255, 255, 255, 0.08); padding: 6px 14px; border-radius: 30px;">
@@ -501,17 +469,18 @@
         </div>
       </div>
 
-     <div class="flash-marquee-wrapper">
+      <div class="flash-marquee-wrapper">
         <div class="flash-marquee-track" id="flashTrack">
           
           <!-- ITEM 1 -->
           <a href="/order.html?game=ff" class="flash-promo-card">
             <span class="ribbon-save">HEMAT 39RB</span>
+            <!-- PADDING RIGHT 45PX AGAR JUDUL GAME TIDak DITABRAK PITA KUNING -->
             <div style="display: flex; gap: 8px; align-items: center; margin-bottom: 8px; padding-right: 45px;">
               <img src="https://images.unsplash.com/photo-1579373903781-fd5c0c30c4cd?auto=format&fit=crop&w=120&q=80" style="width: 36px; height: 36px; border-radius: 8px; object-fit: cover; flex-shrink: 0;">
               <div style="overflow: hidden;">
                 <h4 style="font-size: 0.78rem; font-weight: 800; margin: 0; white-space: nowrap; text-overflow: ellipsis; overflow: hidden; color: #fff;">Bulanan FF</h4>
-                <p style="font-size: 0.65rem; color: #94a3b8; margin: 0;">Free Fire</p>
+                <p style="font-size: 0.65rem; color: #94a3b8; margin: 0;">Garena FF</p>
               </div>
             </div>
             <div>
@@ -543,7 +512,7 @@
               <img src="https://images.unsplash.com/photo-1579373903781-fd5c0c30c4cd?auto=format&fit=crop&w=120&q=80" style="width: 36px; height: 36px; border-radius: 8px; object-fit: cover; flex-shrink: 0;">
               <div style="overflow: hidden;">
                 <h4 style="font-size: 0.78rem; font-weight: 800; margin: 0; white-space: nowrap; text-overflow: ellipsis; overflow: hidden; color: #fff;">Mingguan FF</h4>
-                <p style="font-size: 0.65rem; color: #94a3b8; margin: 0;">Free Fire</p>
+                <p style="font-size: 0.65rem; color: #94a3b8; margin: 0;">Garena FF</p>
               </div>
             </div>
             <div>
@@ -568,14 +537,14 @@
             </div>
           </a>
 
-          <!-- DUPLIKASI UNTUK SEAMLESS TICKER -->
+          <!-- DUPLIKAT UNTUK SEAMLESS TICKER -->
           <a href="/order.html?game=ff" class="flash-promo-card">
             <span class="ribbon-save">HEMAT 39RB</span>
             <div style="display: flex; gap: 8px; align-items: center; margin-bottom: 8px; padding-right: 45px;">
               <img src="https://images.unsplash.com/photo-1579373903781-fd5c0c30c4cd?auto=format&fit=crop&w=120&q=80" style="width: 36px; height: 36px; border-radius: 8px; object-fit: cover; flex-shrink: 0;">
               <div style="overflow: hidden;">
                 <h4 style="font-size: 0.78rem; font-weight: 800; margin: 0; white-space: nowrap; text-overflow: ellipsis; overflow: hidden; color: #fff;">Bulanan FF</h4>
-                <p style="font-size: 0.65rem; color: #94a3b8; margin: 0;">Free Fire</p>
+                <p style="font-size: 0.65rem; color: #94a3b8; margin: 0;">Garena FF</p>
               </div>
             </div>
             <div>
@@ -605,7 +574,7 @@
               <img src="https://images.unsplash.com/photo-1579373903781-fd5c0c30c4cd?auto=format&fit=crop&w=120&q=80" style="width: 36px; height: 36px; border-radius: 8px; object-fit: cover; flex-shrink: 0;">
               <div style="overflow: hidden;">
                 <h4 style="font-size: 0.78rem; font-weight: 800; margin: 0; white-space: nowrap; text-overflow: ellipsis; overflow: hidden; color: #fff;">Mingguan FF</h4>
-                <p style="font-size: 0.65rem; color: #94a3b8; margin: 0;">Free Fire</p>
+                <p style="font-size: 0.65rem; color: #94a3b8; margin: 0;">Garena FF</p>
               </div>
             </div>
             <div>
