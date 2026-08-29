@@ -169,6 +169,80 @@
       display: block;
     }
 
+    /* ===================================================
+       4. NAVBAR MOBILE CONTROLS & KEBAB MENU
+       =================================================== */
+    .mobile-nav-toggle-group {
+      display: none;
+    }
+
+    .mobile-search-dropdown {
+      display: none;
+      padding: 10px 0 4px;
+    }
+
+    .mobile-search-dropdown input {
+      width: 100%;
+      padding: 8px 14px;
+      background: rgba(12, 24, 43, 0.95);
+      border: 1.5px solid rgba(245, 158, 11, 0.4);
+      border-radius: 8px;
+      color: #fff;
+      font-size: 0.85rem;
+      outline: none;
+    }
+
+    .mobile-menu-drawer {
+      display: none;
+      position: absolute;
+      top: 100%;
+      right: 14px;
+      width: 240px;
+      background: #0f172a;
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 14px;
+      box-shadow: 0 15px 35px rgba(0,0,0,0.8);
+      padding: 14px;
+      z-index: 99999;
+    }
+
+    .mobile-menu-drawer.show {
+      display: block;
+      animation: slideDownMenu 0.2s ease-out;
+    }
+
+    @keyframes slideDownMenu {
+      from { opacity: 0; transform: translateY(-10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .mobile-menu-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 10px;
+      padding-bottom: 6px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    .mobile-menu-link {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 8px 10px;
+      color: #cbd5e1;
+      font-size: 0.82rem;
+      font-weight: 700;
+      text-decoration: none;
+      border-radius: 8px;
+      transition: all 0.2s ease;
+    }
+
+    .mobile-menu-link:hover {
+      background: rgba(255, 255, 255, 0.06);
+      color: #fff;
+    }
+
     /* MEDIA QUERY RESPONSIVE (TABLET & HP) */
     @media (max-width: 900px) {
       .popular-grid-layout {
@@ -176,7 +250,36 @@
       }
     }
 
-    @media (max-width: 640px) {
+    @media (max-width: 768px) {
+      .desktop-only {
+        display: none !important;
+      }
+
+      .mobile-nav-toggle-group {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+
+      .btn-mobile-icon {
+        width: 36px;
+        height: 36px;
+        background: #1e293b;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 8px;
+        color: #fff;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 0.95rem;
+        cursor: pointer;
+      }
+
+      .btn-mobile-icon:hover {
+        border-color: #f59e0b;
+        color: #f59e0b;
+      }
+
       .popular-grid-layout {
         grid-template-columns: repeat(2, 1fr) !important;
         gap: 8px !important;
@@ -212,17 +315,63 @@
         Mamang<span>GS</span>
       </a>
 
-      <div class="nav-search">
+      <!-- SEARCH INPUT DESKTOP -->
+      <div class="nav-search desktop-only">
         <i class="fa-solid fa-magnifying-glass"></i>
         <input type="text" placeholder="Cari Game (MLBB, Free Fire, Genshin...)" id="searchInput">
       </div>
 
-      <div class="nav-actions">
+      <!-- DESKTOP MENU ACTIONS -->
+      <div class="nav-actions desktop-only" id="desktopNavActions">
         <a href="/leaderboard.html" class="btn-nav-login" style="background: rgba(245, 158, 11, 0.15); border-color: rgba(245, 158, 11, 0.4); color: #f59e0b;">
           <i class="fa-solid fa-crown"></i> Leaderboard
         </a>
+        <a href="/blog.html" class="btn-nav-login" style="background: rgba(56, 189, 248, 0.15); border-color: rgba(56, 189, 248, 0.4); color: #38bdf8;">
+          <i class="fa-solid fa-newspaper"></i> Blog
+        </a>
         <a href="/auth/login.html" class="btn-nav-login" id="navLoginBtn"><i class="fa-solid fa-right-to-bracket"></i> Masuk</a>
         <a href="/auth/register.html" class="btn-nav-register" id="navRegisterBtn"><i class="fa-solid fa-user-plus"></i> Daftar</a>
+      </div>
+
+      <!-- MOBILE ONLY: SEARCH & KEBAB TITIK TIGA -->
+      <div class="mobile-nav-toggle-group">
+        <button id="btnMobileSearchToggle" class="btn-mobile-icon" title="Cari Game">
+          <i class="fa-solid fa-magnifying-glass"></i>
+        </button>
+        <button id="btnMobileMenuToggle" class="btn-mobile-icon" title="Menu Lengkap">
+          <i class="fa-solid fa-ellipsis-vertical"></i>
+        </button>
+      </div>
+
+    </div>
+
+    <!-- EXPANDABLE MOBILE SEARCH INPUT -->
+    <div id="mobileSearchBar" class="mobile-search-dropdown">
+      <input type="text" placeholder="Ketik nama game..." id="mobileSearchInput">
+    </div>
+
+    <!-- MOBILE DROPDOWN DRAWER -->
+    <div id="mobileMenuDropdown" class="mobile-menu-drawer">
+      <div class="mobile-menu-header">
+        <span style="font-weight: 800; font-size: 0.88rem; color: #fff;">Menu MamangGS</span>
+        <button id="btnCloseMobileMenu" style="background: none; border: none; color: #94a3b8; font-size: 1.1rem; cursor: pointer;">✕</button>
+      </div>
+      
+      <div id="mobileMenuList" class="mobile-menu-items">
+        <a href="/leaderboard.html" class="mobile-menu-link">
+          <i class="fa-solid fa-crown" style="color: #f59e0b;"></i> Leaderboard Sultan
+        </a>
+        <a href="/blog.html" class="mobile-menu-link">
+          <i class="fa-solid fa-newspaper" style="color: #38bdf8;"></i> Blog & Tips Game
+        </a>
+        <a href="/order-status.html" class="mobile-menu-link">
+          <i class="fa-solid fa-receipt" style="color: #10b981;"></i> Lacak Pesanan
+        </a>
+        <hr style="border: none; border-top: 1px solid rgba(255,255,255,0.08); margin: 8px 0;">
+        <div id="mobileAuthSlot">
+          <a href="/auth/login.html" class="mobile-menu-link"><i class="fa-solid fa-right-to-bracket"></i> Masuk Akun</a>
+          <a href="/auth/register.html" class="mobile-menu-link" style="color: #f59e0b;"><i class="fa-solid fa-user-plus"></i> Daftar Member</a>
+        </div>
       </div>
     </div>
   </header>
@@ -535,11 +684,6 @@
       <p><span id="liveSalesItem">Item Game</span> &bull; <span id="liveSalesTime">Baru saja</span></p>
     </div>
   </div>
-
-  <!-- FLOATING REQUEST GAME BUTTON -->
-  <a href="https://wa.me/" target="_blank" class="btn-request-game">
-    <i class="fa-solid fa-comments"></i> Request Game
-  </a>
 
   <!-- FOOTER -->
   <footer class="footer">

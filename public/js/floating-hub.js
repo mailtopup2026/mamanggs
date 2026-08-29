@@ -1,53 +1,41 @@
 document.addEventListener("DOMContentLoaded", () => {
-  // Konfigurasi Media Sosial Resmi MamangGS
-  const SOCIAL_CONFIG = {
-    whatsapp_number: "6282121616716",
-    default_text: "Halo Min, saya mau tanya seputar top up game di MamangGS...",
-    tiktok_url: "https://www.tiktok.com/@arthurwos?_r=1&_t=ZS-99GSX8AEZs4",
-    instagram_url: "https://www.instagram.com/arthur.wos?igsi=ZG4zODZyeXh6YXg5"
-  };
-
-  const waLink = `https://wa.me/${SOCIAL_CONFIG.whatsapp_number}?text=${encodeURIComponent(SOCIAL_CONFIG.default_text)}`;
-
-  // Inject Floating Social Hub ke halaman
-  const hubHtml = `
-    <div class="floating-hub-container" id="floatingHub">
-      <button class="btn-hub-main" id="btnHubToggle" title="Hubungi CS & Media Sosial">
-        <i class="fa-solid fa-comments hub-icon-main"></i>
-      </button>
-
+  // Buat Container jika belum ada di DOM
+  let hubContainer = document.querySelector(".floating-hub-container");
+  if (!hubContainer) {
+    hubContainer = document.createElement("div");
+    hubContainer.className = "floating-hub-container";
+    hubContainer.innerHTML = `
       <div class="hub-menu-list">
-        <a href="${waLink}" target="_blank" rel="noopener noreferrer" class="hub-menu-item whatsapp">
-          <div class="hub-icon-circle"><i class="fa-brands fa-whatsapp"></i></div>
+        <a href="https://wa.me/6281234567890" target="_blank" class="hub-menu-item whatsapp">
           <span>WhatsApp CS</span>
+          <div class="hub-icon-circle"><i class="fa-brands fa-whatsapp"></i></div>
         </a>
-        <a href="${SOCIAL_CONFIG.tiktok_url}" target="_blank" rel="noopener noreferrer" class="hub-menu-item tiktok">
-          <div class="hub-icon-circle"><i class="fa-brands fa-tiktok"></i></div>
+        <a href="https://tiktok.com/@mamanggs" target="_blank" class="hub-menu-item tiktok">
           <span>TikTok MamangGS</span>
+          <div class="hub-icon-circle"><i class="fa-brands fa-tiktok"></i></div>
         </a>
-        <a href="${SOCIAL_CONFIG.instagram_url}" target="_blank" rel="noopener noreferrer" class="hub-menu-item instagram">
-          <div class="hub-icon-circle"><i class="fa-brands fa-instagram"></i></div>
+        <a href="https://instagram.com/mamanggs" target="_blank" class="hub-menu-item instagram">
           <span>Instagram Resmi</span>
+          <div class="hub-icon-circle"><i class="fa-brands fa-instagram"></i></div>
         </a>
       </div>
-    </div>
-  `;
+      <button class="btn-hub-main" id="btnHubToggle" title="Hubungi Kami">
+        <i class="fa-solid fa-headset hub-icon-main"></i>
+      </button>
+    `;
+    document.body.appendChild(hubContainer);
+  }
 
-  document.body.insertAdjacentHTML("beforeend", hubHtml);
+  const btnToggle = document.getElementById("btnHubToggle");
+  if (btnToggle) {
+    btnToggle.addEventListener("click", () => {
+      hubContainer.classList.toggle("active");
+    });
+  }
 
-  // Toggle buka / tutup menu floating
-  const floatingHub = document.getElementById("floatingHub");
-  const btnHubToggle = document.getElementById("btnHubToggle");
-
-  btnHubToggle.addEventListener("click", (e) => {
-    e.stopPropagation();
-    floatingHub.classList.toggle("active");
-  });
-
-  // Tutup popup jika mengklik area luar
   document.addEventListener("click", (e) => {
-    if (!floatingHub.contains(e.target)) {
-      floatingHub.classList.remove("active");
+    if (hubContainer && !hubContainer.contains(e.target)) {
+      hubContainer.classList.remove("active");
     }
   });
 });
