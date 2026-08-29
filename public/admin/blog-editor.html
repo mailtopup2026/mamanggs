@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin CMS Blog Editor - MamangGS</title>
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  
+  <link rel="stylesheet" href="/css/global.css">
+  <link rel="stylesheet" href="/css/profile.css">
+</head>
+<body>
+
+  <!-- NAVBAR -->
+  <header class="navbar">
+    <div class="navbar-container">
+      <a href="/" class="brand-logo">
+        <span class="logo-badge"><i class="fa-solid fa-gamepad"></i></span>
+        Mamang<span>GS</span>
+      </a>
+
+      <div class="nav-actions">
+        <a href="/blog.html" class="btn-nav-login" target="_blank"><i class="fa-solid fa-eye"></i> Lihat Blog Live</a>
+        <a href="/dashboard.html" class="btn-nav-register"><i class="fa-solid fa-gauge-high"></i> Dashboard</a>
+      </div>
+    </div>
+  </header>
+
+  <!-- FORM EDITOR ARTIKEL -->
+  <main class="profile-wrapper" style="max-width: 800px;">
+    <div class="profile-card">
+      <div class="profile-header">
+        <h2><i class="fa-solid fa-pen-nib" style="color: #f59e0b;"></i> CMS Editor Artikel Baru</h2>
+        <p class="profile-email-text">Tulis artikel tips, bocoran event game, atau promo untuk mendongkrak SEO Google.</p>
+      </div>
+
+      <form id="articleForm" class="profile-form">
+        <!-- JUDUL -->
+        <div class="form-group">
+          <label for="postTitle"><i class="fa-solid fa-heading"></i> Judul Artikel (Wajib Menarik untuk SEO)</label>
+          <input type="text" id="postTitle" class="form-control" placeholder="Contoh: Build Hero Suyou MLBB Tersakit 2026" required>
+        </div>
+
+        <!-- SLUG URL & KATEGORI -->
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 14px;">
+          <div class="form-group">
+            <label for="postSlug"><i class="fa-solid fa-link"></i> SEO Slug URL (Otomatis)</label>
+            <input type="text" id="postSlug" class="form-control" placeholder="build-hero-suyou-mlbb" required>
+          </div>
+          <div class="form-group">
+            <label for="postCategory"><i class="fa-solid fa-tags"></i> Kategori</label>
+            <select id="postCategory" class="form-control" style="background: var(--navy-base); color: #fff; cursor: pointer;">
+              <option value="MLBB">MLBB</option>
+              <option value="Promo">Promo</option>
+              <option value="Tips & Trick">Tips & Trick</option>
+              <option value="Free Fire">Free Fire</option>
+              <option value="PUBG">PUBG Mobile</option>
+              <option value="Event">Event Game</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- THUMBNAIL URL -->
+        <div class="form-group">
+          <label for="postThumbnail"><i class="fa-solid fa-image"></i> URL Gambar Thumbnail Banner</label>
+          <input type="url" id="postThumbnail" class="form-control" placeholder="https://images.unsplash.com/... atau link gambar web" required>
+        </div>
+
+        <!-- RINGKASAN SINGKAT -->
+        <div class="form-group">
+          <label for="postSummary"><i class="fa-solid fa-align-left"></i> Ringkasan Singkat (Meta Description 1-2 Kalimat)</label>
+          <textarea id="postSummary" class="form-control" rows="2" placeholder="Ringkasan singkat yang akan muncul di kartu blog dan pencarian Google..." required></textarea>
+        </div>
+
+        <!-- KONTEN LENGKAP (HTML / TEXT) -->
+        <div class="form-group">
+          <label for="postContent"><i class="fa-solid fa-file-lines"></i> Isi Artikel Lengkap (Mendukung tag HTML &lt;h2&gt;, &lt;p&gt;, &lt;ul&gt;, &lt;li&gt;, &lt;strong&gt;)</label>
+          <textarea id="postContent" class="form-control" rows="10" placeholder="Tulis isi artikel di sini... Kamu bisa gunakan format HTML seperti: &#10;<h2>Judul Sub-Bab</h2>&#10;<p>Penjelasan artikel...</p>&#10;<ul><li>Poin 1</li></ul>" required></textarea>
+        </div>
+
+        <div id="editorAlert" class="alert-box" style="display: none;"></div>
+
+        <button type="submit" class="btn-save-profile" id="btnPublishArticle" style="background: linear-gradient(135deg, #10b981, #059669);">
+          <i class="fa-solid fa-paper-plane"></i> Publikasikan Artikel Sekarang
+        </button>
+      </form>
+    </div>
+  </main>
+
+  <!-- JS -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="/js/supabase.js"></script>
+  <script src="/js/navbar.js"></script>
+  <script src="/js/blog-editor.js"></script>
+</body>
+</html>

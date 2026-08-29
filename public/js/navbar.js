@@ -6,7 +6,6 @@ document.addEventListener("DOMContentLoaded", () => {
     return null;
   }
 
-  // 1. Ambil data lokal cepat
   const storedUser = localStorage.getItem("mgs_user");
   let user = storedUser ? JSON.parse(storedUser) : null;
 
@@ -14,24 +13,31 @@ document.addEventListener("DOMContentLoaded", () => {
     const navActions = document.querySelector(".nav-actions");
     if (!navActions) return;
 
+    const blogLink = `<a href="/blog.html" class="btn-nav-login" style="color: #38bdf8; border-color: rgba(56, 189, 248, 0.3);"><i class="fa-solid fa-newspaper"></i> Blog</a>`;
+    const leaderLink = `<a href="/leaderboard.html" class="btn-nav-login" style="color: #f59e0b; border-color: rgba(245, 158, 11, 0.4);"><i class="fa-solid fa-crown"></i> Leaderboard</a>`;
+
     if (!userData) {
-      // Tampilan Belum Login
+      // Belum Login
       navActions.innerHTML = `
+        ${blogLink}
+        ${leaderLink}
         <a href="/auth/login.html" class="btn-nav-login" id="navLoginBtn"><i class="fa-solid fa-right-to-bracket"></i> Masuk</a>
         <a href="/auth/register.html" class="btn-nav-register" id="navRegisterBtn"><i class="fa-solid fa-user-plus"></i> Daftar</a>
       `;
       return;
     }
 
-    // Tampilan Sudah Login
+    // Sudah Login
     const name = profileData?.full_name || userData.user_metadata?.full_name || userData.email?.split("@")[0] || "Member";
     const avatarUrl = profileData?.avatar_url || `https://api.dicebear.com/7.x/adventurer/svg?seed=${encodeURIComponent(name)}&radius=50`;
 
     navActions.innerHTML = `
+      ${blogLink}
+      ${leaderLink}
       <div class="user-nav-capsule" style="display: inline-flex; align-items: center; background: rgba(15, 23, 42, 0.85); border: 1px solid rgba(255, 255, 255, 0.12); border-radius: 50px; padding: 4px 6px 4px 5px; gap: 8px; backdrop-filter: blur(8px);">
         <a href="/dashboard.html" style="display: inline-flex; align-items: center; gap: 8px; text-decoration: none; color: #fff;">
-          <img src="${avatarUrl}" alt="${name}" style="width: 32px; height: 32px; border-radius: 50%; object-fit: cover; border: 1.5px solid #f59e0b; background: #1e293b;">
-          <span style="font-weight: 800; font-size: 0.88rem; max-width: 110px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: #ffffff;">${name}</span>
+          <img src="${avatarUrl}" alt="${name}" style="width: 30px; height: 30px; border-radius: 50%; object-fit: cover; border: 1.5px solid #f59e0b; background: #1e293b;">
+          <span style="font-weight: 800; font-size: 0.85rem; max-width: 100px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: #ffffff;">${name}</span>
         </a>
         <button id="navLogoutBtn" title="Keluar Akun" style="background: transparent; border: none; color: var(--text-muted, #94a3b8); cursor: pointer; padding: 4px 8px; font-size: 0.95rem; border-left: 1px solid rgba(255, 255, 255, 0.1); transition: color 0.2s ease;">
           <i class="fa-solid fa-power-off"></i>
@@ -39,7 +45,6 @@ document.addEventListener("DOMContentLoaded", () => {
       </div>
     `;
 
-    // Logout Action
     const logoutBtn = document.getElementById("navLogoutBtn");
     if (logoutBtn) {
       logoutBtn.addEventListener("click", async () => {
@@ -55,12 +60,12 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 
-  // Render awal instan
   if (user) {
     renderNavbarUser(user, null);
+  } else {
+    renderNavbarUser(null, null);
   }
 
-  // Sinkronisasi realtime profil dari Supabase
   async function syncNavbarProfile() {
     const client = getClient();
     if (!client) {
@@ -81,7 +86,6 @@ document.addEventListener("DOMContentLoaded", () => {
       user = session.user;
       localStorage.setItem("mgs_user", JSON.stringify(user));
 
-      // Tarik avatar_url dan full_name terbaru
       const { data: profile } = await client
         .from("profiles")
         .select("full_name, avatar_url")
