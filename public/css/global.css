@@ -903,4 +903,112 @@ a {
     z-index: 999999 !important;
     display: flex !important;
   }
+/* ===================================================
+   NAVBAR RESPONSIVE & MOBILE DRAWER (GLOBAL FIX)
+   =================================================== */
+.mobile-nav-toggle-group,
+.mobile-search-dropdown,
+.mobile-menu-drawer {
+  display: none !important;
+}
+
+/* ===================================================
+   KHUSUS TAMPILAN MOBILE / HP (< 768px)
+   =================================================== */
+@media (max-width: 768px) {
+  .desktop-only {
+    display: none !important;
+  }
+
+  .mobile-nav-toggle-group {
+    display: flex !important;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .btn-mobile-icon {
+    width: 36px;
+    height: 36px;
+    background: #1e293b;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 8px;
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.95rem;
+    cursor: pointer;
+  }
+
+  .btn-mobile-icon:hover {
+    border-color: #f59e0b;
+    color: #f59e0b;
+  }
+
+  .mobile-search-dropdown {
+    width: 100%;
+    padding: 8px 0;
+  }
+
+  .mobile-search-dropdown input {
+    width: 100%;
+    padding: 8px 14px;
+    background: rgba(12, 24, 43, 0.95);
+    border: 1.5px solid rgba(245, 158, 11, 0.4);
+    border-radius: 8px;
+    color: #fff;
+    font-size: 0.85rem;
+    outline: none;
+    box-sizing: border-box;
+  }
+
+  .mobile-menu-drawer {
+    position: absolute;
+    top: calc(100% + 4px);
+    right: 14px;
+    width: 230px;
+    background: #0f172a;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 14px;
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.8);
+    padding: 14px;
+    z-index: 99999;
+  }
+
+  .mobile-menu-drawer.show {
+    display: block !important;
+    animation: slideDownMenu 0.2s ease-out;
+  }
+
+  @keyframes slideDownMenu {
+    from { opacity: 0; transform: translateY(-10px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .mobile-menu-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+    padding-bottom: 6px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  }
+
+  .mobile-menu-link {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 10px;
+    color: #cbd5e1;
+    font-size: 0.82rem;
+    font-weight: 700;
+    text-decoration: none;
+    border-radius: 8px;
+    transition: all 0.2s ease;
+  }
+
+  .mobile-menu-link:hover {
+    background: rgba(255, 255, 255, 0.06);
+    color: #fff;
+  }
 }

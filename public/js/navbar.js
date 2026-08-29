@@ -6,37 +6,35 @@ document.addEventListener("DOMContentLoaded", async () => {
     return null;
   }
 
-  // 1. INJEKSI OTOMATIS TEMPLATE NAVBAR STANDAR KE SEMUA HALAMAN
+  const isHome = window.location.pathname === "/" || window.location.pathname === "/index.html";
+
+  // 1. INJEKSI NAVBAR STANDAR
   const header = document.querySelector("header.navbar");
   if (header) {
     header.innerHTML = `
-      <div class="navbar-container">
+      <div class="navbar-container" style="position: relative;">
         <a href="/" class="brand-logo">
           <span class="logo-badge"><i class="fa-solid fa-gamepad"></i></span>
           Mamang<span>GS</span>
         </a>
 
-        <!-- Search Desktop (hanya tampil jika di homepage) -->
-        <div class="nav-search desktop-only" style="${window.location.pathname === '/' || window.location.pathname === '/index.html' ? '' : 'display: none;'}">
+        <!-- Search Desktop (Khusus Home) -->
+        <div class="nav-search desktop-only" style="${isHome ? '' : 'display: none !important;'}">
           <i class="fa-solid fa-magnifying-glass"></i>
           <input type="text" placeholder="Cari Game (MLBB, Free Fire, Genshin...)" id="searchInput">
         </div>
 
         <!-- Desktop Action Buttons -->
         <div class="nav-actions desktop-only" id="desktopNavActions">
-          <a href="/blog.html" class="btn-nav-login" style="background: rgba(56, 189, 248, 0.15); border-color: rgba(56, 189, 248, 0.4); color: #38bdf8;">
-            <i class="fa-solid fa-newspaper"></i> Blog
-          </a>
-          <a href="/leaderboard.html" class="btn-nav-login" style="background: rgba(245, 158, 11, 0.15); border-color: rgba(245, 158, 11, 0.4); color: #f59e0b;">
-            <i class="fa-solid fa-crown"></i> Leaderboard
-          </a>
+          <a href="/blog.html" class="btn-nav-login" style="background: rgba(56, 189, 248, 0.15); border-color: rgba(56, 189, 248, 0.4); color: #38bdf8;"><i class="fa-solid fa-newspaper"></i> Blog</a>
+          <a href="/leaderboard.html" class="btn-nav-login" style="background: rgba(245, 158, 11, 0.15); border-color: rgba(245, 158, 11, 0.4); color: #f59e0b;"><i class="fa-solid fa-crown"></i> Leaderboard</a>
           <a href="/auth/login.html" class="btn-nav-login" id="navLoginBtn"><i class="fa-solid fa-right-to-bracket"></i> Masuk</a>
           <a href="/auth/register.html" class="btn-nav-register" id="navRegisterBtn"><i class="fa-solid fa-user-plus"></i> Daftar</a>
         </div>
 
-        <!-- Mobile Kebab (Titik Tiga) Trigger -->
+        <!-- Mobile Controls (Titik Tiga & Search) -->
         <div class="mobile-nav-toggle-group">
-          ${(window.location.pathname === '/' || window.location.pathname === '/index.html') ? `
+          ${isHome ? `
             <button id="btnMobileSearchToggle" class="btn-mobile-icon" title="Cari Game">
               <i class="fa-solid fa-magnifying-glass"></i>
             </button>
@@ -47,32 +45,24 @@ document.addEventListener("DOMContentLoaded", async () => {
         </div>
       </div>
 
-      <!-- Mobile Search Bar Expander (Khusus Homepage) -->
-      ${(window.location.pathname === '/' || window.location.pathname === '/index.html') ? `
-        <div id="mobileSearchBar" class="mobile-search-dropdown">
+      <!-- Mobile Search Field -->
+      ${isHome ? `
+        <div id="mobileSearchBar" class="mobile-search-dropdown" style="display: none;">
           <input type="text" placeholder="Ketik nama game..." id="mobileSearchInput">
         </div>
       ` : ''}
 
-      <!-- Mobile Drawer Modal Kebab -->
+      <!-- Mobile Dropdown Drawer -->
       <div id="mobileMenuDropdown" class="mobile-menu-drawer">
         <div class="mobile-menu-header">
           <span style="font-weight: 800; font-size: 0.88rem; color: #fff;">Menu MamangGS</span>
           <button id="btnCloseMobileMenu" style="background: none; border: none; color: #94a3b8; font-size: 1.1rem; cursor: pointer;">✕</button>
         </div>
-        <div id="mobileMenuList" class="mobile-menu-items">
-          <a href="/" class="mobile-menu-link">
-            <i class="fa-solid fa-house" style="color: #3b82f6;"></i> Beranda
-          </a>
-          <a href="/leaderboard.html" class="mobile-menu-link">
-            <i class="fa-solid fa-crown" style="color: #f59e0b;"></i> Leaderboard Sultan
-          </a>
-          <a href="/blog.html" class="mobile-menu-link">
-            <i class="fa-solid fa-newspaper" style="color: #38bdf8;"></i> Blog & Tips Game
-          </a>
-          <a href="/order-status.html" class="mobile-menu-link">
-            <i class="fa-solid fa-receipt" style="color: #10b981;"></i> Lacak Pesanan
-          </a>
+        <div class="mobile-menu-items">
+          <a href="/" class="mobile-menu-link"><i class="fa-solid fa-house" style="color: #3b82f6;"></i> Beranda</a>
+          <a href="/leaderboard.html" class="mobile-menu-link"><i class="fa-solid fa-crown" style="color: #f59e0b;"></i> Leaderboard Sultan</a>
+          <a href="/blog.html" class="mobile-menu-link"><i class="fa-solid fa-newspaper" style="color: #38bdf8;"></i> Blog & Tips Game</a>
+          <a href="/order-status.html" class="mobile-menu-link"><i class="fa-solid fa-receipt" style="color: #10b981;"></i> Lacak Pesanan</a>
           <hr style="border: none; border-top: 1px solid rgba(255,255,255,0.08); margin: 8px 0;">
           <div id="mobileAuthSlot">
             <a href="/auth/login.html" class="mobile-menu-link"><i class="fa-solid fa-right-to-bracket"></i> Masuk Akun</a>
@@ -83,7 +73,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     `;
   }
 
-  // 2. TOGGLE EVENT CONTROLLERS
+  // 2. EVENT LISTENER TOGGLE
   const btnMobileSearch = document.getElementById("btnMobileSearchToggle");
   const mobileSearchBar = document.getElementById("mobileSearchBar");
   const mobileSearchInput = document.getElementById("mobileSearchInput");
@@ -129,7 +119,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
   });
 
-  // 3. RENDER SESSION & AUTH STATE (DESKTOP + MOBILE)
+  // 3. RENDER AUTH STATUS
   function renderAuthNav(userData, profileData) {
     const desktopNav = document.getElementById("desktopNavActions");
     const mobileAuthSlot = document.getElementById("mobileAuthSlot");
@@ -218,7 +208,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     });
   }
 
-  // 4. SYNC DATA SUPABASE
+  // 4. SINKRONISASI SESSION SUPABASE
   const storedUser = localStorage.getItem("mgs_user");
   let user = storedUser ? JSON.parse(storedUser) : null;
   renderAuthNav(user, null);
