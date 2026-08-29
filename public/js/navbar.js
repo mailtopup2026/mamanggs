@@ -1,35 +1,98 @@
 document.addEventListener("DOMContentLoaded", () => {
-  const navActions = document.querySelector(".nav-actions");
+  function getClient() {
+    if (window.supabaseClient) return window.supabaseClient;
+    if (window.supabase && typeof window.supabase.from === "function") return window.supabase;
+    if (typeof supabase !== "undefined" && typeof supabase.from === "function") return supabase;
+    return null;
+  }
+
+  // 1. Ambil data lokal cepat
   const storedUser = localStorage.getItem("mgs_user");
+  let user = storedUser ? JSON.parse(storedUser) : null;
 
-  if (navActions && storedUser) {
-    try {
-      const user = JSON.parse(storedUser);
-      const displayName = user.user_metadata?.full_name || user.email?.split("@")[0] || "Member";
+  function renderNavbarUser(userData, profileData) {
+    const navActions = document.querySelector(".nav-actions");
+    if (!navActions) return;
 
-      // Render Cyber User Capsule
+    if (!userData) {
+      // Tampilan Belum Login
       navActions.innerHTML = `
-        <div class="nav-user-logged">
-          <a href="/dashboard.html" class="btn-nav-user-profile" title="Buka Dashboard">
-            <div class="nav-mini-avatar"><i class="fa-solid fa-user-astronaut"></i></div>
-            <span class="nav-user-name">${displayName}</span>
-          </a>
-          <button class="btn-nav-logout-capsule" id="navLogoutBtn" title="Keluar Akun">
-            <i class="fa-solid fa-power-off"></i>
-          </button>
-        </div>
+        <a href="/auth/login.html" class="btn-nav-login" id="navLoginBtn"><i class="fa-solid fa-right-to-bracket"></i> Masuk</a>
+        <a href="/auth/register.html" class="btn-nav-register" id="navRegisterBtn"><i class="fa-solid fa-user-plus"></i> Daftar</a>
       `;
+      return;
+    }
 
-      // Event Logout
-      document.getElementById("navLogoutBtn").addEventListener("click", async () => {
-        if (confirm("Apakah Anda yakin ingin keluar dari akun?")) {
-          if (window.supabase) await window.supabase.auth.signOut();
+    // Tampilan Sudah Login
+    const name = profileData?.full_name || userData.user_metadata?.full_name || userData.email?.split("@")[0] || "Member";
+    const avatarUrl = profileData?.avatar_url || `https://api.dicebear.com/7.x/adventurer/svg?seed=${encodeURIComponent(name)}&radius=50`;
+
+    navActions.innerHTML = `
+      <div class="user-nav-capsule" style="display: inline-flex; align-items: center; background: rgba(15, 23, 42, 0.85); border: 1px solid rgba(255, 255, 255, 0.12); border-radius: 50px; padding: 4px 6px 4px 5px; gap: 8px; backdrop-filter: blur(8px);">
+        <a href="/dashboard.html" style="display: inline-flex; align-items: center; gap: 8px; text-decoration: none; color: #fff;">
+          <img src="${avatarUrl}" alt="${name}" style="width: 32px; height: 32px; border-radius: 50%; object-fit: cover; border: 1.5px solid #f59e0b; background: #1e293b;">
+          <span style="font-weight: 800; font-size: 0.88rem; max-width: 110px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: #ffffff;">${name}</span>
+        </a>
+        <button id="navLogoutBtn" title="Keluar Akun" style="background: transparent; border: none; color: var(--text-muted, #94a3b8); cursor: pointer; padding: 4px 8px; font-size: 0.95rem; border-left: 1px solid rgba(255, 255, 255, 0.1); transition: color 0.2s ease;">
+          <i class="fa-solid fa-power-off"></i>
+        </button>
+      </div>
+    `;
+
+    // Logout Action
+    const logoutBtn = document.getElementById("navLogoutBtn");
+    if (logoutBtn) {
+      logoutBtn.addEventListener("click", async () => {
+        if (confirm("Yakin ingin keluar akun?")) {
+          const client = getClient();
+          if (client) await client.auth.signOut();
           localStorage.removeItem("mgs_user");
-          window.location.reload();
+          window.location.href = "/";
         }
       });
-    } catch (e) {
-      console.error("Gagal parse user session:", e);
+      logoutBtn.addEventListener("mouseenter", () => logoutBtn.style.color = "#ef4444");
+      logoutBtn.addEventListener("mouseleave", () => logoutBtn.style.color = "#94a3b8");
     }
   }
+
+  // Render awal instan
+  if (user) {
+    renderNavbarUser(user, null);
+  }
+
+  // Sinkronisasi realtime profil dari Supabase
+  async function syncNavbarProfile() {
+    const client = getClient();
+    if (!client) {
+      setTimeout(syncNavbarProfile, 200);
+      return;
+    }
+
+    try {
+      const { data: { session } } = await client.auth.getSession();
+      if (!session) {
+        if (user) {
+          localStorage.removeItem("mgs_user");
+          renderNavbarUser(null, null);
+        }
+        return;
+      }
+
+      user = session.user;
+      localStorage.setItem("mgs_user", JSON.stringify(user));
+
+      // Tarik avatar_url dan full_name terbaru
+      const { data: profile } = await client
+        .from("profiles")
+        .select("full_name, avatar_url")
+        .eq("id", user.id)
+        .maybeSingle();
+
+      renderNavbarUser(user, profile);
+    } catch (e) {
+      console.warn("Navbar sync issue:", e);
+    }
+  }
+
+  syncNavbarProfile();
 });
