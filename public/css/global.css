@@ -1011,4 +1011,49 @@ a {
     background: rgba(255, 255, 255, 0.06);
     color: #fff;
   }
+/* ===================================================
+   FIX ANTI-BOCOR NAVIGASI (TABLET & DESKTOP)
+   =================================================== */
+/* 1. Kunci rapat elemen mobile agar TIDAK BOCOR di Tablet & PC */
+.mobile-nav-toggle-group,
+.mobile-search-dropdown,
+.mobile-menu-drawer {
+  display: none !important;
+}
+
+/* ===================================================
+   ATURAN RESPONSIVE KHUSUS MOBILE / HP (< 768px)
+   =================================================== */
+@media (max-width: 768px) {
+  /* Sembunyikan tombol-tombol lebar (Desktop) di HP */
+  .desktop-only {
+    display: none !important;
+  }
+
+  /* Munculkan kembali tombol titik tiga di HP */
+  .mobile-nav-toggle-group {
+    display: flex !important;
+    align-items: center;
+    gap: 8px;
+  }
+
+  /* Munculkan laci menu HANYA SAAT titik tiga di-klik (class .show) */
+  .mobile-menu-drawer.show {
+    display: block !important;
+    animation: slideDownMenu 0.2s ease-out;
+  }
+
+  /* Pastikan posisi laci menu melayang cantik (popup drawer) */
+  .mobile-menu-drawer {
+    position: absolute !important;
+    top: calc(100% + 4px) !important;
+    right: 14px !important;
+    width: 240px !important;
+    background: #0f172a !important;
+    border: 1px solid rgba(255, 255, 255, 0.12) !important;
+    border-radius: 14px !important;
+    box-shadow: 0 15px 35px rgba(0,0,0,0.8) !important;
+    padding: 14px !important;
+    z-index: 99999 !important;
+  }
 }
