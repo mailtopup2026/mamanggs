@@ -109,13 +109,12 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 
   // ==========================================
-  // FITUR AUTO CEK NICKNAME ID GAME
+  // FITUR REAL AUTO CEK NICKNAME ID GAME
   // ==========================================
   const userIdInput = document.getElementById("userIdInput");
   const zoneIdInput = document.getElementById("zoneIdInput");
   const idCheckSpinner = document.getElementById("idCheckSpinner");
   const nicknameBox = document.getElementById("nicknameBox");
-  const nicknameText = document.getElementById("nicknameText");
 
   let checkTimeout = null;
 
@@ -135,20 +134,36 @@ document.addEventListener("DOMContentLoaded", () => {
     nicknameBox.style.display = "none";
 
     try {
-      // Mock / Public Validation Logic
-      await new Promise((res) => setTimeout(res, 600));
+      let resultNick = null;
 
-      // Contoh mock nickname berdasarkan kombinasi ID
-      const mockNicknames = {
-        mlbb: `MamangSultan_${uid.slice(-3)}`,
-        ff: `FF_ProPlayer_${uid.slice(-3)}`,
-        whiteout: `Chief_Frost_${uid.slice(-3)}`,
-        genshin: `Traveler_${uid.slice(-3)}`
-      };
+      // Cek Real Nickname Mobile Legends
+      if (currentGame.code === "mlbb") {
+        const res = await fetch(`https://api.isan.eu.org/nickname/ml?id=${encodeURIComponent(uid)}&zone=${encodeURIComponent(zid)}`);
+        const data = await res.json();
+        
+        if (data && data.success && data.name) {
+          resultNick = data.name;
+        } else {
+          throw new Error("ID atau Zone ID Mobile Legends tidak ditemukan.");
+        }
+      } 
+      // Cek Real Nickname Free Fire
+      else if (currentGame.code === "ff") {
+        const res = await fetch(`https://api.isan.eu.org/nickname/ff?id=${encodeURIComponent(uid)}`);
+        const data = await res.json();
+        
+        if (data && data.success && data.name) {
+          resultNick = data.name;
+        } else {
+          throw new Error("User ID Free Fire tidak valid.");
+        }
+      } 
+      // Game lainnya (Genshin / Whiteout)
+      else {
+        resultNick = `Player_${uid.slice(-4)}`;
+      }
 
-      const resultNick = mockNicknames[currentGame.code] || `Player_${uid.slice(-4)}`;
       verifiedNickname = resultNick;
-
       nicknameBox.className = "nickname-result-box";
       nicknameBox.innerHTML = `
         <i class="fa-solid fa-circle-check"></i>
@@ -156,11 +171,11 @@ document.addEventListener("DOMContentLoaded", () => {
       `;
       nicknameBox.style.display = "flex";
     } catch (err) {
-      console.error(err);
+      console.error("Cek ID Error:", err);
       nicknameBox.className = "nickname-result-box error";
       nicknameBox.innerHTML = `
         <i class="fa-solid fa-circle-xmark"></i>
-        <span>User ID tidak ditemukan. Periksa kembali ID Anda.</span>
+        <span>${err.message || "User ID tidak ditemukan. Periksa kembali ID Anda."}</span>
       `;
       nicknameBox.style.display = "flex";
       verifiedNickname = null;
@@ -171,13 +186,13 @@ document.addEventListener("DOMContentLoaded", () => {
 
   userIdInput.addEventListener("input", () => {
     clearTimeout(checkTimeout);
-    checkTimeout = setTimeout(checkNickname, 600);
+    checkTimeout = setTimeout(checkNickname, 700);
   });
 
   if (zoneIdInput) {
     zoneIdInput.addEventListener("input", () => {
       clearTimeout(checkTimeout);
-      checkTimeout = setTimeout(checkNickname, 600);
+      checkTimeout = setTimeout(checkNickname, 700);
     });
   }
 
