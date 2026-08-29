@@ -1,343 +1,157 @@
-/* ===================================================
-   MAMANGGS - MODERN 3D ESPORTS LEADERBOARD
-   =================================================== */
+document.addEventListener("DOMContentLoaded", async () => {
+  const listContainer = document.getElementById("rankingsList");
 
-.leaderboard-app-frame {
-  max-width: 550px;
-  margin: 15px auto 70px;
-  padding: 0 16px;
-}
+  // Helper sensor nama
+  function maskGamersName(name) {
+    if (!name || name === "Gamers Sultan") return "Gamers Sultan";
+    const parts = name.trim().split(" ");
+    if (parts.length === 1) {
+      if (parts[0].length <= 3) return parts[0] + "***";
+      return parts[0].slice(0, 3) + "***" + parts[0].slice(-1);
+    }
+    return parts[0] + " " + parts[1].charAt(0) + "***" + (parts[1].length > 1 ? parts[1].slice(-1) : "");
+  }
 
-/* ===================================================
-   HEADER TITLE MODERN
-   =================================================== */
-.leaderboard-top-header {
-  text-align: center;
-  margin-bottom: 24px;
-}
+  // Helper avatar 3D DiceBear
+  function get3DAvatar(user, defaultSeed) {
+    if (user && user.avatar_url && user.avatar_url.trim() !== "") return user.avatar_url;
+    const seed = encodeURIComponent(user?.player_name || defaultSeed);
+    return `https://api.dicebear.com/7.x/adventurer/svg?seed=${seed}&radius=50`;
+  }
 
-.glow-season-badge {
-  display: inline-flex;
-  align-items: center;
-  gap: 7px;
-  background: rgba(245, 158, 11, 0.1);
-  border: 1px solid rgba(245, 158, 11, 0.35);
-  color: #f59e0b;
-  padding: 4px 14px;
-  border-radius: 30px;
-  font-size: 0.72rem;
-  font-weight: 800;
-  letter-spacing: 1px;
-  margin-bottom: 8px;
-}
+  function renderPodium(rankedUsers) {
+    const r1 = rankedUsers[0];
+    const r2 = rankedUsers[1];
+    const r3 = rankedUsers[2];
 
-.live-dot {
-  width: 6px;
-  height: 6px;
-  background: #10b981;
-  border-radius: 50%;
-  box-shadow: 0 0 8px #10b981;
-}
+    // Reset default
+    document.getElementById("nameRank1").innerText = "-";
+    document.getElementById("scoreRank1").innerText = "Rp 0";
+    document.getElementById("nameRank2").innerText = "-";
+    document.getElementById("scoreRank2").innerText = "Rp 0";
+    document.getElementById("nameRank3").innerText = "-";
+    document.getElementById("scoreRank3").innerText = "Rp 0";
 
-.modern-title-text {
-  font-size: 2.3rem;
-  font-weight: 900;
-  letter-spacing: -1px;
-  margin: 0 0 4px;
-  background: linear-gradient(180deg, #ffffff 40%, #94a3b8 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  filter: drop-shadow(0 2px 8px rgba(255, 255, 255, 0.15));
-}
+    // Rank 1
+    if (r1) {
+      document.getElementById("nameRank1").innerText = maskGamersName(r1.player_name);
+      document.getElementById("scoreRank1").innerText = `Rp ${Number(r1.total_spent || 0).toLocaleString("id-ID")}`;
+      document.getElementById("avatarRank1").src = get3DAvatar(r1, "Jordyn");
+    }
 
-.modern-subtitle-text {
-  font-size: 0.82rem;
-  font-weight: 600;
-  color: var(--text-muted);
-  letter-spacing: 0.5px;
-  margin: 0;
-}
+    // Rank 2
+    if (r2) {
+      document.getElementById("nameRank2").innerText = maskGamersName(r2.player_name);
+      document.getElementById("scoreRank2").innerText = `Rp ${Number(r2.total_spent || 0).toLocaleString("id-ID")}`;
+      document.getElementById("avatarRank2").src = get3DAvatar(r2, "Alena");
+    }
 
-/* ===================================================
-   PODIUM PILLARS STAGE (TOP 3)
-   =================================================== */
-.podium-stage-container {
-  display: flex;
-  align-items: flex-end;
-  justify-content: center;
-  gap: 12px;
-  margin-bottom: 24px;
-  padding-top: 10px;
-}
+    // Rank 3
+    if (r3) {
+      document.getElementById("nameRank3").innerText = maskGamersName(r3.player_name);
+      document.getElementById("scoreRank3").innerText = `Rp ${Number(r3.total_spent || 0).toLocaleString("id-ID")}`;
+      document.getElementById("avatarRank3").src = get3DAvatar(r3, "Carl");
+    }
+  }
 
-.podium-column {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  text-align: center;
-}
+  function renderSheetList(rankedUsers) {
+    if (!listContainer) return;
 
-.podium-pillar {
-  width: 100%;
-  border-radius: 20px 20px 14px 14px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: space-between;
-  padding: 16px 8px 12px;
-  position: relative;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
-  transition: transform 0.3s ease;
-}
+    const lowerRanks = rankedUsers.slice(3);
 
-.podium-pillar:hover {
-  transform: translateY(-4px);
-}
+    if (lowerRanks.length === 0) {
+      listContainer.innerHTML = `<div style="text-align: center; padding: 20px; color: var(--text-muted); font-size: 0.85rem;">Peringkat 4–10 masih kosong. Jadilah sultan berikutnya!</div>`;
+      return;
+    }
 
-/* Pillar 1 (Tengah - Emas & Lebih Tinggi) */
-.podium-column.rank-1 {
-  order: 2;
-  z-index: 2;
-}
+    listContainer.innerHTML = lowerRanks.map((user, index) => {
+      const rankNum = index + 4;
+      const avatarSrc = get3DAvatar(user, `Player${rankNum}`);
 
-.pillar-1 {
-  height: 275px;
-  background: linear-gradient(180deg, #422606 0%, #b47816 45%, #eab308 100%);
-  border: 1.5px solid rgba(250, 204, 21, 0.7);
-  box-shadow: 0 0 35px rgba(234, 179, 8, 0.3);
-}
+      return `
+        <div class="rank-row-item">
+          <div class="rank-user-info">
+            <img src="${avatarSrc}" alt="Avatar" class="rank-avatar-sm">
+            <div class="rank-user-text">
+              <span class="player-name">${maskGamersName(user.player_name)}</span>
+              <span class="player-score">
+                <i class="fa-solid fa-gem" style="font-size: 0.7rem;"></i>
+                Rp ${Number(user.total_spent || 0).toLocaleString("id-ID")}
+              </span>
+            </div>
+          </div>
+          <div class="wreath-badge-sm">${rankNum}<sup>th</sup></div>
+        </div>
+      `;
+    }).join("");
+  }
 
-.pillar-top-content {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  width: 100%;
-  gap: 8px;
-}
+  async function fetchLeaderboard() {
+    if (!window.supabase) {
+      if (listContainer) listContainer.innerHTML = `<div style="text-align: center; padding: 25px; color: var(--text-muted);">Memuat koneksi Supabase...</div>`;
+      return;
+    }
 
-/* BADGE HADIAH VOUCHER DI DALAM PILAR KUNING */
-.pillar-prize-pill {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  background: rgba(15, 23, 42, 0.85);
-  border: 1px solid rgba(250, 204, 21, 0.6);
-  padding: 5px 8px;
-  border-radius: 12px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
-  max-width: 95%;
-  backdrop-filter: blur(4px);
-}
+    try {
+      // 1. Coba panggil via fungsi RPC
+      let { data, error } = await window.supabase.rpc("get_leaderboard_rankings");
 
-.prize-icon {
-  font-size: 0.85rem;
-  color: #f59e0b;
-}
+      // 2. Fallback jika RPC belum diupdate
+      if (error || !data) {
+        console.warn("RPC fetch failed, switching to direct query fallback:", error);
+        
+        const { data: orders, error: ordErr } = await window.supabase
+          .from("orders")
+          .select("user_id, price")
+          .eq("status", "SUCCESS")
+          .not("user_id", "is", null);
 
-.prize-info {
-  display: flex;
-  flex-direction: column;
-  text-align: left;
-}
+        if (ordErr) throw ordErr;
 
-.prize-tag {
-  font-size: 0.55rem;
-  font-weight: 800;
-  color: #fbbf24;
-  letter-spacing: 0.5px;
-  line-height: 1;
-}
+        const { data: profiles } = await window.supabase
+          .from("profiles")
+          .select("id, full_name, avatar_url");
 
-.prize-amount {
-  font-size: 0.72rem;
-  font-weight: 800;
-  color: #ffffff;
-  line-height: 1.2;
-  white-space: nowrap;
-}
+        const profMap = {};
+        (profiles || []).forEach(p => {
+          profMap[p.id] = { name: p.full_name || "Gamers Sultan", avatar: p.avatar_url || "" };
+        });
 
-/* Pillar 2 (Kiri - Biru / Silver) */
-.podium-column.rank-2 {
-  order: 1;
-}
-.pillar-2 {
-  height: 205px;
-  background: linear-gradient(180deg, #091a38 0%, #1e3a8a 60%, #3b82f6 100%);
-  border: 1.5px solid rgba(147, 197, 253, 0.4);
-}
+        const spendMap = {};
+        (orders || []).forEach(o => {
+          if (!spendMap[o.user_id]) {
+            spendMap[o.user_id] = {
+              user_id: o.user_id,
+              player_name: profMap[o.user_id]?.name || "Gamers Sultan",
+              avatar_url: profMap[o.user_id]?.avatar || "",
+              order_count: 0,
+              total_spent: 0
+            };
+          }
+          spendMap[o.user_id].total_spent += Number(o.price || 0);
+          spendMap[o.user_id].order_count += 1;
+        });
 
-/* Pillar 3 (Kanan - Bronze / Ungu) */
-.podium-column.rank-3 {
-  order: 3;
-}
-.pillar-3 {
-  height: 185px;
-  background: linear-gradient(180deg, #2b0e24 0%, #701a75 60%, #c026d3 100%);
-  border: 1.5px solid rgba(244, 114, 182, 0.4);
-}
+        data = Object.values(spendMap).sort((a, b) => b.total_spent - a.total_spent).slice(0, 10);
+      }
 
-/* LAUREL WREATH */
-.laurel-wreath {
-  font-weight: 900;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
+      if (!data || data.length === 0) {
+        renderPodium([]);
+        if (listContainer) {
+          listContainer.innerHTML = `<div style="text-align: center; padding: 25px; color: var(--text-muted); font-size: 0.88rem;">Belum ada data transaksi sukses yang tercatat.</div>`;
+        }
+        return;
+      }
 
-.laurel-wreath .wreath-text {
-  font-size: 1.2rem;
-  letter-spacing: -0.5px;
-}
+      renderPodium(data);
+      renderSheetList(data);
+    } catch (err) {
+      console.error("Gagal load leaderboard:", err);
+      if (listContainer) {
+        listContainer.innerHTML = `<div style="text-align: center; padding: 25px; color: var(--accent-red);">Gagal memuat data: ${err.message}</div>`;
+      }
+    }
+  }
 
-.laurel-gold {
-  color: #fef08a;
-  text-shadow: 0 0 10px rgba(234, 179, 8, 0.8);
-}
-.laurel-gold::before { content: "🌿 "; }
-.laurel-gold::after { content: " 🌿"; }
-
-.laurel-silver {
-  color: #e2e8f0;
-  text-shadow: 0 0 10px rgba(226, 232, 240, 0.6);
-}
-.laurel-silver::before { content: "🌿 "; }
-.laurel-silver::after { content: " 🌿"; }
-
-.laurel-bronze {
-  color: #fbcfe8;
-  text-shadow: 0 0 10px rgba(244, 114, 182, 0.6);
-}
-.laurel-bronze::before { content: "🌿 "; }
-.laurel-bronze::after { content: " 🌿"; }
-
-/* AVATAR 3D */
-.avatar-3d-wrapper {
-  width: 66px;
-  height: 66px;
-  border-radius: 50%;
-  overflow: hidden;
-  border: 3px solid rgba(255, 255, 255, 0.85);
-  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.4);
-  background: #1e293b;
-}
-
-.crown-avatar-border {
-  border-color: #fef08a;
-  box-shadow: 0 0 15px rgba(234, 179, 8, 0.5);
-}
-
-.avatar-3d-img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
-
-.pillar-name {
-  font-size: 0.88rem;
-  font-weight: 800;
-  color: #fff;
-  margin: 10px 0 4px;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  max-width: 95px;
-}
-
-.pillar-score {
-  display: inline-flex;
-  align-items: center;
-  gap: 5px;
-  font-size: 0.82rem;
-  font-weight: 800;
-  color: #34d399;
-}
-
-.gem-icon {
-  font-size: 0.72rem;
-  color: #10b981;
-}
-
-/* ===================================================
-   BOTTOM RANKINGS SHEET (PERINGKAT 4-10)
-   =================================================== */
-.rankings-sheet-card {
-  background: #0d1527;
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: 28px 28px 20px 20px;
-  padding: 16px;
-  box-shadow: 0 -10px 30px rgba(0, 0, 0, 0.6);
-}
-
-.sheet-drag-notch {
-  width: 36px;
-  height: 4px;
-  background: #10b981;
-  border-radius: 4px;
-  margin: 0 auto 16px;
-  box-shadow: 0 0 10px #10b981;
-}
-
-.rankings-list {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
-
-.rank-row-item {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  background: rgba(18, 28, 48, 0.7);
-  border: 1px solid rgba(255, 255, 255, 0.04);
-  padding: 10px 14px;
-  border-radius: 16px;
-  transition: background 0.2s ease;
-}
-
-.rank-row-item:hover {
-  background: rgba(30, 41, 59, 0.9);
-}
-
-.rank-user-info {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
-
-.rank-avatar-sm {
-  width: 42px;
-  height: 42px;
-  border-radius: 50%;
-  border: 2px solid rgba(255, 255, 255, 0.1);
-  background: #1e293b;
-}
-
-.rank-user-text {
-  display: flex;
-  flex-direction: column;
-}
-
-.rank-user-text .player-name {
-  font-size: 0.88rem;
-  font-weight: 800;
-  color: #fff;
-}
-
-.rank-user-text .player-score {
-  font-size: 0.78rem;
-  font-weight: 700;
-  color: #34d399;
-  display: flex;
-  align-items: center;
-  gap: 5px;
-}
-
-.wreath-badge-sm {
-  font-size: 0.85rem;
-  font-weight: 800;
-  color: #f59e0b;
-  letter-spacing: -0.5px;
-}
-.wreath-badge-sm::before { content: "🌿 "; }
-.wreath-badge-sm::after { content: " 🌿"; }
+  fetchLeaderboard();
+});
