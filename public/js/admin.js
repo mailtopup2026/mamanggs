@@ -187,6 +187,9 @@ document.addEventListener("DOMContentLoaded", async () => {
             <div class="btn-action-group">
               ${o.status !== "SUCCESS" ? `<button class="btn-action-sm btn-success" title="Tandai Sukses" onclick="updateOrderStatus('${o.id}', 'SUCCESS')"><i class="fa-solid fa-check"></i></button>` : ""}
               ${o.status !== "CANCELLED" ? `<button class="btn-action-sm btn-cancel" title="Batalkan Pesanan" onclick="updateOrderStatus('${o.id}', 'CANCELLED')"><i class="fa-solid fa-xmark"></i></button>` : ""}
+              <button class="btn-action-sm btn-wa" title="Kirim Struk ke WhatsApp" onclick="openWhatsAppReceipt('${o.id}')">
+                <i class="fa-brands fa-whatsapp"></i>
+              </button>
             </div>
           </td>
         </tr>
@@ -194,7 +197,45 @@ document.addEventListener("DOMContentLoaded", async () => {
     }).join("");
   }
 
-  // Update Status Pesanan & Trigger Notifikasi WA
+  // Helper Kirim Manual Struk WhatsApp
+  window.openWhatsAppReceipt = (orderId) => {
+    const o = allOrders.find((item) => item.id === orderId);
+    if (!o) return;
+
+    if (!o.whatsapp) {
+      alert("Pesanan ini tidak memiliki nomor WhatsApp pembeli!");
+      return;
+    }
+
+    // Format nomor HP ke standar 62xxx
+    let phone = o.whatsapp.replace(/[^0-9]/g, "");
+    if (phone.startsWith("0")) phone = "62" + phone.substring(1);
+    else if (phone.startsWith("8")) phone = "62" + phone;
+
+    const targetAcc = o.zone_id ? `${o.account_id} (${o.zone_id})` : o.account_id;
+    const priceFormatted = Number(o.price || 0).toLocaleString("id-ID");
+
+    const message = 
+`Halo Kak! Terima kasih sudah order di *MamangGS* 🎮🔥
+
+Berikut adalah rincian pesanan Anda:
+📄 *No. Invoice:* ${o.invoice}
+🎮 *Game:* ${o.game_title || o.game_code}
+💎 *Item:* ${o.item_name}
+🆔 *Data Akun:* ${targetAcc}
+💰 *Total Bayar:* Rp ${priceFormatted}
+📌 *Status Pesanan:* *${o.status}*
+
+Cek detail atau download invoice di:
+🔗 https://mamanggs.vercel.app/order-status.html?inv=${o.invoice}
+
+Pesanan Anda telah kami proses. Terima kasih dan selamat bermain! ✨`;
+
+    const waUrl = `https://api.whatsapp.com/send?phone=${phone}&text=${encodeURIComponent(message)}`;
+    window.open(waUrl, "_blank");
+  };
+
+  // Update Status Pesanan
   window.updateOrderStatus = async (orderId, newStatus) => {
     if (!confirm(`Ubah status pesanan ini menjadi ${newStatus}?`)) return;
 
@@ -206,13 +247,6 @@ document.addEventListener("DOMContentLoaded", async () => {
     if (error) {
       alert("Gagal update status: " + error.message);
     } else {
-      // Jika status diubah ke SUCCESS, picu notifikasi WhatsApp otomatis
-      if (newStatus === "SUCCESS" && window.notifyOrderSuccess) {
-        const orderData = allOrders.find((o) => o.id === orderId);
-        if (orderData && orderData.whatsapp) {
-          window.notifyOrderSuccess(orderData);
-        }
-      }
       alert(`Status pesanan berhasil diubah ke ${newStatus}!`);
       loadDashboardData();
     }

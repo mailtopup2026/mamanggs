@@ -218,6 +218,7 @@
 .btn-action-sm.btn-success { background: #10b981; color: #fff; }
 .btn-action-sm.btn-cancel { background: var(--accent-red); color: #fff; }
 .btn-action-sm.btn-adjust { background: #3b82f6; color: #fff; }
+.btn-action-sm.btn-wa { background: #25d366; color: #fff; }
 
 .btn-action-sm:hover { opacity: 0.85; transform: scale(1.04); }
 
@@ -263,6 +264,7 @@
   cursor: pointer;
   margin-top: 14px;
 }
+
 /* Widget Top Games */
 .top-games-grid {
   display: grid;
