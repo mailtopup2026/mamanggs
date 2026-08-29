@@ -1,6 +1,7 @@
 // Variabel Global Admin Scope
 let allOrders = [];
 let allUsers = [];
+let allArticles = [];
 let selectedTargetUser = null;
 
 // ==========================================
@@ -77,6 +78,44 @@ window.openBalanceModal = function(userId, name) {
   if (modalEl) modalEl.classList.add("show");
 };
 
+// Toggle Status Publish / Draft Artikel
+window.togglePublishArticle = async function(articleId, newStatus) {
+  try {
+    const { error } = await window.supabase
+      .from("articles")
+      .update({ is_published: newStatus, updated_at: new Date().toISOString() })
+      .eq("id", articleId);
+
+    if (error) throw error;
+
+    window.fetchAdminArticles();
+  } catch (err) {
+    alert("Gagal mengubah status artikel: " + err.message);
+  }
+};
+
+// Hapus Artikel
+window.deleteArticle = async function(articleId, encodedTitle) {
+  const title = decodeURIComponent(encodedTitle);
+  if (!confirm(`Yakin ingin MENGHAPUS artikel ini secara permanen?\n\n"${title}"`)) {
+    return;
+  }
+
+  try {
+    const { error } = await window.supabase
+      .from("articles")
+      .delete()
+      .eq("id", articleId);
+
+    if (error) throw error;
+
+    alert("Artikel berhasil dihapus.");
+    window.fetchAdminArticles();
+  } catch (err) {
+    alert("Gagal menghapus artikel: " + err.message);
+  }
+};
+
 // ==========================================
 // 2. MAIN DOM CONTENT LOADED
 // ==========================================
@@ -117,6 +156,7 @@ document.addEventListener("DOMContentLoaded", async () => {
       }
 
       await window.loadDashboardData();
+      await window.fetchAdminArticles();
       hideLoader();
     } catch (e) {
       console.error("Admin init error:", e);
@@ -143,7 +183,12 @@ document.addEventListener("DOMContentLoaded", async () => {
       tabBtns.forEach((b) => b.classList.remove("active"));
       tabContents.forEach((c) => c.classList.remove("active"));
       btn.classList.add("active");
-      document.getElementById(btn.dataset.tab).classList.add("active");
+      const targetContent = document.getElementById(btn.dataset.tab);
+      if (targetContent) targetContent.classList.add("active");
+
+      if (btn.dataset.tab === "articlesTab") {
+        window.fetchAdminArticles();
+      }
     });
   });
 
@@ -357,6 +402,98 @@ document.addEventListener("DOMContentLoaded", async () => {
     });
   }
 
-  // Eksekusi
+  // ==========================================
+  // MANAJEMEN ARTIKEL BLOG & SEO (TAB 3)
+  // ==========================================
+  window.fetchAdminArticles = async function() {
+    const articlesTbody = document.getElementById("adminArticlesTableBody");
+    if (!articlesTbody) return;
+
+    articlesTbody.innerHTML = `
+      <tr>
+        <td colspan="6" style="text-align: center; padding: 25px; color: var(--text-muted);">
+          <i class="fa-solid fa-spinner fa-spin"></i> Memuat artikel blog...
+        </td>
+      </tr>
+    `;
+
+    try {
+      const { data: articles, error } = await window.supabase
+        .from("articles")
+        .select("*")
+        .order("created_at", { ascending: false });
+
+      if (error) throw error;
+
+      allArticles = articles || [];
+
+      if (allArticles.length === 0) {
+        articlesTbody.innerHTML = `
+          <tr>
+            <td colspan="6" style="text-align: center; padding: 30px; color: var(--text-muted);">
+              Belum ada artikel. Klik tombol <strong>"Tulis Baru"</strong> untuk membuat artikel pertama!
+            </td>
+          </tr>
+        `;
+        return;
+      }
+
+      articlesTbody.innerHTML = allArticles.map((art) => {
+        const date = new Date(art.created_at).toLocaleDateString("id-ID", {
+          day: "numeric",
+          month: "short",
+          year: "numeric"
+        });
+
+        const isLive = art.is_published;
+        const statusBadge = isLive
+          ? `<span class="badge-status success" style="font-size: 0.72rem; padding: 3px 8px;"><i class="fa-solid fa-check"></i> LIVE</span>`
+          : `<span class="badge-status pending" style="font-size: 0.72rem; padding: 3px 8px; background: rgba(148, 163, 184, 0.2); color: #94a3b8;"><i class="fa-solid fa-box-archive"></i> DRAFT</span>`;
+
+        return `
+          <tr>
+            <td>
+              <div style="display: flex; align-items: center; gap: 10px;">
+                <img src="${art.thumbnail_url}" alt="${art.title}" style="width: 44px; height: 44px; border-radius: 8px; object-fit: cover; background: #0f172a;">
+                <div>
+                  <strong style="color: #fff; font-size: 0.88rem; display: -webkit-box; -webkit-line-clamp: 1; -webkit-box-orient: vertical; overflow: hidden; max-width: 250px;">
+                    ${art.title}
+                  </strong>
+                  <a href="/blog-detail.html?slug=${art.slug}" target="_blank" style="font-size: 0.74rem; color: #38bdf8; text-decoration: none;">
+                    Lihat Artikel <i class="fa-solid fa-arrow-up-right-from-square"></i>
+                  </a>
+                </div>
+              </div>
+            </td>
+            <td><span style="font-size: 0.8rem; color: #fbbf24; font-weight: 700;">${art.category}</span></td>
+            <td><span style="font-size: 0.8rem; color: #cbd5e1;"><i class="fa-solid fa-eye"></i> ${art.views_count || 0}</span></td>
+            <td>${statusBadge}</td>
+            <td><span style="font-size: 0.78rem; color: var(--text-muted);">${date}</span></td>
+            <td>
+              <div class="btn-action-group">
+                <button onclick="togglePublishArticle('${art.id}', ${!isLive})" title="${isLive ? 'Tarik ke Draft' : 'Publikasikan'}" class="btn-action-sm ${isLive ? 'btn-adjust' : 'btn-success'}">
+                  <i class="fa-solid ${isLive ? 'fa-eye-slash' : 'fa-globe'}"></i>
+                </button>
+                <button onclick="deleteArticle('${art.id}', '${encodeURIComponent(art.title)}')" title="Hapus Artikel" class="btn-action-sm btn-cancel">
+                  <i class="fa-solid fa-trash-can"></i>
+                </button>
+              </div>
+            </td>
+          </tr>
+        `;
+      }).join("");
+    } catch (err) {
+      console.error("Gagal load artikel di admin:", err);
+      articlesTbody.innerHTML = `
+        <tr>
+          <td colspan="6" style="text-align: center; padding: 25px; color: var(--accent-red);">
+            Gagal mengambil data artikel: ${err.message}
+          </td>
+        </tr>
+      `;
+    }
+  };
+
+  // Eksekusi Inisialisasi
   initAdmin();
 });
