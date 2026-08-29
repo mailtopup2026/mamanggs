@@ -106,13 +106,20 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
   }
 
-  function renderStats(orders) {
+ function renderStats(orders) {
     let totalRev = 0;
     let pendingCount = 0;
+    const gameSalesMap = {};
+    let totalSuccessCount = 0;
 
     orders.forEach((o) => {
       if (o.status === "SUCCESS") {
         totalRev += Number(o.price || 0);
+        totalSuccessCount++;
+
+        // Hitung akumulasi order per game
+        const gameName = o.game_title || o.game_code || "Lainnya";
+        gameSalesMap[gameName] = (gameSalesMap[gameName] || 0) + 1;
       } else if (o.status === "PENDING") {
         pendingCount++;
       }
@@ -121,40 +128,36 @@ document.addEventListener("DOMContentLoaded", async () => {
     document.getElementById("statTotalRevenue").innerText = `Rp ${totalRev.toLocaleString("id-ID")}`;
     document.getElementById("statTotalOrders").innerText = orders.length;
     document.getElementById("statPendingOrders").innerText = pendingCount;
+
+    // Render Widget Peringkat Game Terlaris
+    renderTopGames(gameSalesMap, totalSuccessCount);
   }
 
-  function renderOrdersTable(orders) {
-    const tbody = document.getElementById("ordersTableBody");
-    const filter = document.getElementById("filterStatus").value;
+  function renderTopGames(gameSalesMap, totalSuccess) {
+    const container = document.getElementById("topGamesContainer");
+    if (!container) return;
 
-    const filtered = filter === "ALL" ? orders : orders.filter((o) => o.status === filter);
+    const sortedGames = Object.entries(gameSalesMap).sort((a, b) => b[1] - a[1]);
 
-    if (filtered.length === 0) {
-      tbody.innerHTML = `<tr><td colspan="8" style="text-align: center; color: var(--text-muted); padding: 25px;">Tidak ada transaksi ditemukan.</td></tr>`;
+    if (sortedGames.length === 0) {
+      container.innerHTML = `<p style="color: var(--text-muted); font-size: 0.85rem;">Belum ada pesanan sukses untuk direkap.</p>`;
       return;
     }
 
-    tbody.innerHTML = filtered.map((o) => {
-      const statusClass = (o.status || "PENDING").toLowerCase();
-      const dateStr = new Date(o.created_at).toLocaleString("id-ID", { dateStyle: "short", timeStyle: "short" });
-      const targetAcc = o.zone_id ? `${o.account_id} (${o.zone_id})` : o.account_id;
+    container.innerHTML = sortedGames.map(([gameName, count], index) => {
+      const percentage = totalSuccess > 0 ? Math.round((count / totalSuccess) * 100) : 0;
+      const rankIcon = index === 0 ? "🥇" : index === 1 ? "🥈" : index === 2 ? "🥉" : `#${index + 1}`;
 
       return `
-        <tr>
-          <td><strong style="color: #fff;">${o.invoice}</strong></td>
-          <td>${dateStr}</td>
-          <td>${o.game_title || o.game_code} - ${o.item_name}</td>
-          <td><code>${targetAcc}</code></td>
-          <td>Rp ${Number(o.price).toLocaleString("id-ID")}</td>
-          <td>${o.payment_method}</td>
-          <td><span class="badge-status ${statusClass}">${o.status}</span></td>
-          <td>
-            <div class="btn-action-group">
-              ${o.status !== "SUCCESS" ? `<button class="btn-action-sm btn-success" title="Tandai Sukses" onclick="updateOrderStatus('${o.id}', 'SUCCESS')"><i class="fa-solid fa-check"></i></button>` : ""}
-              ${o.status !== "CANCELLED" ? `<button class="btn-action-sm btn-cancel" title="Batalkan Pesanan" onclick="updateOrderStatus('${o.id}', 'CANCELLED')"><i class="fa-solid fa-xmark"></i></button>` : ""}
-            </div>
-          </td>
-        </tr>
+        <div class="top-game-card">
+          <div class="top-game-info">
+            <span class="top-game-title"><span>${rankIcon}</span> ${gameName}</span>
+            <span class="top-game-count">${count} Order (${percentage}%)</span>
+          </div>
+          <div class="top-game-bar-bg">
+            <div class="top-game-bar-fill" style="width: ${percentage}%"></div>
+          </div>
+        </div>
       `;
     }).join("");
   }
