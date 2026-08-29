@@ -1,4 +1,6 @@
 document.addEventListener("DOMContentLoaded", async () => {
+  const authLoader = document.getElementById("adminAuthLoader");
+
   if (!window.supabase) {
     alert("Koneksi Supabase belum siap.");
     window.location.href = "/auth/login.html";
@@ -7,40 +9,45 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   // Fungsi Verifikasi & Load Data
   async function initAdmin() {
-    const { data: sessionData } = await window.supabase.auth.getSession();
-    const user = sessionData?.session?.user;
+    try {
+      const { data: sessionData } = await window.supabase.auth.getSession();
+      const user = sessionData?.session?.user;
 
-    if (!user) {
-      alert("Silakan login sebagai Admin terlebih dahulu!");
-      window.location.href = "/auth/login.html";
-      return;
+      if (!user) {
+        alert("Silakan login sebagai Admin terlebih dahulu!");
+        window.location.href = "/auth/login.html";
+        return;
+      }
+
+      const { data: profile, error: profErr } = await window.supabase
+        .from("profiles")
+        .select("role")
+        .eq("id", user.id)
+        .single();
+
+      if (profErr || !profile || profile.role !== "admin") {
+        alert("Akses Ditolak! Anda bukan Administrator.");
+        window.location.href = "/dashboard.html";
+        return;
+      }
+
+      // Load data dashboard jika terverifikasi admin
+      await loadDashboardData();
+
+      // Sembunyikan loader dengan efek fade
+      if (authLoader) {
+        authLoader.style.opacity = "0";
+        authLoader.style.transition = "opacity 0.25s ease";
+        setTimeout(() => authLoader.style.display = "none", 250);
+      }
+    } catch (e) {
+      console.error("Admin init error:", e);
+      if (authLoader) authLoader.style.display = "none";
     }
-
-    const { data: profile, error: profErr } = await window.supabase
-      .from("profiles")
-      .select("role")
-      .eq("id", user.id)
-      .single();
-
-    if (profErr || !profile || profile.role !== "admin") {
-      alert("Akses Ditolak! Anda bukan Administrator.");
-      window.location.href = "/dashboard.html";
-      return;
-    }
-
-    // Load data dashboard jika terverifikasi admin
-    loadDashboardData();
   }
 
   // Jalankan inisialisasi awal
   initAdmin();
-
-  // Dengarkan jika sesi baru saja dimuat/diperbarui oleh browser
-  window.supabase.auth.onAuthStateChange((event, session) => {
-    if (event === "SIGNED_IN" || event === "INITIAL_SESSION") {
-      if (session?.user) initAdmin();
-    }
-  });
 
   // Logout Handler
   document.getElementById("btnAdminLogout").addEventListener("click", async () => {
