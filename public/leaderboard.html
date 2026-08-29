@@ -7,7 +7,7 @@
   
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
   
   <link rel="stylesheet" href="/css/global.css">
@@ -32,11 +32,29 @@
 
   <!-- KONTEN LEADERBOARD -->
   <main class="leaderboard-wrapper">
-    <!-- HERO TITLE -->
-    <div class="leaderboard-hero">
-      <div class="badge-trophy"><i class="fa-solid fa-crown"></i> Hall of Fame</div>
-      <h1>Top Spender Gamers</h1>
-      <p>Peringkat member dengan total transaksi tertinggi di platform MamangGS. Jadilah sultan teratas! Dan Dapatkan Voucher Belanja Senilai 500K</p>
+    <!-- HERO TITLE EVENT BANNER -->
+    <div class="leaderboard-hero-banner">
+      <div class="hero-top-badge">
+        <span class="live-dot"></span>
+        <i class="fa-solid fa-crown"></i> SEASON 1 EVENT SULTAN
+      </div>
+      
+      <h1 class="hero-title-gradient">Top Spender Gamers</h1>
+      <p class="hero-subtitle">
+        Tunjukkan siapa penguasa arena MamangGS! Raih peringkat puncak dan klaim hadiah eksklusifnya.
+      </p>
+
+      <!-- REWARD SHOWCASE CARD -->
+      <div class="reward-event-pill">
+        <div class="reward-icon-sparkle">
+          <i class="fa-solid fa-gift"></i>
+        </div>
+        <div class="reward-content">
+          <span class="reward-label">HADIAH JUARA 1</span>
+          <span class="reward-val">Voucher Belanja Rp 500.000</span>
+        </div>
+        <span class="reward-tag-badge">GRATIS</span>
+      </div>
     </div>
 
     <!-- PODIUM TOP 3 -->
@@ -92,21 +110,6 @@
       </div>
     </section>
   </main>
-
-  <!-- BGM AUDIO PLAYER (EPIC VICTORY SOUND) -->
-  <audio id="bgmAudio" loop preload="auto">
-    <source src="https://cdn.pixabay.com/download/audio/2022/03/15/audio_c8c8a73467.mp3?filename=game-action-11270.mp3" type="audio/mp3">
-    </audio>
-  <!-- FLOATING BGM CONTROLLER -->
-  <button class="music-toggle-btn" id="btnToggleMusic" title="Putar Musik Suasana">
-    <div class="sound-bars">
-      <div class="sound-bar"></div>
-      <div class="sound-bar"></div>
-      <div class="sound-bar"></div>
-    </div>
-    <span id="musicText">Putar Musik Suasana</span>
-    <i class="fa-solid fa-volume-high" id="musicIcon"></i>
-  </button>
 
   <!-- FOOTER -->
   <footer class="footer">
