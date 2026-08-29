@@ -1,3 +1,85 @@
+// Variabel Global Admin Scope
+let allOrders = [];
+let allUsers = [];
+let selectedTargetUser = null;
+
+// ==========================================
+// 1. GLOBAL ACTION HANDLERS (BISA DIAKSES ONCLICK HTML)
+// ==========================================
+
+// Buka WhatsApp Manual dengan Template Struk
+window.openWhatsAppReceipt = function(orderId) {
+  const o = allOrders.find((item) => String(item.id) === String(orderId));
+  if (!o) {
+    alert("Data pesanan tidak ditemukan!");
+    return;
+  }
+
+  if (!o.whatsapp) {
+    alert("Pesanan ini tidak memiliki nomor WhatsApp pembeli!");
+    return;
+  }
+
+  // Format nomor HP ke standar 62xxx
+  let phone = String(o.whatsapp).replace(/[^0-9]/g, "");
+  if (phone.startsWith("0")) phone = "62" + phone.substring(1);
+  else if (phone.startsWith("8")) phone = "62" + phone;
+
+  const targetAcc = o.zone_id ? `${o.account_id} (${o.zone_id})` : o.account_id;
+  const priceFormatted = Number(o.price || 0).toLocaleString("id-ID");
+
+  const message = 
+`Halo Kak! Terima kasih sudah order di *MamangGS* 🎮🔥
+
+Berikut adalah rincian pesanan Anda:
+📄 *No. Invoice:* ${o.invoice}
+🎮 *Game:* ${o.game_title || o.game_code}
+💎 *Item:* ${o.item_name}
+🆔 *Data Akun:* ${targetAcc}
+💰 *Total Bayar:* Rp ${priceFormatted}
+📌 *Status Pesanan:* *${o.status}*
+
+Cek detail atau download invoice di:
+🔗 https://mamanggs.vercel.app/order-status.html?inv=${o.invoice}
+
+Pesanan Anda telah kami proses. Terima kasih dan selamat bermain! ✨`;
+
+  const waUrl = `https://api.whatsapp.com/send?phone=${phone}&text=${encodeURIComponent(message)}`;
+  window.open(waUrl, "_blank");
+};
+
+// Update Status Pesanan
+window.updateOrderStatus = async function(orderId, newStatus) {
+  if (!confirm(`Ubah status pesanan ini menjadi ${newStatus}?`)) return;
+
+  const { error } = await window.supabase
+    .from("orders")
+    .update({ status: newStatus })
+    .eq("id", orderId);
+
+  if (error) {
+    alert("Gagal update status: " + error.message);
+  } else {
+    alert(`Status pesanan berhasil diubah ke ${newStatus}!`);
+    window.loadDashboardData();
+  }
+};
+
+// Buka Modal Saldo Member
+window.openBalanceModal = function(userId, name) {
+  selectedTargetUser = userId;
+  const nameEl = document.getElementById("modalUserName");
+  const inputEl = document.getElementById("modalAmountInput");
+  const modalEl = document.getElementById("balanceModal");
+
+  if (nameEl) nameEl.innerText = name;
+  if (inputEl) inputEl.value = "";
+  if (modalEl) modalEl.classList.add("show");
+};
+
+// ==========================================
+// 2. MAIN DOM CONTENT LOADED
+// ==========================================
 document.addEventListener("DOMContentLoaded", async () => {
   const authLoader = document.getElementById("adminAuthLoader");
 
@@ -7,12 +89,10 @@ document.addEventListener("DOMContentLoaded", async () => {
     return;
   }
 
-  // Sembunyikan Loader
   function hideLoader() {
     if (authLoader) authLoader.style.display = "none";
   }
 
-  // Inisialisasi Auth Admin
   async function initAdmin() {
     try {
       const { data: sessionData } = await window.supabase.auth.getSession();
@@ -24,7 +104,6 @@ document.addEventListener("DOMContentLoaded", async () => {
         return;
       }
 
-      // Cek Role di Supabase
       const { data: profile, error: profErr } = await window.supabase
         .from("profiles")
         .select("role")
@@ -37,8 +116,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         return;
       }
 
-      // Load Semua Data
-      await loadDashboardData();
+      await window.loadDashboardData();
       hideLoader();
     } catch (e) {
       console.error("Admin init error:", e);
@@ -47,11 +125,14 @@ document.addEventListener("DOMContentLoaded", async () => {
   }
 
   // Logout Handler
-  document.getElementById("btnAdminLogout").addEventListener("click", async () => {
-    await window.supabase.auth.signOut();
-    localStorage.removeItem("mgs_user");
-    window.location.href = "/auth/login.html";
-  });
+  const btnLogout = document.getElementById("btnAdminLogout");
+  if (btnLogout) {
+    btnLogout.addEventListener("click", async () => {
+      await window.supabase.auth.signOut();
+      localStorage.removeItem("mgs_user");
+      window.location.href = "/auth/login.html";
+    });
+  }
 
   // Tab Switcher
   const tabBtns = document.querySelectorAll(".tab-btn");
@@ -69,11 +150,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   // ==========================================
   // FETCH STATISTIK & PESANAN
   // ==========================================
-  let allOrders = [];
-  let allUsers = [];
-  let selectedTargetUser = null;
-
-  async function loadDashboardData() {
+  window.loadDashboardData = async function() {
     // 1. Fetch Orders
     const { data: orders, error: ordErr } = await window.supabase
       .from("orders")
@@ -98,7 +175,7 @@ document.addEventListener("DOMContentLoaded", async () => {
       if (statTotalUsers) statTotalUsers.innerText = users.length;
       renderUsersTable(users);
     }
-  }
+  };
 
   function renderStats(orders) {
     let totalRev = 0;
@@ -197,61 +274,6 @@ document.addEventListener("DOMContentLoaded", async () => {
     }).join("");
   }
 
-  // Helper Kirim Manual Struk WhatsApp
-  window.openWhatsAppReceipt = (orderId) => {
-    const o = allOrders.find((item) => item.id === orderId);
-    if (!o) return;
-
-    if (!o.whatsapp) {
-      alert("Pesanan ini tidak memiliki nomor WhatsApp pembeli!");
-      return;
-    }
-
-    // Format nomor HP ke standar 62xxx
-    let phone = o.whatsapp.replace(/[^0-9]/g, "");
-    if (phone.startsWith("0")) phone = "62" + phone.substring(1);
-    else if (phone.startsWith("8")) phone = "62" + phone;
-
-    const targetAcc = o.zone_id ? `${o.account_id} (${o.zone_id})` : o.account_id;
-    const priceFormatted = Number(o.price || 0).toLocaleString("id-ID");
-
-    const message = 
-`Halo Kak! Terima kasih sudah order di *MamangGS* 🎮🔥
-
-Berikut adalah rincian pesanan Anda:
-📄 *No. Invoice:* ${o.invoice}
-🎮 *Game:* ${o.game_title || o.game_code}
-💎 *Item:* ${o.item_name}
-🆔 *Data Akun:* ${targetAcc}
-💰 *Total Bayar:* Rp ${priceFormatted}
-📌 *Status Pesanan:* *${o.status}*
-
-Cek detail atau download invoice di:
-🔗 https://mamanggs.vercel.app/order-status.html?inv=${o.invoice}
-
-Pesanan Anda telah kami proses. Terima kasih dan selamat bermain! ✨`;
-
-    const waUrl = `https://api.whatsapp.com/send?phone=${phone}&text=${encodeURIComponent(message)}`;
-    window.open(waUrl, "_blank");
-  };
-
-  // Update Status Pesanan
-  window.updateOrderStatus = async (orderId, newStatus) => {
-    if (!confirm(`Ubah status pesanan ini menjadi ${newStatus}?`)) return;
-
-    const { error } = await window.supabase
-      .from("orders")
-      .update({ status: newStatus })
-      .eq("id", orderId);
-
-    if (error) {
-      alert("Gagal update status: " + error.message);
-    } else {
-      alert(`Status pesanan berhasil diubah ke ${newStatus}!`);
-      loadDashboardData();
-    }
-  };
-
   // Filter & Refresh Event
   const filterStatusEl = document.getElementById("filterStatus");
   if (filterStatusEl) {
@@ -260,7 +282,7 @@ Pesanan Anda telah kami proses. Terima kasih dan selamat bermain! ✨`;
 
   const btnRefresh = document.getElementById("btnRefreshOrders");
   if (btnRefresh) {
-    btnRefresh.addEventListener("click", loadDashboardData);
+    btnRefresh.addEventListener("click", () => window.loadDashboardData());
   }
 
   // ==========================================
@@ -306,13 +328,6 @@ Pesanan Anda telah kami proses. Terima kasih dan selamat bermain! ✨`;
 
   // Modal Balance Logic
   const balanceModal = document.getElementById("balanceModal");
-  window.openBalanceModal = (userId, name) => {
-    selectedTargetUser = userId;
-    document.getElementById("modalUserName").innerText = name;
-    document.getElementById("modalAmountInput").value = "";
-    balanceModal.classList.add("show");
-  };
-
   const btnCloseBal = document.getElementById("btnCloseBalModal");
   if (btnCloseBal) {
     btnCloseBal.addEventListener("click", () => balanceModal.classList.remove("show"));
@@ -337,7 +352,7 @@ Pesanan Anda telah kami proses. Terima kasih dan selamat bermain! ✨`;
       } else {
         alert("Saldo member berhasil diperbarui!");
         balanceModal.classList.remove("show");
-        loadDashboardData();
+        window.loadDashboardData();
       }
     });
   }
