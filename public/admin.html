@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Dashboard - MamangGS</title>
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  
+  <link rel="stylesheet" href="/css/global.css">
+  <link rel="stylesheet" href="/css/admin.css">
+</head>
+<body>
+
+  <!-- NAVBAR ADMIN -->
+  <header class="navbar">
+    <div class="navbar-container">
+      <a href="/" class="brand-logo">
+        <span class="logo-badge" style="background: #10b981;"><i class="fa-solid fa-shield-halved"></i></span>
+        Mamang<span>GS Admin</span>
+      </a>
+
+      <div class="nav-actions">
+        <span class="admin-badge"><i class="fa-solid fa-crown"></i> Super Admin</span>
+        <button id="btnAdminLogout" class="btn-nav-login" style="background: rgba(230, 57, 70, 0.2); border-color: var(--accent-red); color: #fff;">
+          <i class="fa-solid fa-power-off"></i> Keluar
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- KONTEN UTAMA ADMIN -->
+  <main class="admin-wrapper">
+    <!-- STATISTIK RINGKASAN -->
+    <section class="admin-stats-grid">
+      <div class="stat-card">
+        <div class="stat-icon income"><i class="fa-solid fa-money-bill-wave"></i></div>
+        <div class="stat-info">
+          <p>Total Omset Masuk</p>
+          <h3 id="statTotalRevenue">Rp 0</h3>
+        </div>
+      </div>
+
+      <div class="stat-card">
+        <div class="stat-icon orders"><i class="fa-solid fa-cart-shopping"></i></div>
+        <div class="stat-info">
+          <p>Total Transaksi</p>
+          <h3 id="statTotalOrders">0</h3>
+        </div>
+      </div>
+
+      <div class="stat-card">
+        <div class="stat-icon pending"><i class="fa-solid fa-clock"></i></div>
+        <div class="stat-info">
+          <p>Perlu Diproses (Pending)</p>
+          <h3 id="statPendingOrders">0</h3>
+        </div>
+      </div>
+
+      <div class="stat-card">
+        <div class="stat-icon users"><i class="fa-solid fa-users"></i></div>
+        <div class="stat-info">
+          <p>Total Member Terdaftar</p>
+          <h3 id="statTotalUsers">0</h3>
+        </div>
+      </div>
+    </section>
+
+    <!-- TAB NAVIGASI PANEL -->
+    <div class="admin-tabs">
+      <button class="tab-btn active" data-tab="ordersTab"><i class="fa-solid fa-list-check"></i> Kelola Transaksi</button>
+      <button class="tab-btn" data-tab="balanceTab"><i class="fa-solid fa-wallet"></i> Kelola Saldo Member</button>
+    </div>
+
+    <!-- SECTION 1: KELOLA TRANSAKSI -->
+    <section id="ordersTab" class="tab-content active">
+      <div class="section-card">
+        <div class="table-header-bar">
+          <h3><i class="fa-solid fa-table-list"></i> Daftar Seluruh Transaksi</h3>
+          <div class="filter-actions">
+            <select id="filterStatus" class="admin-select">
+              <option value="ALL">Semua Status</option>
+              <option value="PENDING">PENDING</option>
+              <option value="SUCCESS">SUCCESS</option>
+              <option value="CANCELLED">CANCELLED</option>
+            </select>
+            <button id="btnRefreshOrders" class="btn-refresh"><i class="fa-solid fa-rotate-right"></i> Refresh</button>
+          </div>
+        </div>
+
+        <div class="table-responsive">
+          <table class="admin-table">
+            <thead>
+              <tr>
+                <th>Invoice</th>
+                <th>Tanggal</th>
+                <th>Game & Item</th>
+                <th>User ID / Zone</th>
+                <th>Nominal</th>
+                <th>Metode</th>
+                <th>Status</th>
+                <th>Aksi</th>
+              </tr>
+            </thead>
+            <tbody id="ordersTableBody">
+              <tr>
+                <td colspan="8" style="text-align: center; padding: 25px;">Memuat daftar pesanan...</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION 2: KELOLA SALDO MEMBER -->
+    <section id="balanceTab" class="tab-content">
+      <div class="section-card">
+        <div class="table-header-bar">
+          <h3><i class="fa-solid fa-users-gear"></i> Daftar Member & Saldo Wallet</h3>
+          <input type="text" id="searchUser" class="admin-input-search" placeholder="Cari Email / Nama Member...">
+        </div>
+
+        <div class="table-responsive">
+          <table class="admin-table">
+            <thead>
+              <tr>
+                <th>Nama / Username</th>
+                <th>Email</th>
+                <th>Role</th>
+                <th>Saldo Saat Ini</th>
+                <th>Aksi Kelola Saldo</th>
+              </tr>
+            </thead>
+            <tbody id="usersTableBody">
+              <tr>
+                <td colspan="5" style="text-align: center; padding: 25px;">Memuat data member...</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- MODAL MANUAL TOP UP SALDO -->
+  <div class="modal-backdrop" id="balanceModal">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3><i class="fa-solid fa-circle-dollar-to-slot"></i> Tambah/Kurang Saldo</h3>
+        <button class="btn-close-modal" id="btnCloseBalModal"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+      <div class="modal-body">
+        <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 12px;">
+          Member: <strong id="modalUserName" style="color: #fff;">-</strong>
+        </p>
+        <div class="form-group">
+          <label>Jumlah Saldo (Gunakan tanda minus (-) untuk mengurangi)</label>
+          <input type="number" id="modalAmountInput" placeholder="Contoh: 50000 atau -10000" class="admin-input">
+        </div>
+        <button id="btnSubmitBalance" class="btn-submit-action">
+          <i class="fa-solid fa-check"></i> Simpan Perubahan Saldo
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- JS MODULAR -->
+  <script src="/js/supabase.js"></script>
+  <script src="/js/admin.js"></script>
+</body>
+</html>
