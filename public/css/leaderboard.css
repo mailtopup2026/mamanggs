@@ -239,3 +239,100 @@
   .podium-card.rank-2 { order: 2; }
   .podium-card.rank-3 { order: 3; }
 }
+/* ==========================================
+   EFEK MENYALA JUARA 1 (GOLDEN SULTAN AURA)
+   ========================================== */
+@keyframes goldenGlow {
+  0% {
+    box-shadow: 0 0 15px rgba(245, 158, 11, 0.4), inset 0 0 10px rgba(245, 158, 11, 0.2);
+    border-color: rgba(245, 158, 11, 0.6);
+  }
+  50% {
+    box-shadow: 0 0 35px rgba(245, 158, 11, 0.85), 0 0 60px rgba(245, 158, 11, 0.4), inset 0 0 20px rgba(245, 158, 11, 0.4);
+    border-color: #fbbf24;
+  }
+  100% {
+    box-shadow: 0 0 15px rgba(245, 158, 11, 0.4), inset 0 0 10px rgba(245, 158, 11, 0.2);
+    border-color: rgba(245, 158, 11, 0.6);
+  }
+}
+
+@keyframes crownBounce {
+  0%, 100% { transform: translateY(0) rotate(0deg); }
+  50% { transform: translateY(-6px) rotate(3deg); }
+}
+
+.podium-card.rank-1 {
+  animation: goldenGlow 2.5s infinite ease-in-out;
+  border-width: 2px !important;
+  background: linear-gradient(180deg, rgba(245, 158, 11, 0.18) 0%, rgba(15, 23, 42, 0.95) 100%) !important;
+}
+
+.podium-card.rank-1 .crown-icon {
+  animation: crownBounce 2s infinite ease-in-out;
+  filter: drop-shadow(0 0 15px #f59e0b) drop-shadow(0 0 30px #f59e0b);
+}
+
+.podium-card.rank-1 .podium-avatar {
+  box-shadow: 0 0 20px rgba(245, 158, 11, 0.6);
+}
+
+/* ==========================================
+   TOMBOL BGM / BACKGROUND MUSIC
+   ========================================== */
+.music-toggle-btn {
+  position: fixed;
+  bottom: 25px;
+  right: 25px;
+  z-index: 999;
+  background: rgba(15, 23, 42, 0.85);
+  border: 1px solid rgba(245, 158, 11, 0.5);
+  color: #f59e0b;
+  padding: 10px 18px;
+  border-radius: 50px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+  backdrop-filter: blur(8px);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.5);
+  font-weight: 700;
+  font-size: 0.85rem;
+  transition: var(--transition);
+}
+
+.music-toggle-btn:hover {
+  transform: scale(1.05);
+  border-color: #fbbf24;
+  box-shadow: 0 0 20px rgba(245, 158, 11, 0.4);
+}
+
+.music-toggle-btn.playing {
+  background: linear-gradient(135deg, rgba(245, 158, 11, 0.25), rgba(7, 13, 24, 0.95));
+  border-color: #fbbf24;
+  color: #fff;
+}
+
+/* Equalizer Mini Bar Animation */
+.sound-bars {
+  display: flex;
+  align-items: flex-end;
+  gap: 2px;
+  height: 14px;
+}
+
+.sound-bar {
+  width: 3px;
+  background: #f59e0b;
+  border-radius: 2px;
+  height: 4px;
+}
+
+.music-toggle-btn.playing .sound-bar:nth-child(1) { animation: barPlay 0.8s infinite ease alternate; }
+.music-toggle-btn.playing .sound-bar:nth-child(2) { animation: barPlay 1.1s infinite ease alternate 0.2s; }
+.music-toggle-btn.playing .sound-bar:nth-child(3) { animation: barPlay 0.6s infinite ease alternate 0.4s; }
+
+@keyframes barPlay {
+  0% { height: 3px; }
+  100% { height: 14px; }
+}

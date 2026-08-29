@@ -4,6 +4,62 @@ document.addEventListener("DOMContentLoaded", async () => {
     return;
   }
 
+  // ==========================================
+  // 1. LOGIKA BACKGROUND MUSIC (BGM)
+  // ==========================================
+  const bgmAudio = document.getElementById("bgmAudio");
+  const btnToggleMusic = document.getElementById("btnToggleMusic");
+  const musicText = document.getElementById("musicText");
+  const musicIcon = document.getElementById("musicIcon");
+
+  let isPlaying = false;
+
+  function playMusic() {
+    if (!bgmAudio) return;
+    bgmAudio.volume = 0.35; // Volume nyaman 35%
+    bgmAudio.play().then(() => {
+      isPlaying = true;
+      if (btnToggleMusic) btnToggleMusic.classList.add("playing");
+      if (musicText) musicText.innerText = "Musik Nyala";
+      if (musicIcon) musicIcon.className = "fa-solid fa-volume-high";
+    }).catch((err) => {
+      console.warn("Autoplay ditahan browser sampai user klik layar:", err);
+    });
+  }
+
+  function pauseMusic() {
+    if (!bgmAudio) return;
+    bgmAudio.pause();
+    isPlaying = false;
+    if (btnToggleMusic) btnToggleMusic.classList.remove("playing");
+    if (musicText) musicText.innerText = "Putar Musik Suasana";
+    if (musicIcon) musicIcon.className = "fa-solid fa-volume-xmark";
+  }
+
+  // Toggle manual klik tombol
+  if (btnToggleMusic) {
+    btnToggleMusic.addEventListener("click", (e) => {
+      e.stopPropagation(); // Cegah event klik global
+      if (isPlaying) {
+        pauseMusic();
+      } else {
+        playMusic();
+      }
+    });
+  }
+
+  // Auto-play otomatis pada klik pertama pengguna di mana saja
+  const handleFirstInteraction = () => {
+    if (!isPlaying) {
+      playMusic();
+    }
+    document.removeEventListener("click", handleFirstInteraction);
+  };
+  document.addEventListener("click", handleFirstInteraction);
+
+  // ==========================================
+  // 2. FETCH & RENDER DATA LEADERBOARD
+  // ==========================================
   // Sensor Nama Gamers
   function maskGamersName(name) {
     if (!name || name === "Gamers Sultan") return "Gamers Sultan";
