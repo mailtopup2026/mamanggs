@@ -3,18 +3,16 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Blog & Berita Game - Tips, Build & Promo | MamangGS</title>
-  <meta name="description" content="Kumpulan artikel tips game, bocoran event, rekomendasi build hero, dan panduan promo top up game termurah di platform MamangGS.">
+  <title>Blog & Berita Game - MamangGS</title>
+  <meta name="description" content="Kumpulan artikel tips game, build hero, dan promo top up di MamangGS.">
   
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-  
   <link rel="stylesheet" href="/css/global.css">
-  <link rel="stylesheet" href="/css/blog.css">
 </head>
-<body>
+<body style="background-color: #0b1120; color: #f8fafc; font-family: 'Plus Jakarta Sans', sans-serif; margin: 0; padding: 0;">
 
   <!-- NAVBAR -->
   <header class="navbar">
@@ -31,34 +29,40 @@
     </div>
   </header>
 
-  <!-- HERO SECTION BLOG -->
-  <main class="blog-wrapper">
-    <div class="blog-hero-section">
-      <div class="blog-pill-badge">
+  <!-- CONTAINER UTAMA -->
+  <main style="max-width: 1140px; margin: 30px auto 80px; padding: 0 20px; box-sizing: border-box;">
+    
+    <!-- HEADER HERO -->
+    <div style="text-align: center; margin-bottom: 35px;">
+      <div style="display: inline-flex; align-items: center; gap: 6px; background: rgba(245, 158, 11, 0.12); border: 1px solid rgba(245, 158, 11, 0.35); color: #f59e0b; padding: 5px 16px; border-radius: 20px; font-size: 0.75rem; font-weight: 800; letter-spacing: 0.5px; margin-bottom: 12px;">
         <i class="fa-solid fa-newspaper"></i> MAMANGGS NEWS HUB
       </div>
-      <h1 class="blog-main-title">Berita & Panduan Gamers</h1>
-      <p class="blog-sub-title">Dapatkan info terupdate seputar build hero, tips pro, bocoran event game, dan promo top up spesial.</p>
+      <h1 style="font-size: 2.1rem; font-weight: 900; color: #ffffff; margin: 0 0 8px; letter-spacing: -0.5px;">Berita & Panduan Gamers</h1>
+      <p style="color: #94a3b8; font-size: 0.92rem; max-width: 580px; margin: 0 auto 24px; line-height: 1.5;">Dapatkan info terupdate seputar build hero, tips pro, bocoran event game, dan promo top up spesial.</p>
       
-      <!-- CONTROLS: SEARCH & KATEGORI -->
-      <div class="blog-controls-row">
-        <div class="blog-search-box">
-          <i class="fa-solid fa-magnifying-glass"></i>
-          <input type="text" id="blogSearchInput" placeholder="Cari artikel, hero, promo...">
+      <!-- CONTROLS: SEARCH & TABS -->
+      <div style="display: flex; flex-direction: column; align-items: center; gap: 14px; max-width: 620px; margin: 0 auto;">
+        
+        <!-- Search Box -->
+        <div style="width: 100%; position: relative;">
+          <i class="fa-solid fa-magnifying-glass" style="position: absolute; left: 16px; top: 50%; transform: translateY(-50%); color: #64748b; font-size: 0.9rem;"></i>
+          <input type="text" id="blogSearchInput" placeholder="Cari artikel, hero, atau promo..." style="width: 100%; background: #111827; border: 1.5px solid rgba(255, 255, 255, 0.12); padding: 12px 16px 12px 44px; border-radius: 30px; color: #ffffff; font-size: 0.88rem; font-family: inherit; outline: none; box-sizing: border-box;">
         </div>
 
-        <div class="blog-categories-tabs" id="categoryTabs">
-          <button class="cat-tab-btn active" data-cat="ALL">Semua</button>
-          <button class="cat-tab-btn" data-cat="MLBB">MLBB</button>
-          <button class="cat-tab-btn" data-cat="Promo">Promo</button>
-          <button class="cat-tab-btn" data-cat="Tips & Trick">Tips & Trick</button>
+        <!-- Category Buttons -->
+        <div id="categoryTabs" style="display: flex; gap: 8px; flex-wrap: wrap; justify-content: center;">
+          <button class="cat-tab-btn active" data-cat="ALL" style="background: #f59e0b; border: 1px solid #f59e0b; color: #ffffff; padding: 7px 16px; border-radius: 20px; font-size: 0.8rem; font-weight: 700; cursor: pointer;">Semua</button>
+          <button class="cat-tab-btn" data-cat="MLBB" style="background: #1e293b; border: 1px solid rgba(255,255,255,0.1); color: #94a3b8; padding: 7px 16px; border-radius: 20px; font-size: 0.8rem; font-weight: 700; cursor: pointer;">MLBB</button>
+          <button class="cat-tab-btn" data-cat="Promo" style="background: #1e293b; border: 1px solid rgba(255,255,255,0.1); color: #94a3b8; padding: 7px 16px; border-radius: 20px; font-size: 0.8rem; font-weight: 700; cursor: pointer;">Promo</button>
+          <button class="cat-tab-btn" data-cat="Tips & Trick" style="background: #1e293b; border: 1px solid rgba(255,255,255,0.1); color: #94a3b8; padding: 7px 16px; border-radius: 20px; font-size: 0.8rem; font-weight: 700; cursor: pointer;">Tips & Trick</button>
         </div>
       </div>
     </div>
 
     <!-- GRID ARTIKEL -->
-    <div class="articles-grid" id="articlesGrid">
-      <div style="grid-column: 1/-1; text-align: center; padding: 60px 20px; color: var(--text-muted);">
+    <div id="articlesGrid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 24px; margin-top: 25px;">
+      <!-- Loading State -->
+      <div style="grid-column: 1/-1; text-align: center; padding: 60px 20px; color: #94a3b8;">
         <i class="fa-solid fa-spinner fa-spin fa-2x"></i>
         <p style="margin-top: 12px; font-weight: 600;">Memuat artikel berita...</p>
       </div>
@@ -75,27 +79,9 @@
         </div>
         <p>Platform top up game otomatis, murah, dan terpercaya 24 jam nonstop.</p>
       </div>
-
-      <div class="footer-col">
-        <h4>Menu Navigasi</h4>
-        <ul class="footer-links">
-          <li><a href="/">Beranda</a></li>
-          <li><a href="/order-status.html">Lacak Pesanan</a></li>
-          <li><a href="/leaderboard.html">Leaderboard</a></li>
-          <li><a href="/blog.html">Berita & Blog</a></li>
-        </ul>
+      <div class="footer-bottom">
+        <p>&copy; 2026 MamangGS. All rights reserved.</p>
       </div>
-
-      <div class="footer-col">
-        <h4>Bantuan & Legal</h4>
-        <ul class="footer-links">
-          <li><a href="/privacy-policy.html">Kebijakan Privasi</a></li>
-          <li><a href="/terms.html">Syarat & Ketentuan</a></li>
-        </ul>
-      </div>
-    </div>
-    <div class="footer-bottom">
-      <p>&copy; 2026 MamangGS. All rights reserved.</p>
     </div>
   </footer>
 
