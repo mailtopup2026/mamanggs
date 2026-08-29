@@ -68,22 +68,22 @@
       background: #24334a;
     }
 
-    /* Badge Diskon Pita Miring (Fixed Width agar presisi) */
+    /* Badge Diskon Pita Miring */
     .ribbon-save {
       position: absolute;
       top: 14px;
       right: -30px;
-      width: 120px; /* Dikunci lebarnya */
+      width: 120px;
       background: #f59e0b;
       color: #0b1120;
       font-size: 0.65rem;
       font-weight: 900;
-      padding: 4px 0; /* Padding vertikal saja */
+      padding: 4px 0;
       transform: rotate(45deg);
       box-shadow: 0 2px 6px rgba(0,0,0,0.3);
       z-index: 10;
       letter-spacing: 0.5px;
-      text-align: center; /* Teks ke tengah */
+      text-align: center;
     }
 
     /* Khusus Layar HP (< 640px) */
@@ -369,6 +369,7 @@
           <i class="fa-solid fa-ellipsis-vertical"></i>
         </button>
       </div>
+
     </div>
 
     <!-- EXPANDABLE MOBILE SEARCH INPUT -->
@@ -445,11 +446,12 @@
     </div>
   </section>
 
-  <<!-- ========================================== -->
+  <!-- ========================================== -->
   <!-- 1. SECTION PROMO FLASH SALE -->
   <!-- ========================================== -->
-  <section class="home-section" style="max-width: 1200px; width: 100%; margin: 30px auto 40px; padding: 0 16px; box-sizing: border-box; overflow: hidden;">
-    <div style="background: #111827; border: 1px solid rgba(245, 158, 11, 0.35); border-radius: 18px; padding: 22px 20px; box-sizing: border-box;">
+  <!-- DITAMBAHKAN width: 100%; AGAR SEMPURNA -->
+  <section class="home-section" style="max-width: 1200px; width: 100%; margin: 30px auto 40px; padding: 0 16px; box-sizing: border-box;">
+    <div style="background: #111827; border: 1px solid rgba(245, 158, 11, 0.35); border-radius: 18px; padding: 22px 20px; box-sizing: border-box; overflow: hidden;">
       
       <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px; margin-bottom: 14px; padding: 0 6px;">
         <div style="flex: 1 1 200px;">
@@ -562,16 +564,15 @@
               <div style="font-size: 0.88rem; font-weight: 900; color: #fbbf24; margin-top: 2px;">Rp 27.200</div>
             </div>
           </a>
-
         </div>
       </div>
     </div>
   </section>
 
   <!-- ========================================== -->
-  <!-- 2. SECTION POPULER SEKARANG (3 KOLOM DESKTOP) -->
+  <!-- 2. SECTION POPULER SEKARANG (DIBUAT WIDTH 100%) -->
   <!-- ========================================== -->
-  <section class="home-section" style="max-width: 1200px; margin: 0 auto 45px; padding: 0 16px;">
+  <section class="home-section" style="max-width: 1200px; width: 100%; margin: 0 auto 45px; padding: 0 16px; box-sizing: border-box;">
     <div style="margin-bottom: 16px;">
       <h2 style="font-size: 1.25rem; font-weight: 900; color: #fff; margin: 0 0 4px; display: flex; align-items: center; gap: 8px;">
         🔥 POPULER SEKARANG!
@@ -628,7 +629,7 @@
   <!-- ========================================== -->
   <!-- 3. SECTION KATALOG LENGKAP SEMUA PRODUK -->
   <!-- ========================================== -->
-  <section id="games-section" class="home-section" style="max-width: 1200px; margin: 0 auto 60px; padding: 0 16px;">
+  <section id="games-section" class="home-section" style="max-width: 1200px; width: 100%; margin: 0 auto 60px; padding: 0 16px; box-sizing: border-box;">
     <div style="display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 24px;">
       <button class="catalog-tab-pill active" data-filter="all">Top Up Game</button>
       <button class="catalog-tab-pill" data-filter="reseller">Reseller</button>
@@ -641,8 +642,8 @@
     </div>
   </section>
 
-  <!-- WIDGET BANNER PROMINEN: HALL OF FAME LEADERBOARD -->
-  <section class="catalog-section" style="margin-top: 10px; margin-bottom: 50px;">
+  <!-- WIDGET BANNER PROMINEN: HALL OF FAME LEADERBOARD (DIBUAT WIDTH 100%) -->
+  <section class="catalog-section" style="max-width: 1200px; width: 100%; margin: 10px auto 50px; padding: 0 16px; box-sizing: border-box;">
     <div style="background: linear-gradient(135deg, rgba(245, 158, 11, 0.15) 0%, rgba(7, 13, 24, 0.95) 100%); border: 1px solid rgba(245, 158, 11, 0.4); border-radius: var(--radius-md); padding: 24px 28px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.5);">
       <div style="display: flex; align-items: center; gap: 18px;">
         <div style="width: 55px; height: 55px; border-radius: 14px; background: rgba(245, 158, 11, 0.2); border: 1px solid #f59e0b; display: flex; align-items: center; justify-content: center; font-size: 1.6rem; color: #f59e0b; flex-shrink: 0;">
