@@ -102,7 +102,7 @@
 }
 
 .pillar-1 {
-  height: 275px;
+  height: 285px;
   background: linear-gradient(180deg, #422606 0%, #b47816 45%, #eab308 100%);
   border: 1.5px solid rgba(250, 204, 21, 0.7);
   box-shadow: 0 0 35px rgba(234, 179, 8, 0.3);
@@ -120,19 +120,34 @@
 .pillar-prize-pill {
   display: flex;
   align-items: center;
-  gap: 6px;
-  background: rgba(15, 23, 42, 0.85);
-  border: 1px solid rgba(250, 204, 21, 0.6);
-  padding: 5px 8px;
-  border-radius: 12px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+  gap: 8px;
+  background: rgba(10, 15, 29, 0.92);
+  border: 1px solid rgba(255, 51, 68, 0.45);
+  padding: 6px 10px;
+  border-radius: 50px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5), inset 0 0 10px rgba(255, 51, 68, 0.12);
   max-width: 95%;
-  backdrop-filter: blur(4px);
+  backdrop-filter: blur(6px);
+  transition: transform 0.2s ease;
 }
 
-.prize-icon {
-  font-size: 0.85rem;
-  color: #f59e0b;
+.pillar-prize-pill:hover {
+  transform: scale(1.03);
+  border-color: #ff3344;
+}
+
+.prize-icon-circle {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #ff3344, #b91c1c);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.72rem;
+  color: #fff;
+  box-shadow: 0 0 8px rgba(255, 51, 68, 0.6);
+  flex-shrink: 0;
 }
 
 .prize-info {
@@ -142,15 +157,15 @@
 }
 
 .prize-tag {
-  font-size: 0.55rem;
+  font-size: 0.54rem;
   font-weight: 800;
-  color: #fbbf24;
-  letter-spacing: 0.5px;
+  color: #ff8594;
+  letter-spacing: 0.4px;
   line-height: 1;
 }
 
 .prize-amount {
-  font-size: 0.72rem;
+  font-size: 0.74rem;
   font-weight: 800;
   color: #ffffff;
   line-height: 1.2;
@@ -177,39 +192,59 @@
   border: 1.5px solid rgba(244, 114, 182, 0.4);
 }
 
-/* LAUREL WREATH */
-.laurel-wreath {
-  font-weight: 900;
-  display: flex;
+/* ===================================================
+   TROPHY BADGES & ANIMASI PIALA MENYALA MERAH
+   =================================================== */
+.trophy-rank-badge {
+  display: inline-flex;
   align-items: center;
   justify-content: center;
+  gap: 6px;
+  font-weight: 900;
+  margin-bottom: 4px;
 }
 
-.laurel-wreath .wreath-text {
+.rank-trophy-icon {
+  font-size: 1.15rem;
+}
+
+.wreath-text {
   font-size: 1.2rem;
   letter-spacing: -0.5px;
 }
 
-.laurel-gold {
-  color: #fef08a;
-  text-shadow: 0 0 10px rgba(234, 179, 8, 0.8);
+/* Rank 1: Merah Menyala / Red Pulse Glow */
+.badge-red-glow {
+  color: #ff3344;
+  text-shadow: 0 0 12px rgba(255, 30, 60, 0.8), 0 0 24px rgba(239, 68, 68, 0.5);
 }
-.laurel-gold::before { content: "🌿 "; }
-.laurel-gold::after { content: " 🌿"; }
 
-.laurel-silver {
+.badge-red-glow .red-pulse {
+  animation: redTrophyGlow 1.8s infinite ease-in-out;
+}
+
+@keyframes redTrophyGlow {
+  0%, 100% {
+    transform: scale(1);
+    filter: drop-shadow(0 0 8px rgba(255, 42, 75, 0.8));
+  }
+  50% {
+    transform: scale(1.15);
+    filter: drop-shadow(0 0 20px rgba(255, 42, 75, 1)) drop-shadow(0 0 35px rgba(239, 68, 68, 0.6));
+  }
+}
+
+/* Rank 2 (Silver) */
+.badge-silver {
   color: #e2e8f0;
-  text-shadow: 0 0 10px rgba(226, 232, 240, 0.6);
+  text-shadow: 0 0 10px rgba(226, 232, 240, 0.5);
 }
-.laurel-silver::before { content: "🌿 "; }
-.laurel-silver::after { content: " 🌿"; }
 
-.laurel-bronze {
+/* Rank 3 (Bronze) */
+.badge-bronze {
   color: #fbcfe8;
-  text-shadow: 0 0 10px rgba(244, 114, 182, 0.6);
+  text-shadow: 0 0 10px rgba(244, 114, 182, 0.5);
 }
-.laurel-bronze::before { content: "🌿 "; }
-.laurel-bronze::after { content: " 🌿"; }
 
 /* AVATAR 3D */
 .avatar-3d-wrapper {
@@ -333,11 +368,11 @@
   gap: 5px;
 }
 
-.wreath-badge-sm {
-  font-size: 0.85rem;
+.trophy-badge-sm {
+  font-size: 0.82rem;
   font-weight: 800;
   color: #f59e0b;
-  letter-spacing: -0.5px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
 }
-.wreath-badge-sm::before { content: "🌿 "; }
-.wreath-badge-sm::after { content: " 🌿"; }
