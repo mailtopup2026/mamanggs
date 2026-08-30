@@ -1,130 +1,90 @@
-document.addEventListener("DOMContentLoaded", async function () {
-  var gameMeta = {
-    "MOBILE LEGENDS": {
-      slug: "mlbb",
+document.addEventListener("DOMContentLoaded", function () {
+  var gamesData = [
+    {
+      name: "Mobile Legends",
       dev: "Moonton",
-      img: "https://images.unsplash.com/photo-1563089145-599997674d42?auto=format&fit=crop&w=500&q=80",
-      category: "game"
+      slug: "mlbb",
+      category: "game",
+      image: "https://images.unsplash.com/photo-1563089145-599997674d42?auto=format&fit=crop&w=500&q=80"
     },
-    "FREE FIRE": {
-      slug: "ff",
+    {
+      name: "Free Fire",
       dev: "Garena",
-      img: "https://images.unsplash.com/photo-1579373903781-fd5c0c30c4cd?auto=format&fit=crop&w=500&q=80",
-      category: "game"
+      slug: "ff",
+      category: "game",
+      image: "https://images.unsplash.com/photo-1579373903781-fd5c0c30c4cd?auto=format&fit=crop&w=500&q=80"
     },
-    "PUBG MOBILE": {
+    {
+      name: "PUBG Mobile",
+      dev: "Level Infinite",
       slug: "pubg",
-      dev: "Level Infinite",
-      img: "https://images.unsplash.com/photo-1542751371-adc38448a05e?auto=format&fit=crop&w=500&q=80",
-      category: "game"
+      category: "game",
+      image: "https://images.unsplash.com/photo-1542751371-adc38448a05e?auto=format&fit=crop&w=500&q=80"
     },
-    "GENSHIN IMPACT": {
-      slug: "genshin",
+    {
+      name: "Genshin Impact",
       dev: "HoYoverse",
-      img: "https://images.unsplash.com/photo-1538481199705-c710c4e965fc?auto=format&fit=crop&w=500&q=80",
-      category: "game"
+      slug: "genshin",
+      category: "game",
+      image: "https://images.unsplash.com/photo-1538481199705-c710c4e965fc?auto=format&fit=crop&w=500&q=80"
     },
-    "VALORANT": {
-      slug: "valorant",
+    {
+      name: "Valorant",
       dev: "Riot Games",
-      img: "https://images.unsplash.com/photo-1550745165-9bc0b252726f?auto=format&fit=crop&w=500&q=80",
-      category: "game"
+      slug: "valorant",
+      category: "game",
+      image: "https://images.unsplash.com/photo-1550745165-9bc0b252726f?auto=format&fit=crop&w=500&q=80"
     },
-    "HONOR OF KINGS": {
-      slug: "hok",
+    {
+      name: "Honor of Kings",
       dev: "Level Infinite",
-      img: "https://images.unsplash.com/photo-1560253023-3ec5d502959f?auto=format&fit=crop&w=500&q=80",
-      category: "game"
+      slug: "hok",
+      category: "game",
+      image: "https://images.unsplash.com/photo-1560253023-3ec5d502959f?auto=format&fit=crop&w=500&q=80"
     },
-    "WHITEOUT SURVIVAL": {
-      slug: "whiteout",
+    {
+      name: "Whiteout Survival",
       dev: "Century Games",
-      img: "https://images.unsplash.com/photo-1518709268805-4e9042af9f23?auto=format&fit=crop&w=500&q=80",
-      category: "game"
+      slug: "whiteout",
+      category: "game",
+      image: "https://images.unsplash.com/photo-1518709268805-4e9042af9f23?auto=format&fit=crop&w=500&q=80"
     },
-    "POINT BLANK": {
-      slug: "pb",
+    {
+      name: "Point Blank",
       dev: "Zepetto",
-      img: "https://images.unsplash.com/photo-1542751371-adc38448a05e?auto=format&fit=crop&w=500&q=80",
-      category: "game"
+      slug: "pb",
+      category: "game",
+      image: "https://images.unsplash.com/photo-1542751371-adc38448a05e?auto=format&fit=crop&w=500&q=80"
     },
-    "STEAM WALLET": {
+    {
+      name: "Steam Wallet IDR",
+      dev: "Valve",
       slug: "steam",
-      dev: "Valve Corp",
-      img: "https://images.unsplash.com/photo-1550745165-9bc0b252726f?auto=format&fit=crop&w=500&q=80",
-      category: "voucher"
+      category: "voucher",
+      image: "https://images.unsplash.com/photo-1550745165-9bc0b252726f?auto=format&fit=crop&w=500&q=80"
     }
-  };
+  ];
 
-  var gridContainer = document.getElementById("mainCatalogGrid");
-  if (!gridContainer) return;
-
-  var activeCatalog = [];
-
-  // 1. Tarik Data Brand Resmi dari Supabase
-  try {
-    if (window.supabase) {
-      var res = await window.supabase
-        .from("products")
-        .select("brand, game_code, category")
-        .eq("buyer_product_status", true);
-
-      if (!res.error && res.data && res.data.length > 0) {
-        var rawBrands = res.data.map(function (item) {
-          return item.brand ? item.brand.toUpperCase() : "";
-        }).filter(Boolean);
-
-        var uniqueBrands = Array.from(new Set(rawBrands));
-
-        activeCatalog = uniqueBrands.map(function (brandName) {
-          var matchedKey = Object.keys(gameMeta).find(function (k) {
-            return brandName.indexOf(k) !== -1;
-          }) || "";
-          var meta = gameMeta[matchedKey] || {};
-
-          return {
-            name: brandName,
-            slug: meta.slug || brandName.toLowerCase().replace(/\s+/g, "-"),
-            dev: meta.dev || "Official Publisher",
-            image: meta.img || "https://images.unsplash.com/photo-1542751371-adc38448a05e?auto=format&fit=crop&w=500&q=80",
-            category: meta.category || (brandName.indexOf("VOUCHER") !== -1 || brandName.indexOf("STEAM") !== -1 ? "voucher" : "game")
-          };
-        });
-      }
-    }
-  } catch (err) {
-    console.warn("Koneksi Supabase fallback:", err);
+  var container = document.getElementById("mainCatalogGrid");
+  if (!container) {
+    console.warn("Element #mainCatalogGrid tidak ditemukan!");
+    return;
   }
 
-  // 2. Fallback jika Supabase belum ada data
-  if (activeCatalog.length === 0) {
-    activeCatalog = Object.keys(gameMeta).map(function (brandName) {
-      var val = gameMeta[brandName];
-      return {
-        name: brandName,
-        slug: val.slug,
-        dev: val.dev,
-        image: val.img,
-        category: val.category
-      };
-    });
-  }
+  function renderGrid(filterType) {
+    container.innerHTML = "";
+    var currentFilter = filterType || "all";
 
-  // 3. Render Card Poster
-  function renderCatalog(filterKey) {
-    gridContainer.innerHTML = "";
+    var list = (currentFilter === "all" || currentFilter === "reseller")
+      ? gamesData
+      : gamesData.filter(function (item) { return item.category === currentFilter; });
 
-    var targetKey = filterKey || "all";
-    var filtered = (targetKey === "all" || targetKey === "game")
-      ? activeCatalog
-      : activeCatalog.filter(function (g) { return g.category === targetKey; });
-
-    if (filtered.length === 0) {
-      gridContainer.innerHTML = '<div style="grid-column: 1/-1; text-align: center; color: #64748b; padding: 40px;"><i class="fa-solid fa-box-open" style="font-size: 2rem; margin-bottom: 10px; display: block;"></i>Belum ada produk di kategori ini.</div>';
+    if (list.length === 0) {
+      container.innerHTML = '<div style="grid-column: 1/-1; text-align: center; color: #64748b; padding: 40px;"><i class="fa-solid fa-box-open" style="font-size: 2rem; margin-bottom: 10px; display: block;"></i>Belum ada produk untuk kategori ini.</div>';
       return;
     }
 
-    filtered.forEach(function (game) {
+    list.forEach(function (game) {
       var card = document.createElement("a");
       card.href = "/order.html?game=" + game.slug;
       card.className = "catalog-poster-card";
@@ -134,21 +94,21 @@ document.addEventListener("DOMContentLoaded", async function () {
           '<h3 style="font-size: 0.95rem; font-weight: 800; margin: 0 0 4px; color: #fff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">' + game.name + '</h3>' +
           '<p style="font-size: 0.76rem; color: #94a3b8; margin: 0;">' + game.dev + '</p>' +
         '</div>';
-      gridContainer.appendChild(card);
+      container.appendChild(card);
     });
   }
 
-  // 4. Tab Filter Listener
+  // Event Listener Tab Filter
   var tabButtons = document.querySelectorAll(".catalog-tab-pill");
   tabButtons.forEach(function (btn) {
     btn.addEventListener("click", function () {
       tabButtons.forEach(function (b) { b.classList.remove("active"); });
       this.classList.add("active");
       var filter = this.getAttribute("data-filter") || "all";
-      renderCatalog(filter);
+      renderGrid(filter);
     });
   });
 
-  // Render Tampilan Awal
-  renderCatalog("all");
+  // Render langsung saat halaman terbuka
+  renderGrid("all");
 });
