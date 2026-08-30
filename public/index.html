@@ -1,163 +1,720 @@
-document.addEventListener("DOMContentLoaded", async () => {
-  // Mapping Aset Gambar & Detail Publisher Game
-  const gameMeta = {
-    "MOBILE LEGENDS": {
-      slug: "mlbb",
-      dev: "Moonton",
-      img: "https://images.unsplash.com/photo-1563089145-599997674d42?auto=format&fit=crop&w=500&q=80",
-      category: "game"
-    },
-    "FREE FIRE": {
-      slug: "ff",
-      dev: "Garena",
-      img: "https://images.unsplash.com/photo-1579373903781-fd5c0c30c4cd?auto=format&fit=crop&w=500&q=80",
-      category: "game"
-    },
-    "PUBG MOBILE": {
-      slug: "pubg",
-      dev: "Level Infinite",
-      img: "https://images.unsplash.com/photo-1542751371-adc38448a05e?auto=format&fit=crop&w=500&q=80",
-      category: "game"
-    },
-    "GENSHIN IMPACT": {
-      slug: "genshin",
-      dev: "HoYoverse",
-      img: "https://images.unsplash.com/photo-1538481199705-c710c4e965fc?auto=format&fit=crop&w=500&q=80",
-      category: "game"
-    },
-    "VALORANT": {
-      slug: "valorant",
-      dev: "Riot Games",
-      img: "https://images.unsplash.com/photo-1550745165-9bc0b252726f?auto=format&fit=crop&w=500&q=80",
-      category: "game"
-    },
-    "HONOR OF KINGS": {
-      slug: "hok",
-      dev: "Level Infinite",
-      img: "https://images.unsplash.com/photo-1560253023-3ec5d502959f?auto=format&fit=crop&w=500&q=80",
-      category: "game"
-    },
-    "WHITEOUT SURVIVAL": {
-      slug: "whiteout",
-      dev: "Century Games",
-      img: "https://images.unsplash.com/photo-1518709268805-4e9042af9f23?auto=format&fit=crop&w=500&q=80",
-      category: "game"
-    },
-    "POINT BLANK": {
-      slug: "pb",
-      dev: "Zepetto",
-      img: "https://images.unsplash.com/photo-1542751371-adc38448a05e?auto=format&fit=crop&w=500&q=80",
-      category: "game"
-    },
-    "STEAM WALLET": {
-      slug: "steam",
-      dev: "Valve Corp",
-      img: "https://images.unsplash.com/photo-1550745165-9bc0b252726f?auto=format&fit=crop&w=500&q=80",
-      category: "voucher"
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MamangGS - Top Up Game Favoritmu Cepat & Murah</title>
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  
+  <link rel="stylesheet" href="/css/global.css">
+  <link rel="stylesheet" href="/css/home.css">
+
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎮</text></svg>">
+
+  <style>
+    /* 1. INFINITE AUTO-SCROLL TICKER (PASTI TER-MURAAHH) */
+    .flash-marquee-wrapper {
+      position: relative;
+      width: 100%;
+      max-width: 100%;
+      overflow: hidden;
+      padding: 6px 0;
+      mask-image: linear-gradient(to right, transparent, black 3%, black 97%, transparent);
+      -webkit-mask-image: linear-gradient(to right, transparent, black 3%, black 97%, transparent);
     }
-  };
 
-  const gridContainer = document.getElementById("mainCatalogGrid");
-  if (!gridContainer) return;
+    .flash-marquee-track {
+      display: flex;
+      gap: 12px;
+      width: max-content;
+      animation: scrollLeftLoop 24s linear infinite;
+    }
 
-  // Loading skeleton state
-  gridContainer.innerHTML = `
-    <div style="grid-column: 1/-1; text-align: center; padding: 40px; color: #94a3b8;">
-      <i class="fa-solid fa-spinner fa-spin" style="font-size: 1.8rem; color: #f59e0b; margin-bottom: 10px;"></i>
-      <p style="margin: 0; font-size: 0.9rem;">Memuat katalog game resmi...</p>
-    </div>
-  `;
+    .flash-marquee-wrapper:hover .flash-marquee-track,
+    .flash-marquee-wrapper:active .flash-marquee-track {
+      animation-play-state: paused;
+    }
 
-  let activeCatalog = [];
+    @keyframes scrollLeftLoop {
+      0% { transform: translateX(0); }
+      100% { transform: translateX(-50%); }
+    }
 
-  // 1. Tarik Data Brand Resmi dari Supabase
-  try {
-    if (window.supabase) {
-      const { data, error } = await window.supabase
-        .from("products")
-        .select("brand, game_code, category")
-        .eq("buyer_product_status", true);
+    .flash-promo-card {
+      width: 220px;
+      min-width: 220px;
+      background: #1e293b;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 12px;
+      padding: 12px;
+      position: relative;
+      overflow: hidden;
+      text-decoration: none;
+      color: #fff;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      transition: transform 0.2s ease, border-color 0.2s ease;
+      box-sizing: border-box;
+    }
 
-      if (!error && data && data.length > 0) {
-        const uniqueBrands = [...new Set(data.map(item => item.brand?.toUpperCase()).filter(Boolean))];
+    .flash-promo-card:hover {
+      transform: translateY(-3px);
+      border-color: #f59e0b;
+      background: #24334a;
+    }
 
-        activeCatalog = uniqueBrands.map(brandName => {
-          const matchedKey = Object.keys(gameMeta).find(k => brandName.includes(k)) || "";
-          const meta = gameMeta[matchedKey] || {};
+    .ribbon-save {
+      position: absolute;
+      top: 14px;
+      right: -30px;
+      width: 120px;
+      background: #f59e0b;
+      color: #0b1120;
+      font-size: 0.65rem;
+      font-weight: 900;
+      padding: 4px 0;
+      transform: rotate(45deg);
+      box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+      z-index: 10;
+      letter-spacing: 0.5px;
+      text-align: center;
+    }
 
-          return {
-            name: brandName,
-            slug: meta.slug || brandName.toLowerCase().replace(/\s+/g, "-"),
-            dev: meta.dev || "Official Publisher",
-            image: meta.img || "https://images.unsplash.com/photo-1542751371-adc38448a05e?auto=format&fit=crop&w=500&q=80",
-            category: meta.category || (brandName.includes("VOUCHER") || brandName.includes("STEAM") ? "voucher" : "game")
-          };
-        });
+    @media (max-width: 640px) {
+      .flash-promo-card {
+        width: 190px !important;
+        min-width: 190px !important;
+        padding: 10px 12px !important;
+      }
+      .flash-promo-card img {
+        width: 36px !important;
+        height: 36px !important;
+        border-radius: 6px !important;
+      }
+      .ribbon-save {
+        top: 12px !important;
+        right: -32px !important;
+        width: 110px !important;
+        font-size: 0.55rem !important;
+        padding: 3px 0 !important;
       }
     }
-  } catch (err) {
-    console.warn("Koneksi Supabase fallback ke data lokal:", err);
-  }
 
-  // 2. Fallback jika Supabase kosong / masih sync
-  if (activeCatalog.length === 0) {
-    activeCatalog = Object.entries(gameMeta).map(([brandName, val]) => ({
-      name: brandName,
-      slug: val.slug,
-      dev: val.dev,
-      image: val.img,
-      category: val.category
-    }));
-  }
-
-  // 3. Render Card Katalog Poster
-  function renderCatalog(filterKey = "all") {
-    gridContainer.innerHTML = "";
-
-    const filtered = (filterKey === "all" || filterKey === "game")
-      ? activeCatalog
-      : activeCatalog.filter(g => g.category === filterKey);
-
-    if (filtered.length === 0) {
-      gridContainer.innerHTML = `
-        <div style="grid-column: 1/-1; text-align: center; color: #64748b; padding: 40px;">
-          <i class="fa-solid fa-box-open" style="font-size: 2rem; margin-bottom: 10px; display: block;"></i>
-          Belum ada produk di kategori ini.
-        </div>
-      `;
-      return;
+    /* 2. CARD POPULER */
+    .popular-grid-layout {
+      display: grid !important;
+      grid-template-columns: repeat(3, 1fr) !important;
+      gap: 14px !important;
     }
 
-    filtered.forEach(game => {
-      const card = document.createElement("a");
-      card.href = `/order.html?game=${game.slug}`;
-      card.className = "catalog-poster-card";
-      card.innerHTML = `
-        <img src="${game.image}" alt="${game.name}" loading="lazy">
-        <div style="padding: 12px 14px;">
-          <h3 style="font-size: 0.95rem; font-weight: 800; margin: 0 0 4px; color: #fff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
-            ${game.name}
-          </h3>
-          <p style="font-size: 0.76rem; color: #94a3b8; margin: 0;">
-            ${game.dev}
-          </p>
+    .popular-compact-card {
+      background: #1e293b;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 12px;
+      padding: 12px 14px;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      text-decoration: none;
+      color: #fff;
+      transition: all 0.2s ease;
+    }
+
+    .popular-compact-card:hover {
+      background: #24334a;
+      border-color: #f59e0b;
+      transform: translateY(-2px);
+    }
+
+    .popular-compact-card img {
+      width: 46px;
+      height: 46px;
+      border-radius: 10px;
+      object-fit: cover;
+      flex-shrink: 0;
+    }
+
+    /* 3. TAB PILLS & POSTER KATALOG */
+    .catalog-tab-pill {
+      background: #1e293b;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      color: #94a3b8;
+      padding: 8px 20px;
+      border-radius: 8px;
+      font-size: 0.82rem;
+      font-weight: 800;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .catalog-tab-pill:hover,
+    .catalog-tab-pill.active {
+      background: #f59e0b;
+      color: #0b1120;
+      border-color: #f59e0b;
+    }
+
+    .catalog-poster-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));
+      gap: 18px;
+    }
+
+    .catalog-poster-card {
+      background: #111827;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 14px;
+      overflow: hidden;
+      text-decoration: none;
+      color: #fff;
+      display: flex;
+      flex-direction: column;
+      transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .catalog-poster-card:hover {
+      transform: translateY(-5px);
+      border-color: #f59e0b;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6);
+    }
+
+    .catalog-poster-card img {
+      width: 100%;
+      height: 220px;
+      object-fit: cover;
+      display: block;
+    }
+
+    /* 4. NAVBAR MOBILE CONTROLS */
+    .mobile-nav-toggle-group {
+      display: none;
+    }
+
+    .mobile-search-dropdown {
+      display: none;
+      padding: 10px 0 4px;
+    }
+
+    .mobile-search-dropdown input {
+      width: 100%;
+      padding: 8px 14px;
+      background: rgba(12, 24, 43, 0.95);
+      border: 1.5px solid rgba(245, 158, 11, 0.4);
+      border-radius: 8px;
+      color: #fff;
+      font-size: 0.85rem;
+      outline: none;
+    }
+
+    .mobile-menu-drawer {
+      display: none;
+      position: absolute;
+      top: 100%;
+      right: 14px;
+      width: 240px;
+      background: #0f172a;
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 14px;
+      box-shadow: 0 15px 35px rgba(0,0,0,0.8);
+      padding: 14px;
+      z-index: 99999;
+    }
+
+    .mobile-menu-drawer.show {
+      display: block;
+      animation: slideDownMenu 0.2s ease-out;
+    }
+
+    @keyframes slideDownMenu {
+      from { opacity: 0; transform: translateY(-10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .mobile-menu-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 10px;
+      padding-bottom: 6px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    .mobile-menu-link {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 8px 10px;
+      color: #cbd5e1;
+      font-size: 0.82rem;
+      font-weight: 700;
+      text-decoration: none;
+      border-radius: 8px;
+      transition: all 0.2s ease;
+    }
+
+    .mobile-menu-link:hover {
+      background: rgba(255, 255, 255, 0.06);
+      color: #fff;
+    }
+
+    @media (max-width: 900px) {
+      .popular-grid-layout {
+        grid-template-columns: repeat(2, 1fr) !important;
+      }
+    }
+
+    @media (max-width: 768px) {
+      .desktop-only {
+        display: none !important;
+      }
+
+      .mobile-nav-toggle-group {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+
+      .btn-mobile-icon {
+        width: 36px;
+        height: 36px;
+        background: #1e293b;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 8px;
+        color: #fff;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 0.95rem;
+        cursor: pointer;
+      }
+
+      .btn-mobile-icon:hover {
+        border-color: #f59e0b;
+        color: #f59e0b;
+      }
+
+      .popular-grid-layout {
+        grid-template-columns: repeat(2, 1fr) !important;
+        gap: 8px !important;
+      }
+      .popular-compact-card {
+        padding: 8px 10px !important;
+        gap: 8px !important;
+      }
+      .popular-compact-card img {
+        width: 36px !important;
+        height: 36px !important;
+      }
+      .popular-compact-card h4 {
+        font-size: 0.78rem !important;
+      }
+      .catalog-poster-grid {
+        grid-template-columns: repeat(2, 1fr) !important;
+        gap: 10px !important;
+      }
+      .catalog-poster-card img {
+        height: 160px !important;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- NAVBAR -->
+  <header class="navbar">
+    <div class="navbar-container">
+      <a href="/" class="brand-logo">
+        <span class="logo-badge"><i class="fa-solid fa-gamepad"></i></span>
+        Mamang<span>GS</span>
+      </a>
+
+      <!-- SEARCH INPUT DESKTOP -->
+      <div class="nav-search desktop-only">
+        <i class="fa-solid fa-magnifying-glass"></i>
+        <input type="text" placeholder="Cari Game (MLBB, Free Fire, Genshin...)" id="searchInput">
+      </div>
+
+      <!-- DESKTOP MENU ACTIONS -->
+      <div class="nav-actions desktop-only" id="desktopNavActions">
+        <a href="/leaderboard.html" class="btn-nav-login" style="background: rgba(245, 158, 11, 0.15); border-color: rgba(245, 158, 11, 0.4); color: #f59e0b;">
+          <i class="fa-solid fa-crown"></i> Leaderboard
+        </a>
+        <a href="/blog.html" class="btn-nav-login" style="background: rgba(56, 189, 248, 0.15); border-color: rgba(56, 189, 248, 0.4); color: #38bdf8;">
+          <i class="fa-solid fa-newspaper"></i> Blog
+        </a>
+        <a href="/auth/login.html" class="btn-nav-login" id="navLoginBtn"><i class="fa-solid fa-right-to-bracket"></i> Masuk</a>
+        <a href="/auth/register.html" class="btn-nav-register" id="navRegisterBtn"><i class="fa-solid fa-user-plus"></i> Daftar</a>
+      </div>
+
+      <!-- MOBILE ONLY: SEARCH & KEBAB TITIK TIGA -->
+      <div class="mobile-nav-toggle-group">
+        <button id="btnMobileSearchToggle" class="btn-mobile-icon" title="Cari Game">
+          <i class="fa-solid fa-magnifying-glass"></i>
+        </button>
+        <button id="btnMobileMenuToggle" class="btn-mobile-icon" title="Menu Lengkap">
+          <i class="fa-solid fa-ellipsis-vertical"></i>
+        </button>
+      </div>
+
+    </div>
+
+    <!-- EXPANDABLE MOBILE SEARCH INPUT -->
+    <div id="mobileSearchBar" class="mobile-search-dropdown">
+      <input type="text" placeholder="Ketik nama game..." id="mobileSearchInput">
+    </div>
+
+    <!-- MOBILE DROPDOWN DRAWER -->
+    <div id="mobileMenuDropdown" class="mobile-menu-drawer">
+      <div class="mobile-menu-header">
+        <span style="font-weight: 800; font-size: 0.88rem; color: #fff;">Menu MamangGS</span>
+        <button id="btnCloseMobileMenu" style="background: none; border: none; color: #94a3b8; font-size: 1.1rem; cursor: pointer;">✕</button>
+      </div>
+      <div id="mobileMenuList" class="mobile-menu-items">
+        <a href="/leaderboard.html" class="mobile-menu-link">
+          <i class="fa-solid fa-crown" style="color: #f59e0b;"></i> Leaderboard Sultan
+        </a>
+        <a href="/blog.html" class="mobile-menu-link">
+          <i class="fa-solid fa-newspaper" style="color: #38bdf8;"></i> Blog & Tips Game
+        </a>
+        <a href="/order-status.html" class="mobile-menu-link">
+          <i class="fa-solid fa-receipt" style="color: #10b981;"></i> Lacak Pesanan
+        </a>
+        <hr style="border: none; border-top: 1px solid rgba(255,255,255,0.08); margin: 8px 0;">
+        <div id="mobileAuthSlot">
+          <a href="/auth/login.html" class="mobile-menu-link"><i class="fa-solid fa-right-to-bracket"></i> Masuk Akun</a>
+          <a href="/auth/register.html" class="mobile-menu-link" style="color: #f59e0b;"><i class="fa-solid fa-user-plus"></i> Daftar Member</a>
         </div>
-      `;
-      gridContainer.appendChild(card);
-    });
-  }
+      </div>
+    </div>
+  </header>
 
-  // 4. Tab Listener Kategori
-  const tabButtons = document.querySelectorAll(".catalog-tab-pill");
-  tabButtons.forEach(btn => {
-    btn.addEventListener("click", () => {
-      tabButtons.forEach(b => b.classList.remove("active"));
-      btn.classList.add("active");
-      const filter = btn.getAttribute("data-filter") || "all";
-      renderCatalog(filter);
-    });
-  });
+  <!-- SLIDE BANNER PROMO -->
+  <section class="banner-section">
+    <div class="carousel-container">
+      <div class="carousel-slide slide-promo-1 active">
+        <div class="carousel-text">
+          <span class="badge-populer">FLASH SALE</span>
+          <h2>Top Up Mobile Legends Diskon Spesial!</h2>
+          <p>Bonus diamond melimpah dan garansi proses instan 1–3 detik.</p>
+        </div>
+        <div class="carousel-icon-box" style="background: linear-gradient(135deg, var(--accent-red), #991b1b); color: #fff; box-shadow: 0 0 25px var(--accent-glow);">
+          <i class="fa-solid fa-bolt"></i>
+        </div>
+      </div>
 
-  // Render Tampilan Awal
-  renderCatalog("all");
-});
+      <div class="carousel-slide slide-promo-2">
+        <div class="carousel-text">
+          <span class="badge-populer" style="background: #10b981;">VIP RESELLER</span>
+          <h2>Gabung Jadi Reseller MamangGS</h2>
+          <p>Dapatkan harga modal termurah dan fitur top-up saldo tanpa biaya admin.</p>
+        </div>
+        <div class="carousel-icon-box" style="background: linear-gradient(135deg, #10b981, #047857); color: #fff; box-shadow: 0 0 25px rgba(16, 185, 129, 0.4);">
+          <i class="fa-solid fa-crown"></i>
+        </div>
+      </div>
+
+      <div class="carousel-slide slide-promo-3">
+        <div class="carousel-text">
+          <span class="badge-populer" style="background: #3b82f6;">LAYANAN 24 JAM</span>
+          <h2>Sistem Pembayaran Otomatis & QRIS</h2>
+          <p>Mendukung semua bank dan E-Wallet (GoPay, DANA, OVO, ShopeePay).</p>
+        </div>
+        <div class="carousel-icon-box" style="background: linear-gradient(135deg, #3b82f6, #1d4ed8); color: #fff; box-shadow: 0 0 25px rgba(59, 130, 246, 0.4);">
+          <i class="fa-solid fa-qrcode"></i>
+        </div>
+      </div>
+
+      <div class="carousel-dots">
+        <span class="dot active"></span>
+        <span class="dot"></span>
+        <span class="dot"></span>
+      </div>
+    </div>
+  </section>
+
+  <!-- 1. SECTION PROMO FLASH SALE -->
+  <section class="home-section" style="max-width: 1200px; width: 100%; margin: 30px auto 40px; padding: 0 16px; box-sizing: border-box;">
+    <div style="background: #111827; border: 1px solid rgba(245, 158, 11, 0.35); border-radius: 18px; padding: 22px 20px; box-sizing: border-box; overflow: hidden;">
+      
+      <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px; margin-bottom: 14px; padding: 0 6px;">
+        <div style="flex: 1 1 200px;">
+          <h2 style="font-size: 1.25rem; font-weight: 900; color: #fff; margin: 0 0 4px; display: flex; align-items: center; gap: 8px;">
+            🔥 <span style="color: #fbbf24;">PASTI TER-MURAAHH</span>
+          </h2>
+          <p style="font-size: 0.8rem; color: #94a3b8; margin: 0; line-height: 1.4;">Bandingkan dan Buktikan Sendiri! Harga termurah otomatis 24 Jam.</p>
+        </div>
+
+        <div style="display: flex; align-items: center; gap: 8px; background: rgba(15, 23, 42, 0.8); border: 1px solid rgba(255, 255, 255, 0.08); padding: 6px 14px; border-radius: 30px;">
+          <span style="font-size: 0.75rem; font-weight: 700; color: #94a3b8;"><i class="fa-solid fa-clock" style="color: #f59e0b;"></i> Berakhir:</span>
+          <div style="display: flex; gap: 4px; font-weight: 900; font-size: 0.85rem; color: #fbbf24;">
+            <span id="flashHours">08</span> :
+            <span id="flashMinutes">30</span> :
+            <span id="flashSeconds">00</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="flash-marquee-wrapper">
+        <div class="flash-marquee-track" id="flashTrack">
+          
+          <a href="/order.html?game=ff" class="flash-promo-card">
+            <span class="ribbon-save">HEMAT 39RB</span>
+            <div style="display: flex; gap: 8px; align-items: center; margin-bottom: 8px; padding-right: 32px;">
+              <img src="https://images.unsplash.com/photo-1579373903781-fd5c0c30c4cd?auto=format&fit=crop&w=120&q=80" style="width: 36px; height: 36px; border-radius: 8px; object-fit: cover; flex-shrink: 0;">
+              <div style="overflow: hidden;">
+                <h4 style="font-size: 0.78rem; font-weight: 800; margin: 0; white-space: nowrap; text-overflow: ellipsis; overflow: hidden; color: #fff;">Bulanan FF</h4>
+                <p style="font-size: 0.65rem; color: #94a3b8; margin: 0;">Garena FF</p>
+              </div>
+            </div>
+            <div>
+              <span style="font-size: 0.68rem; color: #64748b; text-decoration: line-through; display: block; line-height: 1;">Rp 99.000</span>
+              <div style="font-size: 0.88rem; font-weight: 900; color: #fbbf24; margin-top: 2px;">Rp 65.285</div>
+            </div>
+          </a>
+
+          <a href="/order.html?game=mlbb" class="flash-promo-card">
+            <span class="ribbon-save">HEMAT 6RB</span>
+            <div style="display: flex; gap: 8px; align-items: center; margin-bottom: 8px; padding-right: 32px;">
+              <img src="https://images.unsplash.com/photo-1563089145-599997674d42?auto=format&fit=crop&w=120&q=80" style="width: 36px; height: 36px; border-radius: 8px; object-fit: cover; flex-shrink: 0;">
+              <div style="overflow: hidden;">
+                <h4 style="font-size: 0.78rem; font-weight: 800; margin: 0; white-space: nowrap; text-overflow: ellipsis; overflow: hidden; color: #fff;">Weekly Pass</h4>
+                <p style="font-size: 0.65rem; color: #94a3b8; margin: 0;">Mobile Legends</p>
+              </div>
+            </div>
+            <div>
+              <span style="font-size: 0.68rem; color: #64748b; text-decoration: line-through; display: block; line-height: 1;">Rp 33.000</span>
+              <div style="font-size: 0.88rem; font-weight: 900; color: #fbbf24; margin-top: 2px;">Rp 27.200</div>
+            </div>
+          </a>
+
+          <a href="/order.html?game=ff" class="flash-promo-card">
+            <span class="ribbon-save">HEMAT 13RB</span>
+            <div style="display: flex; gap: 8px; align-items: center; margin-bottom: 8px; padding-right: 32px;">
+              <img src="https://images.unsplash.com/photo-1579373903781-fd5c0c30c4cd?auto=format&fit=crop&w=120&q=80" style="width: 36px; height: 36px; border-radius: 8px; object-fit: cover; flex-shrink: 0;">
+              <div style="overflow: hidden;">
+                <h4 style="font-size: 0.78rem; font-weight: 800; margin: 0; white-space: nowrap; text-overflow: ellipsis; overflow: hidden; color: #fff;">Mingguan FF</h4>
+                <p style="font-size: 0.65rem; color: #94a3b8; margin: 0;">Garena FF</p>
+              </div>
+            </div>
+            <div>
+              <span style="font-size: 0.68rem; color: #64748b; text-decoration: line-through; display: block; line-height: 1;">Rp 29.000</span>
+              <div style="font-size: 0.88rem; font-weight: 900; color: #fbbf24; margin-top: 2px;">Rp 16.285</div>
+            </div>
+          </a>
+
+          <a href="/order.html?game=genshin" class="flash-promo-card">
+            <span class="ribbon-save">HEMAT 15RB</span>
+            <div style="display: flex; gap: 8px; align-items: center; margin-bottom: 8px; padding-right: 32px;">
+              <img src="https://images.unsplash.com/photo-1538481199705-c710c4e965fc?auto=format&fit=crop&w=120&q=80" style="width: 36px; height: 36px; border-radius: 8px; object-fit: cover; flex-shrink: 0;">
+              <div style="overflow: hidden;">
+                <h4 style="font-size: 0.78rem; font-weight: 800; margin: 0; white-space: nowrap; text-overflow: ellipsis; overflow: hidden; color: #fff;">Welkin Moon</h4>
+                <p style="font-size: 0.65rem; color: #94a3b8; margin: 0;">Genshin Impact</p>
+              </div>
+            </div>
+            <div>
+              <span style="font-size: 0.68rem; color: #64748b; text-decoration: line-through; display: block; line-height: 1;">Rp 79.000</span>
+              <div style="font-size: 0.88rem; font-weight: 900; color: #fbbf24; margin-top: 2px;">Rp 64.000</div>
+            </div>
+          </a>
+
+          <!-- DUPLIKASI LOOP -->
+          <a href="/order.html?game=ff" class="flash-promo-card">
+            <span class="ribbon-save">HEMAT 39RB</span>
+            <div style="display: flex; gap: 8px; align-items: center; margin-bottom: 8px; padding-right: 32px;">
+              <img src="https://images.unsplash.com/photo-1579373903781-fd5c0c30c4cd?auto=format&fit=crop&w=120&q=80" style="width: 36px; height: 36px; border-radius: 8px; object-fit: cover; flex-shrink: 0;">
+              <div style="overflow: hidden;">
+                <h4 style="font-size: 0.78rem; font-weight: 800; margin: 0; white-space: nowrap; text-overflow: ellipsis; overflow: hidden; color: #fff;">Bulanan FF</h4>
+                <p style="font-size: 0.65rem; color: #94a3b8; margin: 0;">Garena FF</p>
+              </div>
+            </div>
+            <div>
+              <span style="font-size: 0.68rem; color: #64748b; text-decoration: line-through; display: block; line-height: 1;">Rp 99.000</span>
+              <div style="font-size: 0.88rem; font-weight: 900; color: #fbbf24; margin-top: 2px;">Rp 65.285</div>
+            </div>
+          </a>
+
+          <a href="/order.html?game=mlbb" class="flash-promo-card">
+            <span class="ribbon-save">HEMAT 6RB</span>
+            <div style="display: flex; gap: 8px; align-items: center; margin-bottom: 8px; padding-right: 32px;">
+              <img src="https://images.unsplash.com/photo-1563089145-599997674d42?auto=format&fit=crop&w=120&q=80" style="width: 36px; height: 36px; border-radius: 8px; object-fit: cover; flex-shrink: 0;">
+              <div style="overflow: hidden;">
+                <h4 style="font-size: 0.78rem; font-weight: 800; margin: 0; white-space: nowrap; text-overflow: ellipsis; overflow: hidden; color: #fff;">Weekly Pass</h4>
+                <p style="font-size: 0.65rem; color: #94a3b8; margin: 0;">Mobile Legends</p>
+              </div>
+            </div>
+            <div>
+              <span style="font-size: 0.68rem; color: #64748b; text-decoration: line-through; display: block; line-height: 1;">Rp 33.000</span>
+              <div style="font-size: 0.88rem; font-weight: 900; color: #fbbf24; margin-top: 2px;">Rp 27.200</div>
+            </div>
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 2. SECTION POPULER SEKARANG -->
+  <section class="home-section" style="max-width: 1200px; width: 100%; margin: 0 auto 45px; padding: 0 16px; box-sizing: border-box;">
+    <div style="margin-bottom: 16px;">
+      <h2 style="font-size: 1.25rem; font-weight: 900; color: #fff; margin: 0 0 4px; display: flex; align-items: center; gap: 8px;">
+        🔥 POPULER SEKARANG!
+      </h2>
+      <p style="font-size: 0.82rem; color: #94a3b8; margin: 0;">Berikut adalah beberapa produk yang paling sering di-top up gamers saat ini.</p>
+    </div>
+
+    <div class="popular-grid-layout">
+      <a href="/order.html?game=ff" class="popular-compact-card">
+        <img src="https://images.unsplash.com/photo-1579373903781-fd5c0c30c4cd?auto=format&fit=crop&w=120&q=80" alt="Free Fire">
+        <div>
+          <h4 style="font-size: 0.88rem; font-weight: 800; margin: 0 0 2px;">Top Up Free Fire</h4>
+          <p style="font-size: 0.72rem; color: #94a3b8; margin: 0;">Garena</p>
+        </div>
+      </a>
+      <a href="/order.html?game=mlbb" class="popular-compact-card">
+        <img src="https://images.unsplash.com/photo-1563089145-599997674d42?auto=format&fit=crop&w=120&q=80" alt="Mobile Legends">
+        <div>
+          <h4 style="font-size: 0.88rem; font-weight: 800; margin: 0 0 2px;">Mobile Legends</h4>
+          <p style="font-size: 0.72rem; color: #94a3b8; margin: 0;">Moonton</p>
+        </div>
+      </a>
+      <a href="/order.html?game=pubg" class="popular-compact-card">
+        <img src="https://images.unsplash.com/photo-1542751371-adc38448a05e?auto=format&fit=crop&w=120&q=80" alt="PUBG Mobile">
+        <div>
+          <h4 style="font-size: 0.88rem; font-weight: 800; margin: 0 0 2px;">PUBG Mobile | UC</h4>
+          <p style="font-size: 0.72rem; color: #94a3b8; margin: 0;">Level Infinite</p>
+        </div>
+      </a>
+      <a href="/order.html?game=genshin" class="popular-compact-card">
+        <img src="https://images.unsplash.com/photo-1538481199705-c710c4e965fc?auto=format&fit=crop&w=120&q=80" alt="Genshin Impact">
+        <div>
+          <h4 style="font-size: 0.88rem; font-weight: 800; margin: 0 0 2px;">Genshin Impact</h4>
+          <p style="font-size: 0.72rem; color: #94a3b8; margin: 0;">HoYoverse</p>
+        </div>
+      </a>
+      <a href="/order.html?game=valorant" class="popular-compact-card">
+        <img src="https://images.unsplash.com/photo-1550745165-9bc0b252726f?auto=format&fit=crop&w=120&q=80" alt="Valorant">
+        <div>
+          <h4 style="font-size: 0.88rem; font-weight: 800; margin: 0 0 2px;">Valorant Points</h4>
+          <p style="font-size: 0.72rem; color: #94a3b8; margin: 0;">Riot Games</p>
+        </div>
+      </a>
+      <a href="/order.html?game=hok" class="popular-compact-card">
+        <img src="https://images.unsplash.com/photo-1560253023-3ec5d502959f?auto=format&fit=crop&w=120&q=80" alt="Honor of Kings">
+        <div>
+          <h4 style="font-size: 0.88rem; font-weight: 800; margin: 0 0 2px;">Honor of Kings</h4>
+          <p style="font-size: 0.72rem; color: #94a3b8; margin: 0;">Level Infinite</p>
+        </div>
+      </a>
+    </div>
+  </section>
+
+  <!-- 3. SECTION KATALOG LENGKAP SEMUA PRODUK -->
+  <section id="games-section" class="home-section" style="max-width: 1200px; width: 100%; margin: 0 auto 60px; padding: 0 16px; box-sizing: border-box;">
+    <div style="display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 24px;">
+      <button class="catalog-tab-pill active" data-filter="all">Top Up Game</button>
+      <button class="catalog-tab-pill" data-filter="reseller">Reseller</button>
+      <button class="catalog-tab-pill" data-filter="stream">Live Streaming</button>
+      <button class="catalog-tab-pill" data-filter="voucher">Voucher</button>
+      <button class="catalog-tab-pill" data-filter="pulsa">Paket Data</button>
+    </div>
+    <div class="catalog-poster-grid" id="mainCatalogGrid">
+      <!-- Di-render dinamis oleh home.js -->
+    </div>
+  </section>
+
+  <!-- WIDGET BANNER PROMINEN: HALL OF FAME LEADERBOARD -->
+  <section class="catalog-section" style="max-width: 1200px; width: 100%; margin: 10px auto 50px; padding: 0 16px; box-sizing: border-box;">
+    <div style="background: linear-gradient(135deg, rgba(245, 158, 11, 0.15) 0%, rgba(7, 13, 24, 0.95) 100%); border: 1px solid rgba(245, 158, 11, 0.4); border-radius: var(--radius-md); padding: 24px 28px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.5);">
+      <div style="display: flex; align-items: center; gap: 18px;">
+        <div style="width: 55px; height: 55px; border-radius: 14px; background: rgba(245, 158, 11, 0.2); border: 1px solid #f59e0b; display: flex; align-items: center; justify-content: center; font-size: 1.6rem; color: #f59e0b; flex-shrink: 0;">
+          <i class="fa-solid fa-crown"></i>
+        </div>
+        <div>
+          <span style="font-size: 0.75rem; font-weight: 800; color: #f59e0b; letter-spacing: 1px; text-transform: uppercase;">Hall of Fame</span>
+          <h3 style="font-size: 1.25rem; font-weight: 800; color: #fff; margin: 3px 0;">Papan Peringkat Sultan Gamers</h3>
+          <p style="font-size: 0.85rem; color: var(--text-muted); margin: 0;">Lihat siapa saja top spender belanja terbanyak di MamangGS bulan ini!</p>
+        </div>
+      </div>
+      <a href="/leaderboard.html" class="btn-topup" style="padding: 12px 24px; font-size: 0.92rem; font-weight: 800; display: inline-flex; align-items: center; gap: 8px; background: linear-gradient(135deg, #f59e0b, #d97706); border: none; box-shadow: 0 4px 15px rgba(245, 158, 11, 0.35); text-decoration: none;">
+        <i class="fa-solid fa-trophy"></i> Cek Leaderboard
+      </a>
+    </div>
+  </section>
+
+  <!-- LIVE SALES POP-UP NOTIFICATION -->
+  <div class="live-sales-toast" id="liveSalesToast">
+    <div class="live-sales-icon">
+      <i class="fa-solid fa-circle-check"></i>
+    </div>
+    <div class="live-sales-text">
+      <h5 id="liveSalesUser">Pembeli</h5>
+      <p><span id="liveSalesItem">Item Game</span> &bull; <span id="liveSalesTime">Baru saja</span></p>
+    </div>
+  </div>
+
+  <!-- FOOTER -->
+  <footer class="footer">
+    <div class="footer-container">
+      <div class="footer-brand">
+        <div class="brand-logo">
+          <span class="logo-badge"><i class="fa-solid fa-gamepad"></i></span>
+          Mamang<span>GS</span>
+        </div>
+        <p>Platform top up game otomatis, murah, dan terpercaya 24 jam nonstop.</p>
+      </div>
+      <div class="footer-col">
+        <h4>Menu Navigasi</h4>
+        <ul class="footer-links">
+          <li><a href="/">Beranda</a></li>
+          <li><a href="/order-status.html">Lacak Pesanan</a></li>
+          <li><a href="/leaderboard.html">Leaderboard</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Bantuan & Legal</h4>
+        <ul class="footer-links">
+          <li><a href="/privacy-policy.html">Kebijakan Privasi</a></li>
+          <li><a href="/terms.html">Syarat & Ketentuan</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>&copy; 2026 MamangGS. All rights reserved.</p>
+    </div>
+  </footer>
+
+  <!-- SCRIPT TIMER FLASH SALE -->
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      let totalSeconds = 8 * 3600 + 30 * 60;
+      setInterval(() => {
+        if (totalSeconds <= 0) totalSeconds = 24 * 3600;
+        totalSeconds--;
+        const h = Math.floor(totalSeconds / 3600);
+        const m = Math.floor((totalSeconds % 3600) / 60);
+        const s = totalSeconds % 60;
+        const elH = document.getElementById("flashHours");
+        const elM = document.getElementById("flashMinutes");
+        const elS = document.getElementById("flashSeconds");
+        if (elH) elH.innerText = String(h).padStart(2, "0");
+        if (elM) elM.innerText = String(m).padStart(2, "0");
+        if (elS) elS.innerText = String(s).padStart(2, "0");
+      }, 1000);
+    });
+  </script>
+
+  <!-- SUPABASE & JS MODULAR -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="/js/particles.js"></script>
+  <script src="/js/supabase.js"></script>
+  <script src="/js/banner.js"></script>
+  <script src="/js/live-sales.js"></script>
+  <script src="/js/navbar.js"></script>
+  <script src="/js/floating-hub.js"></script>
+  <script src="/js/home.js"></script>
+</body>
+</html>
