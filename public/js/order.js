@@ -1,92 +1,69 @@
-document.addEventListener("DOMContentLoaded", () => {
-  // Mock data katalog game & nominal
-  const gamesData = {
+document.addEventListener("DOMContentLoaded", async () => {
+  // Informasi meta game (Banner, Dev, dll)
+  const gamesMeta = {
     mlbb: {
       code: "mlbb",
+      brandQuery: "mobile legends",
       title: "Mobile Legends: Bang Bang",
       dev: "Moonton Games",
       banner: "https://images.unsplash.com/photo-1563089145-599997674d42?auto=format&fit=crop&w=600&q=80",
-      hasZone: true,
-      items: [
-        { name: "86 Diamonds", price: 21500 },
-        { name: "172 Diamonds", price: 42000 },
-        { name: "257 Diamonds", price: 63000 },
-        { name: "706 Diamonds", price: 168000 },
-        { name: "Weekly Pass", price: 27500 },
-        { name: "Twilight Pass", price: 145000 }
-      ]
+      hasZone: true
     },
     ff: {
       code: "ff",
+      brandQuery: "free fire",
       title: "Free Fire Max",
       dev: "Garena International",
       banner: "https://images.unsplash.com/photo-1579373903781-fd5c0c30c4cd?auto=format&fit=crop&w=600&q=80",
-      hasZone: false,
-      items: [
-        { name: "70 Diamonds", price: 9500 },
-        { name: "140 Diamonds", price: 19000 },
-        { name: "355 Diamonds", price: 47000 },
-        { name: "720 Diamonds", price: 93000 },
-        { name: "Member Mingguan", price: 29000 },
-        { name: "Member Bulanan", price: 145000 }
-      ]
+      hasZone: false
     },
     whiteout: {
       code: "whiteout",
+      brandQuery: "whiteout",
       title: "Whiteout Survival",
       dev: "Century Games PTE. LTD.",
       banner: "https://images.unsplash.com/photo-1542751371-adc38448a05e?auto=format&fit=crop&w=600&q=80",
-      hasZone: false,
-      items: [
-        { name: "500 Frost Star", price: 14500 },
-        { name: "1000 Frost Star", price: 28500 },
-        { name: "2500 Frost Star", price: 69000 },
-        { name: "5000 Frost Star", price: 138000 },
-        { name: "10000 Frost Star", price: 275000 },
-        { name: "25000 Frost Star", price: 680000 }
-      ]
+      hasZone: false
     },
     genshin: {
       code: "genshin",
+      brandQuery: "genshin",
       title: "Genshin Impact",
       dev: "HoYoverse",
       banner: "https://images.unsplash.com/photo-1538481199705-c710c4e965fc?auto=format&fit=crop&w=600&q=80",
-      hasZone: true,
-      items: [
-        { name: "60 Genesis Crystals", price: 15000 },
-        { name: "300 Genesis Crystals", price: 75000 },
-        { name: "980 Genesis Crystals", price: 230000 },
-        { name: "Welkin Moon", price: 75000 }
-      ]
+      hasZone: true
     }
   };
 
   const params = new URLSearchParams(window.location.search);
   const gameKey = params.get("game") || "mlbb";
-  const currentGame = gamesData[gameKey] || gamesData["mlbb"];
+  const currentGame = gamesMeta[gameKey] || gamesMeta["mlbb"];
 
-  document.getElementById("gameTitle").innerText = currentGame.title;
-  document.getElementById("gameDev").innerText = currentGame.dev;
-  document.getElementById("gameBanner").src = currentGame.banner;
+  // Set Info Game di UI
+  if (document.getElementById("gameTitle")) document.getElementById("gameTitle").innerText = currentGame.title;
+  if (document.getElementById("gameDev")) document.getElementById("gameDev").innerText = currentGame.dev;
+  if (document.getElementById("gameBanner")) document.getElementById("gameBanner").src = currentGame.banner;
 
   const zoneGroup = document.getElementById("zoneGroup");
   if (!currentGame.hasZone && zoneGroup) {
     zoneGroup.style.display = "none";
   }
 
-  let selectedItem = currentGame.items[0];
+  let selectedItem = null;
   let selectedPayment = "QRIS (Semua E-Wallet)";
   let verifiedNickname = null;
 
   // Variabel Kupon Promo
   let appliedPromo = null;
   let currentDiscountAmount = 0;
-  let finalCalculatedPrice = selectedItem.price;
+  let finalCalculatedPrice = 0;
 
   // ==========================================
   // KALKULASI HARGA & PROMO
   // ==========================================
   function updateCheckoutPricing() {
+    if (!selectedItem) return;
+
     const originalPriceEl = document.getElementById("summaryOriginalPrice");
     const discountRow = document.getElementById("rowDiscount");
     const discountValEl = document.getElementById("summaryDiscountValue");
@@ -148,7 +125,7 @@ document.addEventListener("DOMContentLoaded", () => {
         return;
       }
 
-      const basePrice = Number(selectedItem.price || 0);
+      const basePrice = Number(selectedItem?.price || 0);
 
       try {
         const { data: promo, error } = await window.supabase
@@ -186,30 +163,61 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   // ==========================================
-  // RENDER NOMINAL ITEM
+  // AMBIL & RENDER NOMINAL DARI SUPABASE (REAL DATA)
   // ==========================================
   const nominalContainer = document.getElementById("nominalContainer");
-  nominalContainer.innerHTML = "";
+  nominalContainer.innerHTML = `<div style="grid-column: 1/-1; text-align: center; color: #888; padding: 20px;"><i class="fa-solid fa-spinner fa-spin"></i> Memuat nominal dari database...</div>`;
 
-  currentGame.items.forEach((item, index) => {
-    const card = document.createElement("div");
-    card.className = "nominal-card" + (index === 0 ? " selected" : "");
-    const formattedPrice = Number(item.price).toLocaleString("id-ID");
-    card.innerHTML = `
-      <div class="nominal-title">${item.name}</div>
-      <div class="nominal-price">Rp ${formattedPrice}</div>
-    `;
-    card.addEventListener("click", () => {
-      document.querySelectorAll(".nominal-card").forEach((c) => c.classList.remove("selected"));
-      card.classList.add("selected");
-      selectedItem = item;
+  try {
+    const { data: dbProducts, error: dbError } = await window.supabase
+      .from("products")
+      .select("*")
+      .ilike("brand", `%${currentGame.brandQuery}%`)
+      .order("price_sell", { ascending: true });
+
+    if (dbError) throw dbError;
+
+    if (!dbProducts || dbProducts.length === 0) {
+      nominalContainer.innerHTML = `<div style="grid-column: 1/-1; text-align: center; color: #888; padding: 20px;">Belum ada item untuk game ini.</div>`;
+    } else {
+      nominalContainer.innerHTML = "";
+
+      dbProducts.forEach((prod, index) => {
+        const itemObj = {
+          sku: prod.buyer_sku_code,
+          name: prod.product_name,
+          price: Number(prod.price_sell)
+        };
+
+        if (index === 0) {
+          selectedItem = itemObj;
+        }
+
+        const card = document.createElement("div");
+        card.className = "nominal-card" + (index === 0 ? " selected" : "");
+        const formattedPrice = Number(prod.price_sell).toLocaleString("id-ID");
+        
+        card.innerHTML = `
+          <div class="nominal-title">${prod.product_name}</div>
+          <div class="nominal-price">Rp ${formattedPrice}</div>
+        `;
+
+        card.addEventListener("click", () => {
+          document.querySelectorAll(".nominal-card").forEach((c) => c.classList.remove("selected"));
+          card.classList.add("selected");
+          selectedItem = itemObj;
+          updateCheckoutPricing();
+        });
+
+        nominalContainer.appendChild(card);
+      });
+
       updateCheckoutPricing();
-    });
-    nominalContainer.appendChild(card);
-  });
-
-  // Hitung awal saat load halaman
-  updateCheckoutPricing();
+    }
+  } catch (err) {
+    console.error("Gagal mengambil produk:", err);
+    nominalContainer.innerHTML = `<div style="grid-column: 1/-1; text-align: center; color: #e63946; padding: 20px;">Gagal memuat produk game.</div>`;
+  }
 
   // Handle Pilih Metode Bayar
   document.querySelectorAll(".payment-card").forEach((card) => {
@@ -313,6 +321,10 @@ document.addEventListener("DOMContentLoaded", () => {
     const zoneId = currentGame.hasZone ? zoneIdInput.value.trim() : null;
     const whatsapp = document.getElementById("whatsappInput").value.trim();
 
+    if (!selectedItem) {
+      alert("Harap pilih salah satu nominal produk!");
+      return;
+    }
     if (!userId) {
       alert("Harap masukkan User ID akun game kamu!");
       return;
