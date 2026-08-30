@@ -196,7 +196,8 @@ document.addEventListener("DOMContentLoaded", async () => {
     const { data: dbProducts, error: dbError } = await window.supabase
       .from("products")
       .select("*")
-      .ilike("brand", `%${currentGame.brandQuery}%`)
+      .eq("game_code", currentGame.code)
+      .eq("buyer_product_status", true)
       .order("price_sell", { ascending: true });
 
     if (dbError) throw dbError;
