@@ -1,9 +1,9 @@
 document.addEventListener("DOMContentLoaded", async () => {
-  // Informasi meta game (Banner, Dev, dll)
+  // 1. DAFTAR LENGKAP METADATA GAME
   const gamesMeta = {
     mlbb: {
       code: "mlbb",
-      brandQuery: "mobile legends",
+      brandQuery: "MOBILE LEGEND",
       title: "Mobile Legends: Bang Bang",
       dev: "Moonton Games",
       banner: "https://images.unsplash.com/photo-1563089145-599997674d42?auto=format&fit=crop&w=600&q=80",
@@ -11,32 +11,56 @@ document.addEventListener("DOMContentLoaded", async () => {
     },
     ff: {
       code: "ff",
-      brandQuery: "free fire",
+      brandQuery: "FREE FIRE",
       title: "Free Fire Max",
       dev: "Garena International",
       banner: "https://images.unsplash.com/photo-1579373903781-fd5c0c30c4cd?auto=format&fit=crop&w=600&q=80",
       hasZone: false
     },
-    whiteout: {
-      code: "whiteout",
-      brandQuery: "whiteout",
-      title: "Whiteout Survival",
-      dev: "Century Games PTE. LTD.",
+    pubg: {
+      code: "pubg",
+      brandQuery: "PUBG",
+      title: "PUBG Mobile | UC",
+      dev: "Level Infinite",
       banner: "https://images.unsplash.com/photo-1542751371-adc38448a05e?auto=format&fit=crop&w=600&q=80",
       hasZone: false
     },
     genshin: {
       code: "genshin",
-      brandQuery: "genshin",
+      brandQuery: "GENSHIN",
       title: "Genshin Impact",
       dev: "HoYoverse",
       banner: "https://images.unsplash.com/photo-1538481199705-c710c4e965fc?auto=format&fit=crop&w=600&q=80",
       hasZone: true
+    },
+    valorant: {
+      code: "valorant",
+      brandQuery: "VALORANT",
+      title: "Valorant Points",
+      dev: "Riot Games",
+      banner: "https://images.unsplash.com/photo-1542751371-adc38448a05e?auto=format&fit=crop&w=600&q=80",
+      hasZone: false
+    },
+    hok: {
+      code: "hok",
+      brandQuery: "HONOR OF KINGS",
+      title: "Honor of Kings",
+      dev: "Level Infinite",
+      banner: "https://images.unsplash.com/photo-1563089145-599997674d42?auto=format&fit=crop&w=600&q=80",
+      hasZone: false
+    },
+    whiteout: {
+      code: "whiteout",
+      brandQuery: "WHITEOUT",
+      title: "Whiteout Survival",
+      dev: "Century Games PTE. LTD.",
+      banner: "https://images.unsplash.com/photo-1542751371-adc38448a05e?auto=format&fit=crop&w=600&q=80",
+      hasZone: false
     }
   };
 
   const params = new URLSearchParams(window.location.search);
-  const gameKey = params.get("game") || "mlbb";
+  const gameKey = (params.get("game") || "mlbb").toLowerCase();
   const currentGame = gamesMeta[gameKey] || gamesMeta["mlbb"];
 
   // Set Info Game di UI
@@ -178,7 +202,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     if (dbError) throw dbError;
 
     if (!dbProducts || dbProducts.length === 0) {
-      nominalContainer.innerHTML = `<div style="grid-column: 1/-1; text-align: center; color: #888; padding: 20px;">Belum ada item untuk game ini.</div>`;
+      nominalContainer.innerHTML = `<div style="grid-column: 1/-1; text-align: center; color: #888; padding: 20px;">Produk game ini belum tersedia di katalog.</div>`;
     } else {
       nominalContainer.innerHTML = "";
 
@@ -260,7 +284,6 @@ document.addEventListener("DOMContentLoaded", async () => {
       if (currentGame.code === "mlbb") {
         const res = await fetch(`https://api.isan.eu.org/nickname/ml?id=${encodeURIComponent(uid)}&zone=${encodeURIComponent(zid)}`);
         const data = await res.json();
-        
         if (data && data.success && data.name) {
           resultNick = data.name;
         } else {
@@ -269,7 +292,6 @@ document.addEventListener("DOMContentLoaded", async () => {
       } else if (currentGame.code === "ff") {
         const res = await fetch(`https://api.isan.eu.org/nickname/ff?id=${encodeURIComponent(uid)}`);
         const data = await res.json();
-        
         if (data && data.success && data.name) {
           resultNick = data.name;
         } else {
@@ -287,11 +309,10 @@ document.addEventListener("DOMContentLoaded", async () => {
       `;
       nicknameBox.style.display = "flex";
     } catch (err) {
-      console.error("Cek ID Error:", err);
       nicknameBox.className = "nickname-result-box error";
       nicknameBox.innerHTML = `
         <i class="fa-solid fa-circle-xmark"></i>
-        <span>${err.message || "User ID tidak ditemukan. Periksa kembali ID Anda."}</span>
+        <span>${err.message || "User ID tidak ditemukan."}</span>
       `;
       nicknameBox.style.display = "flex";
       verifiedNickname = null;
@@ -366,7 +387,6 @@ document.addEventListener("DOMContentLoaded", async () => {
       }
     }
 
-    // LOGIKA PEMBAYARAN SALDO DOMPET MAMANGGS
     const isUsingWallet = selectedPayment.toLowerCase().includes("saldo");
     let orderStatus = "PENDING";
     const totalToPay = Number(finalCalculatedPrice);
@@ -416,7 +436,6 @@ document.addEventListener("DOMContentLoaded", async () => {
       }
     }
 
-    // SIMPAN KE TABEL ORDERS SUPABASE
     try {
       if (!window.supabase) throw new Error("Koneksi Supabase belum siap.");
 
@@ -427,7 +446,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         account_id: userId,
         zone_id: zoneId || null,
         item_name: selectedItem.name,
-        price: totalToPay, // Harga yang sudah dipotong diskon
+        price: totalToPay,
         payment_method: selectedPayment,
         whatsapp: whatsapp,
         status: orderStatus
