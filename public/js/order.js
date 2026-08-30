@@ -254,7 +254,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   });
 
   // ==========================================
-  // FITUR REAL AUTO CEK NICKNAME ID GAME
+  // FITUR AUTO CEK NICKNAME VIA SERVERLESS PROXY
   // ==========================================
   const userIdInput = document.getElementById("userIdInput");
   const zoneIdInput = document.getElementById("zoneIdInput");
@@ -265,7 +265,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   async function checkNickname() {
     const uid = userIdInput.value.trim();
-    const zid = currentGame.hasZone ? zoneIdInput.value.trim() : null;
+    const zid = currentGame.hasZone ? (zoneIdInput ? zoneIdInput.value.trim() : "") : "";
 
     if (!uid || (currentGame.hasZone && !zid)) {
       nicknameBox.style.display = "none";
@@ -279,40 +279,32 @@ document.addEventListener("DOMContentLoaded", async () => {
     nicknameBox.style.display = "none";
 
     try {
-      let resultNick = null;
+      const queryParams = new URLSearchParams({
+        game: currentGame.code,
+        id: uid,
+        zone: zid
+      });
 
-      if (currentGame.code === "mlbb") {
-        const res = await fetch(`https://api.isan.eu.org/nickname/ml?id=${encodeURIComponent(uid)}&zone=${encodeURIComponent(zid)}`);
-        const data = await res.json();
-        if (data && data.success && data.name) {
-          resultNick = data.name;
-        } else {
-          throw new Error("ID atau Zone ID Mobile Legends tidak ditemukan.");
-        }
-      } else if (currentGame.code === "ff") {
-        const res = await fetch(`https://api.isan.eu.org/nickname/ff?id=${encodeURIComponent(uid)}`);
-        const data = await res.json();
-        if (data && data.success && data.name) {
-          resultNick = data.name;
-        } else {
-          throw new Error("User ID Free Fire tidak valid.");
-        }
-      } else {
-        resultNick = `Player_${uid.slice(-4)}`;
+      const res = await fetch(`/api/check-id?${queryParams.toString()}`);
+      const data = await res.json();
+
+      if (!res.ok || !data.success) {
+        throw new Error(data.message || "User ID / Server tidak ditemukan.");
       }
 
-      verifiedNickname = resultNick;
+      verifiedNickname = data.name;
       nicknameBox.className = "nickname-result-box";
       nicknameBox.innerHTML = `
         <i class="fa-solid fa-circle-check"></i>
-        <span>Nickname Akun: <strong>${resultNick}</strong> (Terverifikasi)</span>
+        <span>Nickname Akun: <strong>${data.name}</strong> (Terverifikasi)</span>
       `;
       nicknameBox.style.display = "flex";
     } catch (err) {
+      console.error("Cek ID Error:", err);
       nicknameBox.className = "nickname-result-box error";
       nicknameBox.innerHTML = `
         <i class="fa-solid fa-circle-xmark"></i>
-        <span>${err.message || "User ID tidak ditemukan."}</span>
+        <span>${err.message || "User ID / Zone ID tidak valid."}</span>
       `;
       nicknameBox.style.display = "flex";
       verifiedNickname = null;
