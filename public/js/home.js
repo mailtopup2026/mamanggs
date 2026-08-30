@@ -1,85 +1,105 @@
 document.addEventListener("DOMContentLoaded", () => {
-  // DATA KATALOG PRODUK LENGKAP (Struktur Siap Konek API Lapakgaming)
-  const masterCatalog = [
-    { name: "Twilight Chronicle", publisher: "IGG.COM", category: "all", link: "/order.html?game=twilight", poster: "https://images.unsplash.com/photo-1542751371-adc38448a05e?auto=format&fit=crop&w=400&q=80" },
-    { name: "TNT Bomb-Saga", publisher: "Game Studio", category: "all", link: "/order.html?game=tnt", poster: "https://images.unsplash.com/photo-1511512578047-dfb367046420?auto=format&fit=crop&w=400&q=80" },
-    { name: "Gangstar Mirage City", publisher: "Gameloft", category: "all", link: "/order.html?game=gangstar", poster: "https://images.unsplash.com/photo-1538481199705-c710c4e965fc?auto=format&fit=crop&w=400&q=80" },
-    { name: "Ragnarok Zero", publisher: "Gravity Corp", category: "all", link: "/order.html?game=ragnarok", poster: "https://images.unsplash.com/photo-1563089145-599997674d42?auto=format&fit=crop&w=400&q=80" },
-    { name: "Gunbound M", publisher: "Softnyx", category: "all", link: "/order.html?game=gunbound", poster: "https://images.unsplash.com/photo-1579373903781-fd5c0c30c4cd?auto=format&fit=crop&w=400&q=80" },
-    { name: "Zula Strike", publisher: "Madbyte Games", category: "all", link: "/order.html?game=zula", poster: "https://images.unsplash.com/photo-1550745165-9bc0b252726f?auto=format&fit=crop&w=400&q=80" },
-    { name: "Google Play Code ID", publisher: "Google", category: "voucher", link: "/order.html?game=gplay", poster: "https://images.unsplash.com/photo-1607604276583-eef5d076aa5f?auto=format&fit=crop&w=400&q=80" },
-    { name: "Steam Wallet IDR", publisher: "Valve", category: "voucher", link: "/order.html?game=steam", poster: "https://images.unsplash.com/photo-1612287233202-0c9f1a0ff6d1?auto=format&fit=crop&w=400&q=80" },
-    { name: "Bigo Live Diamonds", publisher: "Bigo Technology", category: "stream", link: "/order.html?game=bigo", poster: "https://images.unsplash.com/photo-1516251193007-45ef944ab0c6?auto=format&fit=crop&w=400&q=80" },
-    { name: "Paket Data Telkomsel", publisher: "Telkomsel", category: "pulsa", link: "/order.html?game=tsel", poster: "https://images.unsplash.com/photo-1544717305-2782549b5136?auto=format&fit=crop&w=400&q=80" }
+  // DAFTAR KATALOG GAME UTAMA RESMI MAMANGGS
+  const gamesList = [
+    {
+      name: "Mobile Legends",
+      dev: "Moonton",
+      slug: "mlbb",
+      category: "game",
+      image: "https://images.unsplash.com/photo-1563089145-599997674d42?auto=format&fit=crop&w=500&q=80"
+    },
+    {
+      name: "Free Fire Max",
+      dev: "Garena",
+      slug: "ff",
+      category: "game",
+      image: "https://images.unsplash.com/photo-1579373903781-fd5c0c30c4cd?auto=format&fit=crop&w=500&q=80"
+    },
+    {
+      name: "PUBG Mobile",
+      dev: "Level Infinite",
+      slug: "pubg",
+      category: "game",
+      image: "https://images.unsplash.com/photo-1542751371-adc38448a05e?auto=format&fit=crop&w=500&q=80"
+    },
+    {
+      name: "Genshin Impact",
+      dev: "HoYoverse",
+      slug: "genshin",
+      category: "game",
+      image: "https://images.unsplash.com/photo-1538481199705-c710c4e965fc?auto=format&fit=crop&w=500&q=80"
+    },
+    {
+      name: "Valorant Points",
+      dev: "Riot Games",
+      slug: "valorant",
+      category: "game",
+      image: "https://images.unsplash.com/photo-1542751371-adc38448a05e?auto=format&fit=crop&w=500&q=80"
+    },
+    {
+      name: "Honor of Kings",
+      dev: "Level Infinite",
+      slug: "hok",
+      category: "game",
+      image: "https://images.unsplash.com/photo-1563089145-599997674d42?auto=format&fit=crop&w=500&q=80"
+    },
+    {
+      name: "Whiteout Survival",
+      dev: "Century Games",
+      slug: "whiteout",
+      category: "game",
+      image: "https://images.unsplash.com/photo-1542751371-adc38448a05e?auto=format&fit=crop&w=500&q=80"
+    },
+    {
+      name: "Steam Wallet IDR",
+      dev: "Valve",
+      slug: "steam",
+      category: "voucher",
+      image: "https://images.unsplash.com/photo-1550745165-9bc0b252726f?auto=format&fit=crop&w=500&q=80"
+    }
   ];
 
-  const catalogContainer = document.getElementById("mainCatalogGrid");
-  const tabButtons = document.querySelectorAll(".catalog-tab-pill");
-  const searchNavbar = document.getElementById("searchInput");
+  const gridContainer = document.getElementById("gameGridContainer") || document.querySelector(".game-grid");
+  const tabButtons = document.querySelectorAll(".filter-tab-btn, .category-tab");
 
-  let activeCategory = "all";
+  function renderGames(filterCategory = "all") {
+    if (!gridContainer) return;
 
-  // Fungsi Render Poster Game
-  function renderCatalog(items) {
-    if (!catalogContainer) return;
+    const filtered = filterCategory === "all" || filterCategory === "game"
+      ? gamesList
+      : gamesList.filter(g => g.category === filterCategory);
 
-    if (items.length === 0) {
-      catalogContainer.innerHTML = `
-        <div style="grid-column: 1/-1; text-align: center; padding: 40px 10px; color: #94a3b8;">
-          <i class="fa-solid fa-gamepad fa-2x" style="color: #64748b; margin-bottom: 10px;"></i>
-          <p style="font-size: 0.9rem; font-weight: 700; color: #cbd5e1; margin: 0 0 4px;">Produk tidak ditemukan</p>
-          <span style="font-size: 0.78rem;">Coba gunakan kata kunci pencarian yang lain.</span>
+    gridContainer.innerHTML = "";
+
+    filtered.forEach(game => {
+      const card = document.createElement("a");
+      card.href = `/order.html?game=${game.slug}`;
+      card.className = "game-poster-card";
+      card.innerHTML = `
+        <div class="poster-img-wrap">
+          <img src="${game.image}" alt="${game.name}" loading="lazy">
+        </div>
+        <div class="poster-info">
+          <h3>${game.name}</h3>
+          <p>${game.dev}</p>
         </div>
       `;
-      return;
-    }
-
-    catalogContainer.innerHTML = items.map((game) => `
-      <a href="${game.link}" class="catalog-poster-card">
-        <img src="${game.poster}" alt="${game.name}" loading="lazy">
-        <div style="padding: 12px; text-align: center;">
-          <h4 style="font-size: 0.85rem; font-weight: 800; margin: 0 0 4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: #fff;">${game.name}</h4>
-          <p style="font-size: 0.72rem; color: #94a3b8; margin: 0;">${game.publisher}</p>
-        </div>
-      </a>
-    `).join("");
-  }
-
-  // Filter Engine (Kategori + Pencarian)
-  function applyFilter() {
-    const keyword = (searchNavbar?.value || "").trim().toLowerCase();
-
-    const filtered = masterCatalog.filter((item) => {
-      const matchCategory = activeCategory === "all" || item.category === activeCategory;
-      const matchSearch = item.name.toLowerCase().includes(keyword) || item.publisher.toLowerCase().includes(keyword);
-      return matchCategory && matchSearch;
-    });
-
-    renderCatalog(filtered);
-  }
-
-  // Event Klik Tab Kategori
-  tabButtons.forEach((btn) => {
-    btn.addEventListener("click", () => {
-      tabButtons.forEach((b) => b.classList.remove("active"));
-      btn.classList.add("active");
-      activeCategory = btn.getAttribute("data-filter") || "all";
-      applyFilter();
-    });
-  });
-
-  // Event Input Search di Navbar
-  if (searchNavbar) {
-    searchNavbar.addEventListener("input", () => {
-      // Scroll perlahan ke bagian katalog saat mulai mengetik
-      const catalogSection = document.getElementById("games-section");
-      if (searchNavbar.value.length === 1 && catalogSection) {
-        catalogSection.scrollIntoView({ behavior: "smooth" });
-      }
-      applyFilter();
+      gridContainer.appendChild(card);
     });
   }
 
-  // Inisialisasi awal
-  renderCatalog(masterCatalog);
+  // Filter Tab Handler
+  if (tabButtons.length > 0) {
+    tabButtons.forEach(btn => {
+      btn.addEventListener("click", () => {
+        tabButtons.forEach(b => b.classList.remove("active"));
+        btn.classList.add("active");
+        const cat = btn.getAttribute("data-category") || "all";
+        renderGames(cat);
+      });
+    });
+  }
+
+  // Render awal
+  renderGames("all");
 });
