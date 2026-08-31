@@ -2,7 +2,9 @@
 let allOrders = [];
 let allUsers = [];
 let allArticles = [];
+let allProducts = []; // <-- VAR BARU UNTUK PRODUK
 let selectedTargetUser = null;
+let selectedSku = null; // <-- VAR BARU UNTUK EDIT HARGA
 
 // ==========================================
 // 1. GLOBAL ACTION HANDLERS (BISA DIAKSES ONCLICK HTML)
@@ -117,6 +119,22 @@ window.deleteArticle = async function(articleId, encodedTitle) {
 };
 
 // ==========================================
+// BARU: FUNGSI BUKA MODAL EDIT HARGA PRODUK
+// ==========================================
+window.openPriceModal = function(sku, name, basePrice, sellPrice) {
+  selectedSku = sku;
+  const modalEl = document.getElementById("priceModal");
+  if (document.getElementById("modalProductName")) document.getElementById("modalProductName").innerText = name;
+  if (document.getElementById("modalBasePrice")) document.getElementById("modalBasePrice").value = "Rp " + Number(basePrice).toLocaleString("id-ID");
+  if (document.getElementById("modalSellPriceInput")) document.getElementById("modalSellPriceInput").value = sellPrice;
+  
+  if (modalEl) {
+    modalEl.classList.add("show");
+  }
+};
+
+
+// ==========================================
 // 2. MAIN DOM CONTENT LOADED
 // ==========================================
 document.addEventListener("DOMContentLoaded", async () => {
@@ -186,9 +204,9 @@ document.addEventListener("DOMContentLoaded", async () => {
       const targetContent = document.getElementById(btn.dataset.tab);
       if (targetContent) targetContent.classList.add("active");
 
-      if (btn.dataset.tab === "articlesTab") {
-        window.fetchAdminArticles();
-      }
+      // Load data otomatis saat tab diklik
+      if (btn.dataset.tab === "articlesTab") window.fetchAdminArticles();
+      if (btn.dataset.tab === "productsTab") window.fetchAdminProducts(); // <-- TRIGGER TAB PRODUK
     });
   });
 
@@ -493,6 +511,125 @@ document.addEventListener("DOMContentLoaded", async () => {
       `;
     }
   };
+
+  // ==========================================
+  // MANAJEMEN KATALOG PRODUK & HARGA (TAB 4)
+  // ==========================================
+  window.fetchAdminProducts = async function() {
+    const tbody = document.getElementById("productsTableBody");
+    if (!tbody) return;
+
+    tbody.innerHTML = `<tr><td colspan="7" style="text-align: center; padding: 25px; color: var(--text-muted);"><i class="fa-solid fa-spinner fa-spin"></i> Memuat data produk...</td></tr>`;
+
+    try {
+      const { data, error } = await window.supabase
+        .from("products")
+        .select("*")
+        .order("game_code", { ascending: true })
+        .order("price_sell", { ascending: true });
+
+      if (error) throw error;
+      
+      allProducts = data || [];
+      renderProductsTable(allProducts);
+    } catch (err) {
+      console.error("Gagal load produk:", err);
+      tbody.innerHTML = `<tr><td colspan="7" style="text-align: center; color: var(--accent-red);">Gagal mengambil data: ${err.message}</td></tr>`;
+    }
+  };
+
+  function renderProductsTable(products) {
+    const tbody = document.getElementById("productsTableBody");
+    if (!tbody) return;
+    const keyword = (document.getElementById("searchProductAdmin")?.value || "").toLowerCase();
+
+    const filtered = products.filter((p) => 
+      (p.product_name && p.product_name.toLowerCase().includes(keyword)) ||
+      (p.game_code && p.game_code.toLowerCase().includes(keyword))
+    );
+
+    if (filtered.length === 0) {
+      tbody.innerHTML = `<tr><td colspan="7" style="text-align: center; padding: 25px; color: var(--text-muted);">Produk tidak ditemukan.</td></tr>`;
+      return;
+    }
+
+    tbody.innerHTML = filtered.map((p) => {
+      const basePrice = Number(p.price || 0).toLocaleString("id-ID");
+      const sellPrice = Number(p.price_sell || 0).toLocaleString("id-ID");
+      const statusBadge = p.buyer_product_status 
+        ? `<span class="badge-status success">ON</span>` 
+        : `<span class="badge-status pending" style="background: rgba(239, 68, 68, 0.1); color: #ef4444;">OFF</span>`;
+
+      return `
+        <tr>
+          <td><code style="color: #94a3b8; font-size: 0.8rem;">${p.buyer_sku_code}</code></td>
+          <td><span style="color: #fbbf24; font-weight: 700; text-transform: uppercase; font-size: 0.8rem;">${p.game_code}</span></td>
+          <td><strong style="color: #fff; font-size: 0.85rem;">${p.product_name}</strong></td>
+          <td>Rp ${basePrice}</td>
+          <td><strong style="color: #10b981;">Rp ${sellPrice}</strong></td>
+          <td>${statusBadge}</td>
+          <td>
+            <button class="btn-action-sm btn-adjust" onclick="openPriceModal('${p.buyer_sku_code}', '${p.product_name}', ${p.price}, ${p.price_sell})" title="Ubah Harga Jual">
+              <i class="fa-solid fa-pen-to-square"></i> Edit
+            </button>
+          </td>
+        </tr>
+      `;
+    }).join("");
+  }
+
+  const searchProductAdmin = document.getElementById("searchProductAdmin");
+  if (searchProductAdmin) {
+    searchProductAdmin.addEventListener("input", () => renderProductsTable(allProducts));
+  }
+
+  const btnRefreshProducts = document.getElementById("btnRefreshProducts");
+  if (btnRefreshProducts) {
+    btnRefreshProducts.addEventListener("click", () => window.fetchAdminProducts());
+  }
+
+  // Tutup Modal Harga
+  const btnClosePriceModal = document.getElementById("btnClosePriceModal");
+  const priceModal = document.getElementById("priceModal");
+  if (btnClosePriceModal && priceModal) {
+    btnClosePriceModal.addEventListener("click", () => {
+      priceModal.classList.remove("show");
+    });
+  }
+
+  // Simpan Harga Baru
+  const btnSubmitPrice = document.getElementById("btnSubmitPrice");
+  if (btnSubmitPrice) {
+    btnSubmitPrice.addEventListener("click", async () => {
+      const newPrice = Number(document.getElementById("modalSellPriceInput").value);
+      
+      if (!newPrice || isNaN(newPrice) || newPrice < 100) {
+        alert("Masukkan harga jual yang valid!");
+        return;
+      }
+
+      btnSubmitPrice.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Menyimpan...';
+      btnSubmitPrice.disabled = true;
+
+      try {
+        const { error } = await window.supabase
+          .from("products")
+          .update({ price_sell: newPrice })
+          .eq("buyer_sku_code", selectedSku);
+
+        if (error) throw error;
+
+        alert("Harga jual berhasil diupdate!");
+        priceModal.classList.remove("show");
+        window.fetchAdminProducts(); // Refresh tabel otomatis
+      } catch (err) {
+        alert("Gagal update harga: " + err.message);
+      } finally {
+        btnSubmitPrice.innerHTML = '<i class="fa-solid fa-check"></i> Simpan Harga';
+        btnSubmitPrice.disabled = false;
+      }
+    });
+  }
 
   // Eksekusi Inisialisasi
   initAdmin();
