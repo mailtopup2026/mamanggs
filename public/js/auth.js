@@ -58,6 +58,12 @@ document.addEventListener("DOMContentLoaded", () => {
   if (registerForm) {
     registerForm.addEventListener("submit", async (e) => {
       e.preventDefault();
+
+      if (!window.supabase || !window.supabase.auth) {
+        showToast("error", "Koneksi Belum Siap", "Silakan refresh halaman terlebih dahulu.");
+        return;
+      }
+
       const name = document.getElementById("regName").value.trim();
       const email = document.getElementById("regEmail").value.trim();
       const password = document.getElementById("regPassword").value;
@@ -107,6 +113,12 @@ document.addEventListener("DOMContentLoaded", () => {
   if (loginForm) {
     loginForm.addEventListener("submit", async (e) => {
       e.preventDefault();
+
+      if (!window.supabase || !window.supabase.auth) {
+        showToast("error", "Koneksi Belum Siap", "Silakan refresh halaman terlebih dahulu.");
+        return;
+      }
+
       const email = document.getElementById("loginEmail").value.trim();
       const password = document.getElementById("loginPassword").value;
       const btn = loginForm.querySelector('button[type="submit"]');
@@ -122,10 +134,28 @@ document.addEventListener("DOMContentLoaded", () => {
 
         if (error) throw error;
 
+        // Simpan sesi user ke localStorage
         localStorage.setItem("mgs_user", JSON.stringify(data.user));
-        showToast("success", "Login Berhasil!", "Selamat datang kembali di MamangGS.");
+
+        // Cek Role apakah Admin atau Member
+        let redirectTarget = "/";
+        try {
+          const { data: profile } = await window.supabase
+            .from("profiles")
+            .select("role")
+            .eq("id", data.user.id)
+            .single();
+
+          if (profile && profile.role === "admin") {
+            redirectTarget = "/admin.html";
+          }
+        } catch (roleErr) {
+          console.warn("Gagal cek role, fallback ke home:", roleErr);
+        }
+
+        showToast("success", "Login Berhasil!", "Mengalihkan ke dashboard...");
         setTimeout(() => {
-          window.location.href = "/";
+          window.location.href = redirectTarget;
         }, 1200);
       } catch (err) {
         showToast("error", "Gagal Masuk", err.message);
@@ -140,6 +170,12 @@ document.addEventListener("DOMContentLoaded", () => {
   if (forgotForm) {
     forgotForm.addEventListener("submit", async (e) => {
       e.preventDefault();
+
+      if (!window.supabase || !window.supabase.auth) {
+        showToast("error", "Koneksi Belum Siap", "Silakan refresh halaman terlebih dahulu.");
+        return;
+      }
+
       const email = document.getElementById("forgotEmail").value.trim();
       const btn = forgotForm.querySelector('button[type="submit"]');
 
@@ -169,6 +205,12 @@ document.addEventListener("DOMContentLoaded", () => {
   if (updatePasswordForm) {
     updatePasswordForm.addEventListener("submit", async (e) => {
       e.preventDefault();
+
+      if (!window.supabase || !window.supabase.auth) {
+        showToast("error", "Koneksi Belum Siap", "Silakan refresh halaman terlebih dahulu.");
+        return;
+      }
+
       const newPassword = document.getElementById("newPassword").value;
       const btn = updatePasswordForm.querySelector('button[type="submit"]');
 

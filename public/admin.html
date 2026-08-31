@@ -117,6 +117,8 @@
       <button class="tab-btn active" data-tab="ordersTab"><i class="fa-solid fa-list-check"></i> Kelola Transaksi</button>
       <button class="tab-btn" data-tab="balanceTab"><i class="fa-solid fa-wallet"></i> Kelola Saldo Member</button>
       <button class="tab-btn" data-tab="articlesTab"><i class="fa-solid fa-file-pen"></i> Kelola Artikel Blog</button>
+      <!-- TAB BARU: KATALOG PRODUK -->
+      <button class="tab-btn" data-tab="productsTab"><i class="fa-solid fa-tags"></i> Katalog & Harga</button>
     </div>
 
     <!-- SECTION 1: KELOLA TRANSAKSI -->
@@ -219,6 +221,41 @@
         </div>
       </div>
     </section>
+
+    <!-- SECTION 4: KATALOG PRODUK & HARGA (BARU DITAMBAHKAN) -->
+    <section id="productsTab" class="tab-content">
+      <div class="section-card">
+        <div class="table-header-bar">
+          <h3><i class="fa-solid fa-tags"></i> Daftar Harga & Produk Jual</h3>
+          <div class="filter-actions">
+            <input type="text" id="searchProductAdmin" class="admin-input-search" placeholder="Cari nama item atau game..." style="width: 250px;">
+            <button id="btnRefreshProducts" class="btn-refresh"><i class="fa-solid fa-rotate-right"></i> Refresh</button>
+          </div>
+        </div>
+
+        <div class="table-responsive">
+          <table class="admin-table">
+            <thead>
+              <tr>
+                <th>SKU</th>
+                <th>Brand / Game</th>
+                <th>Nama Produk</th>
+                <th>Harga Beli (Modal)</th>
+                <th>Harga Jual (Web)</th>
+                <th>Status (On/Off)</th>
+                <th>Aksi</th>
+              </tr>
+            </thead>
+            <tbody id="productsTableBody">
+              <tr>
+                <td colspan="7" style="text-align: center; padding: 25px;">Memuat data produk...</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
   </main>
 
   <!-- MODAL MANUAL TOP UP SALDO -->
@@ -238,6 +275,32 @@
         </div>
         <button id="btnSubmitBalance" class="btn-submit-action">
           <i class="fa-solid fa-check"></i> Simpan Perubahan Saldo
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL EDIT HARGA PRODUK -->
+  <div class="modal-backdrop" id="priceModal">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3><i class="fa-solid fa-hand-holding-dollar"></i> Ubah Harga Jual</h3>
+        <button class="btn-close-modal" id="btnClosePriceModal"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+      <div class="modal-body">
+        <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 12px;">
+          Produk: <strong id="modalProductName" style="color: #fff;">-</strong>
+        </p>
+        <div class="form-group" style="margin-bottom: 12px;">
+          <label>Harga Modal (Dari Digiflazz)</label>
+          <input type="text" id="modalBasePrice" class="admin-input" disabled style="background: rgba(255,255,255,0.05); color: #94a3b8;">
+        </div>
+        <div class="form-group">
+          <label>Harga Jual Baru (Tampil di Website)</label>
+          <input type="number" id="modalSellPriceInput" class="admin-input" placeholder="Masukkan harga jual baru">
+        </div>
+        <button id="btnSubmitPrice" class="btn-submit-action" style="margin-top: 15px;">
+          <i class="fa-solid fa-check"></i> Simpan Harga
         </button>
       </div>
     </div>
