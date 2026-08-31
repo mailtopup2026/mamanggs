@@ -215,15 +215,25 @@
         </div>
       </section>
 
-      <!-- TAB 4: KATALOG PRODUK & HARGA -->
+      <!-- TAB 4: KATALOG PRODUK & HARGA (DENGAN FILTER KATEGORI) -->
       <section id="productsTab" class="tab-content">
         <div class="section-card">
           <div class="table-header-bar">
             <h3><i class="fa-solid fa-tags"></i> Daftar Harga & Produk Jual</h3>
             <div class="filter-actions">
-              <input type="text" id="searchProductAdmin" class="admin-input-search" placeholder="Cari item atau game..." style="width: 250px;">
+              <!-- FILTER DROPDOWN GAME -->
+              <select id="filterProductGame" class="admin-select" style="min-width: 180px;">
+                <option value="ALL">🎮 Semua Game / Brand</option>
+              </select>
+              
+              <input type="text" id="searchProductAdmin" class="admin-input-search" placeholder="Cari item atau game..." style="width: 220px;">
               <button id="btnRefreshProducts" class="btn-refresh"><i class="fa-solid fa-rotate-right"></i> Refresh</button>
             </div>
+          </div>
+
+          <!-- KATEGORI PILLS CEPAT -->
+          <div id="gameCategoryPills" style="display: flex; gap: 8px; margin-bottom: 18px; overflow-x: auto; padding-bottom: 6px;">
+            <!-- Diisi otomatis oleh JavaScript -->
           </div>
 
           <div class="table-responsive">

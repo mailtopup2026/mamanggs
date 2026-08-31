@@ -5,6 +5,7 @@ let allArticles = [];
 let allProducts = [];
 let selectedTargetUser = null;
 let selectedSku = null;
+let activeGameFilter = "ALL"; // <-- Filter aktif kategori game
 
 // ==========================================
 // 1. GLOBAL ACTION HANDLERS (BISA DIAKSES ONCLICK HTML)
@@ -139,6 +140,16 @@ window.openPriceModal = function(sku, encodedName, basePrice, sellPrice) {
   if (modalEl) {
     modalEl.classList.add("show");
   }
+};
+
+// Ganti Filter Kategori Game secara Cepat (Pill Buttons)
+window.setGameFilter = function(gameName) {
+  activeGameFilter = gameName;
+  const filterSelect = document.getElementById("filterProductGame");
+  if (filterSelect) filterSelect.value = gameName;
+
+  populateGameFilters(allProducts);
+  renderProductsTable(allProducts);
 };
 
 // ==========================================
@@ -527,12 +538,13 @@ document.addEventListener("DOMContentLoaded", async () => {
       const { data, error } = await window.supabase
         .from("products")
         .select("*")
-        .order("game_code", { ascending: true })
+        .order("brand", { ascending: true })
         .order("price_sell", { ascending: true });
 
       if (error) throw error;
       
       allProducts = data || [];
+      populateGameFilters(allProducts);
       renderProductsTable(allProducts);
     } catch (err) {
       console.error("Gagal load produk:", err);
@@ -540,23 +552,62 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
   };
 
+  // Generate Dropdown & Tombol Pill Kategori Otomatis
+  function populateGameFilters(products) {
+    const filterSelect = document.getElementById("filterProductGame");
+    const pillsContainer = document.getElementById("gameCategoryPills");
+    
+    // Ambil daftar brand/game unik
+    const uniqueGames = [...new Set(products.map(p => p.brand || p.game_code || "Lainnya"))].sort();
+
+    if (filterSelect) {
+      filterSelect.innerHTML = `<option value="ALL">🎮 Semua Game (${products.length})</option>` +
+        uniqueGames.map(g => {
+          const count = products.filter(p => (p.brand || p.game_code) === g).length;
+          return `<option value="${g}" ${activeGameFilter === g ? "selected" : ""}>${g.toUpperCase()} (${count})</option>`;
+        }).join("");
+    }
+
+    if (pillsContainer) {
+      pillsContainer.innerHTML = `
+        <button class="pill-btn ${activeGameFilter === 'ALL' ? 'active' : ''}" onclick="setGameFilter('ALL')">
+          Semua (${products.length})
+        </button>
+      ` + uniqueGames.map(g => {
+        const count = products.filter(p => (p.brand || p.game_code) === g).length;
+        const isActive = activeGameFilter === g ? 'active' : '';
+        return `
+          <button class="pill-btn ${isActive}" onclick="setGameFilter('${g.replace(/'/g, "\\'")}')">
+            ${g.toUpperCase()} <span style="opacity: 0.7; font-size: 0.75rem;">${count}</span>
+          </button>
+        `;
+      }).join("");
+    }
+  }
+
   function renderProductsTable(products) {
     const tbody = document.getElementById("productsTableBody");
     if (!tbody) return;
     const keyword = (document.getElementById("searchProductAdmin")?.value || "").toLowerCase();
 
-    const filtered = products.filter((p) => 
-      (p.product_name && p.product_name.toLowerCase().includes(keyword)) ||
-      (p.game_code && p.game_code.toLowerCase().includes(keyword))
-    );
+    // Saring berdasarkan Pill/Dropdown Game + Kata Kunci Pencarian
+    const filtered = products.filter((p) => {
+      const brandName = p.brand || p.game_code || "Lainnya";
+      const matchCategory = (activeGameFilter === "ALL") || (brandName === activeGameFilter);
+      
+      const matchKeyword = (p.product_name && p.product_name.toLowerCase().includes(keyword)) ||
+                           (p.buyer_sku_code && p.buyer_sku_code.toLowerCase().includes(keyword)) ||
+                           (brandName.toLowerCase().includes(keyword));
+
+      return matchCategory && matchKeyword;
+    });
 
     if (filtered.length === 0) {
-      tbody.innerHTML = `<tr><td colspan="7" style="text-align: center; padding: 25px; color: var(--text-muted);">Produk tidak ditemukan.</td></tr>`;
+      tbody.innerHTML = `<tr><td colspan="7" style="text-align: center; padding: 25px; color: var(--text-muted);">Tidak ada produk untuk kategori ini.</td></tr>`;
       return;
     }
 
     tbody.innerHTML = filtered.map((p) => {
-      // Prioritaskan price_original, lalu fallback ke price
       const basePriceNum = Number(p.price_original ?? p.price ?? 0);
       const sellPriceNum = Number(p.price_sell ?? 0);
       const basePrice = basePriceNum.toLocaleString("id-ID");
@@ -571,7 +622,7 @@ document.addEventListener("DOMContentLoaded", async () => {
       return `
         <tr>
           <td><code style="color: #94a3b8; font-size: 0.8rem;">${p.buyer_sku_code}</code></td>
-          <td><span style="color: #fbbf24; font-weight: 700; text-transform: uppercase; font-size: 0.8rem;">${p.game_code}</span></td>
+          <td><span style="color: #fbbf24; font-weight: 700; text-transform: uppercase; font-size: 0.8rem;">${p.brand || p.game_code}</span></td>
           <td><strong style="color: #fff; font-size: 0.85rem;">${p.product_name}</strong></td>
           <td>Rp ${basePrice}</td>
           <td><strong style="color: #10b981;">Rp ${sellPrice}</strong></td>
@@ -584,6 +635,16 @@ document.addEventListener("DOMContentLoaded", async () => {
         </tr>
       `;
     }).join("");
+  }
+
+  // Filter Dropdown Change
+  const filterProductGame = document.getElementById("filterProductGame");
+  if (filterProductGame) {
+    filterProductGame.addEventListener("change", (e) => {
+      activeGameFilter = e.target.value;
+      populateGameFilters(allProducts);
+      renderProductsTable(allProducts);
+    });
   }
 
   const searchProductAdmin = document.getElementById("searchProductAdmin");

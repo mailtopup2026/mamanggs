@@ -360,6 +360,53 @@ body.admin-body {
   background: rgba(255, 255, 255, 0.02);
 }
 
+/* ===================================================
+   CATEGORY PILL BUTTONS (TAB 4)
+   =================================================== */
+#gameCategoryPills::-webkit-scrollbar {
+  height: 4px;
+}
+
+#gameCategoryPills::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.02);
+  border-radius: 10px;
+}
+
+#gameCategoryPills::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 10px;
+}
+
+.pill-btn {
+  background: #080f1d;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  color: #94a3b8;
+  padding: 7px 16px;
+  border-radius: 999px;
+  font-size: 0.78rem;
+  font-weight: 700;
+  cursor: pointer;
+  white-space: nowrap;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  transition: all 0.2s ease;
+}
+
+.pill-btn:hover {
+  background: #1e293b;
+  color: #fff;
+  border-color: rgba(255, 255, 255, 0.18);
+}
+
+.pill-btn.active {
+  background: #10b981;
+  color: #070d18;
+  border-color: #10b981;
+  font-weight: 800;
+  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+}
+
 /* Badges */
 .badge-status {
   padding: 4px 10px;
