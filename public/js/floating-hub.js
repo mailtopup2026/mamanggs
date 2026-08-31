@@ -1,147 +1,160 @@
 document.addEventListener("DOMContentLoaded", () => {
-  // Hapus container lama jika ada
+  // 1. Hapus elemen hub lama jika ada
   const oldHub = document.querySelector(".floating-hub-container");
   if (oldHub) oldHub.remove();
 
-  // Injeksi CSS Khusus Floating Hub agar tidak lari/menghindar saat di-hover
+  // 2. Suntikkan CSS Override Kuat (Anti-Bentrok)
   const styleEl = document.createElement("style");
-  styleEl.id = "floating-hub-styles";
+  styleEl.id = "floating-hub-force-styles";
   styleEl.innerHTML = `
     .floating-hub-container {
-      position: fixed;
-      bottom: 24px;
-      right: 24px;
-      z-index: 99999;
-      width: 56px;
-      height: 56px;
-      user-select: none;
+      position: fixed !important;
+      bottom: 24px !important;
+      right: 24px !important;
+      z-index: 999999 !important;
+      display: flex !important;
+      flex-direction: column-reverse !important;
+      align-items: center !important;
+      gap: 12px !important;
+      width: 56px !important;
+      height: auto !important;
+      user-select: none !important;
     }
 
     .btn-hub-main {
-      width: 56px;
-      height: 56px;
-      border-radius: 50%;
-      background: linear-gradient(135deg, #10b981, #059669);
-      border: none;
-      color: #fff;
-      font-size: 1.4rem;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      box-shadow: 0 8px 24px rgba(16, 185, 129, 0.4);
-      position: relative;
-      z-index: 2;
-      transition: transform 0.25s ease, background 0.25s ease;
+      width: 56px !important;
+      height: 56px !important;
+      border-radius: 50% !important;
+      background: linear-gradient(135deg, #10b981, #059669) !important;
+      border: none !important;
+      color: #ffffff !important;
+      font-size: 1.4rem !important;
+      cursor: pointer !important;
+      display: flex !important;
+      align-items: center !important;
+      justify-content: center !important;
+      box-shadow: 0 8px 24px rgba(16, 185, 129, 0.45) !important;
+      transition: all 0.25s ease !important;
+      flex-shrink: 0 !important;
     }
 
     .btn-hub-main:hover {
-      transform: scale(1.05);
+      transform: scale(1.08) !important;
     }
 
     .floating-hub-container.active .btn-hub-main {
-      background: #ef4444;
-      transform: rotate(90deg);
-      box-shadow: 0 8px 24px rgba(239, 68, 68, 0.4);
+      background: #ef4444 !important;
+      box-shadow: 0 8px 24px rgba(239, 68, 68, 0.45) !important;
+      transform: rotate(90deg) !important;
+    }
+
+    .hub-menu-items {
+      display: flex !important;
+      flex-direction: column-reverse !important;
+      align-items: center !important;
+      gap: 10px !important;
+      opacity: 0 !important;
+      visibility: hidden !important;
+      pointer-events: none !important;
+      transform: translateY(15px) !important;
+      transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1) !important;
+    }
+
+    .floating-hub-container.active .hub-menu-items {
+      opacity: 1 !important;
+      visibility: visible !important;
+      pointer-events: auto !important;
+      transform: translateY(0) !important;
     }
 
     .hub-radial-item {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 48px;
-      height: 48px;
-      border-radius: 50%;
-      color: #fff;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 1.25rem;
-      text-decoration: none;
-      box-shadow: 0 6px 18px rgba(0, 0, 0, 0.35);
-      opacity: 0;
-      pointer-events: none;
-      transform: translate(0, 0) scale(0.4);
-      transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 0.2s ease;
-      z-index: 1;
+      position: relative !important;
+      width: 46px !important;
+      height: 46px !important;
+      border-radius: 50% !important;
+      color: #ffffff !important;
+      display: flex !important;
+      align-items: center !important;
+      justify-content: center !important;
+      font-size: 1.25rem !important;
+      text-decoration: none !important;
+      box-shadow: 0 6px 16px rgba(0, 0, 0, 0.4) !important;
+      transition: transform 0.2s ease, filter 0.2s ease !important;
+      flex-shrink: 0 !important;
     }
 
-    /* Posisi saat AKTIF (Diam & Tidak Bergerak Liar) */
-    .floating-hub-container.active .hub-radial-item {
-      opacity: 1;
-      pointer-events: auto;
-    }
-
-    /* 1. WhatsApp (Geser ke Kiri: -70px) */
-    .floating-hub-container.active .hub-radial-item.whatsapp {
-      transform: translate(-68px, 4px) scale(1);
-      background: #25d366;
-    }
-
-    /* 2. TikTok (Geser ke Serong Kiri Atas: -50px, -60px) */
-    .floating-hub-container.active .hub-radial-item.tiktok {
-      transform: translate(-50px, -60px) scale(1);
-      background: #000000;
-      border: 1px solid rgba(255,255,255,0.2);
-    }
-
-    /* 3. Instagram (Geser ke Atas: 4px, -70px) */
-    .floating-hub-container.active .hub-radial-item.instagram {
-      transform: translate(4px, -70px) scale(1);
-      background: radial-gradient(circle at 30% 107%, #fdf497 0%, #fdf497 5%, #fd5949 45%, #d6249f 60%, #285AEB 90%);
-    }
-
-    /* Hover efek hanya menambah sedikit terang tanpa merubah posisi koordinat */
     .hub-radial-item:hover {
-      filter: brightness(1.15);
+      transform: scale(1.1) !important;
+      filter: brightness(1.2) !important;
     }
 
-    /* Tooltip Anti-Tabrak */
+    .hub-radial-item.whatsapp {
+      background: #25d366 !important;
+    }
+
+    .hub-radial-item.tiktok {
+      background: #000000 !important;
+      border: 1px solid rgba(255, 255, 255, 0.2) !important;
+    }
+
+    .hub-radial-item.instagram {
+      background: radial-gradient(circle at 30% 107%, #fdf497 0%, #fdf497 5%, #fd5949 45%, #d6249f 60%, #285AEB 90%) !important;
+    }
+
     .hub-tooltip {
-      position: absolute;
-      bottom: -24px;
-      left: 50%;
-      transform: translateX(-50%);
-      background: rgba(15, 23, 42, 0.9);
-      color: #fff;
-      font-size: 0.68rem;
-      font-weight: 700;
-      padding: 2px 6px;
-      border-radius: 4px;
-      white-space: nowrap;
-      pointer-events: none; /* Mencegah tooltip memblokir klik kursor */
-      opacity: 0;
-      transition: opacity 0.15s ease;
+      position: absolute !important;
+      right: 56px !important;
+      top: 50% !important;
+      transform: translateY(-50%) !important;
+      background: rgba(15, 23, 42, 0.95) !important;
+      border: 1px solid rgba(255, 255, 255, 0.12) !important;
+      color: #ffffff !important;
+      font-size: 0.72rem !important;
+      font-weight: 700 !important;
+      padding: 4px 10px !important;
+      border-radius: 6px !important;
+      white-space: nowrap !important;
+      pointer-events: none !important;
+      opacity: 0 !important;
+      transition: opacity 0.15s ease !important;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.3) !important;
     }
 
     .hub-radial-item:hover .hub-tooltip {
-      opacity: 1;
+      opacity: 1 !important;
     }
   `;
   document.head.appendChild(styleEl);
 
-  // Buat Hub Container
+  // 3. Buat Elemen DOM Baru
   const hubContainer = document.createElement("div");
   hubContainer.className = "floating-hub-container";
   hubContainer.innerHTML = `
-    <a href="https://wa.me/6281234567890" target="_blank" class="hub-radial-item whatsapp" title="WhatsApp CS">
-      <i class="fa-brands fa-whatsapp"></i>
-      <span class="hub-tooltip">WhatsApp</span>
-    </a>
-
-    <a href="https://tiktok.com/@mamanggs" target="_blank" class="hub-radial-item tiktok" title="TikTok">
-      <i class="fa-brands fa-tiktok"></i>
-      <span class="hub-tooltip">TikTok</span>
-    </a>
-
-    <a href="https://instagram.com/mamanggs" target="_blank" class="hub-radial-item instagram" title="Instagram">
-      <i class="fa-brands fa-instagram"></i>
-      <span class="hub-tooltip">Instagram</span>
-    </a>
-
+    <!-- Tombol Utama Pemicu -->
     <button class="btn-hub-main" id="btnHubToggle" title="Bantuan & Medsos" type="button">
       <i class="fa-solid fa-headset"></i>
     </button>
+
+    <!-- Menu Melayang ke Atas (Stack) -->
+    <div class="hub-menu-items">
+      <!-- Item 1: WhatsApp -->
+      <a href="https://wa.me/6281234567890" target="_blank" class="hub-radial-item whatsapp" title="WhatsApp CS">
+        <i class="fa-brands fa-whatsapp"></i>
+        <span class="hub-tooltip">WhatsApp CS</span>
+      </a>
+
+      <!-- Item 2: TikTok -->
+      <a href="https://tiktok.com/@mamanggs" target="_blank" class="hub-radial-item tiktok" title="TikTok">
+        <i class="fa-brands fa-tiktok"></i>
+        <span class="hub-tooltip">TikTok Official</span>
+      </a>
+
+      <!-- Item 3: Instagram -->
+      <a href="https://instagram.com/mamanggs" target="_blank" class="hub-radial-item instagram" title="Instagram">
+        <i class="fa-brands fa-instagram"></i>
+        <span class="hub-tooltip">Instagram</span>
+      </a>
+    </div>
   `;
 
   document.body.appendChild(hubContainer);
@@ -158,7 +171,7 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  // Tutup otomatis jika klik di luar
+  // Tutup otomatis jika klik area luar
   document.addEventListener("click", (e) => {
     if (hubContainer && !hubContainer.contains(e.target)) {
       if (hubContainer.classList.contains("active")) {
