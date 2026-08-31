@@ -2,9 +2,9 @@
 let allOrders = [];
 let allUsers = [];
 let allArticles = [];
-let allProducts = []; // <-- VAR BARU UNTUK PRODUK
+let allProducts = [];
 let selectedTargetUser = null;
-let selectedSku = null; // <-- VAR BARU UNTUK EDIT HARGA
+let selectedSku = null;
 
 // ==========================================
 // 1. GLOBAL ACTION HANDLERS (BISA DIAKSES ONCLICK HTML)
@@ -118,21 +118,29 @@ window.deleteArticle = async function(articleId, encodedTitle) {
   }
 };
 
-// ==========================================
-// BARU: FUNGSI BUKA MODAL EDIT HARGA PRODUK
-// ==========================================
-window.openPriceModal = function(sku, name, basePrice, sellPrice) {
+// Buka Modal Edit Harga Produk (Aman dari tanda petik dan nilai null)
+window.openPriceModal = function(sku, encodedName, basePrice, sellPrice) {
   selectedSku = sku;
   const modalEl = document.getElementById("priceModal");
-  if (document.getElementById("modalProductName")) document.getElementById("modalProductName").innerText = name;
-  if (document.getElementById("modalBasePrice")) document.getElementById("modalBasePrice").value = "Rp " + Number(basePrice).toLocaleString("id-ID");
-  if (document.getElementById("modalSellPriceInput")) document.getElementById("modalSellPriceInput").value = sellPrice;
+  const productName = decodeURIComponent(encodedName);
+  
+  if (document.getElementById("modalProductName")) {
+    document.getElementById("modalProductName").innerText = productName;
+  }
+  
+  if (document.getElementById("modalBasePrice")) {
+    const cleanBase = Number(basePrice) || 0;
+    document.getElementById("modalBasePrice").value = "Rp " + cleanBase.toLocaleString("id-ID");
+  }
+  
+  if (document.getElementById("modalSellPriceInput")) {
+    document.getElementById("modalSellPriceInput").value = Number(sellPrice) || 0;
+  }
   
   if (modalEl) {
     modalEl.classList.add("show");
   }
 };
-
 
 // ==========================================
 // 2. MAIN DOM CONTENT LOADED
@@ -206,7 +214,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
       // Load data otomatis saat tab diklik
       if (btn.dataset.tab === "articlesTab") window.fetchAdminArticles();
-      if (btn.dataset.tab === "productsTab") window.fetchAdminProducts(); // <-- TRIGGER TAB PRODUK
+      if (btn.dataset.tab === "productsTab") window.fetchAdminProducts();
     });
   });
 
@@ -375,7 +383,7 @@ document.addEventListener("DOMContentLoaded", async () => {
           <td><span style="color: ${u.role === 'admin' ? '#10b981' : '#8e9bb0'}; font-weight: 700;">${u.role || 'member'}</span></td>
           <td><strong style="color: #10b981;">Rp ${bal}</strong></td>
           <td>
-            <button class="btn-action-sm btn-adjust" onclick="openBalanceModal('${u.id}', '${u.full_name || u.email}')">
+            <button class="btn-action-sm btn-adjust" onclick="openBalanceModal('${u.id}', '${(u.full_name || u.email || '').replace(/'/g, "\\'")}')">
               <i class="fa-solid fa-pen-to-square"></i> Kelola Saldo
             </button>
           </td>
@@ -554,11 +562,16 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
 
     tbody.innerHTML = filtered.map((p) => {
-      const basePrice = Number(p.price || 0).toLocaleString("id-ID");
-      const sellPrice = Number(p.price_sell || 0).toLocaleString("id-ID");
+      const basePriceNum = Number(p.price) || 0;
+      const sellPriceNum = Number(p.price_sell) || 0;
+      const basePrice = basePriceNum.toLocaleString("id-ID");
+      const sellPrice = sellPriceNum.toLocaleString("id-ID");
+      
       const statusBadge = p.buyer_product_status 
         ? `<span class="badge-status success">ON</span>` 
         : `<span class="badge-status pending" style="background: rgba(239, 68, 68, 0.1); color: #ef4444;">OFF</span>`;
+
+      const safeEncodedTitle = encodeURIComponent(p.product_name || "");
 
       return `
         <tr>
@@ -569,7 +582,7 @@ document.addEventListener("DOMContentLoaded", async () => {
           <td><strong style="color: #10b981;">Rp ${sellPrice}</strong></td>
           <td>${statusBadge}</td>
           <td>
-            <button class="btn-action-sm btn-adjust" onclick="openPriceModal('${p.buyer_sku_code}', '${p.product_name}', ${p.price}, ${p.price_sell})" title="Ubah Harga Jual">
+            <button class="btn-action-sm btn-adjust" onclick="openPriceModal('${p.buyer_sku_code}', '${safeEncodedTitle}', ${basePriceNum}, ${sellPriceNum})" title="Ubah Harga Jual">
               <i class="fa-solid fa-pen-to-square"></i> Edit
             </button>
           </td>
@@ -621,7 +634,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
         alert("Harga jual berhasil diupdate!");
         priceModal.classList.remove("show");
-        window.fetchAdminProducts(); // Refresh tabel otomatis
+        window.fetchAdminProducts();
       } catch (err) {
         alert("Gagal update harga: " + err.message);
       } finally {
