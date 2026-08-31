@@ -1,27 +1,25 @@
 document.addEventListener("DOMContentLoaded", () => {
-  // 1. Hapus elemen hub lama jika ada
-  const oldHub = document.querySelector(".floating-hub-container");
-  if (oldHub) oldHub.remove();
+  // 1. Bersihkan elemen lama
+  document.querySelectorAll(".floating-hub-container, .mgs-float-hub").forEach(el => el.remove());
 
-  // 2. Suntikkan CSS Override Kuat (Anti-Bentrok)
+  // 2. Suntikkan CSS Khusus dengan Class Baru (Anti Bentrok dengan CSS lama)
   const styleEl = document.createElement("style");
-  styleEl.id = "floating-hub-force-styles";
+  styleEl.id = "mgs-float-hub-styles";
   styleEl.innerHTML = `
-    .floating-hub-container {
+    .mgs-float-hub {
       position: fixed !important;
       bottom: 24px !important;
       right: 24px !important;
-      z-index: 999999 !important;
-      display: flex !important;
-      flex-direction: column-reverse !important;
-      align-items: center !important;
-      gap: 12px !important;
       width: 56px !important;
-      height: auto !important;
+      height: 56px !important;
+      z-index: 999999 !important;
       user-select: none !important;
     }
 
-    .btn-hub-main {
+    /* Tombol Utama (Pemicu) */
+    .mgs-hub-trigger {
+      position: absolute !important;
+      inset: 0 !important;
       width: 56px !important;
       height: 56px !important;
       border-radius: 50% !important;
@@ -33,150 +31,145 @@ document.addEventListener("DOMContentLoaded", () => {
       display: flex !important;
       align-items: center !important;
       justify-content: center !important;
-      box-shadow: 0 8px 24px rgba(16, 185, 129, 0.45) !important;
-      transition: all 0.25s ease !important;
-      flex-shrink: 0 !important;
+      box-shadow: 0 6px 20px rgba(16, 185, 129, 0.45) !important;
+      z-index: 10 !important;
+      transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1) !important;
+      outline: none !important;
     }
 
-    .btn-hub-main:hover {
-      transform: scale(1.08) !important;
+    .mgs-hub-trigger:hover {
+      transform: scale(1.06) !important;
     }
 
-    .floating-hub-container.active .btn-hub-main {
+    .mgs-float-hub.open .mgs-hub-trigger {
       background: #ef4444 !important;
-      box-shadow: 0 8px 24px rgba(239, 68, 68, 0.45) !important;
+      box-shadow: 0 6px 20px rgba(239, 68, 68, 0.45) !important;
       transform: rotate(90deg) !important;
     }
 
-    .hub-menu-items {
-      display: flex !important;
-      flex-direction: column-reverse !important;
-      align-items: center !important;
-      gap: 10px !important;
-      opacity: 0 !important;
-      visibility: hidden !important;
-      pointer-events: none !important;
-      transform: translateY(15px) !important;
-      transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1) !important;
-    }
-
-    .floating-hub-container.active .hub-menu-items {
-      opacity: 1 !important;
-      visibility: visible !important;
-      pointer-events: auto !important;
-      transform: translateY(0) !important;
-    }
-
-    .hub-radial-item {
-      position: relative !important;
-      width: 46px !important;
-      height: 46px !important;
+    /* Tombol-tombol Medsos */
+    .mgs-hub-btn {
+      position: absolute !important;
+      top: 6px !important;
+      left: 6px !important;
+      width: 44px !important;
+      height: 44px !important;
       border-radius: 50% !important;
       color: #ffffff !important;
       display: flex !important;
       align-items: center !important;
       justify-content: center !important;
-      font-size: 1.25rem !important;
+      font-size: 1.2rem !important;
       text-decoration: none !important;
-      box-shadow: 0 6px 16px rgba(0, 0, 0, 0.4) !important;
-      transition: transform 0.2s ease, filter 0.2s ease !important;
-      flex-shrink: 0 !important;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.35) !important;
+      opacity: 0 !important;
+      pointer-events: none !important;
+      transform: translate(0, 0) scale(0.3) !important;
+      transition: transform 0.28s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.2s ease, filter 0.15s ease !important;
+      z-index: 5 !important;
     }
 
-    .hub-radial-item:hover {
-      transform: scale(1.1) !important;
-      filter: brightness(1.2) !important;
+    .mgs-hub-btn:hover {
+      filter: brightness(1.15) !important;
     }
 
-    .hub-radial-item.whatsapp {
+    /* Posisi Rapi Melengkung di Sebelah Kiri-Atas (Pas & Nyaman Dilihat) */
+    .mgs-float-hub.open .mgs-hub-btn {
+      opacity: 1 !important;
+      pointer-events: auto !important;
+    }
+
+    /* 1. WhatsApp (Lurus ke Kiri: 62px) */
+    .mgs-float-hub.open .mgs-hub-btn.wa {
+      transform: translate(-62px, 0) scale(1) !important;
       background: #25d366 !important;
     }
 
-    .hub-radial-item.tiktok {
+    /* 2. TikTok (Serong Kiri-Atas: -46px, -46px) */
+    .mgs-float-hub.open .mgs-hub-btn.tt {
+      transform: translate(-46px, -46px) scale(1) !important;
       background: #000000 !important;
       border: 1px solid rgba(255, 255, 255, 0.2) !important;
     }
 
-    .hub-radial-item.instagram {
+    /* 3. Instagram (Lurus ke Atas: 0, -62px) */
+    .mgs-float-hub.open .mgs-hub-btn.ig {
+      transform: translate(0, -62px) scale(1) !important;
       background: radial-gradient(circle at 30% 107%, #fdf497 0%, #fdf497 5%, #fd5949 45%, #d6249f 60%, #285AEB 90%) !important;
     }
 
-    .hub-tooltip {
+    /* Tooltip */
+    .mgs-hub-tip {
       position: absolute !important;
-      right: 56px !important;
-      top: 50% !important;
-      transform: translateY(-50%) !important;
-      background: rgba(15, 23, 42, 0.95) !important;
+      right: 52px !important;
+      background: rgba(15, 23, 42, 0.92) !important;
       border: 1px solid rgba(255, 255, 255, 0.12) !important;
       color: #ffffff !important;
       font-size: 0.72rem !important;
       font-weight: 700 !important;
-      padding: 4px 10px !important;
-      border-radius: 6px !important;
+      padding: 3px 8px !important;
+      border-radius: 5px !important;
       white-space: nowrap !important;
       pointer-events: none !important;
       opacity: 0 !important;
       transition: opacity 0.15s ease !important;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.3) !important;
     }
 
-    .hub-radial-item:hover .hub-tooltip {
+    .mgs-hub-btn:hover .mgs-hub-tip {
       opacity: 1 !important;
     }
   `;
   document.head.appendChild(styleEl);
 
-  // 3. Buat Elemen DOM Baru
-  const hubContainer = document.createElement("div");
-  hubContainer.className = "floating-hub-container";
-  hubContainer.innerHTML = `
-    <!-- Tombol Utama Pemicu -->
-    <button class="btn-hub-main" id="btnHubToggle" title="Bantuan & Medsos" type="button">
+  // 3. Render Elemen Baru
+  const hub = document.createElement("div");
+  hub.className = "mgs-float-hub";
+  hub.innerHTML = `
+    <!-- Tombol 1: WhatsApp -->
+    <a href="https://wa.me/6281234567890" target="_blank" class="mgs-hub-btn wa" title="WhatsApp CS">
+      <i class="fa-brands fa-whatsapp"></i>
+      <span class="mgs-hub-tip">WhatsApp CS</span>
+    </a>
+
+    <!-- Tombol 2: TikTok -->
+    <a href="https://tiktok.com/@mamanggs" target="_blank" class="mgs-hub-btn tt" title="TikTok">
+      <i class="fa-brands fa-tiktok"></i>
+      <span class="mgs-hub-tip">TikTok</span>
+    </a>
+
+    <!-- Tombol 3: Instagram -->
+    <a href="https://instagram.com/mamanggs" target="_blank" class="mgs-hub-btn ig" title="Instagram">
+      <i class="fa-brands fa-instagram"></i>
+      <span class="mgs-hub-tip">Instagram</span>
+    </a>
+
+    <!-- Tombol Utama -->
+    <button class="mgs-hub-trigger" id="mgsHubTrigger" type="button" title="Bantuan & Medsos">
       <i class="fa-solid fa-headset"></i>
     </button>
-
-    <!-- Menu Melayang ke Atas (Stack) -->
-    <div class="hub-menu-items">
-      <!-- Item 1: WhatsApp -->
-      <a href="https://wa.me/6281234567890" target="_blank" class="hub-radial-item whatsapp" title="WhatsApp CS">
-        <i class="fa-brands fa-whatsapp"></i>
-        <span class="hub-tooltip">WhatsApp CS</span>
-      </a>
-
-      <!-- Item 2: TikTok -->
-      <a href="https://tiktok.com/@mamanggs" target="_blank" class="hub-radial-item tiktok" title="TikTok">
-        <i class="fa-brands fa-tiktok"></i>
-        <span class="hub-tooltip">TikTok Official</span>
-      </a>
-
-      <!-- Item 3: Instagram -->
-      <a href="https://instagram.com/mamanggs" target="_blank" class="hub-radial-item instagram" title="Instagram">
-        <i class="fa-brands fa-instagram"></i>
-        <span class="hub-tooltip">Instagram</span>
-      </a>
-    </div>
   `;
 
-  document.body.appendChild(hubContainer);
+  document.body.appendChild(hub);
 
-  const btnToggle = hubContainer.querySelector("#btnHubToggle");
-  if (btnToggle) {
-    btnToggle.addEventListener("click", (e) => {
+  // 4. Logika Buka / Tutup Klik
+  const trigger = hub.querySelector("#mgsHubTrigger");
+  if (trigger) {
+    trigger.addEventListener("click", (e) => {
       e.preventDefault();
       e.stopPropagation();
-      const isActive = hubContainer.classList.toggle("active");
-      btnToggle.innerHTML = isActive 
+      const isOpen = hub.classList.toggle("open");
+      trigger.innerHTML = isOpen 
         ? `<i class="fa-solid fa-xmark"></i>` 
         : `<i class="fa-solid fa-headset"></i>`;
     });
   }
 
-  // Tutup otomatis jika klik area luar
+  // Tutup jika klik area di luar
   document.addEventListener("click", (e) => {
-    if (hubContainer && !hubContainer.contains(e.target)) {
-      if (hubContainer.classList.contains("active")) {
-        hubContainer.classList.remove("active");
-        if (btnToggle) btnToggle.innerHTML = `<i class="fa-solid fa-headset"></i>`;
+    if (hub && !hub.contains(e.target)) {
+      if (hub.classList.contains("open")) {
+        hub.classList.remove("open");
+        if (trigger) trigger.innerHTML = `<i class="fa-solid fa-headset"></i>`;
       }
     }
   });
