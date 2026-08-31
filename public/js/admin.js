@@ -23,7 +23,6 @@ window.openWhatsAppReceipt = function(orderId) {
     return;
   }
 
-  // Format nomor HP ke standar 62xxx
   let phone = String(o.whatsapp).replace(/[^0-9]/g, "");
   if (phone.startsWith("0")) phone = "62" + phone.substring(1);
   else if (phone.startsWith("8")) phone = "62" + phone;
@@ -118,7 +117,7 @@ window.deleteArticle = async function(articleId, encodedTitle) {
   }
 };
 
-// Buka Modal Edit Harga Produk (Aman dari tanda petik dan nilai null)
+// Buka Modal Edit Harga Produk
 window.openPriceModal = function(sku, encodedName, basePrice, sellPrice) {
   selectedSku = sku;
   const modalEl = document.getElementById("priceModal");
@@ -212,7 +211,6 @@ document.addEventListener("DOMContentLoaded", async () => {
       const targetContent = document.getElementById(btn.dataset.tab);
       if (targetContent) targetContent.classList.add("active");
 
-      // Load data otomatis saat tab diklik
       if (btn.dataset.tab === "articlesTab") window.fetchAdminArticles();
       if (btn.dataset.tab === "productsTab") window.fetchAdminProducts();
     });
@@ -222,7 +220,6 @@ document.addEventListener("DOMContentLoaded", async () => {
   // FETCH STATISTIK & PESANAN
   // ==========================================
   window.loadDashboardData = async function() {
-    // 1. Fetch Orders
     const { data: orders, error: ordErr } = await window.supabase
       .from("orders")
       .select("*")
@@ -234,7 +231,6 @@ document.addEventListener("DOMContentLoaded", async () => {
       renderOrdersTable(orders);
     }
 
-    // 2. Fetch Users
     const { data: users, error: userErr } = await window.supabase
       .from("profiles")
       .select("*")
@@ -345,7 +341,6 @@ document.addEventListener("DOMContentLoaded", async () => {
     }).join("");
   }
 
-  // Filter & Refresh Event
   const filterStatusEl = document.getElementById("filterStatus");
   if (filterStatusEl) {
     filterStatusEl.addEventListener("change", () => renderOrdersTable(allOrders));
@@ -397,7 +392,6 @@ document.addEventListener("DOMContentLoaded", async () => {
     searchUserEl.addEventListener("input", () => renderUsersTable(allUsers));
   }
 
-  // Modal Balance Logic
   const balanceModal = document.getElementById("balanceModal");
   const btnCloseBal = document.getElementById("btnCloseBalModal");
   if (btnCloseBal) {
@@ -562,8 +556,9 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
 
     tbody.innerHTML = filtered.map((p) => {
-      const basePriceNum = Number(p.price) || 0;
-      const sellPriceNum = Number(p.price_sell) || 0;
+      // Prioritaskan price_original, lalu fallback ke price
+      const basePriceNum = Number(p.price_original ?? p.price ?? 0);
+      const sellPriceNum = Number(p.price_sell ?? 0);
       const basePrice = basePriceNum.toLocaleString("id-ID");
       const sellPrice = sellPriceNum.toLocaleString("id-ID");
       
