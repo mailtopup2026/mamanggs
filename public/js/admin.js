@@ -5,20 +5,18 @@ let allArticles = [];
 let allProducts = [];
 let selectedTargetUser = null;
 let selectedSku = null;
-let activeGameFilter = "ALL"; // <-- Filter aktif kategori game
+let activeGameFilter = "ALL";
 
 // ==========================================
-// 1. GLOBAL ACTION HANDLERS (BISA DIAKSES ONCLICK HTML)
+// 1. GLOBAL ACTION HANDLERS
 // ==========================================
 
-// Buka WhatsApp Manual dengan Template Struk
 window.openWhatsAppReceipt = function(orderId) {
   const o = allOrders.find((item) => String(item.id) === String(orderId));
   if (!o) {
     alert("Data pesanan tidak ditemukan!");
     return;
   }
-
   if (!o.whatsapp) {
     alert("Pesanan ini tidak memiliki nomor WhatsApp pembeli!");
     return;
@@ -51,7 +49,6 @@ Pesanan Anda telah kami proses. Terima kasih dan selamat bermain! ✨`;
   window.open(waUrl, "_blank");
 };
 
-// Update Status Pesanan
 window.updateOrderStatus = async function(orderId, newStatus) {
   if (!confirm(`Ubah status pesanan ini menjadi ${newStatus}?`)) return;
 
@@ -68,7 +65,6 @@ window.updateOrderStatus = async function(orderId, newStatus) {
   }
 };
 
-// Buka Modal Saldo Member
 window.openBalanceModal = function(userId, name) {
   selectedTargetUser = userId;
   const nameEl = document.getElementById("modalUserName");
@@ -80,7 +76,6 @@ window.openBalanceModal = function(userId, name) {
   if (modalEl) modalEl.classList.add("show");
 };
 
-// Toggle Status Publish / Draft Artikel
 window.togglePublishArticle = async function(articleId, newStatus) {
   try {
     const { error } = await window.supabase
@@ -89,28 +84,19 @@ window.togglePublishArticle = async function(articleId, newStatus) {
       .eq("id", articleId);
 
     if (error) throw error;
-
     window.fetchAdminArticles();
   } catch (err) {
     alert("Gagal mengubah status artikel: " + err.message);
   }
 };
 
-// Hapus Artikel
 window.deleteArticle = async function(articleId, encodedTitle) {
   const title = decodeURIComponent(encodedTitle);
-  if (!confirm(`Yakin ingin MENGHAPUS artikel ini secara permanen?\n\n"${title}"`)) {
-    return;
-  }
+  if (!confirm(`Yakin ingin MENGHAPUS artikel ini secara permanen?\n\n"${title}"`)) return;
 
   try {
-    const { error } = await window.supabase
-      .from("articles")
-      .delete()
-      .eq("id", articleId);
-
+    const { error } = await window.supabase.from("articles").delete().eq("id", articleId);
     if (error) throw error;
-
     alert("Artikel berhasil dihapus.");
     window.fetchAdminArticles();
   } catch (err) {
@@ -118,36 +104,26 @@ window.deleteArticle = async function(articleId, encodedTitle) {
   }
 };
 
-// Buka Modal Edit Harga Produk
 window.openPriceModal = function(sku, encodedName, basePrice, sellPrice) {
   selectedSku = sku;
   const modalEl = document.getElementById("priceModal");
   const productName = decodeURIComponent(encodedName);
   
-  if (document.getElementById("modalProductName")) {
-    document.getElementById("modalProductName").innerText = productName;
-  }
-  
+  if (document.getElementById("modalProductName")) document.getElementById("modalProductName").innerText = productName;
   if (document.getElementById("modalBasePrice")) {
     const cleanBase = Number(basePrice) || 0;
     document.getElementById("modalBasePrice").value = "Rp " + cleanBase.toLocaleString("id-ID");
   }
-  
   if (document.getElementById("modalSellPriceInput")) {
     document.getElementById("modalSellPriceInput").value = Number(sellPrice) || 0;
   }
-  
-  if (modalEl) {
-    modalEl.classList.add("show");
-  }
+  if (modalEl) modalEl.classList.add("show");
 };
 
-// Ganti Filter Kategori Game secara Cepat (Pill Buttons)
 window.setGameFilter = function(gameName) {
   activeGameFilter = gameName;
   const filterSelect = document.getElementById("filterProductGame");
   if (filterSelect) filterSelect.value = gameName;
-
   populateGameFilters(allProducts);
   renderProductsTable(allProducts);
 };
@@ -228,9 +204,10 @@ document.addEventListener("DOMContentLoaded", async () => {
   });
 
   // ==========================================
-  // FETCH STATISTIK & PESANAN
+  // FETCH STATISTIK & ANALITIK LENGKAP
   // ==========================================
   window.loadDashboardData = async function() {
+    // 1. Ambil Data Orders
     const { data: orders, error: ordErr } = await window.supabase
       .from("orders")
       .select("*")
@@ -242,6 +219,7 @@ document.addEventListener("DOMContentLoaded", async () => {
       renderOrdersTable(orders);
     }
 
+    // 2. Ambil Data Users
     const { data: users, error: userErr } = await window.supabase
       .from("profiles")
       .select("*")
@@ -257,30 +235,45 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   function renderStats(orders) {
     let totalRev = 0;
+    let totalProfit = 0;
+    let successCount = 0;
     let pendingCount = 0;
+    let cancelledCount = 0;
+
     const gameSalesMap = {};
-    let totalSuccessCount = 0;
+    const paymentMap = {};
 
     orders.forEach((o) => {
+      const priceSell = Number(o.price || 0);
+      const paymentMethod = o.payment_method || "Lainnya";
+
       if (o.status === "SUCCESS") {
-        totalRev += Number(o.price || 0);
-        totalSuccessCount++;
+        totalRev += priceSell;
+        successCount++;
+
+        // Hitung estimasi profit (Jika ada data modal price_original / margin default 10%)
+        const baseCost = Number(o.base_price || (priceSell * 0.9)); 
+        totalProfit += (priceSell - baseCost);
+
         const gameName = o.game_title || o.game_code || "Lainnya";
         gameSalesMap[gameName] = (gameSalesMap[gameName] || 0) + 1;
+        paymentMap[paymentMethod] = (paymentMap[paymentMethod] || 0) + 1;
       } else if (o.status === "PENDING") {
         pendingCount++;
+      } else if (o.status === "CANCELLED" || o.status === "EXPIRED") {
+        cancelledCount++;
       }
     });
 
-    const elRev = document.getElementById("statTotalRevenue");
-    const elOrders = document.getElementById("statTotalOrders");
-    const elPending = document.getElementById("statPendingOrders");
+    // Update Counter Element
+    if (document.getElementById("statTotalRevenue")) document.getElementById("statTotalRevenue").innerText = `Rp ${totalRev.toLocaleString("id-ID")}`;
+    if (document.getElementById("statTotalProfit")) document.getElementById("statTotalProfit").innerText = `Rp ${Math.round(totalProfit).toLocaleString("id-ID")}`;
+    if (document.getElementById("statSuccessOrders")) document.getElementById("statSuccessOrders").innerText = successCount;
+    if (document.getElementById("statPendingOrders")) document.getElementById("statPendingOrders").innerText = pendingCount;
+    if (document.getElementById("statCancelledOrders")) document.getElementById("statCancelledOrders").innerText = cancelledCount;
 
-    if (elRev) elRev.innerText = `Rp ${totalRev.toLocaleString("id-ID")}`;
-    if (elOrders) elOrders.innerText = orders.length;
-    if (elPending) elPending.innerText = pendingCount;
-
-    renderTopGames(gameSalesMap, totalSuccessCount);
+    renderTopGames(gameSalesMap, successCount);
+    renderPaymentStats(paymentMap, successCount);
   }
 
   function renderTopGames(gameSalesMap, totalSuccess) {
@@ -306,6 +299,33 @@ document.addEventListener("DOMContentLoaded", async () => {
           </div>
           <div class="top-game-bar-bg">
             <div class="top-game-bar-fill" style="width: ${percentage}%"></div>
+          </div>
+        </div>
+      `;
+    }).join("");
+  }
+
+  function renderPaymentStats(paymentMap, totalSuccess) {
+    const container = document.getElementById("topPaymentContainer");
+    if (!container) return;
+
+    const sortedPayments = Object.entries(paymentMap).sort((a, b) => b[1] - a[1]);
+
+    if (sortedPayments.length === 0) {
+      container.innerHTML = `<p style="color: var(--text-muted); font-size: 0.85rem;">Belum ada data pembayaran sukses.</p>`;
+      return;
+    }
+
+    container.innerHTML = sortedPayments.map(([method, count]) => {
+      const percentage = totalSuccess > 0 ? Math.round((count / totalSuccess) * 100) : 0;
+      return `
+        <div class="top-game-card">
+          <div class="top-game-info">
+            <span class="top-game-title"><i class="fa-solid fa-wallet" style="color: #38bdf8;"></i> ${method}</span>
+            <span class="top-game-count" style="color: #38bdf8; border-color: rgba(56, 189, 248, 0.3); background: rgba(56, 189, 248, 0.1);">${count}x (${percentage}%)</span>
+          </div>
+          <div class="top-game-bar-bg">
+            <div class="top-game-bar-fill" style="width: ${percentage}%; background: linear-gradient(90deg, #38bdf8, #818cf8);"></div>
           </div>
         </div>
       `;
@@ -353,14 +373,10 @@ document.addEventListener("DOMContentLoaded", async () => {
   }
 
   const filterStatusEl = document.getElementById("filterStatus");
-  if (filterStatusEl) {
-    filterStatusEl.addEventListener("change", () => renderOrdersTable(allOrders));
-  }
+  if (filterStatusEl) filterStatusEl.addEventListener("change", () => renderOrdersTable(allOrders));
 
   const btnRefresh = document.getElementById("btnRefreshOrders");
-  if (btnRefresh) {
-    btnRefresh.addEventListener("click", () => window.loadDashboardData());
-  }
+  if (btnRefresh) btnRefresh.addEventListener("click", () => window.loadDashboardData());
 
   // ==========================================
   // MANAJEMEN SALDO MEMBER
@@ -399,22 +415,18 @@ document.addEventListener("DOMContentLoaded", async () => {
   }
 
   const searchUserEl = document.getElementById("searchUser");
-  if (searchUserEl) {
-    searchUserEl.addEventListener("input", () => renderUsersTable(allUsers));
-  }
+  if (searchUserEl) searchUserEl.addEventListener("input", () => renderUsersTable(allUsers));
 
   const balanceModal = document.getElementById("balanceModal");
   const btnCloseBal = document.getElementById("btnCloseBalModal");
-  if (btnCloseBal) {
-    btnCloseBal.addEventListener("click", () => balanceModal.classList.remove("show"));
-  }
+  if (btnCloseBal) btnCloseBal.addEventListener("click", () => balanceModal.classList.remove("show"));
 
   const btnSubmitBal = document.getElementById("btnSubmitBalance");
   if (btnSubmitBal) {
     btnSubmitBal.addEventListener("click", async () => {
       const amount = Number(document.getElementById("modalAmountInput").value);
       if (!amount || isNaN(amount)) {
-        alert("Masukkan nominal penambahan / pengurangan yang valid!");
+        alert("Masukkan nominal yang valid!");
         return;
       }
 
@@ -440,13 +452,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     const articlesTbody = document.getElementById("adminArticlesTableBody");
     if (!articlesTbody) return;
 
-    articlesTbody.innerHTML = `
-      <tr>
-        <td colspan="6" style="text-align: center; padding: 25px; color: var(--text-muted);">
-          <i class="fa-solid fa-spinner fa-spin"></i> Memuat artikel blog...
-        </td>
-      </tr>
-    `;
+    articlesTbody.innerHTML = `<tr><td colspan="6" style="text-align: center; padding: 25px; color: var(--text-muted);"><i class="fa-solid fa-spinner fa-spin"></i> Memuat artikel blog...</td></tr>`;
 
     try {
       const { data: articles, error } = await window.supabase
@@ -455,27 +461,15 @@ document.addEventListener("DOMContentLoaded", async () => {
         .order("created_at", { ascending: false });
 
       if (error) throw error;
-
       allArticles = articles || [];
 
       if (allArticles.length === 0) {
-        articlesTbody.innerHTML = `
-          <tr>
-            <td colspan="6" style="text-align: center; padding: 30px; color: var(--text-muted);">
-              Belum ada artikel. Klik tombol <strong>"Tulis Baru"</strong> untuk membuat artikel pertama!
-            </td>
-          </tr>
-        `;
+        articlesTbody.innerHTML = `<tr><td colspan="6" style="text-align: center; padding: 30px; color: var(--text-muted);">Belum ada artikel.</td></tr>`;
         return;
       }
 
       articlesTbody.innerHTML = allArticles.map((art) => {
-        const date = new Date(art.created_at).toLocaleDateString("id-ID", {
-          day: "numeric",
-          month: "short",
-          year: "numeric"
-        });
-
+        const date = new Date(art.created_at).toLocaleDateString("id-ID", { day: "numeric", month: "short", year: "numeric" });
         const isLive = art.is_published;
         const statusBadge = isLive
           ? `<span class="badge-status success" style="font-size: 0.72rem; padding: 3px 8px;"><i class="fa-solid fa-check"></i> LIVE</span>`
@@ -514,14 +508,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         `;
       }).join("");
     } catch (err) {
-      console.error("Gagal load artikel di admin:", err);
-      articlesTbody.innerHTML = `
-        <tr>
-          <td colspan="6" style="text-align: center; padding: 25px; color: var(--accent-red);">
-            Gagal mengambil data artikel: ${err.message}
-          </td>
-        </tr>
-      `;
+      articlesTbody.innerHTML = `<tr><td colspan="6" style="text-align: center; padding: 25px; color: var(--accent-red);">Gagal mengambil artikel: ${err.message}</td></tr>`;
     }
   };
 
@@ -542,22 +529,17 @@ document.addEventListener("DOMContentLoaded", async () => {
         .order("price_sell", { ascending: true });
 
       if (error) throw error;
-      
       allProducts = data || [];
       populateGameFilters(allProducts);
       renderProductsTable(allProducts);
     } catch (err) {
-      console.error("Gagal load produk:", err);
       tbody.innerHTML = `<tr><td colspan="7" style="text-align: center; color: var(--accent-red);">Gagal mengambil data: ${err.message}</td></tr>`;
     }
   };
 
-  // Generate Dropdown & Tombol Pill Kategori Otomatis
   function populateGameFilters(products) {
     const filterSelect = document.getElementById("filterProductGame");
     const pillsContainer = document.getElementById("gameCategoryPills");
-    
-    // Ambil daftar brand/game unik
     const uniqueGames = [...new Set(products.map(p => p.brand || p.game_code || "Lainnya"))].sort();
 
     if (filterSelect) {
@@ -590,11 +572,9 @@ document.addEventListener("DOMContentLoaded", async () => {
     if (!tbody) return;
     const keyword = (document.getElementById("searchProductAdmin")?.value || "").toLowerCase();
 
-    // Saring berdasarkan Pill/Dropdown Game + Kata Kunci Pencarian
     const filtered = products.filter((p) => {
       const brandName = p.brand || p.game_code || "Lainnya";
       const matchCategory = (activeGameFilter === "ALL") || (brandName === activeGameFilter);
-      
       const matchKeyword = (p.product_name && p.product_name.toLowerCase().includes(keyword)) ||
                            (p.buyer_sku_code && p.buyer_sku_code.toLowerCase().includes(keyword)) ||
                            (brandName.toLowerCase().includes(keyword));
@@ -612,11 +592,7 @@ document.addEventListener("DOMContentLoaded", async () => {
       const sellPriceNum = Number(p.price_sell ?? 0);
       const basePrice = basePriceNum.toLocaleString("id-ID");
       const sellPrice = sellPriceNum.toLocaleString("id-ID");
-      
-      const statusBadge = p.buyer_product_status 
-        ? `<span class="badge-status success">ON</span>` 
-        : `<span class="badge-status pending" style="background: rgba(239, 68, 68, 0.1); color: #ef4444;">OFF</span>`;
-
+      const statusBadge = p.buyer_product_status ? `<span class="badge-status success">ON</span>` : `<span class="badge-status pending" style="background: rgba(239, 68, 68, 0.1); color: #ef4444;">OFF</span>`;
       const safeEncodedTitle = encodeURIComponent(p.product_name || "");
 
       return `
@@ -637,7 +613,6 @@ document.addEventListener("DOMContentLoaded", async () => {
     }).join("");
   }
 
-  // Filter Dropdown Change
   const filterProductGame = document.getElementById("filterProductGame");
   if (filterProductGame) {
     filterProductGame.addEventListener("change", (e) => {
@@ -648,30 +623,21 @@ document.addEventListener("DOMContentLoaded", async () => {
   }
 
   const searchProductAdmin = document.getElementById("searchProductAdmin");
-  if (searchProductAdmin) {
-    searchProductAdmin.addEventListener("input", () => renderProductsTable(allProducts));
-  }
+  if (searchProductAdmin) searchProductAdmin.addEventListener("input", () => renderProductsTable(allProducts));
 
   const btnRefreshProducts = document.getElementById("btnRefreshProducts");
-  if (btnRefreshProducts) {
-    btnRefreshProducts.addEventListener("click", () => window.fetchAdminProducts());
-  }
+  if (btnRefreshProducts) btnRefreshProducts.addEventListener("click", () => window.fetchAdminProducts());
 
-  // Tutup Modal Harga
   const btnClosePriceModal = document.getElementById("btnClosePriceModal");
   const priceModal = document.getElementById("priceModal");
   if (btnClosePriceModal && priceModal) {
-    btnClosePriceModal.addEventListener("click", () => {
-      priceModal.classList.remove("show");
-    });
+    btnClosePriceModal.addEventListener("click", () => priceModal.classList.remove("show"));
   }
 
-  // Simpan Harga Baru
   const btnSubmitPrice = document.getElementById("btnSubmitPrice");
   if (btnSubmitPrice) {
     btnSubmitPrice.addEventListener("click", async () => {
       const newPrice = Number(document.getElementById("modalSellPriceInput").value);
-      
       if (!newPrice || isNaN(newPrice) || newPrice < 100) {
         alert("Masukkan harga jual yang valid!");
         return;
@@ -681,13 +647,8 @@ document.addEventListener("DOMContentLoaded", async () => {
       btnSubmitPrice.disabled = true;
 
       try {
-        const { error } = await window.supabase
-          .from("products")
-          .update({ price_sell: newPrice })
-          .eq("buyer_sku_code", selectedSku);
-
+        const { error } = await window.supabase.from("products").update({ price_sell: newPrice }).eq("buyer_sku_code", selectedSku);
         if (error) throw error;
-
         alert("Harga jual berhasil diupdate!");
         priceModal.classList.remove("show");
         window.fetchAdminProducts();
@@ -700,6 +661,5 @@ document.addEventListener("DOMContentLoaded", async () => {
     });
   }
 
-  // Eksekusi Inisialisasi
   initAdmin();
 });

@@ -241,6 +241,8 @@ body.admin-body {
 .stat-icon.orders { background: rgba(59, 130, 246, 0.2); color: #60a5fa; }
 .stat-icon.pending { background: rgba(245, 158, 11, 0.2); color: #fbbf24; }
 .stat-icon.users { background: rgba(230, 57, 70, 0.2); color: #f87171; }
+.stat-icon.profit { background: rgba(16, 185, 129, 0.2); color: #34d399; }
+.stat-icon.failed { background: rgba(239, 68, 68, 0.2); color: #f87171; }
 
 .stat-info p {
   font-size: 0.78rem;
