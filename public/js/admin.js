@@ -3,24 +3,22 @@ let allOrders = [];
 let allUsers = [];
 let allArticles = [];
 let allProducts = [];
+let allBanners = [];
+let allGameCategories = [];
+let allFlashSales = [];
 let selectedTargetUser = null;
 let selectedSku = null;
 let activeGameFilter = "ALL";
 
 // ==========================================
-// 1. GLOBAL ACTION HANDLERS
+// 1. GLOBAL ACTION HANDLERS & MODAL BINDINGS
 // ==========================================
 
+// --- WHATSAPP & ORDERS ---
 window.openWhatsAppReceipt = function(orderId) {
   const o = allOrders.find((item) => String(item.id) === String(orderId));
-  if (!o) {
-    alert("Data pesanan tidak ditemukan!");
-    return;
-  }
-  if (!o.whatsapp) {
-    alert("Pesanan ini tidak memiliki nomor WhatsApp pembeli!");
-    return;
-  }
+  if (!o) return alert("Data pesanan tidak ditemukan!");
+  if (!o.whatsapp) return alert("Pesanan ini tidak memiliki nomor WhatsApp pembeli!");
 
   let phone = String(o.whatsapp).replace(/[^0-9]/g, "");
   if (phone.startsWith("0")) phone = "62" + phone.substring(1);
@@ -51,12 +49,7 @@ Pesanan Anda telah kami proses. Terima kasih dan selamat bermain! ✨`;
 
 window.updateOrderStatus = async function(orderId, newStatus) {
   if (!confirm(`Ubah status pesanan ini menjadi ${newStatus}?`)) return;
-
-  const { error } = await window.supabase
-    .from("orders")
-    .update({ status: newStatus })
-    .eq("id", orderId);
-
+  const { error } = await window.supabase.from("orders").update({ status: newStatus }).eq("id", orderId);
   if (error) {
     alert("Gagal update status: " + error.message);
   } else {
@@ -65,6 +58,7 @@ window.updateOrderStatus = async function(orderId, newStatus) {
   }
 };
 
+// --- BALANCE MEMBER ---
 window.openBalanceModal = function(userId, name) {
   selectedTargetUser = userId;
   const nameEl = document.getElementById("modalUserName");
@@ -76,13 +70,10 @@ window.openBalanceModal = function(userId, name) {
   if (modalEl) modalEl.classList.add("show");
 };
 
+// --- ARTIKEL BLOG ---
 window.togglePublishArticle = async function(articleId, newStatus) {
   try {
-    const { error } = await window.supabase
-      .from("articles")
-      .update({ is_published: newStatus, updated_at: new Date().toISOString() })
-      .eq("id", articleId);
-
+    const { error } = await window.supabase.from("articles").update({ is_published: newStatus, updated_at: new Date().toISOString() }).eq("id", articleId);
     if (error) throw error;
     window.fetchAdminArticles();
   } catch (err) {
@@ -93,7 +84,6 @@ window.togglePublishArticle = async function(articleId, newStatus) {
 window.deleteArticle = async function(articleId, encodedTitle) {
   const title = decodeURIComponent(encodedTitle);
   if (!confirm(`Yakin ingin MENGHAPUS artikel ini secara permanen?\n\n"${title}"`)) return;
-
   try {
     const { error } = await window.supabase.from("articles").delete().eq("id", articleId);
     if (error) throw error;
@@ -104,6 +94,7 @@ window.deleteArticle = async function(articleId, encodedTitle) {
   }
 };
 
+// --- PRODUK & FILTER ---
 window.openPriceModal = function(sku, encodedName, basePrice, sellPrice) {
   selectedSku = sku;
   const modalEl = document.getElementById("priceModal");
@@ -128,8 +119,173 @@ window.setGameFilter = function(gameName) {
   renderProductsTable(allProducts);
 };
 
+// --- BANNER MODAL & ACTIONS ---
+window.openBannerModal = function() {
+  document.getElementById("bannerTitleInput").value = "";
+  document.getElementById("bannerUrlInput").value = "";
+  document.getElementById("bannerLinkInput").value = "";
+  document.getElementById("bannerModal")?.classList.add("show");
+};
+
+window.closeBannerModal = function() {
+  document.getElementById("bannerModal")?.classList.remove("show");
+};
+
+window.submitBanner = async function() {
+  const title = document.getElementById("bannerTitleInput")?.value.trim();
+  const image_url = document.getElementById("bannerUrlInput")?.value.trim();
+  const target_url = document.getElementById("bannerLinkInput")?.value.trim() || "#";
+
+  if (!title || !image_url) return alert("Judul dan URL gambar banner wajib diisi!");
+
+  const btn = document.getElementById("btnSubmitBanner");
+  btn.disabled = true;
+  btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Menyimpan...';
+
+  try {
+    const { error } = await window.supabase.from("banners").insert([{ title, image_url, target_url, is_active: true }]);
+    if (error) throw error;
+    alert("Banner berhasil ditambahkan!");
+    window.closeBannerModal();
+    window.fetchAdminBanners();
+  } catch (err) {
+    alert("Gagal menambahkan banner: " + err.message);
+  } finally {
+    btn.disabled = false;
+    btn.innerHTML = '<i class="fa-solid fa-cloud-arrow-up"></i> Simpan Banner';
+  }
+};
+
+window.toggleBannerStatus = async function(id, status) {
+  const { error } = await window.supabase.from("banners").update({ is_active: status }).eq("id", id);
+  if (error) alert("Gagal update status banner: " + error.message);
+  else window.fetchAdminBanners();
+};
+
+window.deleteBanner = async function(id) {
+  if (!confirm("Hapus banner ini?")) return;
+  const { error } = await window.supabase.from("banners").delete().eq("id", id);
+  if (error) alert("Gagal menghapus banner: " + error.message);
+  else window.fetchAdminBanners();
+};
+
+// --- GAME CATEGORY MODAL & ACTIONS ---
+window.openGameModal = function() {
+  document.getElementById("gameCodeInput").value = "";
+  document.getElementById("gameTitleInput").value = "";
+  document.getElementById("gameDevInput").value = "";
+  document.getElementById("gameImgInput").value = "";
+  document.getElementById("gameIsPopular").checked = false;
+  document.getElementById("gameModal")?.classList.add("show");
+};
+
+window.closeGameModal = function() {
+  document.getElementById("gameModal")?.classList.remove("show");
+};
+
+window.submitGameCategory = async function() {
+  const game_code = document.getElementById("gameCodeInput")?.value.trim().toLowerCase();
+  const title = document.getElementById("gameTitleInput")?.value.trim();
+  const developer = document.getElementById("gameDevInput")?.value.trim() || "Official Publisher";
+  const image_url = document.getElementById("gameImgInput")?.value.trim();
+  const is_popular = document.getElementById("gameIsPopular")?.checked || false;
+
+  if (!game_code || !title || !image_url) return alert("Kode game, nama game, dan URL cover wajib diisi!");
+
+  const btn = document.getElementById("btnSubmitGame");
+  btn.disabled = true;
+  btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Menyimpan...';
+
+  try {
+    const { error } = await window.supabase.from("game_categories").upsert([
+      { game_code, title, developer, image_url, is_popular, updated_at: new Date().toISOString() }
+    ], { onConflict: 'game_code' });
+
+    if (error) throw error;
+    alert("Cover katalog game berhasil disimpan!");
+    window.closeGameModal();
+    window.fetchAdminGames();
+  } catch (err) {
+    alert("Gagal menyimpan game: " + err.message);
+  } finally {
+    btn.disabled = false;
+    btn.innerHTML = '<i class="fa-solid fa-floppy-disk"></i> Simpan Katalog Game';
+  }
+};
+
+window.toggleGamePopular = async function(id, status) {
+  const { error } = await window.supabase.from("game_categories").update({ is_popular: status }).eq("id", id);
+  if (error) alert("Gagal update status: " + error.message);
+  else window.fetchAdminGames();
+};
+
+window.deleteGameCategory = async function(id) {
+  if (!confirm("Hapus cover game ini dari katalog?")) return;
+  const { error } = await window.supabase.from("game_categories").delete().eq("id", id);
+  if (error) alert("Gagal menghapus game: " + error.message);
+  else window.fetchAdminGames();
+};
+
+// --- FLASH SALE MODAL & ACTIONS ---
+window.openFlashSaleModal = function() {
+  const select = document.getElementById("flashSkuSelect");
+  if (select && allProducts.length > 0) {
+    select.innerHTML = '<option value="">-- Pilih Produk --</option>' + 
+      allProducts.map(p => `<option value="${p.buyer_sku_code}">${p.brand || p.game_code} - ${p.product_name} (Rp ${Number(p.price_sell).toLocaleString("id-ID")})</option>`).join("");
+  }
+  document.getElementById("flashPriceInput").value = "";
+  document.getElementById("flashDiscountInput").value = "-20%";
+  document.getElementById("flashEndInput").value = "";
+  document.getElementById("flashSaleModal")?.classList.add("show");
+};
+
+window.closeFlashSaleModal = function() {
+  document.getElementById("flashSaleModal")?.classList.remove("show");
+};
+
+window.submitFlashSale = async function() {
+  const buyer_sku_code = document.getElementById("flashSkuSelect")?.value;
+  const flash_price = Number(document.getElementById("flashPriceInput")?.value);
+  const discount_label = document.getElementById("flashDiscountInput")?.value.trim() || "-15%";
+  const end_time = document.getElementById("flashEndInput")?.value;
+
+  if (!buyer_sku_code || !flash_price || !end_time) return alert("Semua kolom flash sale wajib diisi!");
+
+  const btn = document.getElementById("btnSubmitFlash");
+  btn.disabled = true;
+  btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Menerbitkan...';
+
+  try {
+    const { error } = await window.supabase.from("flash_sales").insert([
+      { buyer_sku_code, flash_price, discount_label, end_time: new Date(end_time).toISOString(), is_active: true }
+    ]);
+    if (error) throw error;
+    alert("Item promo Flash Sale berhasil diterbitkan!");
+    window.closeFlashSaleModal();
+    window.fetchAdminFlashSale();
+  } catch (err) {
+    alert("Gagal menerbitkan Flash Sale: " + err.message);
+  } finally {
+    btn.disabled = false;
+    btn.innerHTML = '<i class="fa-solid fa-bolt"></i> Terbitkan Flash Sale';
+  }
+};
+
+window.toggleFlashSaleStatus = async function(id, status) {
+  const { error } = await window.supabase.from("flash_sales").update({ is_active: status }).eq("id", id);
+  if (error) alert("Gagal update status: " + error.message);
+  else window.fetchAdminFlashSale();
+};
+
+window.deleteFlashSale = async function(id) {
+  if (!confirm("Hapus item flash sale ini?")) return;
+  const { error } = await window.supabase.from("flash_sales").delete().eq("id", id);
+  if (error) alert("Gagal menghapus flash sale: " + error.message);
+  else window.fetchAdminFlashSale();
+};
+
 // ==========================================
-// 2. MAIN DOM CONTENT LOADED
+// 2. MAIN DOM INITIALIZATION
 // ==========================================
 document.addEventListener("DOMContentLoaded", async () => {
   const authLoader = document.getElementById("adminAuthLoader");
@@ -169,6 +325,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
       await window.loadDashboardData();
       await window.fetchAdminArticles();
+      await window.fetchAdminProducts(false); // preload list produk
       hideLoader();
     } catch (e) {
       console.error("Admin init error:", e);
@@ -186,7 +343,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     });
   }
 
-  // Tab Switcher
+  // Sidebar Tab Switcher
   const tabBtns = document.querySelectorAll(".tab-btn");
   const tabContents = document.querySelectorAll(".tab-content");
 
@@ -198,16 +355,20 @@ document.addEventListener("DOMContentLoaded", async () => {
       const targetContent = document.getElementById(btn.dataset.tab);
       if (targetContent) targetContent.classList.add("active");
 
+      // Lazy Data Fetching
+      if (btn.dataset.tab === "dashboardTab") window.loadDashboardData();
       if (btn.dataset.tab === "articlesTab") window.fetchAdminArticles();
       if (btn.dataset.tab === "productsTab") window.fetchAdminProducts();
+      if (btn.dataset.tab === "bannersTab") window.fetchAdminBanners();
+      if (btn.dataset.tab === "gamesTab") window.fetchAdminGames();
+      if (btn.dataset.tab === "flashSaleTab") window.fetchAdminFlashSale();
     });
   });
 
   // ==========================================
-  // FETCH STATISTIK & ANALITIK LENGKAP
+  // FETCH STATISTIK & PESANAN
   // ==========================================
   window.loadDashboardData = async function() {
-    // 1. Ambil Data Orders
     const { data: orders, error: ordErr } = await window.supabase
       .from("orders")
       .select("*")
@@ -219,7 +380,6 @@ document.addEventListener("DOMContentLoaded", async () => {
       renderOrdersTable(orders);
     }
 
-    // 2. Ambil Data Users
     const { data: users, error: userErr } = await window.supabase
       .from("profiles")
       .select("*")
@@ -250,8 +410,6 @@ document.addEventListener("DOMContentLoaded", async () => {
       if (o.status === "SUCCESS") {
         totalRev += priceSell;
         successCount++;
-
-        // Hitung estimasi profit (Jika ada data modal price_original / margin default 10%)
         const baseCost = Number(o.base_price || (priceSell * 0.9)); 
         totalProfit += (priceSell - baseCost);
 
@@ -265,7 +423,6 @@ document.addEventListener("DOMContentLoaded", async () => {
       }
     });
 
-    // Update Counter Element
     if (document.getElementById("statTotalRevenue")) document.getElementById("statTotalRevenue").innerText = `Rp ${totalRev.toLocaleString("id-ID")}`;
     if (document.getElementById("statTotalProfit")) document.getElementById("statTotalProfit").innerText = `Rp ${Math.round(totalProfit).toLocaleString("id-ID")}`;
     if (document.getElementById("statSuccessOrders")) document.getElementById("statSuccessOrders").innerText = successCount;
@@ -281,7 +438,6 @@ document.addEventListener("DOMContentLoaded", async () => {
     if (!container) return;
 
     const sortedGames = Object.entries(gameSalesMap).sort((a, b) => b[1] - a[1]);
-
     if (sortedGames.length === 0) {
       container.innerHTML = `<p style="color: var(--text-muted); font-size: 0.85rem;">Belum ada pesanan sukses untuk direkap.</p>`;
       return;
@@ -290,7 +446,6 @@ document.addEventListener("DOMContentLoaded", async () => {
     container.innerHTML = sortedGames.map(([gameName, count], index) => {
       const percentage = totalSuccess > 0 ? Math.round((count / totalSuccess) * 100) : 0;
       const rankIcon = index === 0 ? "🥇" : index === 1 ? "🥈" : index === 2 ? "🥉" : `#${index + 1}`;
-
       return `
         <div class="top-game-card">
           <div class="top-game-info">
@@ -310,7 +465,6 @@ document.addEventListener("DOMContentLoaded", async () => {
     if (!container) return;
 
     const sortedPayments = Object.entries(paymentMap).sort((a, b) => b[1] - a[1]);
-
     if (sortedPayments.length === 0) {
       container.innerHTML = `<p style="color: var(--text-muted); font-size: 0.85rem;">Belum ada data pembayaran sukses.</p>`;
       return;
@@ -336,7 +490,6 @@ document.addEventListener("DOMContentLoaded", async () => {
     const tbody = document.getElementById("ordersTableBody");
     if (!tbody) return;
     const filter = document.getElementById("filterStatus").value;
-
     const filtered = filter === "ALL" ? orders : orders.filter((o) => o.status === filter);
 
     if (filtered.length === 0) {
@@ -425,10 +578,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   if (btnSubmitBal) {
     btnSubmitBal.addEventListener("click", async () => {
       const amount = Number(document.getElementById("modalAmountInput").value);
-      if (!amount || isNaN(amount)) {
-        alert("Masukkan nominal yang valid!");
-        return;
-      }
+      if (!amount || isNaN(amount)) return alert("Masukkan nominal yang valid!");
 
       const { error } = await window.supabase.rpc("admin_adjust_balance", {
         target_user_id: selectedTargetUser,
@@ -446,60 +596,41 @@ document.addEventListener("DOMContentLoaded", async () => {
   }
 
   // ==========================================
-  // MANAJEMEN ARTIKEL BLOG & SEO (TAB 3)
+  // MANAJEMEN BANNER PROMO (TAB BANNER)
   // ==========================================
-  window.fetchAdminArticles = async function() {
-    const articlesTbody = document.getElementById("adminArticlesTableBody");
-    if (!articlesTbody) return;
+  window.fetchAdminBanners = async function() {
+    const tbody = document.getElementById("bannersTableBody");
+    if (!tbody) return;
 
-    articlesTbody.innerHTML = `<tr><td colspan="6" style="text-align: center; padding: 25px; color: var(--text-muted);"><i class="fa-solid fa-spinner fa-spin"></i> Memuat artikel blog...</td></tr>`;
+    tbody.innerHTML = `<tr><td colspan="5" style="text-align: center; padding: 25px;"><i class="fa-solid fa-spinner fa-spin"></i> Memuat slider banner...</td></tr>`;
 
     try {
-      const { data: articles, error } = await window.supabase
-        .from("articles")
-        .select("*")
-        .order("created_at", { ascending: false });
-
+      const { data, error } = await window.supabase.from("banners").select("*").order("created_at", { ascending: false });
       if (error) throw error;
-      allArticles = articles || [];
+      allBanners = data || [];
 
-      if (allArticles.length === 0) {
-        articlesTbody.innerHTML = `<tr><td colspan="6" style="text-align: center; padding: 30px; color: var(--text-muted);">Belum ada artikel.</td></tr>`;
+      if (allBanners.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="5" style="text-align: center; padding: 25px; color: #94a3b8;">Belum ada banner promo. Klik "Tambah Banner Baru".</td></tr>`;
         return;
       }
 
-      articlesTbody.innerHTML = allArticles.map((art) => {
-        const date = new Date(art.created_at).toLocaleDateString("id-ID", { day: "numeric", month: "short", year: "numeric" });
-        const isLive = art.is_published;
-        const statusBadge = isLive
-          ? `<span class="badge-status success" style="font-size: 0.72rem; padding: 3px 8px;"><i class="fa-solid fa-check"></i> LIVE</span>`
-          : `<span class="badge-status pending" style="font-size: 0.72rem; padding: 3px 8px; background: rgba(148, 163, 184, 0.2); color: #94a3b8;"><i class="fa-solid fa-box-archive"></i> DRAFT</span>`;
+      tbody.innerHTML = allBanners.map(b => {
+        const statusBadge = b.is_active 
+          ? `<span class="badge-status success">AKTIF</span>` 
+          : `<span class="badge-status cancelled">NONAKTIF</span>`;
 
         return `
           <tr>
-            <td>
-              <div style="display: flex; align-items: center; gap: 10px;">
-                <img src="${art.thumbnail_url}" alt="${art.title}" style="width: 44px; height: 44px; border-radius: 8px; object-fit: cover; background: #0f172a;">
-                <div>
-                  <strong style="color: #fff; font-size: 0.88rem; display: -webkit-box; -webkit-line-clamp: 1; -webkit-box-orient: vertical; overflow: hidden; max-width: 250px;">
-                    ${art.title}
-                  </strong>
-                  <a href="/blog-detail.html?slug=${art.slug}" target="_blank" style="font-size: 0.74rem; color: #38bdf8; text-decoration: none;">
-                    Lihat Artikel <i class="fa-solid fa-arrow-up-right-from-square"></i>
-                  </a>
-                </div>
-              </div>
-            </td>
-            <td><span style="font-size: 0.8rem; color: #fbbf24; font-weight: 700;">${art.category}</span></td>
-            <td><span style="font-size: 0.8rem; color: #cbd5e1;"><i class="fa-solid fa-eye"></i> ${art.views_count || 0}</span></td>
+            <td><img src="${b.image_url}" alt="${b.title}" style="width: 120px; height: 55px; border-radius: 6px; object-fit: cover; background: #0b1120;"></td>
+            <td><strong style="color: #fff;">${b.title}</strong></td>
+            <td><code style="color: #38bdf8;">${b.target_url}</code></td>
             <td>${statusBadge}</td>
-            <td><span style="font-size: 0.78rem; color: var(--text-muted);">${date}</span></td>
             <td>
               <div class="btn-action-group">
-                <button onclick="togglePublishArticle('${art.id}', ${!isLive})" title="${isLive ? 'Tarik ke Draft' : 'Publikasikan'}" class="btn-action-sm ${isLive ? 'btn-adjust' : 'btn-success'}">
-                  <i class="fa-solid ${isLive ? 'fa-eye-slash' : 'fa-globe'}"></i>
+                <button class="btn-action-sm ${b.is_active ? 'btn-adjust' : 'btn-success'}" onclick="toggleBannerStatus('${b.id}', ${!b.is_active})" title="${b.is_active ? 'Nonaktifkan' : 'Aktifkan'}">
+                  <i class="fa-solid ${b.is_active ? 'fa-eye-slash' : 'fa-eye'}"></i>
                 </button>
-                <button onclick="deleteArticle('${art.id}', '${encodeURIComponent(art.title)}')" title="Hapus Artikel" class="btn-action-sm btn-cancel">
+                <button class="btn-action-sm btn-cancel" onclick="deleteBanner('${b.id}')" title="Hapus Banner">
                   <i class="fa-solid fa-trash-can"></i>
                 </button>
               </div>
@@ -508,18 +639,124 @@ document.addEventListener("DOMContentLoaded", async () => {
         `;
       }).join("");
     } catch (err) {
-      articlesTbody.innerHTML = `<tr><td colspan="6" style="text-align: center; padding: 25px; color: var(--accent-red);">Gagal mengambil artikel: ${err.message}</td></tr>`;
+      tbody.innerHTML = `<tr><td colspan="5" style="text-align: center; color: var(--accent-red);">${err.message}</td></tr>`;
+    }
+  };
+
+  // ==========================================
+  // MANAJEMEN COVER KATALOG GAME (TAB GAMES)
+  // ==========================================
+  window.fetchAdminGames = async function() {
+    const tbody = document.getElementById("gamesTableBody");
+    if (!tbody) return;
+
+    tbody.innerHTML = `<tr><td colspan="6" style="text-align: center; padding: 25px;"><i class="fa-solid fa-spinner fa-spin"></i> Memuat katalog game...</td></tr>`;
+
+    try {
+      const { data, error } = await window.supabase.from("game_categories").select("*").order("sort_order", { ascending: true });
+      if (error) throw error;
+      allGameCategories = data || [];
+
+      if (allGameCategories.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="6" style="text-align: center; padding: 25px; color: #94a3b8;">Belum ada cover game yang dikustom. Klik "Tambah / Set Cover Game".</td></tr>`;
+        return;
+      }
+
+      tbody.innerHTML = allGameCategories.map(g => {
+        const popBadge = g.is_popular 
+          ? `<span class="badge-status success"><i class="fa-solid fa-fire"></i> POPULER</span>` 
+          : `<span class="badge-status pending">BIASA</span>`;
+
+        return `
+          <tr>
+            <td><img src="${g.image_url}" alt="${g.title}" style="width: 50px; height: 50px; border-radius: 10px; object-fit: cover; background: #0b1120;"></td>
+            <td><code style="color: #fbbf24; font-weight: 700;">${g.game_code}</code></td>
+            <td><strong style="color: #fff;">${g.title}</strong></td>
+            <td><span style="color: #94a3b8;">${g.developer}</span></td>
+            <td>${popBadge}</td>
+            <td>
+              <div class="btn-action-group">
+                <button class="btn-action-sm ${g.is_popular ? 'btn-adjust' : 'btn-success'}" onclick="toggleGamePopular('${g.id}', ${!g.is_popular})" title="Ubah Populer">
+                  <i class="fa-solid fa-star"></i>
+                </button>
+                <button class="btn-action-sm btn-cancel" onclick="deleteGameCategory('${g.id}')" title="Hapus Game">
+                  <i class="fa-solid fa-trash-can"></i>
+                </button>
+              </div>
+            </td>
+          </tr>
+        `;
+      }).join("");
+    } catch (err) {
+      tbody.innerHTML = `<tr><td colspan="6" style="text-align: center; color: var(--accent-red);">${err.message}</td></tr>`;
+    }
+  };
+
+  // ==========================================
+  // MANAJEMEN PROMO FLASH SALE (TAB FLASH SALE)
+  // ==========================================
+  window.fetchAdminFlashSale = async function() {
+    const tbody = document.getElementById("flashSaleTableBody");
+    if (!tbody) return;
+
+    tbody.innerHTML = `<tr><td colspan="7" style="text-align: center; padding: 25px;"><i class="fa-solid fa-spinner fa-spin"></i> Memuat flash sale...</td></tr>`;
+
+    try {
+      const { data, error } = await window.supabase
+        .from("flash_sales")
+        .select(`*, products (product_name, brand, price_sell)`)
+        .order("created_at", { ascending: false });
+
+      if (error) throw error;
+      allFlashSales = data || [];
+
+      if (allFlashSales.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="7" style="text-align: center; padding: 25px; color: #94a3b8;">Belum ada item Flash Sale aktif. Klik "Tambah Item Flash Sale".</td></tr>`;
+        return;
+      }
+
+      tbody.innerHTML = allFlashSales.map(fs => {
+        const prodName = fs.products?.product_name || fs.buyer_sku_code;
+        const brand = fs.products?.brand || "";
+        const normalPrice = Number(fs.products?.price_sell || 0).toLocaleString("id-ID");
+        const flashPrice = Number(fs.flash_price || 0).toLocaleString("id-ID");
+        const endDate = new Date(fs.end_time).toLocaleString("id-ID", { dateStyle: "short", timeStyle: "short" });
+        const statusBadge = fs.is_active ? `<span class="badge-status success">LIVE</span>` : `<span class="badge-status cancelled">EXPIRED</span>`;
+
+        return `
+          <tr>
+            <td><strong style="color: #fff;">${brand} - ${prodName}</strong></td>
+            <td><del style="color: #94a3b8;">Rp ${normalPrice}</del></td>
+            <td><strong style="color: #f59e0b; font-size: 0.95rem;">Rp ${flashPrice}</strong></td>
+            <td><span class="badge-status pending" style="background: rgba(245, 158, 11, 0.2); color: #fbbf24;">${fs.discount_label}</span></td>
+            <td><span style="color: #94a3b8; font-size: 0.8rem;"><i class="fa-solid fa-clock"></i> ${endDate}</span></td>
+            <td>${statusBadge}</td>
+            <td>
+              <div class="btn-action-group">
+                <button class="btn-action-sm ${fs.is_active ? 'btn-adjust' : 'btn-success'}" onclick="toggleFlashSaleStatus('${fs.id}', ${!fs.is_active})" title="Toggle Live">
+                  <i class="fa-solid ${fs.is_active ? 'fa-pause' : 'fa-play'}"></i>
+                </button>
+                <button class="btn-action-sm btn-cancel" onclick="deleteFlashSale('${fs.id}')" title="Hapus Promo">
+                  <i class="fa-solid fa-trash-can"></i>
+                </button>
+              </div>
+            </td>
+          </tr>
+        `;
+      }).join("");
+    } catch (err) {
+      tbody.innerHTML = `<tr><td colspan="7" style="text-align: center; color: var(--accent-red);">${err.message}</td></tr>`;
     }
   };
 
   // ==========================================
   // MANAJEMEN KATALOG PRODUK & HARGA (TAB 4)
   // ==========================================
-  window.fetchAdminProducts = async function() {
+  window.fetchAdminProducts = async function(renderTable = true) {
     const tbody = document.getElementById("productsTableBody");
-    if (!tbody) return;
-
-    tbody.innerHTML = `<tr><td colspan="7" style="text-align: center; padding: 25px; color: var(--text-muted);"><i class="fa-solid fa-spinner fa-spin"></i> Memuat data produk...</td></tr>`;
+    if (tbody && renderTable) {
+      tbody.innerHTML = `<tr><td colspan="7" style="text-align: center; padding: 25px; color: var(--text-muted);"><i class="fa-solid fa-spinner fa-spin"></i> Memuat data produk...</td></tr>`;
+    }
 
     try {
       const { data, error } = await window.supabase
@@ -530,10 +767,12 @@ document.addEventListener("DOMContentLoaded", async () => {
 
       if (error) throw error;
       allProducts = data || [];
-      populateGameFilters(allProducts);
-      renderProductsTable(allProducts);
+      if (renderTable) {
+        populateGameFilters(allProducts);
+        renderProductsTable(allProducts);
+      }
     } catch (err) {
-      tbody.innerHTML = `<tr><td colspan="7" style="text-align: center; color: var(--accent-red);">Gagal mengambil data: ${err.message}</td></tr>`;
+      if (tbody) tbody.innerHTML = `<tr><td colspan="7" style="text-align: center; color: var(--accent-red);">Gagal mengambil data: ${err.message}</td></tr>`;
     }
   };
 
@@ -613,6 +852,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     }).join("");
   }
 
+  // --- EVENTS & FILTERS ---
   const filterProductGame = document.getElementById("filterProductGame");
   if (filterProductGame) {
     filterProductGame.addEventListener("change", (e) => {
@@ -638,10 +878,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   if (btnSubmitPrice) {
     btnSubmitPrice.addEventListener("click", async () => {
       const newPrice = Number(document.getElementById("modalSellPriceInput").value);
-      if (!newPrice || isNaN(newPrice) || newPrice < 100) {
-        alert("Masukkan harga jual yang valid!");
-        return;
-      }
+      if (!newPrice || isNaN(newPrice) || newPrice < 100) return alert("Masukkan harga jual yang valid!");
 
       btnSubmitPrice.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Menyimpan...';
       btnSubmitPrice.disabled = true;
@@ -660,6 +897,73 @@ document.addEventListener("DOMContentLoaded", async () => {
       }
     });
   }
+
+  // ==========================================
+  // MANAJEMEN ARTIKEL BLOG & SEO (TAB ARTIKEL)
+  // ==========================================
+  window.fetchAdminArticles = async function() {
+    const articlesTbody = document.getElementById("adminArticlesTableBody");
+    if (!articlesTbody) return;
+
+    articlesTbody.innerHTML = `<tr><td colspan="6" style="text-align: center; padding: 25px; color: var(--text-muted);"><i class="fa-solid fa-spinner fa-spin"></i> Memuat artikel blog...</td></tr>`;
+
+    try {
+      const { data: articles, error } = await window.supabase
+        .from("articles")
+        .select("*")
+        .order("created_at", { ascending: false });
+
+      if (error) throw error;
+      allArticles = articles || [];
+
+      if (allArticles.length === 0) {
+        articlesTbody.innerHTML = `<tr><td colspan="6" style="text-align: center; padding: 30px; color: var(--text-muted);">Belum ada artikel.</td></tr>`;
+        return;
+      }
+
+      articlesTbody.innerHTML = allArticles.map((art) => {
+        const date = new Date(art.created_at).toLocaleDateString("id-ID", { day: "numeric", month: "short", year: "numeric" });
+        const isLive = art.is_published;
+        const statusBadge = isLive
+          ? `<span class="badge-status success" style="font-size: 0.72rem; padding: 3px 8px;"><i class="fa-solid fa-check"></i> LIVE</span>`
+          : `<span class="badge-status pending" style="font-size: 0.72rem; padding: 3px 8px; background: rgba(148, 163, 184, 0.2); color: #94a3b8;"><i class="fa-solid fa-box-archive"></i> DRAFT</span>`;
+
+        return `
+          <tr>
+            <td>
+              <div style="display: flex; align-items: center; gap: 10px;">
+                <img src="${art.thumbnail_url}" alt="${art.title}" style="width: 44px; height: 44px; border-radius: 8px; object-fit: cover; background: #0f172a;">
+                <div>
+                  <strong style="color: #fff; font-size: 0.88rem; display: -webkit-box; -webkit-line-clamp: 1; -webkit-box-orient: vertical; overflow: hidden; max-width: 250px;">
+                    ${art.title}
+                  </strong>
+                  <a href="/blog-detail.html?slug=${art.slug}" target="_blank" style="font-size: 0.74rem; color: #38bdf8; text-decoration: none;">
+                    Lihat Artikel <i class="fa-solid fa-arrow-up-right-from-square"></i>
+                  </a>
+                </div>
+              </div>
+            </td>
+            <td><span style="font-size: 0.8rem; color: #fbbf24; font-weight: 700;">${art.category}</span></td>
+            <td><span style="font-size: 0.8rem; color: #cbd5e1;"><i class="fa-solid fa-eye"></i> ${art.views_count || 0}</span></td>
+            <td>${statusBadge}</td>
+            <td><span style="font-size: 0.78rem; color: var(--text-muted);">${date}</span></td>
+            <td>
+              <div class="btn-action-group">
+                <button onclick="togglePublishArticle('${art.id}', ${!isLive})" title="${isLive ? 'Tarik ke Draft' : 'Publikasikan'}" class="btn-action-sm ${isLive ? 'btn-adjust' : 'btn-success'}">
+                  <i class="fa-solid ${isLive ? 'fa-eye-slash' : 'fa-globe'}"></i>
+                </button>
+                <button onclick="deleteArticle('${art.id}', '${encodeURIComponent(art.title)}')" title="Hapus Artikel" class="btn-action-sm btn-cancel">
+                  <i class="fa-solid fa-trash-can"></i>
+                </button>
+              </div>
+            </td>
+          </tr>
+        `;
+      }).join("");
+    } catch (err) {
+      articlesTbody.innerHTML = `<tr><td colspan="6" style="text-align: center; padding: 25px; color: var(--accent-red);">Gagal mengambil artikel: ${err.message}</td></tr>`;
+    }
+  };
 
   initAdmin();
 });

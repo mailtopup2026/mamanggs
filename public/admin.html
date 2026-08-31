@@ -46,14 +46,27 @@
         <button class="tab-btn" data-tab="balanceTab">
           <i class="fa-solid fa-wallet"></i> <span>Saldo Member</span>
         </button>
-        <button class="tab-btn" data-tab="articlesTab">
-          <i class="fa-solid fa-file-pen"></i> <span>Artikel Blog</span>
+        
+        <div class="menu-label" style="margin-top: 14px;">Tampilan & Promosi</div>
+        <button class="tab-btn" data-tab="bannersTab">
+          <i class="fa-solid fa-image"></i> <span>Kelola Banner</span>
         </button>
+        <button class="tab-btn" data-tab="gamesTab">
+          <i class="fa-solid fa-gamepad"></i> <span>Cover Katalog Game</span>
+        </button>
+        <button class="tab-btn" data-tab="flashSaleTab">
+          <i class="fa-solid fa-bolt" style="color: #f59e0b;"></i> <span>Event Flash Sale</span>
+        </button>
+
+        <div class="menu-label" style="margin-top: 14px;">Produk & Konten</div>
         <button class="tab-btn" data-tab="productsTab">
           <i class="fa-solid fa-tags"></i> <span>Katalog & Harga</span>
         </button>
+        <button class="tab-btn" data-tab="articlesTab">
+          <i class="fa-solid fa-file-pen"></i> <span>Artikel Blog</span>
+        </button>
 
-        <div class="menu-label" style="margin-top: 20px;">Aksi Cepat</div>
+        <div class="menu-label" style="margin-top: 14px;">Aksi Cepat</div>
         <a href="/admin/blog-editor.html" class="sidebar-link-btn">
           <i class="fa-solid fa-pen-nib"></i> <span>Tulis Berita</span>
         </a>
@@ -86,7 +99,6 @@
 
         <!-- STATISTIK GRID LENGKAP -->
         <div class="admin-stats-grid">
-          <!-- Omzet -->
           <div class="stat-card">
             <div class="stat-icon income"><i class="fa-solid fa-money-bill-wave"></i></div>
             <div class="stat-info">
@@ -95,7 +107,6 @@
             </div>
           </div>
 
-          <!-- Estimasi Laba Bersih -->
           <div class="stat-card">
             <div class="stat-icon profit"><i class="fa-solid fa-sack-dollar"></i></div>
             <div class="stat-info">
@@ -104,7 +115,6 @@
             </div>
           </div>
 
-          <!-- Transaksi Sukses -->
           <div class="stat-card">
             <div class="stat-icon orders"><i class="fa-solid fa-circle-check"></i></div>
             <div class="stat-info">
@@ -113,7 +123,6 @@
             </div>
           </div>
 
-          <!-- Transaksi Pending -->
           <div class="stat-card">
             <div class="stat-icon pending"><i class="fa-solid fa-clock"></i></div>
             <div class="stat-info">
@@ -122,7 +131,6 @@
             </div>
           </div>
 
-          <!-- Transaksi Gagal -->
           <div class="stat-card">
             <div class="stat-icon failed"><i class="fa-solid fa-circle-xmark"></i></div>
             <div class="stat-info">
@@ -131,7 +139,6 @@
             </div>
           </div>
 
-          <!-- Total Member -->
           <div class="stat-card">
             <div class="stat-icon users"><i class="fa-solid fa-users"></i></div>
             <div class="stat-info">
@@ -141,9 +148,7 @@
           </div>
         </div>
 
-        <!-- 2 KOLOM WIDGET ANALITIK -->
         <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 20px; margin-top: 10px;">
-          <!-- WIDGET GAME TERLARIS -->
           <div class="section-card">
             <div class="table-header-bar" style="margin-bottom: 16px;">
               <h3><i class="fa-solid fa-fire" style="color: #f59e0b;"></i> Game Terlaris</h3>
@@ -154,7 +159,6 @@
             </div>
           </div>
 
-          <!-- WIDGET METODE PEMBAYARAN -->
           <div class="section-card">
             <div class="table-header-bar" style="margin-bottom: 16px;">
               <h3><i class="fa-solid fa-credit-card" style="color: #38bdf8;"></i> Metode Pembayaran Populer</h3>
@@ -200,9 +204,7 @@
                 </tr>
               </thead>
               <tbody id="ordersTableBody">
-                <tr>
-                  <td colspan="8" style="text-align: center; padding: 25px;">Memuat daftar pesanan...</td>
-                </tr>
+                <tr><td colspan="8" style="text-align: center; padding: 25px;">Memuat daftar pesanan...</td></tr>
               </tbody>
             </table>
           </div>
@@ -231,9 +233,142 @@
                 </tr>
               </thead>
               <tbody id="usersTableBody">
+                <tr><td colspan="5" style="text-align: center; padding: 25px;">Memuat data member...</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- ==========================================
+           TAB BARU: KELOLA BANNER PROMO
+           ========================================== -->
+      <section id="bannersTab" class="tab-content">
+        <div class="section-card">
+          <div class="table-header-bar">
+            <h3><i class="fa-solid fa-image" style="color: #38bdf8;"></i> Kelola Slider Banner Homepage</h3>
+            <button class="btn-submit-action" style="width: auto; margin: 0; padding: 8px 16px; font-size: 0.85rem;" onclick="openBannerModal()">
+              <i class="fa-solid fa-plus"></i> Tambah Banner Baru
+            </button>
+          </div>
+
+          <div class="table-responsive">
+            <table class="admin-table">
+              <thead>
                 <tr>
-                  <td colspan="5" style="text-align: center; padding: 25px;">Memuat data member...</td>
+                  <th>Preview Banner</th>
+                  <th>Judul Promo</th>
+                  <th>Link Tujuan</th>
+                  <th>Status</th>
+                  <th>Aksi</th>
                 </tr>
+              </thead>
+              <tbody id="bannersTableBody">
+                <tr><td colspan="5" style="text-align: center; padding: 25px;">Memuat data banner...</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- ==========================================
+           TAB BARU: COVER KATALOG GAME
+           ========================================== -->
+      <section id="gamesTab" class="tab-content">
+        <div class="section-card">
+          <div class="table-header-bar">
+            <h3><i class="fa-solid fa-gamepad" style="color: #f59e0b;"></i> Pengaturan Cover & Gambar Game</h3>
+            <button class="btn-submit-action" style="width: auto; margin: 0; padding: 8px 16px; font-size: 0.85rem;" onclick="openGameModal()">
+              <i class="fa-solid fa-plus"></i> Tambah / Set Cover Game
+            </button>
+          </div>
+
+          <div class="table-responsive">
+            <table class="admin-table">
+              <thead>
+                <tr>
+                  <th>Cover Card</th>
+                  <th>Kode Game</th>
+                  <th>Judul Game</th>
+                  <th>Developer</th>
+                  <th>Popular?</th>
+                  <th>Aksi</th>
+                </tr>
+              </thead>
+              <tbody id="gamesTableBody">
+                <tr><td colspan="6" style="text-align: center; padding: 25px;">Memuat katalog game...</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- ==========================================
+           TAB BARU: EVENT FLASH SALE
+           ========================================== -->
+      <section id="flashSaleTab" class="tab-content">
+        <div class="section-card">
+          <div class="table-header-bar">
+            <h3><i class="fa-solid fa-bolt" style="color: #f59e0b;"></i> Pengaturan Promo Flash Sale</h3>
+            <button class="btn-submit-action" style="width: auto; margin: 0; padding: 8px 16px; font-size: 0.85rem; background: linear-gradient(135deg, #f59e0b, #d97706);" onclick="openFlashSaleModal()">
+              <i class="fa-solid fa-plus"></i> Tambah Item Flash Sale
+            </button>
+          </div>
+
+          <div class="table-responsive">
+            <table class="admin-table">
+              <thead>
+                <tr>
+                  <th>Produk Flash Sale</th>
+                  <th>Harga Normal</th>
+                  <th>Harga Flash Sale</th>
+                  <th>Diskon</th>
+                  <th>Berakhir Pada</th>
+                  <th>Status</th>
+                  <th>Aksi</th>
+                </tr>
+              </thead>
+              <tbody id="flashSaleTableBody">
+                <tr><td colspan="7" style="text-align: center; padding: 25px;">Memuat data promo flash sale...</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- ==========================================
+           TAB 4: KATALOG PRODUK & HARGA
+           ========================================== -->
+      <section id="productsTab" class="tab-content">
+        <div class="section-card">
+          <div class="table-header-bar">
+            <h3><i class="fa-solid fa-tags"></i> Daftar Harga & Produk Jual</h3>
+            <div class="filter-actions">
+              <select id="filterProductGame" class="admin-select" style="min-width: 180px;">
+                <option value="ALL">🎮 Semua Game / Brand</option>
+              </select>
+              <input type="text" id="searchProductAdmin" class="admin-input-search" placeholder="Cari item atau game..." style="width: 220px;">
+              <button id="btnRefreshProducts" class="btn-refresh"><i class="fa-solid fa-rotate-right"></i> Refresh</button>
+            </div>
+          </div>
+
+          <div id="gameCategoryPills" style="display: flex; gap: 8px; margin-bottom: 18px; overflow-x: auto; padding-bottom: 6px;"></div>
+
+          <div class="table-responsive">
+            <table class="admin-table">
+              <thead>
+                <tr>
+                  <th>SKU</th>
+                  <th>Brand / Game</th>
+                  <th>Nama Produk</th>
+                  <th>Harga Beli (Modal)</th>
+                  <th>Harga Jual (Web)</th>
+                  <th>Status (On/Off)</th>
+                  <th>Aksi</th>
+                </tr>
+              </thead>
+              <tbody id="productsTableBody">
+                <tr><td colspan="7" style="text-align: center; padding: 25px;">Memuat data produk...</td></tr>
               </tbody>
             </table>
           </div>
@@ -265,52 +400,7 @@
                 </tr>
               </thead>
               <tbody id="adminArticlesTableBody">
-                <tr>
-                  <td colspan="6" style="text-align: center; padding: 25px;">Memuat artikel blog...</td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-        </div>
-      </section>
-
-      <!-- ==========================================
-           TAB 4: KATALOG PRODUK & HARGA
-           ========================================== -->
-      <section id="productsTab" class="tab-content">
-        <div class="section-card">
-          <div class="table-header-bar">
-            <h3><i class="fa-solid fa-tags"></i> Daftar Harga & Produk Jual</h3>
-            <div class="filter-actions">
-              <select id="filterProductGame" class="admin-select" style="min-width: 180px;">
-                <option value="ALL">🎮 Semua Game / Brand</option>
-              </select>
-              
-              <input type="text" id="searchProductAdmin" class="admin-input-search" placeholder="Cari item atau game..." style="width: 220px;">
-              <button id="btnRefreshProducts" class="btn-refresh"><i class="fa-solid fa-rotate-right"></i> Refresh</button>
-            </div>
-          </div>
-
-          <div id="gameCategoryPills" style="display: flex; gap: 8px; margin-bottom: 18px; overflow-x: auto; padding-bottom: 6px;">
-          </div>
-
-          <div class="table-responsive">
-            <table class="admin-table">
-              <thead>
-                <tr>
-                  <th>SKU</th>
-                  <th>Brand / Game</th>
-                  <th>Nama Produk</th>
-                  <th>Harga Beli (Modal)</th>
-                  <th>Harga Jual (Web)</th>
-                  <th>Status (On/Off)</th>
-                  <th>Aksi</th>
-                </tr>
-              </thead>
-              <tbody id="productsTableBody">
-                <tr>
-                  <td colspan="7" style="text-align: center; padding: 25px;">Memuat data produk...</td>
-                </tr>
+                <tr><td colspan="6" style="text-align: center; padding: 25px;">Memuat artikel blog...</td></tr>
               </tbody>
             </table>
           </div>
@@ -327,16 +417,12 @@
         <button class="btn-close-modal" id="btnCloseBalModal"><i class="fa-solid fa-xmark"></i></button>
       </div>
       <div class="modal-body">
-        <p style="font-size: 0.85rem; color: #94a3b8; margin-bottom: 12px;">
-          Member: <strong id="modalUserName" style="color: #fff;">-</strong>
-        </p>
+        <p style="font-size: 0.85rem; color: #94a3b8; margin-bottom: 12px;">Member: <strong id="modalUserName" style="color: #fff;">-</strong></p>
         <div class="form-group">
           <label style="font-size: 0.8rem; color: #94a3b8;">Jumlah Saldo (Gunakan minus (-) untuk mengurangi)</label>
           <input type="number" id="modalAmountInput" placeholder="Contoh: 50000 atau -10000" class="admin-input" style="width: 100%; box-sizing: border-box; margin-top: 6px;">
         </div>
-        <button id="btnSubmitBalance" class="btn-submit-action">
-          <i class="fa-solid fa-check"></i> Simpan Perubahan Saldo
-        </button>
+        <button id="btnSubmitBalance" class="btn-submit-action"><i class="fa-solid fa-check"></i> Simpan Perubahan Saldo</button>
       </div>
     </div>
   </div>
@@ -349,9 +435,7 @@
         <button class="btn-close-modal" id="btnClosePriceModal"><i class="fa-solid fa-xmark"></i></button>
       </div>
       <div class="modal-body">
-        <p style="font-size: 0.85rem; color: #94a3b8; margin-bottom: 12px;">
-          Produk: <strong id="modalProductName" style="color: #fff;">-</strong>
-        </p>
+        <p style="font-size: 0.85rem; color: #94a3b8; margin-bottom: 12px;">Produk: <strong id="modalProductName" style="color: #fff;">-</strong></p>
         <div class="form-group" style="margin-bottom: 12px;">
           <label style="font-size: 0.8rem; color: #94a3b8;">Harga Modal (Dari Digiflazz)</label>
           <input type="text" id="modalBasePrice" class="admin-input" disabled style="background: rgba(255,255,255,0.05); color: #94a3b8; width: 100%; box-sizing: border-box; margin-top: 6px;">
@@ -360,8 +444,99 @@
           <label style="font-size: 0.8rem; color: #94a3b8;">Harga Jual Baru (Tampil di Website)</label>
           <input type="number" id="modalSellPriceInput" class="admin-input" placeholder="Masukkan harga jual baru" style="width: 100%; box-sizing: border-box; margin-top: 6px;">
         </div>
-        <button id="btnSubmitPrice" class="btn-submit-action" style="margin-top: 15px;">
-          <i class="fa-solid fa-check"></i> Simpan Harga
+        <button id="btnSubmitPrice" class="btn-submit-action" style="margin-top: 15px;"><i class="fa-solid fa-check"></i> Simpan Harga</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL TAMBAH BANNER -->
+  <div class="modal-backdrop" id="bannerModal">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3><i class="fa-solid fa-image"></i> Kelola Slider Banner</h3>
+        <button class="btn-close-modal" onclick="closeBannerModal()"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+      <div class="modal-body">
+        <div class="form-group" style="margin-bottom: 12px;">
+          <label style="font-size: 0.8rem; color: #94a3b8;">Judul Promo / Event</label>
+          <input type="text" id="bannerTitleInput" placeholder="Contoh: Diskon Merdeka MLBB" class="admin-input" style="width: 100%; box-sizing: border-box; margin-top: 6px;">
+        </div>
+        <div class="form-group" style="margin-bottom: 12px;">
+          <label style="font-size: 0.8rem; color: #94a3b8;">URL Gambar Banner (Rasio 16:9 / 2:1)</label>
+          <input type="url" id="bannerUrlInput" placeholder="https://domain.com/banner.jpg" class="admin-input" style="width: 100%; box-sizing: border-box; margin-top: 6px;">
+        </div>
+        <div class="form-group">
+          <label style="font-size: 0.8rem; color: #94a3b8;">Target Link Klik</label>
+          <input type="text" id="bannerLinkInput" placeholder="/order.html?game=mlbb" class="admin-input" style="width: 100%; box-sizing: border-box; margin-top: 6px;">
+        </div>
+        <button id="btnSubmitBanner" class="btn-submit-action" onclick="submitBanner()"><i class="fa-solid fa-cloud-arrow-up"></i> Simpan Banner</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL TAMBAH/EDIT COVER GAME -->
+  <div class="modal-backdrop" id="gameModal">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3><i class="fa-solid fa-gamepad"></i> Setup Cover Gambar Game</h3>
+        <button class="btn-close-modal" onclick="closeGameModal()"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+      <div class="modal-body">
+        <div class="form-group" style="margin-bottom: 12px;">
+          <label style="font-size: 0.8rem; color: #94a3b8;">Kode Game (Harus sama dgn kode produk)</label>
+          <input type="text" id="gameCodeInput" placeholder="Contoh: mlbb, ff, pubg, genshin" class="admin-input" style="width: 100%; box-sizing: border-box; margin-top: 6px;">
+        </div>
+        <div class="form-group" style="margin-bottom: 12px;">
+          <label style="font-size: 0.8rem; color: #94a3b8;">Nama Resmi Game</label>
+          <input type="text" id="gameTitleInput" placeholder="Contoh: Mobile Legends: Bang Bang" class="admin-input" style="width: 100%; box-sizing: border-box; margin-top: 6px;">
+        </div>
+        <div class="form-group" style="margin-bottom: 12px;">
+          <label style="font-size: 0.8rem; color: #94a3b8;">Nama Publisher / Developer</label>
+          <input type="text" id="gameDevInput" placeholder="Contoh: Moonton" class="admin-input" style="width: 100%; box-sizing: border-box; margin-top: 6px;">
+        </div>
+        <div class="form-group" style="margin-bottom: 12px;">
+          <label style="font-size: 0.8rem; color: #94a3b8;">URL Cover Card Game (Kotak/Portrait)</label>
+          <input type="url" id="gameImgInput" placeholder="https://..." class="admin-input" style="width: 100%; box-sizing: border-box; margin-top: 6px;">
+        </div>
+        <div class="form-group">
+          <label style="display: flex; align-items: center; gap: 8px; font-size: 0.85rem; color: #fff; cursor: pointer;">
+            <input type="checkbox" id="gameIsPopular">
+            <span>Tandai sebagai Game Populer (Tampil di Beranda Teratas)</span>
+          </label>
+        </div>
+        <button id="btnSubmitGame" class="btn-submit-action" onclick="submitGameCategory()"><i class="fa-solid fa-floppy-disk"></i> Simpan Katalog Game</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL SETUP FLASH SALE -->
+  <div class="modal-backdrop" id="flashSaleModal">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3><i class="fa-solid fa-bolt" style="color: #f59e0b;"></i> Setup Promo Flash Sale</h3>
+        <button class="btn-close-modal" onclick="closeFlashSaleModal()"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+      <div class="modal-body">
+        <div class="form-group" style="margin-bottom: 12px;">
+          <label style="font-size: 0.8rem; color: #94a3b8;">Pilih Produk Yang Ingin Didiskon</label>
+          <select id="flashSkuSelect" class="admin-select" style="width: 100%; margin-top: 6px;">
+            <option value="">-- Pilih Produk --</option>
+          </select>
+        </div>
+        <div class="form-group" style="margin-bottom: 12px;">
+          <label style="font-size: 0.8rem; color: #94a3b8;">Harga Promo Flash Sale (Rp)</label>
+          <input type="number" id="flashPriceInput" placeholder="Contoh: 1250" class="admin-input" style="width: 100%; box-sizing: border-box; margin-top: 6px;">
+        </div>
+        <div class="form-group" style="margin-bottom: 12px;">
+          <label style="font-size: 0.8rem; color: #94a3b8;">Label Badge Diskon</label>
+          <input type="text" id="flashDiscountInput" placeholder="Contoh: -25%" class="admin-input" style="width: 100%; box-sizing: border-box; margin-top: 6px;">
+        </div>
+        <div class="form-group">
+          <label style="font-size: 0.8rem; color: #94a3b8;">Waktu Promo Berakhir (Countdown)</label>
+          <input type="datetime-local" id="flashEndInput" class="admin-input" style="width: 100%; box-sizing: border-box; margin-top: 6px;">
+        </div>
+        <button id="btnSubmitFlash" class="btn-submit-action" style="background: linear-gradient(135deg, #f59e0b, #d97706); margin-top: 15px;" onclick="submitFlashSale()">
+          <i class="fa-solid fa-bolt"></i> Terbitkan Flash Sale
         </button>
       </div>
     </div>
