@@ -485,13 +485,25 @@ document.addEventListener("DOMContentLoaded", async () => {
       const { error } = await window.supabase.from("orders").insert([orderPayload]);
       if (error) throw error;
 
-      // REDIRECT KE HALAMAN ORDER STATUS BAWAAN MAMANGGS
+      // REDIRECT LOGIC SEMENTARA (LANGSUNG KE DOKU CHECKOUT)
       if (isUsingWallet) {
         alert("Pembayaran Berhasil! Saldo akun Anda telah dipotong dan pesanan langsung diproses.");
+        window.location.href = `/order-status.html?inv=${encodeURIComponent(invoiceNumber)}`;
+        return;
       }
 
-      window.location.href = `/order-status.html?inv=${encodeURIComponent(invoiceNumber)}`;
-      
+      const paymentUrl =
+        dokuPaymentData?.response?.payment?.url ||
+        dokuPaymentData?.payment?.url ||
+        dokuPaymentData?.response?.url ||
+        dokuPaymentData?.payment_url ||
+        dokuPaymentData?.url;
+
+      if (paymentUrl) {
+        window.location.href = paymentUrl;
+      } else {
+        window.location.href = `/order-status.html?inv=${encodeURIComponent(invoiceNumber)}`;
+      }
     } catch (err) {
       console.error("Error order:", err);
       alert("Gagal membuat pesanan: " + err.message);
