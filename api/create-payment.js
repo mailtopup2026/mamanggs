@@ -6,7 +6,7 @@ module.exports = async function (req, res) {
   }
 
   try {
-    const { orderId, amount, customerPhone, customerName } = req.body;
+    const { orderId, amount } = req.body;
 
     if (!orderId || !amount) {
       return res.status(400).json({ error: "Parameter tidak lengkap" });
@@ -16,31 +16,27 @@ module.exports = async function (req, res) {
     const secretKey = process.env.DOKU_SECRET_KEY;
     const baseUrl = process.env.DOKU_API_URL || "https://api.doku.com";
 
-    const targetPath = "/checkout/v1/payment";
+    const targetPath = "/qris-http/v1/generate-qr";
     const requestTimestamp = new Date().toISOString().replace(/\.\d{3}Z$/, "Z");
     const requestId = `REQ-${Date.now()}`;
 
+    // Payload resmi DOKU Direct QRIS
     const requestBody = {
       order: {
-        amount: parseInt(amount, 10),
         invoice_number: orderId,
-        currency: "IDR",
-        callback_url: `https://mamanggs.my.id/order-status.html?inv=${orderId}`
+        amount: parseInt(amount, 10),
       },
       payment: {
-        payment_due_date: 60
+        payment_due_date: 60, // 60 menit expired
       },
-      customer: {
-        name: customerName || "Pelanggan MamangGS",
-        phone: customerPhone || "081234567890",
-        email: "customer@mamanggs.my.id"
-      }
     };
 
     const jsonBody = JSON.stringify(requestBody);
 
+    // Hitung Digest SHA-256
     const digest = crypto.createHash("sha256").update(jsonBody, "utf8").digest("base64");
 
+    // Format Signature DOKU Direct
     const signatureComponent = [
       `Client-Id:${clientId}`,
       `Request-Id:${requestId}`,
@@ -70,11 +66,12 @@ module.exports = async function (req, res) {
 
     if (!response.ok) {
       return res.status(response.status).json({
-        error: "Gagal membuat tagihan DOKU",
+        error: "Gagal generate Direct QRIS DOKU",
         details: result,
       });
     }
 
+    // result akan berisi { "order": {...}, "payment": { "qr_content": "00020101021226..." } }
     return res.status(200).json({
       success: true,
       data: result,
