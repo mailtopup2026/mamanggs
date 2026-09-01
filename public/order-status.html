@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Lacak Pesanan - MamangGS</title>
+  <title>Lacak Status Pesanan - MamangGS</title>
   
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -19,10 +19,9 @@
     <div class="navbar-container">
       <a href="/" class="brand-logo">
         <div class="logo-video-wrap"><video autoplay loop muted playsinline class="logo-video"><source src="/assets/images/logo.mp4" type="video/mp4"></video></div>
-        
       </a>
 
-      <!-- DESKTOP ACTIONS (Otomatis Hilang di HP) -->
+      <!-- DESKTOP ACTIONS -->
       <div class="nav-actions desktop-only" id="desktopNavActions">
         <a href="/blog.html" class="btn-nav-login" style="background: rgba(56, 189, 248, 0.15); border-color: rgba(56, 189, 248, 0.4); color: #38bdf8;">
           <i class="fa-solid fa-newspaper"></i> Blog
@@ -89,10 +88,8 @@
       </div>
     </div>
 
-    <!-- AREA HASIL (Awalnya disembunyikan) -->
-    <div id="orderResultArea" style="margin-top: 30px; display: none;">
-      <!-- Konten hasil akan diinjeksi ke sini via JS -->
-    </div>
+    <!-- AREA HASIL PESANAN -->
+    <div id="orderResultArea" style="margin-top: 30px; display: none;"></div>
 
   </main>
 
@@ -102,7 +99,6 @@
       <div class="footer-brand">
         <div class="brand-logo">
           <div class="logo-video-wrap"><video autoplay loop muted playsinline class="logo-video"><source src="/assets/images/logo.mp4" type="video/mp4"></video></div>
-          
         </div>
         <p>Platform top up game otomatis, murah, dan terpercaya 24 jam nonstop.</p>
       </div>
@@ -112,8 +108,9 @@
     </div>
   </footer>
 
-  <!-- JS -->
+  <!-- JS DEPENDENCIES -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
   <script src="/js/supabase.js"></script>
   <script src="/js/navbar.js"></script>
   
@@ -123,55 +120,255 @@
       const inputId = document.getElementById('orderIdInput');
       const resultArea = document.getElementById('orderResultArea');
 
+      // Cek apakah invoice dipass via URL (?inv=...)
+      const urlParams = new URLSearchParams(window.location.search);
+      const invFromUrl = urlParams.get('inv');
+      if (invFromUrl) {
+        inputId.value = invFromUrl;
+        const checkTimer = setInterval(() => {
+          if (window.supabase) {
+            clearInterval(checkTimer);
+            fetchAndRenderOrder(invFromUrl);
+          }
+        }, 100);
+      }
+
       btnTrack.addEventListener('click', () => {
         const orderId = inputId.value.trim();
         if (!orderId) {
-          alert('Masukkan ID Pesanan dulu bosku!');
+          alert('Masukkan nomor Invoice transaksi dulu bosku!');
           return;
         }
+        fetchAndRenderOrder(orderId);
+      });
 
-        // Simulasi pencarian (Bisa diganti fetch ke backend nanti)
+      async function fetchAndRenderOrder(invoice) {
         btnTrack.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Mencari...';
         btnTrack.disabled = true;
 
-        setTimeout(() => {
+        try {
+          if (!window.supabase) throw new Error("Koneksi database Supabase belum siap.");
+
+          const { data: order, error } = await window.supabase
+            .from("orders")
+            .select("*")
+            .ilike("invoice", invoice)
+            .maybeSingle();
+
+          if (error) throw error;
+
+          if (!order) {
+            alert("Nomor invoice tidak ditemukan! Pastikan nomor invoice yang dimasukkan benar.");
+            resultArea.style.display = "none";
+            return;
+          }
+
+          renderOrderCard(order);
+        } catch (err) {
+          console.error("Order fetch error:", err);
+          alert("Gagal memeriksa pesanan: " + err.message);
+        } finally {
           btnTrack.innerHTML = '<i class="fa-solid fa-magnifying-glass"></i> Cek Status';
           btnTrack.disabled = false;
-          
-          resultArea.style.display = 'block';
-          resultArea.innerHTML = `
-            <div style="background: rgba(16, 185, 129, 0.1); border: 1px solid #10b981; border-radius: 16px; padding: 24px;">
-              <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 16px;">
-                <div style="width: 40px; height: 40px; background: #10b981; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #fff; font-size: 1.2rem;">
-                  <i class="fa-solid fa-check"></i>
-                </div>
-                <div>
-                  <h3 style="margin: 0; color: #10b981; font-size: 1.1rem;">Pesanan Berhasil</h3>
-                  <p style="margin: 0; color: #94a3b8; font-size: 0.85rem;">${orderId}</p>
-                </div>
+        }
+      }
+
+      function renderOrderCard(order) {
+        resultArea.style.display = 'block';
+
+        const isSuccess = order.status === "SUCCESS";
+        const isFailed = order.status === "FAILED" || order.status === "EXPIRED";
+        const isPending = !isSuccess && !isFailed;
+
+        let statusColor = "#f59e0b";
+        let statusBg = "rgba(245, 158, 11, 0.1)";
+        let statusBorder = "#f59e0b";
+        let statusIcon = "fa-clock";
+        let statusTitle = "Menunggu Pembayaran";
+
+        if (isSuccess) {
+          statusColor = "#10b981";
+          statusBg = "rgba(16, 185, 129, 0.1)";
+          statusBorder = "#10b981";
+          statusIcon = "fa-check";
+          statusTitle = "Pesanan Berhasil / Sukses";
+        } else if (isFailed) {
+          statusColor = "#ef4444";
+          statusBg = "rgba(239, 68, 68, 0.1)";
+          statusBorder = "#ef4444";
+          statusIcon = "fa-xmark";
+          statusTitle = "Pesanan Dibatalkan / Gagal";
+        }
+
+        const formattedPrice = `Rp ${Number(order.price || 0).toLocaleString("id-ID")}`;
+        const targetId = order.zone_id ? `${order.account_id} (${order.zone_id})` : order.account_id;
+        const formattedDate = new Date(order.created_at || Date.now()).toLocaleString("id-ID", {
+          day: "numeric",
+          month: "short",
+          year: "numeric",
+          hour: "2-digit",
+          minute: "2-digit"
+        }) + " WIB";
+
+        // Template Utama Detail Order
+        let html = `
+          <div style="background: ${statusBg}; border: 1px solid ${statusBorder}; border-radius: 20px; padding: 24px; box-shadow: 0 10px 30px rgba(0,0,0,0.3);">
+            <div style="display: flex; align-items: center; gap: 14px; margin-bottom: 20px;">
+              <div style="width: 44px; height: 44px; background: ${statusColor}; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #fff; font-size: 1.3rem;">
+                <i class="fa-solid ${statusIcon}"></i>
               </div>
-              <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; font-size: 0.9rem;">
-                <div style="background: rgba(0,0,0,0.2); padding: 12px; border-radius: 8px;">
-                  <span style="color: #94a3b8; display: block; margin-bottom: 4px; font-size: 0.8rem;">Item</span>
-                  <strong>1000 Diamonds MLBB</strong>
-                </div>
-                <div style="background: rgba(0,0,0,0.2); padding: 12px; border-radius: 8px;">
-                  <span style="color: #94a3b8; display: block; margin-bottom: 4px; font-size: 0.8rem;">Harga</span>
-                  <strong>Rp 120.000</strong>
-                </div>
-                <div style="background: rgba(0,0,0,0.2); padding: 12px; border-radius: 8px;">
-                  <span style="color: #94a3b8; display: block; margin-bottom: 4px; font-size: 0.8rem;">Tujuan</span>
-                  <strong>12345678 (1234)</strong>
-                </div>
-                <div style="background: rgba(0,0,0,0.2); padding: 12px; border-radius: 8px;">
-                  <span style="color: #94a3b8; display: block; margin-bottom: 4px; font-size: 0.8rem;">Waktu</span>
-                  <strong>29 Ags 2026, 14:30 WIB</strong>
-                </div>
+              <div>
+                <h3 style="margin: 0; color: ${statusColor}; font-size: 1.15rem; font-weight: 800;">${statusTitle}</h3>
+                <p style="margin: 3px 0 0; color: #94a3b8; font-size: 0.85rem; font-family: monospace; letter-spacing: 0.5px;">${order.invoice}</p>
               </div>
             </div>
+
+            <!-- DETAIL PESANAN GRID -->
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 12px; font-size: 0.9rem; margin-bottom: 20px;">
+              <div style="background: rgba(0,0,0,0.3); padding: 12px 14px; border-radius: 10px; border: 1px solid rgba(255,255,255,0.05);">
+                <span style="color: #94a3b8; display: block; margin-bottom: 4px; font-size: 0.78rem;">Produk</span>
+                <strong style="color: #f8fafc; font-size: 0.95rem;">${order.item_name}</strong>
+              </div>
+              <div style="background: rgba(0,0,0,0.3); padding: 12px 14px; border-radius: 10px; border: 1px solid rgba(255,255,255,0.05);">
+                <span style="color: #94a3b8; display: block; margin-bottom: 4px; font-size: 0.78rem;">Total Bayar</span>
+                <strong style="color: #38bdf8; font-size: 0.95rem;">${formattedPrice}</strong>
+              </div>
+              <div style="background: rgba(0,0,0,0.3); padding: 12px 14px; border-radius: 10px; border: 1px solid rgba(255,255,255,0.05);">
+                <span style="color: #94a3b8; display: block; margin-bottom: 4px; font-size: 0.78rem;">Tujuan (User ID)</span>
+                <strong style="color: #f8fafc; font-size: 0.95rem;">${targetId}</strong>
+              </div>
+              <div style="background: rgba(0,0,0,0.3); padding: 12px 14px; border-radius: 10px; border: 1px solid rgba(255,255,255,0.05);">
+                <span style="color: #94a3b8; display: block; margin-bottom: 4px; font-size: 0.78rem;">Waktu Order</span>
+                <strong style="color: #f8fafc; font-size: 0.85rem;">${formattedDate}</strong>
+              </div>
+            </div>
+
+            <!-- CONTAINER INSTRUKSI PEMBAYARAN -->
+            <div id="paymentInstructionBox"></div>
+          </div>
+        `;
+
+        resultArea.innerHTML = html;
+
+        // Render instruksi pembayaran jika status masih PENDING
+        if (isPending) {
+          renderPaymentInstructions(order);
+        }
+      }
+
+      function renderPaymentInstructions(order) {
+        const payBox = document.getElementById("paymentInstructionBox");
+        if (!payBox) return;
+
+        const payData = order.payment_data || {};
+        const method = (order.payment_method || "").toLowerCase();
+
+        // 1. OPSI QRIS
+        if (method.includes("qris") || method.includes("e-wallet")) {
+          const qrContent =
+            payData?.response?.payment?.qr_content ||
+            payData?.payment?.qr_content ||
+            payData?.qr_content;
+
+          const dokuCheckoutUrl =
+            payData?.response?.payment?.url ||
+            payData?.payment?.url ||
+            payData?.url;
+
+          if (qrContent) {
+            payBox.innerHTML = `
+              <div style="background: #0f172a; border: 1px solid rgba(255,255,255,0.1); border-radius: 16px; padding: 24px; text-align: center; margin-top: 10px;">
+                <div style="display: inline-flex; align-items: center; gap: 8px; background: rgba(56,189,248,0.1); color: #38bdf8; padding: 6px 14px; border-radius: 20px; font-size: 0.82rem; font-weight: 700; margin-bottom: 16px;">
+                  <i class="fa-solid fa-qrcode"></i> QRIS STANDAR NASIONAL (NMID: MAMANGGS)
+                </div>
+                
+                <div style="display: flex; justify-content: center; margin-bottom: 16px;">
+                  <div id="qrCanvasWrapper" style="background: #ffffff; padding: 16px; border-radius: 14px; box-shadow: 0 8px 24px rgba(0,0,0,0.5); display: inline-block;"></div>
+                </div>
+
+                <div style="font-size: 1.25rem; font-weight: 900; color: #38bdf8; margin-bottom: 12px;">
+                  Rp ${Number(order.price || 0).toLocaleString("id-ID")}
+                </div>
+
+                <p style="color: #94a3b8; font-size: 0.85rem; max-width: 420px; margin: 0 auto 16px; line-height: 1.5;">
+                  Buka aplikasi e-wallet (GoPay, OVO, DANA, ShopeePay) atau Mobile Banking kamu, lalu scan QR Code di atas.
+                </p>
+
+                <div style="display: flex; justify-content: center; gap: 10px; flex-wrap: wrap;">
+                  <button id="btnDownloadQR" style="background: rgba(255,255,255,0.1); color: #fff; border: 1px solid rgba(255,255,255,0.2); padding: 10px 18px; border-radius: 10px; font-weight: 600; font-size: 0.85rem; cursor: pointer; display: flex; align-items: center; gap: 6px;">
+                    <i class="fa-solid fa-download"></i> Unduh QR Code
+                  </button>
+                  ${dokuCheckoutUrl ? `
+                    <a href="${dokuCheckoutUrl}" target="_blank" style="background: #e63946; color: #fff; text-decoration: none; padding: 10px 18px; border-radius: 10px; font-weight: 700; font-size: 0.85rem; display: flex; align-items: center; gap: 6px;">
+                      <i class="fa-solid fa-up-right-from-square"></i> Buka Halaman DOKU
+                    </a>
+                  ` : ''}
+                </div>
+              </div>
+            `;
+
+            // Generate QRCode
+            const qrWrapper = document.getElementById("qrCanvasWrapper");
+            qrWrapper.innerHTML = "";
+            new QRCode(qrWrapper, {
+              text: qrContent,
+              width: 220,
+              height: 220,
+              correctLevel: QRCode.CorrectLevel.M
+            });
+
+            // Tombol Unduh QR
+            document.getElementById("btnDownloadQR")?.addEventListener("click", () => {
+              const img = qrWrapper.querySelector("img");
+              if (img && img.src) {
+                const a = document.createElement("a");
+                a.href = img.src;
+                a.download = `QRIS-${order.invoice}.png`;
+                a.click();
+              } else {
+                alert("QR Code sedang dimuat, coba sesaat lagi.");
+              }
+            });
+          } else if (dokuCheckoutUrl) {
+            payBox.innerHTML = `
+              <div style="background: #0f172a; border: 1px solid rgba(255,255,255,0.1); border-radius: 16px; padding: 24px; text-align: center; margin-top: 10px;">
+                <p style="color: #94a3b8; font-size: 0.9rem; margin-bottom: 16px;">Selesaikan pembayaran melalui portal aman DOKU Checkout:</p>
+                <a href="${dokuCheckoutUrl}" target="_blank" style="display: inline-flex; align-items: center; gap: 8px; background: #e63946; color: #fff; text-decoration: none; padding: 14px 28px; border-radius: 12px; font-weight: 800; font-size: 0.95rem;">
+                  <i class="fa-solid fa-qrcode"></i> Bayar Sekarang via DOKU
+                </a>
+              </div>
+            `;
+          }
+        }
+        // 2. OPSI VIRTUAL ACCOUNT
+        else if (method.includes("virtual account") || method.includes("va") || method.includes("bank")) {
+          const vaNumber =
+            payData?.response?.payment?.va_number ||
+            payData?.payment?.va_number ||
+            payData?.va_number ||
+            "-";
+
+          payBox.innerHTML = `
+            <div style="background: #0f172a; border: 1px solid rgba(255,255,255,0.1); border-radius: 16px; padding: 24px; text-align: center; margin-top: 10px;">
+              <span style="color: #94a3b8; font-size: 0.85rem; display: block; margin-bottom: 6px;">Nomor Virtual Account Bank</span>
+              <div style="font-size: 1.8rem; font-weight: 900; letter-spacing: 2px; color: #38bdf8; font-family: monospace; margin: 8px 0;">
+                ${vaNumber}
+              </div>
+              <button id="btnCopyVA" style="background: rgba(255,255,255,0.1); color: #fff; border: 1px solid rgba(255,255,255,0.2); padding: 8px 18px; border-radius: 8px; font-size: 0.85rem; font-weight: 600; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; margin-bottom: 16px;">
+                <i class="fa-solid fa-copy"></i> Salin Nomor VA
+              </button>
+              <p style="color: #64748b; font-size: 0.8rem; margin: 0;">Transfer persis sesuai nominal tagihan agar sistem otomatis memverifikasi.</p>
+            </div>
           `;
-        }, 1000);
-      });
+
+          document.getElementById("btnCopyVA")?.addEventListener("click", () => {
+            if (vaNumber && vaNumber !== "-") {
+              navigator.clipboard.writeText(vaNumber);
+              alert("Nomor Virtual Account berhasil disalin ke clipboard!");
+            }
+          });
+        }
+      }
     });
   </script>
 </body>
