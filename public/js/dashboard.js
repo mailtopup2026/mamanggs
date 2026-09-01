@@ -166,6 +166,86 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
   }
 
+  // ==========================================
+  // FITUR DEPOSIT TOP UP SALDO MGS OTOMATIS
+  // ==========================================
+  const btnDeposit = document.getElementById("btnDeposit");
+  if (btnDeposit) {
+    btnDeposit.addEventListener("click", async () => {
+      const nominalStr = prompt("Masukkan nominal isi saldo MGS (Minimal Rp 10.000):", "10000");
+      if (!nominalStr) return;
+
+      const amount = parseInt(nominalStr.replace(/\D/g, ""), 10);
+      if (isNaN(amount) || amount < 10000) {
+        alert("Nominal deposit minimal adalah Rp 10.000");
+        return;
+      }
+
+      btnDeposit.disabled = true;
+      btnDeposit.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Menyiapkan...';
+
+      const now = new Date();
+      const dateStr = now.getFullYear().toString() + String(now.getMonth() + 1).padStart(2, "0") + String(now.getDate()).padStart(2, "0");
+      const randomDigits = Math.floor(1000 + Math.random() * 9000);
+      const invoiceNumber = `DEP-${dateStr}-${randomDigits}`;
+
+      try {
+        // 1. Request DOKU Payment Gateway
+        const dokuRes = await fetch("/api/create-payment", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            orderId: invoiceNumber,
+            amount: amount,
+            paymentMethod: "Deposit Saldo MGS",
+            customerPhone: user.phone || "081234567890",
+            customerName: user.user_metadata?.full_name || "Member MGS"
+          })
+        });
+
+        const dokuResult = await dokuRes.json();
+        if (!dokuRes.ok || !dokuResult.success) {
+          throw new Error(dokuResult.error || "Gagal membuat invoice DOKU");
+        }
+
+        // 2. Simpan order deposit ke Supabase
+        await window.supabase.from("orders").insert([{
+          invoice: invoiceNumber,
+          user_id: user.id,
+          game_code: "WALLET",
+          game_title: "Top Up Saldo MGS",
+          account_id: user.email || user.id,
+          item_name: `Top Up Saldo Rp ${amount.toLocaleString("id-ID")}`,
+          price: amount,
+          payment_method: "DOKU Checkout",
+          whatsapp: user.phone || "-",
+          status: "PENDING",
+          payment_data: dokuResult.data
+        }]);
+
+        // 3. Arahkan langsung ke URL Pembayaran DOKU
+        const paymentUrl = 
+          dokuResult.data?.response?.payment?.url || 
+          dokuResult.data?.payment?.url || 
+          dokuResult.data?.response?.url || 
+          dokuResult.data?.payment_url || 
+          dokuResult.data?.url;
+
+        if (paymentUrl) {
+          window.location.href = paymentUrl;
+        } else {
+          window.location.href = `/order-status.html?inv=${encodeURIComponent(invoiceNumber)}`;
+        }
+      } catch (err) {
+        console.error("Deposit Error:", err);
+        alert(`Gagal memproses deposit: ${err.message}`);
+        btnDeposit.disabled = false;
+        btnDeposit.innerHTML = '<i class="fa-solid fa-circle-plus"></i> Isi Saldo QRIS';
+      }
+    });
+  }
+
+  // Logout Handlers
   const handleLogout = async () => {
     try {
       if (window.supabase?.auth) await window.supabase.auth.signOut();
@@ -177,8 +257,4 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   document.getElementById("logoutBtn")?.addEventListener("click", handleLogout);
   document.getElementById("btnMobileLogout")?.addEventListener("click", handleLogout);
-
-  document.getElementById("btnDeposit")?.addEventListener("click", () => {
-    alert("Fitur Deposit Saldo Instan QRIS akan aktif di menu saldo.");
-  });
 });
