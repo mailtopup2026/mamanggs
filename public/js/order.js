@@ -385,25 +385,60 @@ document.addEventListener("DOMContentLoaded", async () => {
     });
   });
 
-  // Modal Saldo Kurang Handlers
-  const modalBalance = document.getElementById("insufficientBalanceModal");
-  const btnCloseBal = document.getElementById("btnCloseBalModal");
-  if (btnCloseBal && modalBalance) {
-    btnCloseBal.addEventListener("click", () => {
-      modalBalance.style.display = "none";
-    });
-  }
-
+  // ==========================================
+  // MODAL POP-UP SALDO TIDAK CUKUP (CYBERPUNK AUTO-INJECT)
+  // ==========================================
   function showInsufficientBalanceModal(currentBal, totalPay) {
-    if (modalBalance) {
-      const balEl = document.getElementById("modalUserBalanceText");
-      const reqEl = document.getElementById("modalRequiredAmountText");
-      if (balEl) balEl.innerText = `Rp ${Number(currentBal).toLocaleString("id-ID")}`;
-      if (reqEl) reqEl.innerText = `Rp ${Number(totalPay).toLocaleString("id-ID")}`;
-      modalBalance.style.display = "flex";
-    } else {
-      alert(`Saldo MGS Anda tidak mencukupi!\nSaldo Anda: Rp ${currentBal.toLocaleString("id-ID")}\nTotal Bayar: Rp ${totalPay.toLocaleString("id-ID")}\n\nSilakan isi saldo akun Anda terlebih dahulu.`);
-    }
+    const oldModal = document.getElementById("cyberBalanceModal");
+    if (oldModal) oldModal.remove();
+
+    const formattedBal = Number(currentBal || 0).toLocaleString("id-ID");
+    const formattedPay = Number(totalPay || 0).toLocaleString("id-ID");
+
+    const modalHTML = `
+      <div id="cyberBalanceModal" style="position: fixed; inset: 0; z-index: 99999; background: rgba(3, 7, 18, 0.85); backdrop-filter: blur(8px); display: flex; align-items: center; justify-content: center; padding: 16px;">
+        <div style="background: linear-gradient(145deg, #0d1527, #070b14); border: 1px solid rgba(230, 57, 70, 0.4); box-shadow: 0 20px 50px rgba(0, 0, 0, 0.8), 0 0 30px rgba(230, 57, 70, 0.2); border-radius: 20px; max-width: 420px; width: 100%; padding: 26px; text-align: center; position: relative;">
+          
+          <div style="width: 58px; height: 58px; border-radius: 16px; background: rgba(230, 57, 70, 0.15); border: 1px solid rgba(230, 57, 70, 0.4); display: flex; align-items: center; justify-content: center; color: #ff4d5a; font-size: 1.6rem; margin: 0 auto 16px;">
+            <i class="fa-solid fa-triangle-exclamation"></i>
+          </div>
+
+          <h3 style="margin: 0 0 8px; font-size: 1.25rem; font-weight: 800; color: #fff;">Saldo MGS Tidak Cukup</h3>
+          <p style="color: #94a3b8; font-size: 0.86rem; margin: 0 0 20px; line-height: 1.5;">Saldo dompet internal akun Anda tidak mencukupi untuk menyelesaikan transaksi ini.</p>
+
+          <div style="background: rgba(15, 23, 42, 0.7); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 14px; padding: 16px; margin-bottom: 22px; text-align: left; font-size: 0.88rem;">
+            <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
+              <span style="color: #94a3b8;">Saldo Saat Ini:</span>
+              <strong style="color: #fff;">Rp ${formattedBal}</strong>
+            </div>
+            <div style="display: flex; justify-content: space-between; border-top: 1px solid rgba(255,255,255,0.06); padding-top: 10px;">
+              <span style="color: #94a3b8;">Total Tagihan:</span>
+              <strong style="color: #ff4d5a; font-size: 1rem;">Rp ${formattedPay}</strong>
+            </div>
+          </div>
+
+          <div style="display: flex; gap: 10px;">
+            <button id="btnDismissCyberModal" type="button" style="flex: 1; background: rgba(255, 255, 255, 0.06); border: 1px solid rgba(255, 255, 255, 0.12); color: #cbd5e1; padding: 12px; border-radius: 10px; font-weight: 700; cursor: pointer; font-family: inherit; font-size: 0.9rem;">
+              Batal
+            </button>
+            <a href="/dashboard.html" style="flex: 1.2; background: #e63946; color: #fff; text-decoration: none; padding: 12px; border-radius: 10px; font-weight: 800; display: flex; align-items: center; justify-content: center; gap: 8px; box-shadow: 0 4px 18px rgba(230, 57, 70, 0.45); font-size: 0.9rem;">
+              <i class="fa-solid fa-circle-plus"></i> Isi Saldo
+            </a>
+          </div>
+
+        </div>
+      </div>
+    `;
+
+    document.body.insertAdjacentHTML("beforeend", modalHTML);
+
+    const cyberModal = document.getElementById("cyberBalanceModal");
+    const dismissBtn = document.getElementById("btnDismissCyberModal");
+
+    dismissBtn?.addEventListener("click", () => cyberModal.remove());
+    cyberModal?.addEventListener("click", (e) => {
+      if (e.target === cyberModal) cyberModal.remove();
+    });
   }
 
   // ==========================================
@@ -556,7 +591,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
         const currentBal = Number(profile.balance) || 0;
 
-        // Tampilkan Modal Pop-up jika saldo kurang
+        // Tampilkan Modal Cyber Pop-up jika saldo kurang
         if (currentBal < totalToPay) {
           showInsufficientBalanceModal(currentBal, totalToPay);
           checkoutBtn.disabled = false;
