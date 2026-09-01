@@ -88,7 +88,7 @@ document.addEventListener("DOMContentLoaded", async () => {
           }
         }
 
-        // Saldo
+        // Saldo Dompet
         const walletEl = document.getElementById("walletBalance");
         if (walletEl) {
           const balance = Number(profile.balance || 0).toLocaleString("id-ID");
@@ -167,22 +167,56 @@ document.addEventListener("DOMContentLoaded", async () => {
   }
 
   // ==========================================
-  // FITUR DEPOSIT TOP UP SALDO MGS OTOMATIS
+  // MODAL LOGIK ISI SALDO MGS
   // ==========================================
+  const depositModal = document.getElementById("depositModal");
   const btnDeposit = document.getElementById("btnDeposit");
-  if (btnDeposit) {
-    btnDeposit.addEventListener("click", async () => {
-      const nominalStr = prompt("Masukkan nominal isi saldo MGS (Minimal Rp 10.000):", "10000");
-      if (!nominalStr) return;
+  const btnCloseDeposit = document.getElementById("btnCloseDeposit");
+  const inputDepositVal = document.getElementById("inputDepositVal");
+  const btnSubmitDeposit = document.getElementById("btnSubmitDeposit");
+  const presetButtons = document.querySelectorAll(".btn-preset-val");
 
-      const amount = parseInt(nominalStr.replace(/\D/g, ""), 10);
+  if (btnDeposit && depositModal) {
+    btnDeposit.addEventListener("click", () => {
+      depositModal.classList.add("show");
+    });
+
+    btnCloseDeposit?.addEventListener("click", () => {
+      depositModal.classList.remove("show");
+    });
+
+    depositModal.addEventListener("click", (e) => {
+      if (e.target === depositModal) depositModal.classList.remove("show");
+    });
+
+    presetButtons.forEach((btn) => {
+      btn.addEventListener("click", () => {
+        presetButtons.forEach((b) => b.classList.remove("active"));
+        btn.classList.add("active");
+        if (inputDepositVal) inputDepositVal.value = btn.getAttribute("data-amount");
+      });
+    });
+
+    inputDepositVal?.addEventListener("input", () => {
+      const val = inputDepositVal.value;
+      presetButtons.forEach((b) => {
+        if (b.getAttribute("data-amount") === val) {
+          b.classList.add("active");
+        } else {
+          b.classList.remove("active");
+        }
+      });
+    });
+
+    btnSubmitDeposit?.addEventListener("click", async () => {
+      const amount = parseInt(inputDepositVal.value, 10);
       if (isNaN(amount) || amount < 10000) {
-        alert("Nominal deposit minimal adalah Rp 10.000");
+        alert("Nominal minimal isi saldo adalah Rp 10.000");
         return;
       }
 
-      btnDeposit.disabled = true;
-      btnDeposit.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Menyiapkan...';
+      btnSubmitDeposit.disabled = true;
+      btnSubmitDeposit.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Menyiapkan Tagihan...';
 
       const now = new Date();
       const dateStr = now.getFullYear().toString() + String(now.getMonth() + 1).padStart(2, "0") + String(now.getDate()).padStart(2, "0");
@@ -190,7 +224,7 @@ document.addEventListener("DOMContentLoaded", async () => {
       const invoiceNumber = `DEP-${dateStr}-${randomDigits}`;
 
       try {
-        // 1. Request DOKU Payment Gateway
+        // 1. Tagihan DOKU Checkout
         const dokuRes = await fetch("/api/create-payment", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -205,10 +239,10 @@ document.addEventListener("DOMContentLoaded", async () => {
 
         const dokuResult = await dokuRes.json();
         if (!dokuRes.ok || !dokuResult.success) {
-          throw new Error(dokuResult.error || "Gagal membuat invoice DOKU");
+          throw new Error(dokuResult.error || "Gagal membuat invoice pembayaran.");
         }
 
-        // 2. Simpan order deposit ke Supabase
+        // 2. Simpan Transaksi Deposit ke Supabase
         await window.supabase.from("orders").insert([{
           invoice: invoiceNumber,
           user_id: user.id,
@@ -223,7 +257,7 @@ document.addEventListener("DOMContentLoaded", async () => {
           payment_data: dokuResult.data
         }]);
 
-        // 3. Arahkan langsung ke URL Pembayaran DOKU
+        // 3. Arahkan ke Halaman Pembayaran DOKU
         const paymentUrl = 
           dokuResult.data?.response?.payment?.url || 
           dokuResult.data?.payment?.url || 
@@ -239,8 +273,8 @@ document.addEventListener("DOMContentLoaded", async () => {
       } catch (err) {
         console.error("Deposit Error:", err);
         alert(`Gagal memproses deposit: ${err.message}`);
-        btnDeposit.disabled = false;
-        btnDeposit.innerHTML = '<i class="fa-solid fa-circle-plus"></i> Isi Saldo QRIS';
+        btnSubmitDeposit.disabled = false;
+        btnSubmitDeposit.innerHTML = '<i class="fa-solid fa-qrcode"></i> Lanjut Pilih Metode Pembayaran';
       }
     });
   }
