@@ -12,21 +12,57 @@
   
   <link rel="stylesheet" href="/css/global.css">
   <link rel="stylesheet" href="/css/dashboard.css">
+
+  <style>
+    html, body {
+      overflow-x: hidden !important;
+      max-width: 100% !important;
+    }
+    *, *::before, *::after {
+      box-sizing: border-box !important;
+    }
+  </style>
 </head>
 <body>
 
-  <!-- NAVBAR -->
+  <!-- NAVBAR DENGAN FITUR RESPONSIVE & TITIK TIGA -->
   <header class="navbar">
     <div class="navbar-container">
       <a href="/" class="brand-logo">
         <div class="logo-video-wrap"><video autoplay loop muted playsinline class="logo-video"><source src="/assets/images/logo.mp4" type="video/mp4"></video></div>
-        
       </a>
 
-      <div class="nav-actions">
+      <!-- DESKTOP ACTIONS -->
+      <div class="nav-actions desktop-only" id="desktopNavActions">
         <a href="/" class="btn-nav-login"><i class="fa-solid fa-house"></i> Beranda</a>
         <a href="/leaderboard.html" class="btn-nav-login" style="color: #f59e0b; border-color: rgba(245, 158, 11, 0.4);"><i class="fa-solid fa-crown"></i> Leaderboard</a>
         <a href="/order-status.html" class="btn-nav-login"><i class="fa-solid fa-magnifying-glass"></i> Lacak</a>
+        <a href="/blog.html" class="btn-nav-login" style="color: #38bdf8; border-color: rgba(56, 189, 248, 0.4);"><i class="fa-solid fa-newspaper"></i> Blog</a>
+      </div>
+
+      <!-- MOBILE ONLY: TOMBOL TITIK TIGA (⋮) -->
+      <div class="mobile-nav-toggle-group">
+        <button id="btnMobileMenuToggle" class="btn-mobile-icon" title="Menu Lengkap">
+          <i class="fa-solid fa-ellipsis-vertical"></i>
+        </button>
+      </div>
+    </div>
+
+    <!-- MOBILE DROPDOWN DRAWER -->
+    <div id="mobileMenuDropdown" class="mobile-menu-drawer">
+      <div class="mobile-menu-header">
+        <span style="font-weight: 800; font-size: 0.88rem; color: #fff;">Menu MamangGS</span>
+        <button id="btnCloseMobileMenu" style="background: none; border: none; color: #94a3b8; font-size: 1.1rem; cursor: pointer;">✕</button>
+      </div>
+      <div id="mobileMenuList" class="mobile-menu-items">
+        <a href="/" class="mobile-menu-link"><i class="fa-solid fa-house" style="color: #3b82f6;"></i> Beranda</a>
+        <a href="/leaderboard.html" class="mobile-menu-link"><i class="fa-solid fa-crown" style="color: #f59e0b;"></i> Leaderboard Sultan</a>
+        <a href="/blog.html" class="mobile-menu-link"><i class="fa-solid fa-newspaper" style="color: #38bdf8;"></i> Blog & Tips Game</a>
+        <a href="/order-status.html" class="mobile-menu-link" style="color: #10b981;"><i class="fa-solid fa-receipt"></i> Lacak Pesanan</a>
+        <hr style="border: none; border-top: 1px solid rgba(255,255,255,0.08); margin: 8px 0;">
+        <button id="btnMobileLogout" class="mobile-menu-link" style="width: 100%; text-align: left; background: none; border: none; color: #ef4444; cursor: pointer; padding: 10px 0; font-family: inherit; font-size: 0.95rem; font-weight: 700;">
+          <i class="fa-solid fa-right-from-bracket"></i> Keluar Akun
+        </button>
       </div>
     </div>
   </header>
@@ -133,7 +169,6 @@
       <div class="footer-brand">
         <div class="brand-logo">
           <div class="logo-video-wrap"><video autoplay loop muted playsinline class="logo-video"><source src="/assets/images/logo.mp4" type="video/mp4"></video></div>
-          
         </div>
         <p>Platform top up game otomatis, murah, dan terpercaya 24 jam nonstop.</p>
       </div>
@@ -163,6 +198,7 @@
   </footer>
 
   <!-- JS MODULAR -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="/js/particles.js"></script>
   <script src="/js/supabase.js"></script>
   <script src="/js/navbar.js"></script>

@@ -1,13 +1,8 @@
-document.addEventListener("DOMContentLoaded", () => {
+document.addEventListener("DOMContentLoaded", async () => {
   const storedUser = localStorage.getItem("mgs_user");
-  if (!storedUser) {
-    window.location.href = "/auth/login.html";
-    return;
-  }
+  let user = storedUser ? JSON.parse(storedUser) : null;
 
-  const user = JSON.parse(storedUser);
-
-  // Daftar kamus icon game untuk render badge di dashboard
+  // Kamus Badge Game
   const gameDictionary = {
     MLBB: { name: "MLBB", icon: "fa-solid fa-shield-halved" },
     PUBG: { name: "PUBG Mobile", icon: "fa-solid fa-crosshairs" },
@@ -20,23 +15,38 @@ document.addEventListener("DOMContentLoaded", () => {
     WOS: { name: "Whiteout", icon: "fa-solid fa-snowflake" }
   };
 
-  // Pasang data awal dari metadata login
-  const initialName = user.user_metadata?.full_name || user.email?.split("@")[0] || "Member";
-  if (document.getElementById("profileName")) document.getElementById("profileName").innerText = initialName;
-  if (document.getElementById("profileEmail")) document.getElementById("profileEmail").innerText = user.email || "";
-
-  // Sinkronisasi data real-time dengan Supabase
-  const checkSupabase = setInterval(() => {
+  // Tunggu Supabase siap
+  const checkSupabase = setInterval(async () => {
     if (window.supabase) {
       clearInterval(checkSupabase);
+
+      // Ambil session resmi dari Supabase Auth
+      try {
+        const { data: sessionData } = await window.supabase.auth.getSession();
+        if (sessionData?.session?.user) {
+          user = sessionData.session.user;
+          localStorage.setItem("mgs_user", JSON.stringify(user));
+        }
+      } catch (e) {}
+
+      if (!user) {
+        window.location.href = "/auth/login.html";
+        return;
+      }
+
+      // Render data awal
+      const initialName = user.user_metadata?.full_name || user.email?.split("@")[0] || "Member";
+      if (document.getElementById("profileName")) document.getElementById("profileName").innerText = initialName;
+      if (document.getElementById("profileEmail")) document.getElementById("profileEmail").innerText = user.email || "";
+
       loadUserProfile(user.id);
     }
   }, 100);
 
-  // Ambil saldo, role, avatar 3d, dan game favorit dari profiles
+  // Ambil saldo, role, avatar, dan riwayat pesanan
   async function loadUserProfile(userId) {
     try {
-      const { data, error } = await window.supabase
+      const { data: profile, error } = await window.supabase
         .from("profiles")
         .select("*")
         .eq("id", userId)
@@ -46,28 +56,28 @@ document.addEventListener("DOMContentLoaded", () => {
 
       let userPhone = null;
 
-      if (data) {
-        userPhone = data.whatsapp || null;
-        if (data.full_name && document.getElementById("profileName")) {
-          document.getElementById("profileName").innerText = data.full_name;
+      if (profile) {
+        userPhone = profile.whatsapp || null;
+        if (profile.full_name && document.getElementById("profileName")) {
+          document.getElementById("profileName").innerText = profile.full_name;
         }
-        if (data.email && document.getElementById("profileEmail")) {
-          document.getElementById("profileEmail").innerText = data.email;
+        if (profile.email && document.getElementById("profileEmail")) {
+          document.getElementById("profileEmail").innerText = profile.email;
         }
 
-        // 1. Update Avatar 3D
+        // Avatar
         const userAvatarImg = document.getElementById("userAvatarImg");
         if (userAvatarImg) {
-          const avatarUrl = data.avatar_url && data.avatar_url.trim() !== "" 
-            ? data.avatar_url 
-            : `https://api.dicebear.com/7.x/adventurer/svg?seed=${encodeURIComponent(data.full_name || "Member")}&radius=50`;
+          const avatarUrl = profile.avatar_url && profile.avatar_url.trim() !== "" 
+            ? profile.avatar_url 
+            : `https://api.dicebear.com/7.x/adventurer/svg?seed=${encodeURIComponent(profile.full_name || "Member")}&radius=50`;
           userAvatarImg.src = avatarUrl;
         }
 
-        // 2. Render Badge Game Favorit di Dashboard
+        // Badge Game
         const dashboardBadges = document.getElementById("dashboardBadges");
         if (dashboardBadges) {
-          const favGames = Array.isArray(data.favorite_games) ? data.favorite_games : [];
+          const favGames = Array.isArray(profile.favorite_games) ? profile.favorite_games : [];
           if (favGames.length > 0) {
             dashboardBadges.innerHTML = favGames.map(code => {
               const g = gameDictionary[code] || { name: code, icon: "fa-solid fa-gamepad" };
@@ -82,31 +92,28 @@ document.addEventListener("DOMContentLoaded", () => {
           }
         }
 
-        // 3. Saldo & Role
+        // Saldo Dompet
         const walletEl = document.getElementById("walletBalance");
         if (walletEl) {
-          const balance = Number(data.balance || 0).toLocaleString("id-ID");
+          const balance = Number(profile.balance || 0).toLocaleString("id-ID");
           walletEl.innerText = `Rp ${balance}`;
         }
 
+        // Role
         const rolePill = document.getElementById("profileRole");
         if (rolePill) {
-          const role = (data.role || "MEMBER").toUpperCase();
-          rolePill.innerText = role;
-          if (data.role === "reseller") rolePill.classList.add("reseller");
+          rolePill.innerText = (profile.role || "MEMBER").toUpperCase();
         }
       }
 
-      // Panggil loadOrderHistory setelah data profile (termasuk nomor WA) siap
       loadOrderHistory(userId, userPhone);
-
     } catch (err) {
       console.error("Gagal sinkron profil:", err.message);
       loadOrderHistory(userId, null);
     }
   }
 
-  // Ambil riwayat pesanan (Cari via user_id ATAU no WhatsApp)
+  // Load Riwayat Pesanan
   async function loadOrderHistory(userId, userPhone) {
     const tableBody = document.getElementById("orderHistoryBody");
     const emptyState = document.getElementById("historyEmptyState");
@@ -118,9 +125,9 @@ document.addEventListener("DOMContentLoaded", () => {
         .select("*")
         .order("created_at", { ascending: false });
 
-      if (userPhone) {
+      if (userPhone && userId) {
         query = query.or(`user_id.eq.${userId},whatsapp.eq.${userPhone}`);
-      } else {
+      } else if (userId) {
         query = query.eq("user_id", userId);
       }
 
@@ -136,20 +143,22 @@ document.addEventListener("DOMContentLoaded", () => {
 
         orders.forEach((ord) => {
           const row = document.createElement("tr");
-          const date = new Date(ord.created_at).toLocaleDateString("id-ID", {
+          const date = new Date(ord.created_at || Date.now()).toLocaleDateString("id-ID", {
             day: "numeric",
             month: "short",
             year: "numeric"
           });
           const price = Number(ord.price || 0).toLocaleString("id-ID");
+          const isSuccess = (ord.status || "").toUpperCase() === "SUCCESS";
+          const statusClass = isSuccess ? "success" : "pending";
 
           row.innerHTML = `
-            <td><strong style="color: var(--accent-red);">${ord.invoice}</strong></td>
+            <td><strong style="color: #e63946; font-family: monospace;">${ord.invoice}</strong></td>
             <td>${ord.game_title || ord.game_code || "-"}</td>
             <td>${ord.item_name}</td>
-            <td>Rp ${price}</td>
-            <td><span class="status-badge ${(ord.status || 'pending').toLowerCase()}">${ord.status}</span></td>
-            <td>${date}</td>
+            <td style="color: #38bdf8; font-weight: 700;">Rp ${price}</td>
+            <td><span class="status-badge ${statusClass}">${ord.status}</span></td>
+            <td style="color: #94a3b8;">${date}</td>
           `;
           if (tableBody) tableBody.appendChild(row);
         });
@@ -162,50 +171,22 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 
-  // ==========================================
-  // CUSTOM CYBER MODAL LOGOUT HANDLER
-  // ==========================================
-  const logoutBtn = document.getElementById("logoutBtn");
-  const logoutModal = document.getElementById("logoutModalOverlay");
-  const btnCancelLogout = document.getElementById("btnCancelLogout");
-  const btnConfirmLogout = document.getElementById("btnConfirmLogout");
+  // Logout Handlers
+  const handleLogout = async () => {
+    try {
+      if (window.supabase?.auth) await window.supabase.auth.signOut();
+    } catch (e) {}
+    localStorage.clear();
+    sessionStorage.clear();
+    window.location.href = "/";
+  };
 
-  if (logoutBtn && logoutModal) {
-    logoutBtn.addEventListener("click", () => {
-      logoutModal.classList.add("show");
-    });
+  document.getElementById("logoutBtn")?.addEventListener("click", handleLogout);
+  document.getElementById("logoutBtnTop")?.addEventListener("click", handleLogout);
+  document.getElementById("btnMobileLogout")?.addEventListener("click", handleLogout);
 
-    btnCancelLogout?.addEventListener("click", () => {
-      logoutModal.classList.remove("show");
-    });
-
-    logoutModal.addEventListener("click", (e) => {
-      if (e.target === logoutModal) {
-        logoutModal.classList.remove("show");
-      }
-    });
-
-    btnConfirmLogout?.addEventListener("click", async () => {
-      btnConfirmLogout.disabled = true;
-      btnConfirmLogout.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Keluar...';
-
-      try {
-        if (window.supabase && window.supabase.auth) {
-          await window.supabase.auth.signOut();
-        }
-      } catch (err) {
-        console.warn("Gagal sign out Supabase:", err);
-      } finally {
-        localStorage.removeItem("mgs_user");
-        localStorage.clear();
-        sessionStorage.clear();
-        window.location.href = "/";
-      }
-    });
-  }
-
-  // Tombol Isi Saldo
+  // Deposit Info
   document.getElementById("btnDeposit")?.addEventListener("click", () => {
-    alert("Fitur Deposit Saldo Instan QRIS akan aktif di Step Integrasi Payment Gateway!");
+    alert("Fitur Deposit Saldo Instan QRIS akan aktif di menu saldo.");
   });
 });
