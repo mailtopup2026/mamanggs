@@ -2,7 +2,8 @@
 <html lang="id">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <!-- Tambahan: maximum-scale=1.0 & user-scalable=no agar di HP tidak bisa zoom out berantakan -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>MamangGS - Top Up Game Favoritmu Cepat & Murah</title>
   
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -16,6 +17,23 @@
   <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎮</text></svg>">
 
   <style>
+    /* --- FIX 1: PENGUNCI LAYAR AGAR TIDAK BISA DIGESER KE KANAN-KIRI --- */
+    html, body {
+      max-width: 100vw !important;
+      overflow-x: hidden !important;
+    }
+
+    /* --- FIX 2: TINGGI CAROUSEL --- */
+    .carousel-container {
+      position: relative;
+      width: 100%;
+      height: 360px; /* Tambahan tinggi agar titik dot tidak jatuh */
+      border-radius: 18px;
+      overflow: hidden;
+      background: #0f172a;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.4);
+    }
+
     /* 1. INFINITE AUTO-SCROLL TICKER (PASTI TER-MURAAHH) */
     .flash-marquee-wrapper {
       position: relative;
@@ -110,6 +128,9 @@
       display: grid !important;
       grid-template-columns: repeat(3, 1fr) !important;
       gap: 14px !important;
+      /* --- FIX 3: KUNCI LEBAR AGAR TIDAK BOCOR KE KANAN --- */
+      width: 100%;
+      box-sizing: border-box;
     }
 
     .popular-compact-card {
@@ -123,6 +144,10 @@
       text-decoration: none;
       color: #fff;
       transition: all 0.2s ease;
+      /* --- FIX: MENCEGAH TEKS PANJANG MERUSAK GRID --- */
+      box-sizing: border-box;
+      min-width: 0;
+      overflow: hidden;
     }
 
     .popular-compact-card:hover {
@@ -163,6 +188,8 @@
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));
       gap: 18px;
+      width: 100%;
+      box-sizing: border-box;
     }
 
     .catalog-poster-card {
@@ -175,6 +202,8 @@
       display: flex;
       flex-direction: column;
       transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+      box-sizing: border-box;
+      min-width: 0;
     }
 
     .catalog-poster-card:hover {
@@ -275,10 +304,21 @@
         width: 36px; height: 36px; background: #1e293b; border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 8px; color: #fff; display: flex; align-items: center; justify-content: center; font-size: 0.95rem; cursor: pointer;
       }
       .btn-mobile-icon:hover { border-color: #f59e0b; color: #f59e0b; }
+      
+      /* --- FIX 4: TINGGI CAROUSEL KHUSUS DI HP --- */
+      .carousel-container {
+        height: 180px !important; 
+      }
+
       .popular-grid-layout { grid-template-columns: repeat(2, 1fr) !important; gap: 8px !important; }
       .popular-compact-card { padding: 8px 10px !important; gap: 8px !important; }
       .popular-compact-card img { width: 36px !important; height: 36px !important; }
-      .popular-compact-card h4 { font-size: 0.78rem !important; }
+      .popular-compact-card h4 { 
+        font-size: 0.78rem !important; 
+        white-space: nowrap; 
+        overflow: hidden; 
+        text-overflow: ellipsis; 
+      }
       .catalog-poster-grid { grid-template-columns: repeat(2, 1fr) !important; gap: 10px !important; }
       .catalog-poster-card img { height: 160px !important; }
     }
