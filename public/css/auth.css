@@ -554,3 +554,15 @@
   line-height: 1.35 !important;
   margin: 0 !important;
 }
+/* Styling Tombol Sosial Media (Google & Discord) */
+.btn-social.btn-discord:hover {
+  background: rgba(88, 101, 242, 0.15);
+  border-color: #5865f2;
+  color: #fff;
+}
+
+.btn-social.btn-google:hover {
+  background: rgba(234, 67, 53, 0.15);
+  border-color: #ea4335;
+  color: #fff;
+}

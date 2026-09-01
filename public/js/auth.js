@@ -72,6 +72,50 @@ function triggerMascotSuccess() {
 }
 
 // ==========================================
+// LOGIN DENGAN GOOGLE OAUTH
+// ==========================================
+async function loginWithGoogle() {
+  if (!window.supabase || !window.supabase.auth) {
+    showToast("error", "Koneksi Belum Siap", "Silakan refresh halaman terlebih dahulu.");
+    return;
+  }
+
+  try {
+    const { error } = await window.supabase.auth.signInWithOAuth({
+      provider: "google",
+      options: {
+        redirectTo: window.location.origin
+      }
+    });
+    if (error) throw error;
+  } catch (err) {
+    showToast("error", "Gagal Login Google", err.message);
+  }
+}
+
+// ==========================================
+// LOGIN DENGAN DISCORD OAUTH
+// ==========================================
+async function loginWithDiscord() {
+  if (!window.supabase || !window.supabase.auth) {
+    showToast("error", "Koneksi Belum Siap", "Silakan refresh halaman terlebih dahulu.");
+    return;
+  }
+
+  try {
+    const { error } = await window.supabase.auth.signInWithOAuth({
+      provider: "discord",
+      options: {
+        redirectTo: window.location.origin
+      }
+    });
+    if (error) throw error;
+  } catch (err) {
+    showToast("error", "Gagal Login Discord", err.message);
+  }
+}
+
+// ==========================================
 // INITIALIZE INTERACTIVE MASCOT EVENTS
 // ==========================================
 function initMascotEvents() {
