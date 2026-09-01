@@ -74,7 +74,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   }
 
   let selectedItem = null;
-  let selectedPayment = "QRIS (Semua E-Wallet)";
+  let selectedPayment = "Pilih Cara Pembayaran";
   let verifiedNickname = null;
 
   // Variabel Kupon Promo
@@ -245,12 +245,20 @@ document.addEventListener("DOMContentLoaded", async () => {
   }
 
   // Handle Pilih Metode Bayar
+  const checkoutBtn = document.getElementById("checkoutBtn");
   document.querySelectorAll(".payment-card").forEach((card) => {
     card.addEventListener("click", () => {
       document.querySelectorAll(".payment-card").forEach((c) => c.classList.remove("selected"));
       card.classList.add("selected");
       const spanTitle = card.querySelector(".payment-brand span");
       if (spanTitle) selectedPayment = spanTitle.innerText.trim();
+
+      // Update Teks Tombol Beli sesuai metode yang dipilih
+      if (selectedPayment.toLowerCase().includes("saldo")) {
+        checkoutBtn.innerHTML = '<i class="fa-solid fa-bolt"></i> Bayar Pakai Saldo MGS';
+      } else {
+        checkoutBtn.innerHTML = '<i class="fa-solid fa-bolt"></i> Beli dan Pilih Cara Pembayaran';
+      }
     });
   });
 
@@ -329,7 +337,6 @@ document.addEventListener("DOMContentLoaded", async () => {
   // ==========================================
   // CHECKOUT HANDLER
   // ==========================================
-  const checkoutBtn = document.getElementById("checkoutBtn");
   checkoutBtn.addEventListener("click", async () => {
     const userId = userIdInput.value.trim();
     const zoneId = currentGame.hasZone ? zoneIdInput.value.trim() : null;
@@ -388,9 +395,9 @@ document.addEventListener("DOMContentLoaded", async () => {
     // 1. PEMBAYARAN MENGGUNAKAN SALDO INTERNAL MAMANGGS
     if (isUsingWallet) {
       if (!userUuid) {
-        alert("Metode pembayaran Saldo Akun hanya berlaku untuk member yang sudah login. Silakan Login terlebih dahulu!");
+        alert("Metode pembayaran Saldo MGS hanya berlaku untuk member yang sudah login. Silakan Login terlebih dahulu!");
         checkoutBtn.disabled = false;
-        checkoutBtn.innerHTML = '<i class="fa-solid fa-bolt"></i> Beli Sekarang';
+        checkoutBtn.innerHTML = '<i class="fa-solid fa-bolt"></i> Bayar Pakai Saldo MGS';
         return;
       }
 
@@ -406,9 +413,9 @@ document.addEventListener("DOMContentLoaded", async () => {
         const currentBal = Number(profile.balance) || 0;
 
         if (currentBal < totalToPay) {
-          alert(`Saldo Akun Anda tidak mencukupi!\nSaldo Anda: Rp ${currentBal.toLocaleString("id-ID")}\nTotal Bayar: Rp ${totalToPay.toLocaleString("id-ID")}\n\nSilakan isi saldo akun Anda terlebih dahulu.`);
+          alert(`Saldo MGS Anda tidak mencukupi!\nSaldo Anda: Rp ${currentBal.toLocaleString("id-ID")}\nTotal Bayar: Rp ${totalToPay.toLocaleString("id-ID")}\n\nSilakan isi saldo akun Anda terlebih dahulu.`);
           checkoutBtn.disabled = false;
-          checkoutBtn.innerHTML = '<i class="fa-solid fa-bolt"></i> Beli Sekarang';
+          checkoutBtn.innerHTML = '<i class="fa-solid fa-bolt"></i> Bayar Pakai Saldo MGS';
           return;
         }
 
@@ -426,11 +433,11 @@ document.addEventListener("DOMContentLoaded", async () => {
         console.error("Wallet error:", err);
         alert(err.message);
         checkoutBtn.disabled = false;
-        checkoutBtn.innerHTML = '<i class="fa-solid fa-bolt"></i> Beli Sekarang';
+        checkoutBtn.innerHTML = '<i class="fa-solid fa-bolt"></i> Bayar Pakai Saldo MGS';
         return;
       }
     } else {
-      // 2. PEMBAYARAN MENGGUNAKAN DOKU PAYMENT GATEWAY (QRIS / VA)
+      // 2. PEMBAYARAN MENGGUNAKAN DOKU PAYMENT GATEWAY (PILIH CARA PEMBAYARAN)
       try {
         const dokuRes = await fetch("/api/create-payment", {
           method: "POST",
@@ -455,7 +462,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         console.error("DOKU Gateway Error:", err);
         alert(`Gagal memproses gateway pembayaran: ${err.message}`);
         checkoutBtn.disabled = false;
-        checkoutBtn.innerHTML = '<i class="fa-solid fa-bolt"></i> Beli Sekarang';
+        checkoutBtn.innerHTML = '<i class="fa-solid fa-bolt"></i> Beli dan Pilih Cara Pembayaran';
         return;
       }
     }
@@ -485,9 +492,9 @@ document.addEventListener("DOMContentLoaded", async () => {
       const { error } = await window.supabase.from("orders").insert([orderPayload]);
       if (error) throw error;
 
-      // REDIRECT LOGIC SEMENTARA (LANGSUNG KE DOKU CHECKOUT)
+      // REDIRECT LOGIC
       if (isUsingWallet) {
-        alert("Pembayaran Berhasil! Saldo akun Anda telah dipotong dan pesanan langsung diproses.");
+        alert("Pembayaran Berhasil! Saldo MGS Anda telah dipotong dan pesanan langsung diproses.");
         window.location.href = `/order-status.html?inv=${encodeURIComponent(invoiceNumber)}`;
         return;
       }
@@ -508,7 +515,9 @@ document.addEventListener("DOMContentLoaded", async () => {
       console.error("Error order:", err);
       alert("Gagal membuat pesanan: " + err.message);
       checkoutBtn.disabled = false;
-      checkoutBtn.innerHTML = '<i class="fa-solid fa-bolt"></i> Beli Sekarang';
+      checkoutBtn.innerHTML = selectedPayment.toLowerCase().includes("saldo")
+        ? '<i class="fa-solid fa-bolt"></i> Bayar Pakai Saldo MGS'
+        : '<i class="fa-solid fa-bolt"></i> Beli dan Pilih Cara Pembayaran';
     }
   });
 });
