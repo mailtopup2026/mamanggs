@@ -1,28 +1,100 @@
 document.addEventListener("DOMContentLoaded", async () => {
-  // 1. DAFTAR LENGKAP METADATA GAME
+  // 1. DAFTAR LENGKAP METADATA GAME (SINKRON DENGAN BERANDA & ADMIN PANEL)
   const gamesMeta = {
     mlbb: {
       code: "mlbb",
       brandQuery: "MOBILE LEGEND",
       title: "Mobile Legends: Bang Bang",
-      dev: "Moonton Games",
+      dev: "Moonton",
       banner: "https://images.unsplash.com/photo-1563089145-599997674d42?auto=format&fit=crop&w=600&q=80",
       hasZone: true
     },
     ff: {
       code: "ff",
       brandQuery: "FREE FIRE",
-      title: "Free Fire Max",
-      dev: "Garena International",
+      title: "Free Fire",
+      dev: "Garena",
       banner: "https://images.unsplash.com/photo-1579373903781-fd5c0c30c4cd?auto=format&fit=crop&w=600&q=80",
       hasZone: false
     },
     pubg: {
       code: "pubg",
       brandQuery: "PUBG",
-      title: "PUBG Mobile | UC",
+      title: "PUBG Mobile",
       dev: "Level Infinite",
       banner: "https://images.unsplash.com/photo-1542751371-adc38448a05e?auto=format&fit=crop&w=600&q=80",
+      hasZone: false
+    },
+    codm: {
+      code: "codm",
+      brandQuery: "CALL OF DUTY",
+      title: "Call of Duty: Mobile",
+      dev: "Garena / Activision",
+      banner: "https://images.unsplash.com/photo-1538481199705-c710c4e965fc?auto=format&fit=crop&w=600&q=80",
+      hasZone: false
+    },
+    aov: {
+      code: "aov",
+      brandQuery: "ARENA OF VALOR",
+      title: "Arena of Valor (AOV)",
+      dev: "Garena",
+      banner: "https://images.unsplash.com/photo-1511512578047-dfb367046420?auto=format&fit=crop&w=600&q=80",
+      hasZone: false
+    },
+    ragnarok: {
+      code: "ragnarok",
+      brandQuery: "RAGNAROK",
+      title: "Ragnarok M: Eternal Love",
+      dev: "Gravity Interactive",
+      banner: "https://images.unsplash.com/photo-1579373903781-fd5c0c30c4cd?auto=format&fit=crop&w=600&q=80",
+      hasZone: true
+    },
+    whiteout: {
+      code: "whiteout",
+      brandQuery: "WHITEOUT",
+      title: "Whiteout Survival",
+      dev: "Century Games",
+      banner: "https://images.unsplash.com/photo-1542751371-adc38448a05e?auto=format&fit=crop&w=600&q=80",
+      hasZone: false
+    },
+    lords: {
+      code: "lords",
+      brandQuery: "LORDS MOBILE",
+      title: "Lords Mobile",
+      dev: "IGG",
+      banner: "https://images.unsplash.com/photo-1563089145-599997674d42?auto=format&fit=crop&w=600&q=80",
+      hasZone: false
+    },
+    pb: {
+      code: "pb",
+      brandQuery: "POINT BLANK",
+      title: "Point Blank",
+      dev: "Zepetto",
+      banner: "https://images.unsplash.com/photo-1542751371-adc38448a05e?auto=format&fit=crop&w=600&q=80",
+      hasZone: false
+    },
+    laplace: {
+      code: "laplace",
+      brandQuery: "LAPLACE",
+      title: "Laplace M",
+      dev: "ZlongGames",
+      banner: "https://images.unsplash.com/photo-1579373903781-fd5c0c30c4cd?auto=format&fit=crop&w=600&q=80",
+      hasZone: true
+    },
+    au2: {
+      code: "au2",
+      brandQuery: "AU2",
+      title: "AU2 Mobile",
+      dev: "VTC Game",
+      banner: "https://images.unsplash.com/photo-1563089145-599997674d42?auto=format&fit=crop&w=600&q=80",
+      hasZone: true
+    },
+    garena: {
+      code: "garena",
+      brandQuery: "GARENA",
+      title: "Garena Shell",
+      dev: "Garena",
+      banner: "https://images.unsplash.com/photo-1511512578047-dfb367046420?auto=format&fit=crop&w=600&q=80",
       hasZone: false
     },
     genshin: {
@@ -48,14 +120,6 @@ document.addEventListener("DOMContentLoaded", async () => {
       dev: "Level Infinite",
       banner: "https://images.unsplash.com/photo-1563089145-599997674d42?auto=format&fit=crop&w=600&q=80",
       hasZone: false
-    },
-    whiteout: {
-      code: "whiteout",
-      brandQuery: "WHITEOUT",
-      title: "Whiteout Survival",
-      dev: "Century Games PTE. LTD.",
-      banner: "https://images.unsplash.com/photo-1542751371-adc38448a05e?auto=format&fit=crop&w=600&q=80",
-      hasZone: false
     }
   };
 
@@ -76,11 +140,51 @@ document.addEventListener("DOMContentLoaded", async () => {
   let selectedItem = null;
   let selectedPayment = "Pilih Cara Pembayaran";
   let verifiedNickname = null;
+  let cachedUserBalance = 0;
 
   // Variabel Kupon Promo
   let appliedPromo = null;
   let currentDiscountAmount = 0;
   let finalCalculatedPrice = 0;
+
+  // ==========================================
+  // SINKRONISASI SALDO USER AKTIF
+  // ==========================================
+  async function syncUserBalanceDisplay() {
+    try {
+      if (!window.supabase) return;
+      const { data: sessionData } = await window.supabase.auth.getSession();
+      const userUuid = sessionData?.session?.user?.id;
+
+      if (userUuid) {
+        const { data: profile } = await window.supabase
+          .from("profiles")
+          .select("balance")
+          .eq("id", userUuid)
+          .maybeSingle();
+
+        if (profile && profile.balance !== undefined) {
+          cachedUserBalance = Number(profile.balance || 0);
+
+          document.querySelectorAll(".payment-card").forEach(card => {
+            const spanText = card.querySelector(".payment-brand span");
+            if (spanText && spanText.innerText.toLowerCase().includes("saldo")) {
+              spanText.innerHTML = `Saldo MGS <small style="color: #10b981; font-size: 0.78rem; font-weight: 700;">(Rp ${cachedUserBalance.toLocaleString("id-ID")})</small>`;
+            }
+          });
+        }
+      }
+    } catch (e) {
+      console.warn("Gagal sinkron saldo di menu checkout:", e);
+    }
+  }
+
+  const checkBalanceInterval = setInterval(() => {
+    if (window.supabase) {
+      clearInterval(checkBalanceInterval);
+      syncUserBalanceDisplay();
+    }
+  }, 100);
 
   // ==========================================
   // KALKULASI HARGA & PROMO
@@ -187,23 +291,43 @@ document.addEventListener("DOMContentLoaded", async () => {
   }
 
   // ==========================================
-  // AMBIL & RENDER NOMINAL DARI SUPABASE (REAL DATA)
+  // AMBIL & RENDER NOMINAL DARI SUPABASE (SINKRON DENGAN ADMIN PANEL)
   // ==========================================
   const nominalContainer = document.getElementById("nominalContainer");
-  nominalContainer.innerHTML = `<div style="grid-column: 1/-1; text-align: center; color: #888; padding: 20px;"><i class="fa-solid fa-spinner fa-spin"></i> Memuat nominal dari database...</div>`;
+  nominalContainer.innerHTML = `<div style="grid-column: 1/-1; text-align: center; color: #888; padding: 20px;"><i class="fa-solid fa-spinner fa-spin"></i> Memuat katalog produk...</div>`;
 
   try {
-    const { data: dbProducts, error: dbError } = await window.supabase
+    // 1. Sinkronisasi Cover Banner dari database jika ada
+    try {
+      const { data: dbCover } = await window.supabase
+        .from("game_covers")
+        .select("*")
+        .ilike("game_code", currentGame.code)
+        .maybeSingle();
+
+      if (dbCover && dbCover.banner_url && document.getElementById("gameBanner")) {
+        document.getElementById("gameBanner").src = dbCover.banner_url;
+      }
+    } catch (coverErr) {}
+
+    // 2. Ambil produk aktif dari Supabase berdasarkan brandQuery / game_code
+    let query = window.supabase
       .from("products")
       .select("*")
-      .eq("game_code", currentGame.code)
-      .eq("buyer_product_status", true)
-      .order("price_sell", { ascending: true });
+      .eq("buyer_product_status", true);
+
+    if (currentGame.brandQuery) {
+      query = query.ilike("brand", `%${currentGame.brandQuery}%`);
+    } else {
+      query = query.ilike("game_code", `%${currentGame.code}%`);
+    }
+
+    const { data: dbProducts, error: dbError } = await query.order("price_sell", { ascending: true });
 
     if (dbError) throw dbError;
 
     if (!dbProducts || dbProducts.length === 0) {
-      nominalContainer.innerHTML = `<div style="grid-column: 1/-1; text-align: center; color: #888; padding: 20px;">Produk game ini belum tersedia di katalog.</div>`;
+      nominalContainer.innerHTML = `<div style="grid-column: 1/-1; text-align: center; color: #94a3b8; padding: 20px;">Produk game ini sedang disiapkan atau dinonaktifkan di Admin.</div>`;
     } else {
       nominalContainer.innerHTML = "";
 
@@ -241,7 +365,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
   } catch (err) {
     console.error("Gagal mengambil produk:", err);
-    nominalContainer.innerHTML = `<div style="grid-column: 1/-1; text-align: center; color: #e63946; padding: 20px;">Gagal memuat produk game.</div>`;
+    nominalContainer.innerHTML = `<div style="grid-column: 1/-1; text-align: center; color: #e63946; padding: 20px;">Gagal memuat katalog produk.</div>`;
   }
 
   // Handle Pilih Metode Bayar
@@ -253,7 +377,6 @@ document.addEventListener("DOMContentLoaded", async () => {
       const spanTitle = card.querySelector(".payment-brand span");
       if (spanTitle) selectedPayment = spanTitle.innerText.trim();
 
-      // Update Teks Tombol Beli sesuai metode yang dipilih
       if (selectedPayment.toLowerCase().includes("saldo")) {
         checkoutBtn.innerHTML = '<i class="fa-solid fa-bolt"></i> Bayar Pakai Saldo MGS';
       } else {
@@ -262,8 +385,29 @@ document.addEventListener("DOMContentLoaded", async () => {
     });
   });
 
+  // Modal Saldo Kurang Handlers
+  const modalBalance = document.getElementById("insufficientBalanceModal");
+  const btnCloseBal = document.getElementById("btnCloseBalModal");
+  if (btnCloseBal && modalBalance) {
+    btnCloseBal.addEventListener("click", () => {
+      modalBalance.style.display = "none";
+    });
+  }
+
+  function showInsufficientBalanceModal(currentBal, totalPay) {
+    if (modalBalance) {
+      const balEl = document.getElementById("modalUserBalanceText");
+      const reqEl = document.getElementById("modalRequiredAmountText");
+      if (balEl) balEl.innerText = `Rp ${Number(currentBal).toLocaleString("id-ID")}`;
+      if (reqEl) reqEl.innerText = `Rp ${Number(totalPay).toLocaleString("id-ID")}`;
+      modalBalance.style.display = "flex";
+    } else {
+      alert(`Saldo MGS Anda tidak mencukupi!\nSaldo Anda: Rp ${currentBal.toLocaleString("id-ID")}\nTotal Bayar: Rp ${totalPay.toLocaleString("id-ID")}\n\nSilakan isi saldo akun Anda terlebih dahulu.`);
+    }
+  }
+
   // ==========================================
-  // FITUR AUTO CEK NICKNAME VIA SERVERLESS PROXY
+  // FITUR AUTO CEK NICKNAME VIA PROXY
   // ==========================================
   const userIdInput = document.getElementById("userIdInput");
   const zoneIdInput = document.getElementById("zoneIdInput");
@@ -392,7 +536,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     const totalToPay = Number(finalCalculatedPrice);
     let dokuPaymentData = null;
 
-    // 1. PEMBAYARAN MENGGUNAKAN SALDO INTERNAL MAMANGGS
+    // 1. PEMBAYARAN MENGGUNAKAN SALDO INTERNAL
     if (isUsingWallet) {
       if (!userUuid) {
         alert("Metode pembayaran Saldo MGS hanya berlaku untuk member yang sudah login. Silakan Login terlebih dahulu!");
@@ -412,8 +556,9 @@ document.addEventListener("DOMContentLoaded", async () => {
 
         const currentBal = Number(profile.balance) || 0;
 
+        // Tampilkan Modal Pop-up jika saldo kurang
         if (currentBal < totalToPay) {
-          alert(`Saldo MGS Anda tidak mencukupi!\nSaldo Anda: Rp ${currentBal.toLocaleString("id-ID")}\nTotal Bayar: Rp ${totalToPay.toLocaleString("id-ID")}\n\nSilakan isi saldo akun Anda terlebih dahulu.`);
+          showInsufficientBalanceModal(currentBal, totalToPay);
           checkoutBtn.disabled = false;
           checkoutBtn.innerHTML = '<i class="fa-solid fa-bolt"></i> Bayar Pakai Saldo MGS';
           return;
@@ -437,7 +582,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         return;
       }
     } else {
-      // 2. PEMBAYARAN MENGGUNAKAN DOKU PAYMENT GATEWAY (PILIH CARA PEMBAYARAN)
+      // 2. PEMBAYARAN MENGGUNAKAN DOKU PAYMENT GATEWAY
       try {
         const dokuRes = await fetch("/api/create-payment", {
           method: "POST",
@@ -477,7 +622,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         game_title: currentGame.title,
         account_id: userId,
         zone_id: zoneId || null,
-        sku_code: selectedItem.sku, // Disimpan agar terhubung ke produk DigiFlazz
+        sku_code: selectedItem.sku,
         item_name: selectedItem.name,
         price: totalToPay,
         payment_method: selectedPayment,
