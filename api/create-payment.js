@@ -6,7 +6,7 @@ module.exports = async function (req, res) {
   }
 
   try {
-    const { orderId, amount, customerPhone, customerName, paymentMethod } = req.body;
+    const { orderId, amount, customerPhone, customerName } = req.body;
 
     if (!orderId || !amount) {
       return res.status(400).json({ error: "Parameter tidak lengkap" });
@@ -20,10 +20,6 @@ module.exports = async function (req, res) {
     const requestTimestamp = new Date().toISOString().replace(/\.\d{3}Z$/, "Z");
     const requestId = `REQ-${Date.now()}`;
 
-    // Tentukan metode bayar: QRIS atau VIRTUAL_ACCOUNT
-    const isVA = paymentMethod && (paymentMethod.toLowerCase().includes("va") || paymentMethod.toLowerCase().includes("virtual account"));
-    const selectedMethodTypes = isVA ? ["VIRTUAL_ACCOUNT"] : ["QRIS"];
-
     const requestBody = {
       order: {
         amount: parseInt(amount, 10),
@@ -32,8 +28,7 @@ module.exports = async function (req, res) {
         callback_url: `https://mamanggs.my.id/order-status.html?inv=${orderId}`
       },
       payment: {
-        payment_due_date: 60,
-        payment_method_types: selectedMethodTypes
+        payment_due_date: 60
       },
       customer: {
         name: customerName || "Pelanggan MamangGS",
