@@ -22,15 +22,14 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // Pasang data awal dari metadata login
   const initialName = user.user_metadata?.full_name || user.email?.split("@")[0] || "Member";
-  document.getElementById("profileName").innerText = initialName;
-  document.getElementById("profileEmail").innerText = user.email || "";
+  if (document.getElementById("profileName")) document.getElementById("profileName").innerText = initialName;
+  if (document.getElementById("profileEmail")) document.getElementById("profileEmail").innerText = user.email || "";
 
   // Sinkronisasi data real-time dengan Supabase
   const checkSupabase = setInterval(() => {
     if (window.supabase) {
       clearInterval(checkSupabase);
       loadUserProfile(user.id);
-      loadOrderHistory(user.id);
     }
   }, 100);
 
@@ -45,9 +44,16 @@ document.addEventListener("DOMContentLoaded", () => {
 
       if (error) throw error;
 
+      let userPhone = null;
+
       if (data) {
-        if (data.full_name) document.getElementById("profileName").innerText = data.full_name;
-        if (data.email) document.getElementById("profileEmail").innerText = data.email;
+        userPhone = data.whatsapp || null;
+        if (data.full_name && document.getElementById("profileName")) {
+          document.getElementById("profileName").innerText = data.full_name;
+        }
+        if (data.email && document.getElementById("profileEmail")) {
+          document.getElementById("profileEmail").innerText = data.email;
+        }
 
         // 1. Update Avatar 3D
         const userAvatarImg = document.getElementById("userAvatarImg");
@@ -77,37 +83,56 @@ document.addEventListener("DOMContentLoaded", () => {
         }
 
         // 3. Saldo & Role
-        const balance = Number(data.balance || 0).toLocaleString("id-ID");
-        document.getElementById("walletBalance").innerText = `Rp ${balance}`;
+        const walletEl = document.getElementById("walletBalance");
+        if (walletEl) {
+          const balance = Number(data.balance || 0).toLocaleString("id-ID");
+          walletEl.innerText = `Rp ${balance}`;
+        }
 
         const rolePill = document.getElementById("profileRole");
-        const role = (data.role || "MEMBER").toUpperCase();
-        rolePill.innerText = role;
-        if (data.role === "reseller") rolePill.classList.add("reseller");
+        if (rolePill) {
+          const role = (data.role || "MEMBER").toUpperCase();
+          rolePill.innerText = role;
+          if (data.role === "reseller") rolePill.classList.add("reseller");
+        }
       }
+
+      // Panggil loadOrderHistory setelah data profile (termasuk nomor WA) siap
+      loadOrderHistory(userId, userPhone);
+
     } catch (err) {
       console.error("Gagal sinkron profil:", err.message);
+      loadOrderHistory(userId, null);
     }
   }
 
-  // Ambil riwayat pesanan
-  async function loadOrderHistory(userId) {
+  // Ambil riwayat pesanan (Cari via user_id ATAU no WhatsApp)
+  async function loadOrderHistory(userId, userPhone) {
     const tableBody = document.getElementById("orderHistoryBody");
     const emptyState = document.getElementById("historyEmptyState");
+    const countEl = document.getElementById("totalOrdersCount");
 
     try {
-      const { data: orders, error } = await window.supabase
+      let query = window.supabase
         .from("orders")
         .select("*")
-        .eq("user_id", userId)
         .order("created_at", { ascending: false });
 
+      if (userPhone) {
+        query = query.or(`user_id.eq.${userId},whatsapp.eq.${userPhone}`);
+      } else {
+        query = query.eq("user_id", userId);
+      }
+
+      const { data: orders, error } = await query;
       if (error) throw error;
 
+      const totalCount = orders ? orders.length : 0;
+      if (countEl) countEl.innerText = totalCount;
+
       if (orders && orders.length > 0) {
-        tableBody.innerHTML = "";
-        emptyState.style.display = "none";
-        document.getElementById("totalOrdersCount").innerText = orders.length;
+        if (tableBody) tableBody.innerHTML = "";
+        if (emptyState) emptyState.style.display = "none";
 
         orders.forEach((ord) => {
           const row = document.createElement("tr");
@@ -116,21 +141,21 @@ document.addEventListener("DOMContentLoaded", () => {
             month: "short",
             year: "numeric"
           });
-          const price = Number(ord.price).toLocaleString("id-ID");
+          const price = Number(ord.price || 0).toLocaleString("id-ID");
 
           row.innerHTML = `
             <td><strong style="color: var(--accent-red);">${ord.invoice}</strong></td>
-            <td>${ord.game_title}</td>
+            <td>${ord.game_title || ord.game_code || "-"}</td>
             <td>${ord.item_name}</td>
             <td>Rp ${price}</td>
-            <td><span class="status-badge ${ord.status.toLowerCase()}">${ord.status}</span></td>
+            <td><span class="status-badge ${(ord.status || 'pending').toLowerCase()}">${ord.status}</span></td>
             <td>${date}</td>
           `;
-          tableBody.appendChild(row);
+          if (tableBody) tableBody.appendChild(row);
         });
       } else {
-        tableBody.innerHTML = "";
-        emptyState.style.display = "block";
+        if (tableBody) tableBody.innerHTML = "";
+        if (emptyState) emptyState.style.display = "block";
       }
     } catch (err) {
       console.error("Gagal load pesanan:", err.message);
