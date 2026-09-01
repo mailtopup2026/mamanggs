@@ -19,7 +19,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     { code: "WOS", name: "Whiteout Survival", icon: "fa-solid fa-snowflake" }
   ];
 
-  // Koleksi Avatar 3D DiceBear
+  // Koleksi Avatar Karakter DiceBear
   const avatarSeeds = [
     "Jordyn", "Alena", "Carl", "Davis", "Isona", "Makenna",
     "Kianna", "Maxith", "Zain", "Felix", "Jack", "Aneka"
@@ -39,13 +39,11 @@ document.addEventListener("DOMContentLoaded", async () => {
   const profileForm = document.getElementById("profileForm");
   const profileAlert = document.getElementById("profileAlert");
   const btnSaveProfile = document.getElementById("btnSaveProfile");
-  const customAvatarFileInput = document.getElementById("customAvatarFileInput");
-  const uploadStatusText = document.getElementById("uploadStatusText");
 
   let selectedGames = [];
   let currentUserId = null;
 
-  // Render Grid Avatar Awal
+  // Render Grid Pilihan Avatar
   function renderAvatarChoices(activeUrl) {
     if (!avatarPickerGrid) return;
     avatarPickerGrid.innerHTML = avatarSeeds.map(seed => {
@@ -63,9 +61,8 @@ document.addEventListener("DOMContentLoaded", async () => {
         document.querySelectorAll(".avatar-choice-item").forEach(el => el.classList.remove("active"));
         item.classList.add("active");
         const newUrl = item.getAttribute("data-url");
-        selectedAvatarInput.value = newUrl;
-        currentAvatarPreview.src = newUrl;
-        if (uploadStatusText) uploadStatusText.innerText = "";
+        if (selectedAvatarInput) selectedAvatarInput.value = newUrl;
+        if (currentAvatarPreview) currentAvatarPreview.src = newUrl;
       });
     });
   }
@@ -135,45 +132,9 @@ document.addEventListener("DOMContentLoaded", async () => {
     });
   }
 
-  // Jalankan render grid awal
+  // Jalankan render awal
   renderAvatarChoices("");
   renderGameChoices();
-
-  // Handler Upload Foto Custom Sendiri (Maks 2MB)
-  if (customAvatarFileInput) {
-    customAvatarFileInput.addEventListener("change", (e) => {
-      const file = e.target.files[0];
-      if (!file) return;
-
-      // Validasi Ukuran Maksimal 2MB (2 * 1024 * 1024 bytes)
-      const maxSize = 2 * 1024 * 1024;
-      if (file.size > maxSize) {
-        alert("Ukuran file terlalu besar! Maksimal ukuran foto adalah 2MB.");
-        customAvatarFileInput.value = "";
-        return;
-      }
-
-      // Validasi Format Gambar
-      if (!["image/jpeg", "image/png", "image/webp"].includes(file.type)) {
-        alert("Format file tidak didukung! Gunakan format JPG, PNG, atau WebP.");
-        customAvatarFileInput.value = "";
-        return;
-      }
-
-      // Baca File secara lokal (Base64 DataURL)
-      const reader = new FileReader();
-      reader.onload = (event) => {
-        const base64Url = event.target.result;
-        selectedAvatarInput.value = base64Url;
-        currentAvatarPreview.src = base64Url;
-        if (uploadStatusText) {
-          uploadStatusText.innerText = `✓ Foto (${(file.size / 1024).toFixed(0)} KB) siap disimpan`;
-        }
-        document.querySelectorAll(".avatar-choice-item").forEach(el => el.classList.remove("active"));
-      };
-      reader.readAsDataURL(file);
-    });
-  }
 
   // Load Profil User dari Supabase / Local Storage
   async function initUserProfile() {
@@ -219,8 +180,8 @@ document.addEventListener("DOMContentLoaded", async () => {
         if (profileDisplayName) profileDisplayName.innerText = profile.full_name || "Gamers Sultan";
         
         const activeUrl = profile.avatar_url || `https://api.dicebear.com/7.x/adventurer/svg?seed=Jordyn`;
-        selectedAvatarInput.value = activeUrl;
-        currentAvatarPreview.src = activeUrl;
+        if (selectedAvatarInput) selectedAvatarInput.value = activeUrl;
+        if (currentAvatarPreview) currentAvatarPreview.src = activeUrl;
         renderAvatarChoices(activeUrl);
 
         selectedGames = Array.isArray(profile.favorite_games) ? profile.favorite_games : [];
@@ -265,7 +226,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     } else {
       if (profileDisplayName) profileDisplayName.innerText = updatePayload.full_name;
       profileAlert.className = "alert-box alert-success";
-      profileAlert.innerText = "Profil, Foto/Avatar, & 3 Badge Game Favorit berhasil disimpan!";
+      profileAlert.innerText = "Profil, Avatar Karakter, & Game Favorit berhasil disimpan!";
       profileAlert.style.display = "block";
       updateBadgeUI();
     }

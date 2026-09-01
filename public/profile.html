@@ -40,9 +40,6 @@
       <div class="profile-header">
         <div class="current-avatar-preview-wrap">
           <img id="currentAvatarPreview" src="https://api.dicebear.com/7.x/adventurer/svg?seed=Jordyn" alt="Avatar" class="current-avatar-preview">
-          <label for="customAvatarFileInput" class="btn-upload-avatar-floating" title="Upload Foto Custom">
-            <i class="fa-solid fa-camera"></i>
-          </label>
         </div>
         <h2 id="profileDisplayName">Gamers Sultan</h2>
         <p id="profileDisplayEmail" class="profile-email-text">user@email.com</p>
@@ -53,19 +50,10 @@
         </div>
       </div>
 
-      <!-- SECTION 1: PILIH AVATAR 3D / UPLOAD CUSTOM -->
+      <!-- SECTION 1: PILIH AVATAR 3D -->
       <div class="section-group">
-        <label class="section-label-title"><i class="fa-solid fa-face-smile"></i> 1. Pilih Avatar 3D atau Upload Foto</label>
-        <p class="section-sub-desc">Pilih karakter 3D di bawah ini atau upload foto kustom kamu sendiri (Format JPG/PNG/WebP, Maks. 2MB).</p>
-        
-        <!-- Upload Custom Input -->
-        <div class="custom-upload-box">
-          <input type="file" id="customAvatarFileInput" accept="image/png, image/jpeg, image/webp" style="display: none;">
-          <label for="customAvatarFileInput" class="btn-custom-upload">
-            <i class="fa-solid fa-cloud-arrow-up"></i> Upload Foto Sendiri (Maks 2MB)
-          </label>
-          <span id="uploadStatusText" class="upload-status-hint"></span>
-        </div>
+        <label class="section-label-title"><i class="fa-solid fa-face-smile"></i> 1. Pilih Avatar Karakter</label>
+        <p class="section-sub-desc">Klik salah satu karakter di bawah ini untuk mengganti avatar profil kamu secara instan.</p>
 
         <!-- 3D Avatar Grid -->
         <div class="avatar-picker-grid" id="avatarPickerGrid">
