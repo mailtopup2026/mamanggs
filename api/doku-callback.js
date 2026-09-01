@@ -1,9 +1,49 @@
 import { createClient } from "@supabase/supabase-js";
+import crypto from "crypto";
 
 const supabaseUrl = process.env.SUPABASE_URL;
-// Gunakan Service Role Key jika ada agar bypass RLS, fallback ke Anon Key
 const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.SUPABASE_ANON_KEY;
 const supabase = createClient(supabaseUrl, supabaseKey);
+
+// Helper Fungsi Tembak Transaksi ke DigiFlazz
+async function orderDigiflazz(order) {
+  const username = process.env.DIGIFLAZZ_USERNAME;
+  const apiKey = process.env.DIGIFLAZZ_API_KEY || process.env.DIGIFLAZZ_KEY;
+  const isDev = process.env.DIGIFLAZZ_MODE === "development";
+  const endpoint = isDev 
+    ? "https://api.digiflazz.com/v1/transaction" 
+    : "https://api.digiflazz.com/v1/transaction";
+
+  // Signature DigiFlazz: md5(username + apiKey + ref_id)
+  const sign = crypto
+    .createHash("md5")
+    .update(`${username}${apiKey}${order.invoice}`)
+    .digest("hex");
+
+  // Format Customer ID: jika ada Zone ID (seperti MLBB: ID+ZoneID)
+  const customerNo = order.zone_id 
+    ? `${order.account_id}${order.zone_id}` 
+    : `${order.account_id}`;
+
+  const payload = {
+    username: username,
+    buyer_sku_code: order.sku_code || order.item_name, // Pastikan SKU DigiFlazz terbaca
+    customer_no: customerNo,
+    ref_id: order.invoice,
+    sign: sign,
+    testing: isDev
+  };
+
+  console.log("Mengirim request ke DigiFlazz:", payload);
+
+  const res = await fetch(endpoint, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(payload)
+  });
+
+  return await res.json();
+}
 
 export default async function handler(req, res) {
   if (req.method !== "POST") {
@@ -14,14 +54,13 @@ export default async function handler(req, res) {
     const body = req.body || {};
     console.log("DOKU CALLBACK PAYLOAD:", JSON.stringify(body));
 
-    // Ekstraksi nomor invoice dari berbagai kemungkinan field DOKU
+    // Ekstraksi Invoice & Status dari balasan DOKU
     const invoiceNumber = 
       body?.order?.invoice_number || 
       body?.invoice_number || 
       body?.orderId || 
       body?.transaction?.invoice_number;
 
-    // Ekstraksi status transaksi
     const trxStatus = (
       body?.transaction?.status || 
       body?.order?.status || 
@@ -30,11 +69,10 @@ export default async function handler(req, res) {
     ).toUpperCase();
 
     if (!invoiceNumber) {
-      console.warn("Callback DOKU diterima tanpa invoice number:", body);
+      console.warn("Callback DOKU diterima tanpa invoice number");
       return res.status(200).json({ status: "IGNORED_NO_INVOICE" });
     }
 
-    // Periksa apakah status menyatakan sukses / lunas
     const isSuccess = 
       trxStatus === "SUCCESS" || 
       trxStatus === "SUCCESSFUL" || 
@@ -42,27 +80,56 @@ export default async function handler(req, res) {
       trxStatus === "SETTLED";
 
     if (isSuccess) {
-      const { data, error } = await supabase
+      // 1. Ambil data pesanan dari Supabase
+      const { data: order, error: findError } = await supabase
         .from("orders")
-        .update({
-          status: "SUCCESS",
-          payment_data: body
-        })
+        .select("*")
         .ilike("invoice", invoiceNumber.trim())
-        .select();
+        .maybeSingle();
 
-      if (error) {
-        console.error("Gagal update status di Supabase:", error);
-        return res.status(500).json({ error: error.message });
+      if (findError || !order) {
+        console.error("Order tidak ditemukan di Supabase:", invoiceNumber);
+        return res.status(200).json({ status: "ORDER_NOT_FOUND" });
       }
 
-      console.log(`Pesanan ${invoiceNumber} berhasil diupdate ke SUCCESS!`);
+      // Jika pesanan belum diproses (masih PENDING)
+      if (order.status !== "SUCCESS") {
+        let digiResult = null;
+        let finalStatus = "PROCESSING"; // Berubah ke PROCESSING saat ditembak ke provider
+
+        try {
+          // 2. Eksekusi tembak item game ke DigiFlazz
+          digiResult = await orderDigiflazz(order);
+          console.log("DigiFlazz Response:", digiResult);
+
+          const digiStatus = digiResult?.data?.status;
+          if (digiStatus === "Sukses") {
+            finalStatus = "SUCCESS";
+          } else if (digiStatus === "Gagal") {
+            finalStatus = "FAILED";
+          }
+        } catch (dfErr) {
+          console.error("Error panggil DigiFlazz API:", dfErr);
+        }
+
+        // 3. Update status pesanan di database Supabase
+        await supabase
+          .from("orders")
+          .update({
+            status: finalStatus,
+            payment_data: body,
+            provider_response: digiResult
+          })
+          .ilike("invoice", invoiceNumber.trim());
+
+        console.log(`Pesanan ${invoiceNumber} berhasil diperbarui ke status: ${finalStatus}`);
+      }
     }
 
-    // DOKU mewajibkan respons status 200 OK
+    // Wajib beri respons 200 OK ke DOKU
     return res.status(200).json({ status: "OK" });
   } catch (err) {
-    console.error("DOKU Callback Exception:", err);
+    console.error("DOKU Callback Handler Error:", err);
     return res.status(500).json({ error: err.message });
   }
 }

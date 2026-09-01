@@ -477,6 +477,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         game_title: currentGame.title,
         account_id: userId,
         zone_id: zoneId || null,
+        sku_code: selectedItem.sku, // Disimpan agar terhubung ke produk DigiFlazz
         item_name: selectedItem.name,
         price: totalToPay,
         payment_method: selectedPayment,
