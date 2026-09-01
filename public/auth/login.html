@@ -58,7 +58,7 @@
         <a href="/auth/forgot-password.html" class="forgot-link">Forgot Password?</a>
       </div>
 
-      <button type="submit" class="btn-auth-main">
+      <button type="submit" class="btn-auth-main" id="btnLoginSubmit">
         <i class="fa-solid fa-wand-magic-sparkles"></i> Sign In
       </button>
 
@@ -67,10 +67,10 @@
       </div>
 
       <div class="social-btn-grid">
-        <button type="button" class="btn-social" onclick="alert('Google Auth Siap Dihubungkan ke Supabase!')">
+        <button type="button" class="btn-social" onclick="alert('Fitur login Google akan segera hadir!')">
           <i class="fa-brands fa-google"></i> Google
         </button>
-        <button type="button" class="btn-social" onclick="alert('Apple ID Siap Dihubungkan!')">
+        <button type="button" class="btn-social" onclick="alert('Fitur login Apple akan segera hadir!')">
           <i class="fa-brands fa-apple"></i> Apple
         </button>
       </div>
@@ -81,11 +81,28 @@
     </form>
   </div>
 
-  <!-- WAJIB DITAMBAHKAN: Script Inti Supabase -->
+  <!-- CDN SUPABASE SDK (Wajib Paling Pertama) -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   
   <script src="/js/particles.js"></script>
   <script src="/js/supabase.js"></script>
   <script src="/js/auth.js"></script>
+
+  <!-- Fungsi Toggle Show/Hide Password -->
+  <script>
+    function togglePass(inputId, icon) {
+      const input = document.getElementById(inputId);
+      if (!input) return;
+      if (input.type === "password") {
+        input.type = "text";
+        icon.classList.remove("fa-eye-slash");
+        icon.classList.add("fa-eye");
+      } else {
+        input.type = "password";
+        icon.classList.remove("fa-eye");
+        icon.classList.add("fa-eye-slash");
+      }
+    }
+  </script>
 </body>
 </html>
