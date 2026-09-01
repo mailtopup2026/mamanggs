@@ -17,22 +17,246 @@
     html, body {
       overflow-x: hidden !important;
       max-width: 100% !important;
+      background-color: #070d18;
+      color: #f8fafc;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      margin: 0;
+      padding: 0;
     }
     *, *::before, *::after {
       box-sizing: border-box !important;
+    }
+
+    /* CARD PROFIL RAPI */
+    .profile-banner-card {
+      background: linear-gradient(135deg, rgba(230, 57, 70, 0.12), rgba(15, 23, 42, 0.85));
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 20px;
+      padding: 24px;
+      margin-bottom: 24px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 20px;
+      flex-wrap: wrap;
+    }
+
+    .profile-info-group {
+      display: flex;
+      align-items: center;
+      gap: 18px;
+      flex: 1 1 300px;
+    }
+
+    .avatar-cyber-wrap {
+      width: 76px;
+      height: 76px;
+      min-width: 76px;
+      border-radius: 20px;
+      background: linear-gradient(145deg, #e63946, #800f2f);
+      padding: 3px;
+      box-shadow: 0 8px 24px rgba(230, 57, 70, 0.35);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .avatar-cyber-wrap img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      border-radius: 17px;
+      background: #0f172a;
+    }
+
+    .user-meta-header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .user-meta-header h2 {
+      margin: 0;
+      font-size: 1.25rem;
+      font-weight: 800;
+      color: #ffffff;
+      white-space: nowrap;
+    }
+
+    .role-pill {
+      background: rgba(230, 57, 70, 0.18);
+      color: #ff4d5a;
+      border: 1px solid rgba(230, 57, 70, 0.4);
+      padding: 3px 10px;
+      border-radius: 6px;
+      font-size: 0.72rem;
+      font-weight: 800;
+      letter-spacing: 0.5px;
+    }
+
+    .user-email-text {
+      margin: 4px 0 10px;
+      color: #94a3b8;
+      font-size: 0.86rem;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      word-break: break-all;
+    }
+
+    .profile-actions-group {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .btn-action-profile {
+      text-decoration: none;
+      padding: 10px 18px;
+      border-radius: 10px;
+      font-size: 0.85rem;
+      font-weight: 700;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      transition: all 0.2s ease;
+      cursor: pointer;
+    }
+
+    .btn-action-edit {
+      background: rgba(245, 158, 11, 0.12);
+      border: 1px solid rgba(245, 158, 11, 0.4);
+      color: #f59e0b;
+    }
+
+    .btn-action-edit:hover {
+      background: rgba(245, 158, 11, 0.2);
+    }
+
+    .btn-action-logout {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      color: #cbd5e1;
+    }
+
+    .btn-action-logout:hover {
+      background: rgba(239, 68, 68, 0.15);
+      border-color: rgba(239, 68, 68, 0.3);
+      color: #ef4444;
+    }
+
+    /* RIWAYAT TRANSAKSI SCROLLABLE (MAX 5 BARIS) */
+    .history-card-wrapper {
+      background: rgba(15, 23, 42, 0.7);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 20px;
+      padding: 24px;
+    }
+
+    .table-scroll-container {
+      width: 100%;
+      max-height: 340px; /* Batas tinggi untuk 5 baris */
+      overflow-y: auto;
+      overflow-x: auto;
+      border-radius: 12px;
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      background: rgba(8, 14, 26, 0.5);
+    }
+
+    /* Custom Scrollbar */
+    .table-scroll-container::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    .table-scroll-container::-webkit-scrollbar-track {
+      background: rgba(15, 23, 42, 0.6);
+      border-radius: 8px;
+    }
+    .table-scroll-container::-webkit-scrollbar-thumb {
+      background: rgba(255, 255, 255, 0.2);
+      border-radius: 8px;
+    }
+    .table-scroll-container::-webkit-scrollbar-thumb:hover {
+      background: rgba(230, 57, 70, 0.6);
+    }
+
+    .table-cyber {
+      width: 100%;
+      border-collapse: collapse;
+      text-align: left;
+      font-size: 0.86rem;
+      white-space: nowrap;
+    }
+
+    .table-cyber thead {
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      background: #0b1324;
+    }
+
+    .table-cyber th {
+      padding: 14px 16px;
+      color: #94a3b8;
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    .table-cyber td {
+      padding: 14px 16px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+      vertical-align: middle;
+    }
+
+    .table-cyber tr:hover {
+      background: rgba(255, 255, 255, 0.02);
+    }
+
+    .invoice-text {
+      font-family: monospace;
+      color: #ff4d5a;
+      font-weight: 700;
+      font-size: 0.88rem;
+    }
+
+    .status-badge {
+      padding: 4px 10px;
+      border-radius: 6px;
+      font-size: 0.72rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      display: inline-block;
+    }
+    .status-badge.success {
+      background: rgba(16, 185, 129, 0.15);
+      color: #10b981;
+      border: 1px solid rgba(16, 185, 129, 0.3);
+    }
+    .status-badge.pending {
+      background: rgba(245, 158, 11, 0.15);
+      color: #f59e0b;
+      border: 1px solid rgba(245, 158, 11, 0.3);
+    }
+    .status-badge.failed {
+      background: rgba(239, 68, 68, 0.15);
+      color: #ef4444;
+      border: 1px solid rgba(239, 68, 68, 0.3);
     }
   </style>
 </head>
 <body>
 
-  <!-- NAVBAR DENGAN FITUR RESPONSIVE & TITIK TIGA -->
+  <!-- NAVBAR RESPONSIVE TITIK 3 -->
   <header class="navbar">
     <div class="navbar-container">
       <a href="/" class="brand-logo">
         <div class="logo-video-wrap"><video autoplay loop muted playsinline class="logo-video"><source src="/assets/images/logo.mp4" type="video/mp4"></video></div>
       </a>
 
-      <!-- DESKTOP ACTIONS -->
       <div class="nav-actions desktop-only" id="desktopNavActions">
         <a href="/" class="btn-nav-login"><i class="fa-solid fa-house"></i> Beranda</a>
         <a href="/leaderboard.html" class="btn-nav-login" style="color: #f59e0b; border-color: rgba(245, 158, 11, 0.4);"><i class="fa-solid fa-crown"></i> Leaderboard</a>
@@ -40,7 +264,6 @@
         <a href="/blog.html" class="btn-nav-login" style="color: #38bdf8; border-color: rgba(56, 189, 248, 0.4);"><i class="fa-solid fa-newspaper"></i> Blog</a>
       </div>
 
-      <!-- MOBILE ONLY: TOMBOL TITIK TIGA (⋮) -->
       <div class="mobile-nav-toggle-group">
         <button id="btnMobileMenuToggle" class="btn-mobile-icon" title="Menu Lengkap">
           <i class="fa-solid fa-ellipsis-vertical"></i>
@@ -67,39 +290,36 @@
     </div>
   </header>
 
-  <!-- KONTEN DASHBOARD -->
-  <main class="dashboard-wrapper">
-    <!-- Profil Banner -->
+  <!-- KONTEN UTAMA -->
+  <main class="dashboard-wrapper" style="max-width: 960px; margin: 30px auto 80px; padding: 0 16px;">
+    
+    <!-- KARTU BANNER PROFIL -->
     <div class="profile-banner-card">
       <div class="profile-info-group">
-        <div class="avatar-cyber">
-          <!-- Avatar 3D Dynamic / Fallback -->
-          <img id="userAvatarImg" src="https://api.dicebear.com/7.x/adventurer/svg?seed=Jordyn" alt="Avatar" style="width: 100%; height: 100%; object-fit: cover; border-radius: 50%;">
+        <div class="avatar-cyber-wrap">
+          <img id="userAvatarImg" src="https://api.dicebear.com/7.x/adventurer/svg?seed=Jordyn" alt="Avatar">
         </div>
-        <div class="user-meta">
-          <h2>
-            <span id="profileName">User</span> 
+        <div class="user-meta" style="min-width: 0;">
+          <div class="user-meta-header">
+            <h2 id="profileName">User</h2>
             <span class="role-pill" id="profileRole">MEMBER</span>
-          </h2>
-          <p><i class="fa-solid fa-envelope"></i> <span id="profileEmail">user@email.com</span></p>
-          
-          <!-- Wadah Badges Game Favorit di Dashboard -->
-          <div id="dashboardBadges" style="display: flex; gap: 6px; flex-wrap: wrap; margin-top: 8px;"></div>
+          </div>
+          <p class="user-email-text"><i class="fa-solid fa-envelope"></i> <span id="profileEmail">user@email.com</span></p>
+          <div id="dashboardBadges" style="display: flex; gap: 6px; flex-wrap: wrap;"></div>
         </div>
       </div>
 
-      <!-- Action Buttons (Edit Profil + Logout) -->
-      <div class="profile-header-actions" style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap;">
-        <a href="/profile.html" class="btn-edit-profile-action" style="background: rgba(245, 158, 11, 0.15); border: 1px solid rgba(245, 158, 11, 0.4); color: #f59e0b; padding: 10px 16px; border-radius: 8px; font-weight: 800; font-size: 0.85rem; text-decoration: none; display: inline-flex; align-items: center; gap: 8px; transition: all 0.2s ease;">
+      <div class="profile-actions-group">
+        <a href="/profile.html" class="btn-action-profile btn-action-edit">
           <i class="fa-solid fa-user-pen"></i> Edit Profil
         </a>
-        <button class="btn-header-logout" id="logoutBtn">
+        <button class="btn-action-profile btn-action-logout" id="logoutBtn">
           <i class="fa-solid fa-right-from-bracket"></i> Keluar Akun
         </button>
       </div>
     </div>
 
-    <!-- Grid Statistik & Dompet -->
+    <!-- STATISTIK GRID -->
     <div class="stats-grid">
       <div class="card-stat featured">
         <div class="stat-top">
@@ -131,13 +351,16 @@
       </div>
     </div>
 
-    <!-- Riwayat Transaksi -->
+    <!-- RIWAYAT TRANSAKSI DENGAN SCROLLING 5 ITEM -->
     <div class="history-card-wrapper">
-      <div class="history-title-row">
-        <h3><i class="fa-solid fa-clock-rotate-left"></i> Riwayat Transaksi</h3>
+      <div class="history-title-row" style="margin-bottom: 16px; display: flex; justify-content: space-between; align-items: center;">
+        <h3 style="margin: 0; font-size: 1.1rem; font-weight: 800; display: flex; align-items: center; gap: 8px;">
+          <i class="fa-solid fa-clock-rotate-left" style="color: #e63946;"></i> Riwayat Transaksi
+        </h3>
+        <span style="font-size: 0.78rem; color: #64748b;">Gulir untuk melihat semua</span>
       </div>
 
-      <div class="table-responsive">
+      <div class="table-scroll-container">
         <table class="table-cyber">
           <thead>
             <tr>
@@ -150,52 +373,20 @@
             </tr>
           </thead>
           <tbody id="orderHistoryBody">
-            <!-- Data dimasukkan via JS -->
+            <!-- Data dari JS -->
           </tbody>
         </table>
+      </div>
 
-        <div class="empty-state-cyber" id="historyEmptyState">
-          <i class="fa-solid fa-ghost"></i>
-          <p>Belum ada riwayat pesanan yang dilakukan.</p>
-          <a href="/" class="btn-empty-order"><i class="fa-solid fa-bolt"></i> Mulai Top Up Sekarang</a>
-        </div>
+      <div class="empty-state-cyber" id="historyEmptyState" style="display: none; text-align: center; padding: 40px 20px;">
+        <i class="fa-solid fa-ghost" style="font-size: 2.5rem; color: #334155; margin-bottom: 12px;"></i>
+        <p style="color: #64748b; font-size: 0.9rem; margin: 0 0 16px;">Belum ada riwayat pesanan yang dilakukan.</p>
+        <a href="/" class="btn-empty-order" style="background: rgba(230,57,70,0.15); border: 1px solid rgba(230,57,70,0.3); color: #e63946; text-decoration: none; padding: 10px 18px; border-radius: 10px; font-weight: 700; font-size: 0.85rem; display: inline-flex; align-items: center; gap: 6px;">
+          <i class="fa-solid fa-bolt"></i> Mulai Top Up Sekarang
+        </a>
       </div>
     </div>
   </main>
-
-  <!-- FOOTER -->
-  <footer class="footer">
-    <div class="footer-container">
-      <div class="footer-brand">
-        <div class="brand-logo">
-          <div class="logo-video-wrap"><video autoplay loop muted playsinline class="logo-video"><source src="/assets/images/logo.mp4" type="video/mp4"></video></div>
-        </div>
-        <p>Platform top up game otomatis, murah, dan terpercaya 24 jam nonstop.</p>
-      </div>
-
-      <div class="footer-col">
-        <h4>Menu Navigasi</h4>
-        <ul class="footer-links">
-          <li><a href="/">Beranda</a></li>
-          <li><a href="/order-status.html">Lacak Pesanan</a></li>
-          <li><a href="/leaderboard.html">Leaderboard</a></li>
-          <li><a href="/dashboard.html">Dashboard</a></li>
-        </ul>
-      </div>
-
-      <div class="footer-col">
-        <h4>Bantuan & Legal</h4>
-        <ul class="footer-links">
-          <li><a href="/privacy-policy.html">Kebijakan Privasi</a></li>
-          <li><a href="/terms.html">Syarat & Ketentuan</a></li>
-        </ul>
-      </div>
-    </div>
-
-    <div class="footer-bottom">
-      <p>&copy; 2026 MamangGS. All rights reserved.</p>
-    </div>
-  </footer>
 
   <!-- JS MODULAR -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>

@@ -4,23 +4,21 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   // Kamus Badge Game
   const gameDictionary = {
-    MLBB: { name: "MLBB", icon: "fa-solid fa-shield-halved" },
+    MLBB: { name: "Mobile Legends", icon: "fa-solid fa-shield-halved" },
     PUBG: { name: "PUBG Mobile", icon: "fa-solid fa-crosshairs" },
     FF: { name: "Free Fire", icon: "fa-solid fa-fire" },
     VALO: { name: "Valorant", icon: "fa-solid fa-skull" },
     DOTA: { name: "Dota 2", icon: "fa-solid fa-khanda" },
-    GENSHIN: { name: "Genshin", icon: "fa-solid fa-wind" },
-    HOK: { name: "HOK", icon: "fa-solid fa-crown" },
+    GENSHIN: { name: "Genshin Impact", icon: "fa-solid fa-wind" },
+    HOK: { name: "Honor of Kings", icon: "fa-solid fa-crown" },
     ROBLOX: { name: "Roblox", icon: "fa-solid fa-cubes" },
-    WOS: { name: "Whiteout", icon: "fa-solid fa-snowflake" }
+    WOS: { name: "Whiteout Survival", icon: "fa-solid fa-snowflake" }
   };
 
-  // Tunggu Supabase siap
   const checkSupabase = setInterval(async () => {
     if (window.supabase) {
       clearInterval(checkSupabase);
 
-      // Ambil session resmi dari Supabase Auth
       try {
         const { data: sessionData } = await window.supabase.auth.getSession();
         if (sessionData?.session?.user) {
@@ -34,7 +32,6 @@ document.addEventListener("DOMContentLoaded", async () => {
         return;
       }
 
-      // Render data awal
       const initialName = user.user_metadata?.full_name || user.email?.split("@")[0] || "Member";
       if (document.getElementById("profileName")) document.getElementById("profileName").innerText = initialName;
       if (document.getElementById("profileEmail")) document.getElementById("profileEmail").innerText = user.email || "";
@@ -43,7 +40,6 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
   }, 100);
 
-  // Ambil saldo, role, avatar, dan riwayat pesanan
   async function loadUserProfile(userId) {
     try {
       const { data: profile, error } = await window.supabase
@@ -74,7 +70,7 @@ document.addEventListener("DOMContentLoaded", async () => {
           userAvatarImg.src = avatarUrl;
         }
 
-        // Badge Game
+        // Render Badge Game
         const dashboardBadges = document.getElementById("dashboardBadges");
         if (dashboardBadges) {
           const favGames = Array.isArray(profile.favorite_games) ? profile.favorite_games : [];
@@ -92,7 +88,7 @@ document.addEventListener("DOMContentLoaded", async () => {
           }
         }
 
-        // Saldo Dompet
+        // Saldo
         const walletEl = document.getElementById("walletBalance");
         if (walletEl) {
           const balance = Number(profile.balance || 0).toLocaleString("id-ID");
@@ -113,7 +109,6 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
   }
 
-  // Load Riwayat Pesanan
   async function loadOrderHistory(userId, userPhone) {
     const tableBody = document.getElementById("orderHistoryBody");
     const emptyState = document.getElementById("historyEmptyState");
@@ -153,12 +148,12 @@ document.addEventListener("DOMContentLoaded", async () => {
           const statusClass = isSuccess ? "success" : "pending";
 
           row.innerHTML = `
-            <td><strong style="color: #e63946; font-family: monospace;">${ord.invoice}</strong></td>
+            <td><span class="invoice-text">${ord.invoice}</span></td>
             <td>${ord.game_title || ord.game_code || "-"}</td>
             <td>${ord.item_name}</td>
             <td style="color: #38bdf8; font-weight: 700;">Rp ${price}</td>
             <td><span class="status-badge ${statusClass}">${ord.status}</span></td>
-            <td style="color: #94a3b8;">${date}</td>
+            <td style="color: #94a3b8; font-size: 0.82rem;">${date}</td>
           `;
           if (tableBody) tableBody.appendChild(row);
         });
@@ -171,7 +166,6 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
   }
 
-  // Logout Handlers
   const handleLogout = async () => {
     try {
       if (window.supabase?.auth) await window.supabase.auth.signOut();
@@ -182,10 +176,8 @@ document.addEventListener("DOMContentLoaded", async () => {
   };
 
   document.getElementById("logoutBtn")?.addEventListener("click", handleLogout);
-  document.getElementById("logoutBtnTop")?.addEventListener("click", handleLogout);
   document.getElementById("btnMobileLogout")?.addEventListener("click", handleLogout);
 
-  // Deposit Info
   document.getElementById("btnDeposit")?.addEventListener("click", () => {
     alert("Fitur Deposit Saldo Instan QRIS akan aktif di menu saldo.");
   });
