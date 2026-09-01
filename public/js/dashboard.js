@@ -1,6 +1,7 @@
 document.addEventListener("DOMContentLoaded", async () => {
   const storedUser = localStorage.getItem("mgs_user");
   let user = storedUser ? JSON.parse(storedUser) : null;
+  let currentProfileData = null; // Menyimpan data profil terbaru (nama & whatsapp)
 
   // Kamus Badge Game
   const gameDictionary = {
@@ -53,7 +54,9 @@ document.addEventListener("DOMContentLoaded", async () => {
       let userPhone = null;
 
       if (profile) {
+        currentProfileData = profile; // Simpan data profil terbaru
         userPhone = profile.whatsapp || null;
+
         if (profile.full_name && document.getElementById("profileName")) {
           document.getElementById("profileName").innerText = profile.full_name;
         }
@@ -223,8 +226,12 @@ document.addEventListener("DOMContentLoaded", async () => {
       const randomDigits = Math.floor(1000 + Math.random() * 9000);
       const invoiceNumber = `DEP-${dateStr}-${randomDigits}`;
 
+      // Ambil data pelanggan terbaru dari data profil yang tersinkron
+      const customerName = currentProfileData?.full_name || user.user_metadata?.full_name || "Member MGS";
+      const customerPhone = currentProfileData?.whatsapp || user.phone || "081234567890";
+
       try {
-        // 1. Tagihan DOKU Checkout
+        // 1. Tagihan DOKU Checkout dengan data pelanggan terkini
         const dokuRes = await fetch("/api/create-payment", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -232,8 +239,8 @@ document.addEventListener("DOMContentLoaded", async () => {
             orderId: invoiceNumber,
             amount: amount,
             paymentMethod: "Deposit Saldo MGS",
-            customerPhone: user.phone || "081234567890",
-            customerName: user.user_metadata?.full_name || "Member MGS"
+            customerPhone: customerPhone,
+            customerName: customerName
           })
         });
 
@@ -252,7 +259,7 @@ document.addEventListener("DOMContentLoaded", async () => {
           item_name: `Top Up Saldo Rp ${amount.toLocaleString("id-ID")}`,
           price: amount,
           payment_method: "DOKU Checkout",
-          whatsapp: user.phone || "-",
+          whatsapp: customerPhone,
           status: "PENDING",
           payment_data: dokuResult.data
         }]);
