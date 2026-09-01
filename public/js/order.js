@@ -432,7 +432,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     } else {
       // 2. PEMBAYARAN MENGGUNAKAN DOKU PAYMENT GATEWAY (QRIS / VA)
       try {
-        const dokuRes = await fetch("/api/create-payment.js", {
+        const dokuRes = await fetch("/api/create-payment", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
