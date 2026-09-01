@@ -912,3 +912,38 @@ a {
   transform: translateY(-2px);
   box-shadow: 0 6px 20px rgba(230, 57, 70, 0.6);
 }
+
+/* ===================================================
+   CYBER ANIMATED VIDEO LOGO (NAVBAR & FOOTER)
+   =================================================== */
+.logo-video-wrap {
+  height: 38px;
+  max-width: 160px;
+  border-radius: 8px;
+  overflow: hidden;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  flex-shrink: 0;
+}
+
+.logo-video {
+  height: 100%;
+  width: auto;
+  max-height: 38px;
+  object-fit: contain;
+  display: block;
+  pointer-events: none;
+}
+
+@media (max-width: 768px) {
+  .logo-video-wrap {
+    height: 28px;
+    max-width: 120px;
+  }
+  
+  .logo-video {
+    max-height: 28px;
+  }
+}
