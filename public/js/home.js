@@ -21,6 +21,10 @@ document.addEventListener("DOMContentLoaded", async function () {
       keywords: ["ff", "epep", "ef ef", "free fire", "freefire", "ff max", "diamond ff"]
     },
     {
+      codes: ["WOS", "WHITEOUT", "WHITEOUT-SURVIVAL"],
+      keywords: ["wos", "whiteout survival", "whiteout", "survival", "white out", "frost star", "frost"]
+    },
+    {
       codes: ["PUBG", "PUBGM"],
       keywords: ["pubg", "pubgm", "pubji", "pabji", "uc pubg", "mobile pubg"]
     },
@@ -35,10 +39,6 @@ document.addEventListener("DOMContentLoaded", async function () {
     {
       codes: ["HSR", "STAR-RAIL"],
       keywords: ["hsr", "honkai", "star rail", "starrail", "express supply"]
-    },
-    {
-      codes: ["WOS", "WHITEOUT"],
-      keywords: ["wos", "whiteout", "survival", "white out", "frost star"]
     },
     {
       codes: ["HOK", "HONOR-OF-KINGS"],
