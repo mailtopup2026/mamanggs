@@ -156,7 +156,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const updatePasswordForm = document.getElementById("updatePasswordForm");
 
   // ==========================================
-  // HANDLER REGISTER (DENGAN CEK EMAIL DUPLIKAT)
+  // HANDLER REGISTER (DENGAN CEK EMAIL DUPLIKAT & CAPTCHA)
   // ==========================================
   if (registerForm) {
     registerForm.addEventListener("submit", async (e) => {
@@ -171,6 +171,9 @@ document.addEventListener("DOMContentLoaded", () => {
       const email = document.getElementById("regEmail").value.trim().toLowerCase();
       const password = document.getElementById("regPassword").value;
       const btn = registerForm.querySelector('button[type="submit"]');
+
+      // Ambil token Turnstile jika form register ada widgetnya
+      const captchaToken = registerForm.querySelector('[name="cf-turnstile-response"]')?.value;
 
       btn.disabled = true;
       btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Mendaftarkan...';
@@ -187,17 +190,23 @@ document.addEventListener("DOMContentLoaded", () => {
           showToast("error", "Email Sudah Terdaftar", "Email ini sudah digunakan. Silakan langsung masuk ke akun Anda!");
           btn.disabled = false;
           btn.innerHTML = '<i class="fa-solid fa-wand-magic-sparkles"></i> Register';
+          if (window.turnstile) window.turnstile.reset();
           return;
         }
 
         // LAPIS 2: Lakukan pendaftaran via Supabase Auth
+        const signUpOptions = {
+          data: { full_name: name },
+          emailRedirectTo: "https://mamanggs.vercel.app/auth/login.html"
+        };
+        if (captchaToken) {
+          signUpOptions.captchaToken = captchaToken;
+        }
+
         const { data, error } = await window.supabase.auth.signUp({
           email: email,
           password: password,
-          options: {
-            data: { full_name: name },
-            emailRedirectTo: "https://mamanggs.vercel.app/auth/login.html"
-          }
+          options: signUpOptions
         });
 
         if (error) throw error;
@@ -207,6 +216,7 @@ document.addEventListener("DOMContentLoaded", () => {
           showToast("error", "Email Sudah Terdaftar", "Email ini sudah terdaftar! Silakan langsung login.");
           btn.disabled = false;
           btn.innerHTML = '<i class="fa-solid fa-wand-magic-sparkles"></i> Register';
+          if (window.turnstile) window.turnstile.reset();
           return;
         }
 
@@ -235,6 +245,7 @@ document.addEventListener("DOMContentLoaded", () => {
           errorMsg = "Email ini sudah terdaftar! Silakan langsung login.";
         }
         showToast("error", "Gagal Mendaftar", errorMsg);
+        if (window.turnstile) window.turnstile.reset();
       } finally {
         btn.disabled = false;
         btn.innerHTML = '<i class="fa-solid fa-wand-magic-sparkles"></i> Register';
@@ -243,7 +254,7 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   // ==========================================
-  // HANDLER LOGIN
+  // HANDLER LOGIN (DENGAN CLOUDFLARE TURNSTILE)
   // ==========================================
   if (loginForm) {
     loginForm.addEventListener("submit", async (e) => {
@@ -258,13 +269,24 @@ document.addEventListener("DOMContentLoaded", () => {
       const password = document.getElementById("loginPassword").value;
       const btn = loginForm.querySelector('button[type="submit"]');
 
+      // Ambil token dari Turnstile Captcha
+      const captchaToken = loginForm.querySelector('[name="cf-turnstile-response"]')?.value;
+
+      if (!captchaToken) {
+        showToast("error", "Verifikasi Keamanan", "Harap tunggu verifikasi Captcha selesai!");
+        return;
+      }
+
       btn.disabled = true;
       btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Memproses...';
 
       try {
         const { data, error } = await window.supabase.auth.signInWithPassword({
           email: email,
-          password: password
+          password: password,
+          options: {
+            captchaToken: captchaToken
+          }
         });
 
         if (error) throw error;
@@ -297,6 +319,8 @@ document.addEventListener("DOMContentLoaded", () => {
         }, 1200);
       } catch (err) {
         showToast("error", "Gagal Masuk", err.message);
+        // Reset captcha agar siap dicoba kembali
+        if (window.turnstile) window.turnstile.reset();
       } finally {
         btn.disabled = false;
         btn.innerHTML = '<i class="fa-solid fa-wand-magic-sparkles"></i> Sign In';
@@ -319,13 +343,21 @@ document.addEventListener("DOMContentLoaded", () => {
       const email = document.getElementById("forgotEmail").value.trim();
       const btn = forgotForm.querySelector('button[type="submit"]');
 
+      // Ambil token Turnstile jika form forgot ada widgetnya
+      const captchaToken = forgotForm.querySelector('[name="cf-turnstile-response"]')?.value;
+
       btn.disabled = true;
       btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Mengirim...';
 
       try {
-        const { error } = await window.supabase.auth.resetPasswordForEmail(email, {
+        const resetOptions = {
           redirectTo: "https://mamanggs.vercel.app/auth/reset-password.html"
-        });
+        };
+        if (captchaToken) {
+          resetOptions.captchaToken = captchaToken;
+        }
+
+        const { error } = await window.supabase.auth.resetPasswordForEmail(email, resetOptions);
         if (error) throw error;
         
         triggerMascotSuccess();
@@ -336,6 +368,7 @@ document.addEventListener("DOMContentLoaded", () => {
           msg = "Terlalu sering meminta email. Silakan tunggu 1-2 menit sebelum mencoba lagi.";
         }
         showToast("error", "Permintaan Gagal", msg);
+        if (window.turnstile) window.turnstile.reset();
       } finally {
         btn.disabled = false;
         btn.innerHTML = '<i class="fa-solid fa-wand-magic-sparkles"></i> Send Code';

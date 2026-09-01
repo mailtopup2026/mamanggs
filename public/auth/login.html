@@ -12,17 +12,17 @@
   
   <link rel="stylesheet" href="/css/global.css">
   <link rel="stylesheet" href="/css/auth.css">
+
+  <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
 </head>
 <body class="auth-page">
 
   <div class="auth-mobile-card">
-    <!-- Topbar -->
     <div class="auth-topbar">
       <a href="/" class="btn-back-circle"><i class="fa-solid fa-arrow-left"></i></a>
       <div class="top-icon-circle"><i class="fa-solid fa-gamepad"></i></div>
     </div>
 
-    <!-- Interactive Cyber Mascot (Mamang Bot) -->
     <div class="mascot-container">
       <div class="mascot-avatar" id="mascotAvatar">
         <div class="mascot-headset"></div>
@@ -38,13 +38,11 @@
       </div>
     </div>
 
-    <!-- Title Header -->
     <div class="auth-title-section">
       <h1>Welcome Back!</h1>
       <p>Sign in to access your reseller discount and instant order history.</p>
     </div>
 
-    <!-- Form -->
     <form id="loginForm">
       <div class="auth-form-group">
         <label for="loginEmail">Email address<span>*</span></label>
@@ -67,6 +65,13 @@
           <span>Remember me</span>
         </label>
         <a href="/auth/forgot-password.html" class="forgot-link">Forgot Password?</a>
+      </div>
+
+      <div style="margin: 14px 0; display: flex; justify-content: center; width: 100%;">
+        <div class="cf-turnstile" 
+             data-sitekey="0x4AAAAAAAEkEJCnWqOudH9Jc" 
+             data-theme="dark">
+        </div>
       </div>
 
       <button type="submit" class="btn-auth-main" id="btnLoginSubmit">
@@ -92,7 +97,6 @@
     </form>
   </div>
 
-  <!-- CDN SUPABASE SDK (Wajib Paling Pertama) -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   
   <script src="/js/particles.js"></script>
