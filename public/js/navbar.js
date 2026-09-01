@@ -78,7 +78,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     return null;
   }
 
-  // 1. EVENT LISTENER UNTUK MOBILE TOGGLE
+  // 1. EVENT LISTENER UNTUK MOBILE TOGGLE & SINKRONISASI PENCARIAN
   const btnMobileSearch = document.getElementById("btnMobileSearchToggle");
   const mobileSearchBar = document.getElementById("mobileSearchBar");
   const mobileSearchInput = document.getElementById("mobileSearchInput");
@@ -87,18 +87,48 @@ document.addEventListener("DOMContentLoaded", async () => {
     btnMobileSearch.addEventListener("click", () => {
       const isVisible = mobileSearchBar.style.display === "block";
       mobileSearchBar.style.display = isVisible ? "none" : "block";
-      if (!isVisible && mobileSearchInput) mobileSearchInput.focus();
+      if (!isVisible && mobileSearchInput) {
+        setTimeout(() => mobileSearchInput.focus(), 80);
+      }
     });
   }
 
   if (mobileSearchInput) {
-    mobileSearchInput.addEventListener("input", () => {
-      const desktopSearch = document.getElementById("searchInput");
+    const forwardSearchValue = () => {
+      const query = mobileSearchInput.value;
+      
+      // Sinkronkan ke input search desktop
+      const desktopSearch = document.getElementById("searchInput") || document.getElementById("gameSearchInput");
       if (desktopSearch) {
-        desktopSearch.value = mobileSearchInput.value;
-        desktopSearch.dispatchEvent(new Event("input"));
+        desktopSearch.value = query;
+        desktopSearch.dispatchEvent(new Event("input", { bubbles: true }));
+        desktopSearch.dispatchEvent(new Event("keyup", { bubbles: true }));
+        desktopSearch.dispatchEvent(new Event("change", { bubbles: true }));
       }
-    });
+
+      // Filter katalog kartu secara langsung jika elemen kartu ada di halaman
+      const gameCards = document.querySelectorAll(".catalog-poster-card, .popular-compact-card, .game-card-item");
+      if (gameCards.length > 0) {
+        const cleanQuery = query.toLowerCase().trim();
+        gameCards.forEach(card => {
+          const title = (card.innerText || card.textContent || "").toLowerCase();
+          if (!cleanQuery || title.includes(cleanQuery)) {
+            card.style.display = "";
+          } else {
+            card.style.display = "none";
+          }
+        });
+      }
+
+      // Panggil fungsi filter katalog jika tersedia di window global
+      if (typeof window.filterGamesCatalog === "function") {
+        window.filterGamesCatalog(query);
+      }
+    };
+
+    mobileSearchInput.addEventListener("input", forwardSearchValue);
+    mobileSearchInput.addEventListener("keyup", forwardSearchValue);
+    mobileSearchInput.addEventListener("change", forwardSearchValue);
   }
 
   const btnMobileMenu = document.getElementById("btnMobileMenuToggle");

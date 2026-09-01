@@ -9,6 +9,78 @@ document.addEventListener("DOMContentLoaded", async function () {
   let flashSaleInterval;
 
   // ==========================================
+  // DICTIONARY ALIAS & SINGKATAN POPULER
+  // ==========================================
+  const GAME_ALIASES = [
+    {
+      codes: ["MLBB", "ML", "MOBILE-LEGENDS"],
+      keywords: ["ml", "mlbb", "mobile legends", "mobel lejen", "legend", "em el", "diamonds ml"]
+    },
+    {
+      codes: ["FF", "FREE-FIRE", "FREEFIRE"],
+      keywords: ["ff", "epep", "ef ef", "free fire", "freefire", "ff max", "diamond ff"]
+    },
+    {
+      codes: ["PUBG", "PUBGM"],
+      keywords: ["pubg", "pubgm", "pubji", "pabji", "uc pubg", "mobile pubg"]
+    },
+    {
+      codes: ["VALO", "VALORANT"],
+      keywords: ["valo", "val", "valorant", "vp", "point valorant"]
+    },
+    {
+      codes: ["GENSHIN", "GI"],
+      keywords: ["gi", "genshin", "impact", "gensin", "welkin", "genesis"]
+    },
+    {
+      codes: ["HSR", "STAR-RAIL"],
+      keywords: ["hsr", "honkai", "star rail", "starrail", "express supply"]
+    },
+    {
+      codes: ["WOS", "WHITEOUT"],
+      keywords: ["wos", "whiteout", "survival", "white out", "frost star"]
+    },
+    {
+      codes: ["HOK", "HONOR-OF-KINGS"],
+      keywords: ["hok", "honor of kings", "honor", "kings", "tokens hok"]
+    },
+    {
+      codes: ["ROBLOX", "RBX"],
+      keywords: ["rbx", "roblox", "robux"]
+    },
+    {
+      codes: ["DOTA", "DOTA2"],
+      keywords: ["dota", "dota 2", "dota2"]
+    }
+  ];
+
+  // Helper Pengecekan Cerdas (Cocok Judul, Developer, Game Code, atau Singkatan)
+  function isGameMatched(game, rawQuery) {
+    const q = rawQuery.toLowerCase().trim();
+    if (!q) return true;
+
+    const title = (game.title || "").toLowerCase();
+    const code = (game.game_code || "").toLowerCase();
+    const dev = (game.developer || "").toLowerCase();
+
+    // 1. Cek langsung kecocokan di Title, Game Code, atau Developer
+    if (title.includes(q) || code.includes(q) || dev.includes(q)) return true;
+
+    // 2. Cek kecocokan di Kamus Singkatan / Alias
+    const foundAlias = GAME_ALIASES.find(item => {
+      const matchCode = item.codes.some(c => c.toLowerCase() === code || code.includes(c.toLowerCase()));
+      const matchTitle = item.keywords.some(k => title.includes(k));
+      return matchCode || matchTitle;
+    });
+
+    if (foundAlias) {
+      return foundAlias.keywords.some(k => k === q || k.includes(q) || q.includes(k));
+    }
+
+    return false;
+  }
+
+  // ==========================================
   // 1. LOAD SLIDER BANNERS
   // ==========================================
   async function loadBanners() {
@@ -60,14 +132,14 @@ document.addEventListener("DOMContentLoaded", async function () {
     setInterval(() => {
       slides[currentIndex].style.display = 'none';
       slides[currentIndex].classList.remove('active');
-      if(dots[currentIndex]) dots[currentIndex].classList.remove('active');
+      if (dots[currentIndex]) dots[currentIndex].classList.remove('active');
 
       currentIndex = (currentIndex + 1) % totalSlides;
 
       slides[currentIndex].style.display = 'flex';
       slides[currentIndex].classList.add('active');
-      if(dots[currentIndex]) dots[currentIndex].classList.add('active');
-    }, 4000); // Ganti slide setiap 4 detik
+      if (dots[currentIndex]) dots[currentIndex].classList.add('active');
+    }, 4000);
   }
 
   // ==========================================
@@ -90,12 +162,11 @@ document.addEventListener("DOMContentLoaded", async function () {
       if (error) throw error;
 
       if (!flashSales || flashSales.length === 0) {
-        wrapper.style.display = 'none'; // Sembunyikan section jika tidak ada flash sale
+        wrapper.style.display = 'none';
         return;
       }
 
-      // Duplikasi data agar animasi marquee bisa berputar mulus (efek infinite scroll)
-      const displayData = [...flashSales, ...flashSales, ...flashSales]; 
+      const displayData = [...flashSales, ...flashSales, ...flashSales];
 
       track.innerHTML = displayData.map(fs => {
         const prodName = fs.products?.product_name || fs.buyer_sku_code;
@@ -103,12 +174,10 @@ document.addEventListener("DOMContentLoaded", async function () {
         const normalPrice = Number(fs.products?.price_sell || 0).toLocaleString("id-ID");
         const flashPrice = Number(fs.flash_price || 0).toLocaleString("id-ID");
         const hemat = Number(fs.products?.price_sell || 0) - Number(fs.flash_price || 0);
-        const hematLabel = hemat > 1000 ? `HEMAT ${Math.floor(hemat/1000)}RB` : fs.discount_label;
-        
-        // Cari cover game dari allGamesData
-        const gameData = allGamesData.find(g => g.game_code.toUpperCase() === brand.toUpperCase() || brand.toLowerCase().includes(g.game_code));
+        const hematLabel = hemat > 1000 ? `HEMAT ${Math.floor(hemat / 1000)}RB` : fs.discount_label;
+
+        const gameData = allGamesData.find(g => (g.game_code || "").toUpperCase() === brand.toUpperCase() || brand.toLowerCase().includes((g.game_code || "").toLowerCase()));
         const imgUrl = gameData ? gameData.image_url : "https://images.unsplash.com/photo-1542751371-adc38448a05e?auto=format&fit=crop&w=120&q=80";
-        // Asumsi game_code bisa didapat dari string brand awal jika ga ketemu
         const targetGame = gameData ? gameData.game_code : brand.toLowerCase().replace(/\s+/g, '-');
 
         return `
@@ -129,7 +198,6 @@ document.addEventListener("DOMContentLoaded", async function () {
         `;
       }).join("");
 
-      // Start Real Countdown berdasarkan end_time terdekat
       startFlashSaleCountdown(new Date(flashSales[0].end_time).getTime());
 
     } catch (err) {
@@ -139,7 +207,7 @@ document.addEventListener("DOMContentLoaded", async function () {
   }
 
   function startFlashSaleCountdown(endTimeMs) {
-    if(flashSaleInterval) clearInterval(flashSaleInterval);
+    if (flashSaleInterval) clearInterval(flashSaleInterval);
 
     flashSaleInterval = setInterval(() => {
       const now = new Date().getTime();
@@ -162,7 +230,7 @@ document.addEventListener("DOMContentLoaded", async function () {
   }
 
   // ==========================================
-  // 3. LOAD KATALOG GAME & POPULAR GAMES
+  // 3. LOAD KATALOG GAME & LIVE FILTER SEARCH
   // ==========================================
   async function loadGames() {
     try {
@@ -194,7 +262,7 @@ document.addEventListener("DOMContentLoaded", async function () {
     }
 
     container.innerHTML = popularGames.map(game => `
-      <a href="/order.html?game=${game.game_code}" class="popular-compact-card">
+      <a href="/order.html?game=${game.game_code}" class="popular-compact-card" data-title="${game.title}" data-code="${game.game_code}">
         <img src="${game.image_url}" alt="${game.title}">
         <div style="overflow: hidden;">
           <h4 style="font-size: 0.88rem; font-weight: 800; margin: 0 0 2px; white-space: nowrap; text-overflow: ellipsis; overflow: hidden;">${game.title}</h4>
@@ -204,27 +272,29 @@ document.addEventListener("DOMContentLoaded", async function () {
     `).join("");
   }
 
-  function renderMainCatalog(filterType) {
+  function renderMainCatalog(filterType, searchQuery = "") {
     const container = document.getElementById("mainCatalogGrid");
     if (!container) return;
-    container.innerHTML = "";
 
-    // Karena di DB game_categories tidak ada spesifik kolom "category" PPOB/Game/Voucher,
-    // kita asumsikan semua tampil di filter "all".
     let list = allGamesData;
-    
-    // Fitur filter opsional kedepannya
-    // if (filterType !== "all" && filterType !== "reseller") {
-    //   list = allGamesData.filter(g => g.category === filterType);
-    // }
+
+    // Filter berdasarkan query pencarian (termasuk deteksi alias/singkatan)
+    if (searchQuery && searchQuery.trim() !== "") {
+      list = list.filter(game => isGameMatched(game, searchQuery));
+    }
 
     if (list.length === 0) {
-      container.innerHTML = '<div style="grid-column: 1/-1; text-align: center; color: #64748b; padding: 40px;"><i class="fa-solid fa-box-open" style="font-size: 2rem; margin-bottom: 10px; display: block;"></i>Belum ada produk game yang diatur admin.</div>';
+      container.innerHTML = `
+        <div style="grid-column: 1/-1; text-align: center; color: #64748b; padding: 40px;">
+          <i class="fa-solid fa-magnifying-glass" style="font-size: 2rem; margin-bottom: 10px; display: block; color: var(--accent-red, #e63946);"></i>
+          Game "${searchQuery}" tidak ditemukan. Coba gunakan kata kunci atau singkatan lain.
+        </div>
+      `;
       return;
     }
 
     container.innerHTML = list.map(game => `
-      <a href="/order.html?game=${game.game_code}" class="catalog-poster-card">
+      <a href="/order.html?game=${game.game_code}" class="catalog-poster-card" data-title="${game.title}" data-code="${game.game_code}">
         <img src="${game.image_url}" alt="${game.title}" loading="lazy">
         <div style="padding: 12px 14px;">
           <h3 style="font-size: 0.95rem; font-weight: 800; margin: 0 0 4px; color: #fff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${game.title}</h3>
@@ -234,6 +304,30 @@ document.addEventListener("DOMContentLoaded", async function () {
     `).join("");
   }
 
+  // ==========================================
+  // 4. GLOBAL LIVE SEARCH FUNCTION
+  // ==========================================
+  window.filterGamesCatalog = function (query) {
+    renderMainCatalog("all", query);
+
+    // Filter juga section "Populer Sekarang" jika ada
+    const popularCards = document.querySelectorAll(".popular-compact-card");
+    popularCards.forEach(card => {
+      const title = card.getAttribute("data-title") || "";
+      const code = card.getAttribute("data-code") || "";
+      const matched = isGameMatched({ title, game_code: code }, query);
+      card.style.display = matched ? "" : "none";
+    });
+  };
+
+  // Listener input search desktop jika ada di index
+  const desktopSearch = document.getElementById("searchInput");
+  if (desktopSearch) {
+    desktopSearch.addEventListener("input", (e) => {
+      window.filterGamesCatalog(e.target.value);
+    });
+  }
+
   // Event Listener Tab Filter Katalog
   const tabButtons = document.querySelectorAll(".catalog-tab-pill");
   tabButtons.forEach(btn => {
@@ -241,12 +335,13 @@ document.addEventListener("DOMContentLoaded", async function () {
       tabButtons.forEach(b => b.classList.remove("active"));
       this.classList.add("active");
       const filter = this.getAttribute("data-filter") || "all";
-      renderMainCatalog(filter);
+      const currentQuery = desktopSearch ? desktopSearch.value : "";
+      renderMainCatalog(filter, currentQuery);
     });
   });
 
-  // Eksekusi pemuatan data secara berurutan
-  await loadGames();        // Load game dulu agar flash sale bisa pakai cover gambarnya
-  await loadFlashSales();   // Load flash sale (marquee & timer db)
-  await loadBanners();      // Load banner carousel
+  // Eksekusi pemuatan data
+  await loadGames();
+  await loadFlashSales();
+  await loadBanners();
 });
