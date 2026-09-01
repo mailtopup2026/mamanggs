@@ -485,18 +485,25 @@ document.addEventListener("DOMContentLoaded", async () => {
       const { error } = await window.supabase.from("orders").insert([orderPayload]);
       if (error) throw error;
 
-      // REDIRECT LOGIC YANG BARU
+      // REDIRECT LOGIC
       if (isUsingWallet) {
         alert("Pembayaran Berhasil! Saldo akun Anda telah dipotong dan pesanan langsung diproses.");
         window.location.href = `/order-status.html?inv=${encodeURIComponent(invoiceNumber)}`;
-      } else if (dokuPaymentData && dokuPaymentData.payment && dokuPaymentData.payment.url) {
-        // Alihkan user ke halaman pembayaran DOKU (untuk QRIS/VA)
-        window.location.href = dokuPaymentData.payment.url;
+        return;
+      }
+
+      const paymentUrl =
+        dokuPaymentData?.response?.payment?.url ||
+        dokuPaymentData?.payment?.url ||
+        dokuPaymentData?.response?.url ||
+        dokuPaymentData?.payment_url ||
+        dokuPaymentData?.url;
+
+      if (paymentUrl) {
+        window.location.href = paymentUrl;
       } else {
-        // Fallback jika tidak ada URL dari DOKU
         window.location.href = `/order-status.html?inv=${encodeURIComponent(invoiceNumber)}`;
       }
-      
     } catch (err) {
       console.error("Error order:", err);
       alert("Gagal membuat pesanan: " + err.message);
