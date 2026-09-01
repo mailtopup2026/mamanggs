@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Pengaturan Profil - MamangGS</title>
+  <title>Edit Profil & Avatar - MamangGS</title>
   
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -12,115 +12,151 @@
   
   <link rel="stylesheet" href="/css/global.css">
   <link rel="stylesheet" href="/css/profile.css">
+
+  <style>
+    html, body {
+      overflow-x: hidden !important;
+      max-width: 100% !important;
+      background-color: #070d18;
+      color: #f8fafc;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      margin: 0;
+      padding: 0;
+    }
+    *, *::before, *::after {
+      box-sizing: border-box !important;
+    }
+  </style>
 </head>
 <body>
 
-  <!-- NAVBAR -->
+  <!-- NAVBAR RESPONSIVE DENGAN TITIK TIGA -->
   <header class="navbar">
     <div class="navbar-container">
       <a href="/" class="brand-logo">
         <div class="logo-video-wrap"><video autoplay loop muted playsinline class="logo-video"><source src="/assets/images/logo.mp4" type="video/mp4"></video></div>
-        
       </a>
 
-      <div class="nav-actions">
-        <a href="/leaderboard.html" class="btn-nav-login" style="background: rgba(245, 158, 11, 0.15); border-color: rgba(245, 158, 11, 0.4); color: #f59e0b;">
-          <i class="fa-solid fa-crown"></i> Leaderboard
-        </a>
-        <a href="/dashboard.html" class="btn-nav-register"><i class="fa-solid fa-gauge-high"></i> Dashboard</a>
+      <!-- DESKTOP NAV ACTIONS -->
+      <div class="nav-actions desktop-only" id="desktopNavActions">
+        <a href="/" class="btn-nav-login"><i class="fa-solid fa-house"></i> Beranda</a>
+        <a href="/dashboard.html" class="btn-nav-login" style="color: #e63946; border-color: rgba(230, 57, 70, 0.4);"><i class="fa-solid fa-gauge-high"></i> Dashboard</a>
+        <a href="/leaderboard.html" class="btn-nav-login" style="color: #f59e0b; border-color: rgba(245, 158, 11, 0.4);"><i class="fa-solid fa-crown"></i> Leaderboard</a>
+        <a href="/order-status.html" class="btn-nav-login"><i class="fa-solid fa-magnifying-glass"></i> Lacak</a>
+      </div>
+
+      <!-- MOBILE ONLY: TOMBOL TITIK TIGA (⋮) -->
+      <div class="mobile-nav-toggle-group">
+        <button id="btnMobileMenuToggle" class="btn-mobile-icon" title="Menu Lengkap">
+          <i class="fa-solid fa-ellipsis-vertical"></i>
+        </button>
+      </div>
+    </div>
+
+    <!-- MOBILE DROPDOWN DRAWER -->
+    <div id="mobileMenuDropdown" class="mobile-menu-drawer">
+      <div class="mobile-menu-header">
+        <span style="font-weight: 800; font-size: 0.88rem; color: #fff;">Menu MamangGS</span>
+        <button id="btnCloseMobileMenu" style="background: none; border: none; color: #94a3b8; font-size: 1.1rem; cursor: pointer;">✕</button>
+      </div>
+      <div id="mobileMenuList" class="mobile-menu-items">
+        <a href="/" class="mobile-menu-link"><i class="fa-solid fa-house" style="color: #3b82f6;"></i> Beranda</a>
+        <a href="/dashboard.html" class="mobile-menu-link"><i class="fa-solid fa-gauge-high" style="color: #e63946;"></i> Dashboard Akun</a>
+        <a href="/leaderboard.html" class="mobile-menu-link"><i class="fa-solid fa-crown" style="color: #f59e0b;"></i> Leaderboard Sultan</a>
+        <a href="/blog.html" class="mobile-menu-link"><i class="fa-solid fa-newspaper" style="color: #38bdf8;"></i> Blog & Tips Game</a>
+        <a href="/order-status.html" class="mobile-menu-link" style="color: #10b981;"><i class="fa-solid fa-receipt"></i> Lacak Pesanan</a>
+        <hr style="border: none; border-top: 1px solid rgba(255,255,255,0.08); margin: 8px 0;">
+        <button id="btnMobileLogout" class="mobile-menu-link" style="width: 100%; text-align: left; background: none; border: none; color: #ef4444; cursor: pointer; padding: 10px 0; font-family: inherit; font-size: 0.95rem; font-weight: 700;">
+          <i class="fa-solid fa-right-from-bracket"></i> Keluar Akun
+        </button>
       </div>
     </div>
   </header>
 
-  <!-- PROFILE WRAPPER -->
-  <main class="profile-wrapper">
-    <div class="profile-card">
+  <!-- KONTEN EDIT PROFIL -->
+  <main class="profile-container" style="max-width: 680px; margin: 30px auto 80px; padding: 0 16px;">
+    
+    <!-- CARD PREVIEW AKUN -->
+    <div class="profile-card" style="text-align: center; padding: 28px 20px; border-radius: 20px; background: linear-gradient(135deg, rgba(230, 57, 70, 0.1), rgba(15, 23, 42, 0.85)); border: 1px solid rgba(255, 255, 255, 0.08); margin-bottom: 24px;">
+      <div class="avatar-large-wrap" style="width: 90px; height: 90px; margin: 0 auto 16px; border-radius: 50%; background: linear-gradient(145deg, #f59e0b, #d97706); padding: 3px; box-shadow: 0 0 25px rgba(245, 158, 11, 0.35);">
+        <img id="currentAvatarPreview" src="https://api.dicebear.com/7.x/adventurer/svg?seed=Jordyn" alt="Avatar Preview" style="width: 100%; height: 100%; border-radius: 50%; object-fit: cover; background: #0b1324;">
+      </div>
+      <h2 id="profileDisplayName" style="margin: 0; font-size: 1.35rem; font-weight: 800; color: #fff;">Pt anak negeri digital</h2>
+      <p id="profileDisplayEmail" style="margin: 4px 0 14px; color: #94a3b8; font-size: 0.88rem;">anaknegeridigital@gmail.com</p>
       
-      <!-- HEADER PREVIEW -->
-      <div class="profile-header">
-        <div class="current-avatar-preview-wrap">
-          <img id="currentAvatarPreview" src="https://api.dicebear.com/7.x/adventurer/svg?seed=Jordyn" alt="Avatar" class="current-avatar-preview">
-        </div>
-        <h2 id="profileDisplayName">Gamers Sultan</h2>
-        <p id="profileDisplayEmail" class="profile-email-text">user@email.com</p>
-
-        <!-- BADGES GAME PREVIEW DI PROFIL -->
-        <div class="profile-badges-container" id="profileBadgesPreview">
-          <span class="empty-badge-text">Belum memilih game favorit</span>
-        </div>
-      </div>
-
-      <!-- SECTION 1: PILIH AVATAR 3D -->
-      <div class="section-group">
-        <label class="section-label-title"><i class="fa-solid fa-face-smile"></i> 1. Pilih Avatar Karakter</label>
-        <p class="section-sub-desc">Klik salah satu karakter di bawah ini untuk mengganti avatar profil kamu secara instan.</p>
-
-        <!-- 3D Avatar Grid -->
-        <div class="avatar-picker-grid" id="avatarPickerGrid">
-          <!-- Diisi via JS -->
-        </div>
-        <input type="hidden" id="selectedAvatarInput" value="">
-      </div>
-
-      <!-- SECTION 2: PILIH GAME FAVORIT (MAKS 3) -->
-      <div class="section-group">
-        <div class="badge-selection-header">
-          <label class="section-label-title"><i class="fa-solid fa-gamepad"></i> 2. Pilih Game Favorit (Maksimal 3)</label>
-          <span class="badge-counter-pill" id="badgeCounter">0/3 Terpilih</span>
-        </div>
-        <p class="section-sub-desc">Klik ikon game di bawah untuk memajang badge di profil publik & leaderboard.</p>
-        
-        <div class="game-badges-grid" id="gameBadgesGrid">
-          <!-- Diisi via JS -->
-        </div>
-      </div>
-
-      <!-- SECTION 3: FORM BIODATA -->
-      <form id="profileForm" class="profile-form">
-        <div class="form-group">
-          <label for="fullNameInput"><i class="fa-solid fa-user"></i> 3. Nama Lengkap / Nickname</label>
-          <input type="text" id="fullNameInput" class="form-control" placeholder="Masukkan nama gamers..." required>
-        </div>
-
-        <div class="form-group">
-          <label for="whatsappInput"><i class="fa-brands fa-whatsapp"></i> Nomor WhatsApp</label>
-          <input type="tel" id="whatsappInput" class="form-control" placeholder="Contoh: 081234567890" required>
-        </div>
-
-        <div class="form-group">
-          <label for="emailInput"><i class="fa-solid fa-envelope"></i> Email Akun (Terkunci)</label>
-          <input type="email" id="emailInput" class="form-control" disabled style="opacity: 0.6; cursor: not-allowed;">
-          <small style="color: var(--text-muted); font-size: 0.72rem; margin-top: 3px;">Email terikat permanen dengan keamanan otentikasi login kamu.</small>
-        </div>
-
-        <div id="profileAlert" class="alert-box" style="display: none;"></div>
-
-        <button type="submit" class="btn-save-profile" id="btnSaveProfile">
-          <i class="fa-solid fa-floppy-disk"></i> Simpan Perubahan Profil
-        </button>
-      </form>
+      <!-- Preview Badges -->
+      <div id="profileBadgesPreview" style="display: flex; justify-content: center; gap: 8px; flex-wrap: wrap;"></div>
     </div>
+
+    <!-- FORM SETTINGS -->
+    <form id="profileForm" style="background: rgba(15, 23, 42, 0.7); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 20px; padding: 24px;">
+      <input type="hidden" id="selectedAvatarInput" value="">
+      
+      <div id="profileAlert" class="alert-box" style="display: none; margin-bottom: 18px;"></div>
+
+      <!-- 1. PILIH AVATAR KARAKTER -->
+      <div class="form-section-header" style="margin-bottom: 14px;">
+        <h3 style="margin: 0; font-size: 1.05rem; font-weight: 800; display: flex; align-items: center; gap: 8px;">
+          <i class="fa-regular fa-face-smile" style="color: #f59e0b;"></i> 1. Pilih Avatar Karakter
+        </h3>
+        <p style="margin: 4px 0 0; color: #94a3b8; font-size: 0.82rem;">Klik salah satu karakter di bawah ini untuk mengganti avatar secara instan.</p>
+      </div>
+
+      <div class="avatar-picker-grid" id="avatarPickerGrid" style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 28px;">
+        <!-- Avatar list via JS -->
+      </div>
+
+      <!-- 2. PILIH GAME FAVORIT -->
+      <div class="form-section-header" style="margin-bottom: 14px; display: flex; justify-content: space-between; align-items: flex-end;">
+        <div>
+          <h3 style="margin: 0; font-size: 1.05rem; font-weight: 800; display: flex; align-items: center; gap: 8px;">
+            <i class="fa-solid fa-gamepad" style="color: #38bdf8;"></i> 2. Pilih Game Favorit
+          </h3>
+          <p style="margin: 4px 0 0; color: #94a3b8; font-size: 0.82rem;">Ikon game akan dipajang di profil & leaderboard publik.</p>
+        </div>
+        <span class="badge-counter" id="badgeCounter" style="background: rgba(16, 185, 129, 0.15); border: 1px solid rgba(16, 185, 129, 0.3); color: #10b981; padding: 4px 10px; border-radius: 8px; font-size: 0.75rem; font-weight: 800;">0/3 Terpilih</span>
+      </div>
+
+      <div class="game-badges-grid" id="gameBadgesGrid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); gap: 10px; margin-bottom: 28px;">
+        <!-- Game badges via JS -->
+      </div>
+
+      <!-- 3. INFORMASI BIODATA -->
+      <div class="form-section-header" style="margin-bottom: 14px;">
+        <h3 style="margin: 0; font-size: 1.05rem; font-weight: 800; display: flex; align-items: center; gap: 8px;">
+          <i class="fa-solid fa-id-card" style="color: #e63946;"></i> 3. Informasi Kontak
+        </h3>
+      </div>
+
+      <div style="display: flex; flex-direction: column; gap: 14px; margin-bottom: 24px;">
+        <div>
+          <label style="display: block; font-size: 0.82rem; font-weight: 700; color: #94a3b8; margin-bottom: 6px;">Nama Lengkap / Brand</label>
+          <input type="text" id="fullNameInput" style="width: 100%; background: #090f1d; border: 1px solid rgba(255,255,255,0.1); padding: 12px 14px; border-radius: 10px; color: #fff; font-family: inherit; font-size: 0.9rem;" placeholder="Masukkan nama kamu">
+        </div>
+
+        <div>
+          <label style="display: block; font-size: 0.82rem; font-weight: 700; color: #94a3b8; margin-bottom: 6px;">Nomor WhatsApp Aktif</label>
+          <input type="tel" id="whatsappInput" style="width: 100%; background: #090f1d; border: 1px solid rgba(255,255,255,0.1); padding: 12px 14px; border-radius: 10px; color: #fff; font-family: inherit; font-size: 0.9rem;" placeholder="08xxxxxxxxxx">
+        </div>
+
+        <div>
+          <label style="display: block; font-size: 0.82rem; font-weight: 700; color: #94a3b8; margin-bottom: 6px;">Alamat Email</label>
+          <input type="email" id="emailInput" disabled style="width: 100%; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.05); padding: 12px 14px; border-radius: 10px; color: #64748b; font-family: inherit; font-size: 0.9rem; cursor: not-allowed;">
+        </div>
+      </div>
+
+      <button type="submit" id="btnSaveProfile" style="width: 100%; background: #e63946; color: #fff; border: none; padding: 14px; border-radius: 12px; font-weight: 800; font-size: 0.95rem; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; transition: background 0.2s;">
+        <i class="fa-solid fa-floppy-disk"></i> Simpan Perubahan Profil
+      </button>
+    </form>
   </main>
 
-  <!-- FOOTER -->
-  <footer class="footer">
-    <div class="footer-container">
-      <div class="footer-brand">
-        <div class="brand-logo">
-          <div class="logo-video-wrap"><video autoplay loop muted playsinline class="logo-video"><source src="/assets/images/logo.mp4" type="video/mp4"></video></div>
-          
-        </div>
-        <p>Platform top up game otomatis, murah, dan terpercaya 24 jam nonstop.</p>
-      </div>
-      <div class="footer-bottom">
-        <p>&copy; 2026 MamangGS. All rights reserved.</p>
-      </div>
-    </div>
-  </footer>
-
-  <!-- SUPABASE CDN & JS -->
+  <!-- JS MODULAR -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="/js/particles.js"></script>
   <script src="/js/supabase.js"></script>
+  <script src="/js/navbar.js"></script>
   <script src="/js/profile.js"></script>
+  <script src="/js/floating-hub.js"></script>
 </body>
 </html>
