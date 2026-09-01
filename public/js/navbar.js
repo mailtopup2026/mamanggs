@@ -1,9 +1,7 @@
 // ==========================================
-// FUNGSI GLOBAL LOGOUT BERSIH & AMAN
+// FUNGSI GLOBAL LOGOUT DENGAN CYBER MODAL
 // ==========================================
-async function handleLogout() {
-  if (!confirm("Yakin ingin keluar akun?")) return;
-
+function handleLogout() {
   function getClient() {
     if (window.supabaseClient) return window.supabaseClient;
     if (window.supabase && typeof window.supabase.from === "function") return window.supabase;
@@ -11,22 +9,65 @@ async function handleLogout() {
     return null;
   }
 
-  try {
-    const client = getClient();
-    if (client && client.auth) {
-      await client.auth.signOut();
-    }
-  } catch (err) {
-    console.warn("Error saat sign out Supabase:", err);
-  } finally {
-    // Bersihkan semua local storage & cache session
-    localStorage.removeItem("mgs_user");
-    localStorage.clear();
-    sessionStorage.clear();
+  let modal = document.getElementById("logoutModalOverlay");
 
-    // Arahkan ke beranda dan reload
-    window.location.href = "/";
+  // Jika modal belum ada di DOM dokumen, buat secara dinamis
+  if (!modal) {
+    const modalHTML = `
+      <div class="mgs-modal-overlay" id="logoutModalOverlay">
+        <div class="mgs-cyber-modal">
+          <div class="modal-icon-glow">
+            <i class="fa-solid fa-power-off"></i>
+          </div>
+          <h3>Konfirmasi Keluar</h3>
+          <p>Apakah kamu yakin ingin mengakhiri sesi dan keluar dari akun MamangGS?</p>
+          <div class="modal-actions-grid">
+            <button type="button" class="btn-modal-cancel" id="btnCancelLogout">Batal</button>
+            <button type="button" class="btn-modal-confirm" id="btnConfirmLogout">Ya, Keluar</button>
+          </div>
+        </div>
+      </div>
+    `;
+    document.body.insertAdjacentHTML("beforeend", modalHTML);
+    modal = document.getElementById("logoutModalOverlay");
+
+    // Tutup modal via tombol Batal
+    document.getElementById("btnCancelLogout")?.addEventListener("click", () => {
+      modal.classList.remove("show");
+    });
+
+    // Tutup jika area luar modal diklik
+    modal.addEventListener("click", (e) => {
+      if (e.target === modal) modal.classList.remove("show");
+    });
+
+    // Eksekusi logout saat tombol konfirmasi diklik
+    document.getElementById("btnConfirmLogout")?.addEventListener("click", async () => {
+      const btn = document.getElementById("btnConfirmLogout");
+      btn.disabled = true;
+      btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Keluar...';
+
+      try {
+        const client = getClient();
+        if (client && client.auth) {
+          await client.auth.signOut();
+        }
+      } catch (err) {
+        console.warn("Error saat sign out Supabase:", err);
+      } finally {
+        // Bersihkan semua local storage & cache session
+        localStorage.removeItem("mgs_user");
+        localStorage.clear();
+        sessionStorage.clear();
+
+        // Arahkan ke beranda
+        window.location.href = "/";
+      }
+    });
   }
+
+  // Tampilkan Cyber Modal
+  modal.classList.add("show");
 }
 
 document.addEventListener("DOMContentLoaded", async () => {
@@ -117,7 +158,9 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     // JIKA USER SUDAH LOGIN
     const name = profileData?.full_name || userData.user_metadata?.full_name || userData.email?.split("@")[0] || "Member";
-    const avatarUrl = profileData?.avatar_url || `https://api.dicebear.com/7.x/adventurer/svg?seed=${encodeURIComponent(name)}&radius=50`;
+    const avatarUrl = (profileData && profileData.avatar_url && profileData.avatar_url.trim() !== "")
+      ? profileData.avatar_url
+      : `https://api.dicebear.com/7.x/adventurer/svg?seed=${encodeURIComponent(name)}&radius=50`;
 
     if (desktopNav) {
       desktopNav.innerHTML = `
