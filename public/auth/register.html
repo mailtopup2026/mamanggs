@@ -22,9 +22,20 @@
       <div class="top-icon-circle"><i class="fa-solid fa-crown"></i></div>
     </div>
 
-    <!-- Glowing Sphere Orb -->
-    <div class="orb-container">
-      <div class="glowing-orb"></div>
+    <!-- Interactive Cyber Mascot (Mamang Bot) -->
+    <div class="mascot-container">
+      <div class="mascot-avatar" id="mascotAvatar">
+        <div class="mascot-headset"></div>
+        <div class="mascot-face">
+          <div class="mascot-eye left"></div>
+          <div class="mascot-eye right"></div>
+        </div>
+        <div class="mascot-mouth"></div>
+        <div class="mascot-hands">
+          <div class="mascot-hand"></div>
+          <div class="mascot-hand"></div>
+        </div>
+      </div>
     </div>
 
     <!-- Title Header -->
@@ -87,21 +98,5 @@
   <script src="/js/particles.js"></script>
   <script src="/js/supabase.js"></script>
   <script src="/js/auth.js"></script>
-
-  <script>
-    function togglePass(inputId, icon) {
-      const input = document.getElementById(inputId);
-      if (!input) return;
-      if (input.type === "password") {
-        input.type = "text";
-        icon.classList.remove("fa-eye-slash");
-        icon.classList.add("fa-eye");
-      } else {
-        input.type = "password";
-        icon.classList.remove("fa-eye");
-        icon.classList.add("fa-eye-slash");
-      }
-    }
-  </script>
 </body>
 </html>

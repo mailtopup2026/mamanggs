@@ -1,4 +1,6 @@
-// Fungsi Toast Kustom MamangGS
+// ==========================================
+// FUNGSI TOAST KUSTOM MAMANGGS
+// ==========================================
 function showToast(type, title, message) {
   let container = document.querySelector(".mgs-toast-container");
   if (!container) {
@@ -24,37 +26,94 @@ function showToast(type, title, message) {
 
   container.appendChild(toast);
 
-  // Animasi masuk
   setTimeout(() => toast.classList.add("show"), 50);
 
-  // Otomatis hilang dalam 4 detik
   setTimeout(() => {
     toast.classList.remove("show");
     setTimeout(() => toast.remove(), 400);
   }, 4000);
 }
 
-// Toggle Show/Hide Password
+// ==========================================
+// TOGGLE SHOW/HIDE PASSWORD + REAKSI MASKOT
+// ==========================================
 function togglePass(inputId, iconElement) {
   const input = document.getElementById(inputId);
+  const mascot = document.getElementById("mascotAvatar");
   if (!input) return;
 
   if (input.type === "password") {
     input.type = "text";
-    iconElement.classList.replace("fa-eye-slash", "fa-eye");
+    if (iconElement) iconElement.classList.replace("fa-eye-slash", "fa-eye");
+    
+    // Maskot ngintip satu mata
+    if (mascot) {
+      mascot.classList.remove("blindfold");
+      mascot.classList.add("peeking");
+    }
   } else {
     input.type = "password";
-    iconElement.classList.replace("fa-eye", "fa-eye-slash");
+    if (iconElement) iconElement.classList.replace("fa-eye", "fa-eye-slash");
+    
+    // Maskot tutup mata lagi jika kolom password masih aktif
+    if (mascot && document.activeElement === input) {
+      mascot.classList.remove("peeking");
+      mascot.classList.add("blindfold");
+    }
   }
 }
 
+// Trigger Maskot Sukses / Horay
+function triggerMascotSuccess() {
+  const mascot = document.getElementById("mascotAvatar");
+  if (mascot) {
+    mascot.className = "mascot-avatar success";
+  }
+}
+
+// ==========================================
+// INITIALIZE INTERACTIVE MASCOT EVENTS
+// ==========================================
+function initMascotEvents() {
+  const mascot = document.getElementById("mascotAvatar");
+  if (!mascot) return;
+
+  // Cari semua input password di form
+  const passInputs = document.querySelectorAll('input[type="password"]');
+  const otherInputs = document.querySelectorAll('input:not([type="password"])');
+
+  passInputs.forEach(input => {
+    input.addEventListener("focus", () => {
+      if (input.type === "password") {
+        mascot.classList.remove("peeking");
+        mascot.classList.add("blindfold");
+      }
+    });
+
+    input.addEventListener("blur", () => {
+      mascot.classList.remove("blindfold", "peeking");
+    });
+  });
+
+  otherInputs.forEach(input => {
+    input.addEventListener("focus", () => {
+      mascot.classList.remove("blindfold", "peeking");
+    });
+  });
+}
+
 document.addEventListener("DOMContentLoaded", () => {
+  // Inisialisasi event maskot
+  initMascotEvents();
+
   const loginForm = document.getElementById("loginForm");
   const registerForm = document.getElementById("registerForm");
   const forgotForm = document.getElementById("forgotForm");
   const updatePasswordForm = document.getElementById("updatePasswordForm");
 
-  // Handler Register
+  // ==========================================
+  // HANDLER REGISTER
+  // ==========================================
   if (registerForm) {
     registerForm.addEventListener("submit", async (e) => {
       e.preventDefault();
@@ -85,7 +144,7 @@ document.addEventListener("DOMContentLoaded", () => {
         if (error) throw error;
 
         if (data.user) {
-          await window.supabase.from("profiles").insert([
+          await window.supabase.from("profiles").upsert([
             {
               id: data.user.id,
               full_name: name,
@@ -95,6 +154,9 @@ document.addEventListener("DOMContentLoaded", () => {
             }
           ]);
         }
+
+        // Maskot Horay!
+        triggerMascotSuccess();
 
         showToast("success", "Pendaftaran Berhasil!", "Silakan login menggunakan akun baru Anda.");
         setTimeout(() => {
@@ -109,7 +171,9 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  // Handler Login
+  // ==========================================
+  // HANDLER LOGIN
+  // ==========================================
   if (loginForm) {
     loginForm.addEventListener("submit", async (e) => {
       e.preventDefault();
@@ -136,6 +200,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
         // Simpan sesi user ke localStorage
         localStorage.setItem("mgs_user", JSON.stringify(data.user));
+
+        // Maskot Horay!
+        triggerMascotSuccess();
 
         // Cek Role apakah Admin atau Member
         let redirectTarget = "/";
@@ -166,7 +233,9 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  // Handler Forgot Password
+  // ==========================================
+  // HANDLER FORGOT PASSWORD
+  // ==========================================
   if (forgotForm) {
     forgotForm.addEventListener("submit", async (e) => {
       e.preventDefault();
@@ -187,6 +256,8 @@ document.addEventListener("DOMContentLoaded", () => {
           redirectTo: "https://mamanggs.vercel.app/auth/reset-password.html"
         });
         if (error) throw error;
+        
+        triggerMascotSuccess();
         showToast("success", "Email Terkirim!", "Tautan reset telah dikirim ke " + email);
       } catch (err) {
         let msg = err.message;
@@ -201,7 +272,9 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  // Handler Update Password Baru
+  // ==========================================
+  // HANDLER UPDATE PASSWORD BARU
+  // ==========================================
   if (updatePasswordForm) {
     updatePasswordForm.addEventListener("submit", async (e) => {
       e.preventDefault();
@@ -224,6 +297,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
         if (error) throw error;
 
+        triggerMascotSuccess();
         showToast("success", "Berhasil Diperbarui!", "Kata sandi telah diganti. Mengalihkan ke login...");
         setTimeout(() => {
           window.location.href = "/auth/login.html";
