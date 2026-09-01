@@ -10,9 +10,7 @@ async function orderDigiflazz(order) {
   const username = process.env.DIGIFLAZZ_USERNAME;
   const apiKey = process.env.DIGIFLAZZ_API_KEY || process.env.DIGIFLAZZ_KEY;
   const isDev = process.env.DIGIFLAZZ_MODE === "development";
-  const endpoint = isDev 
-    ? "https://api.digiflazz.com/v1/transaction" 
-    : "https://api.digiflazz.com/v1/transaction";
+  const endpoint = "https://api.digiflazz.com/v1/transaction";
 
   // Signature DigiFlazz: md5(username + apiKey + ref_id)
   const sign = crypto
@@ -27,7 +25,7 @@ async function orderDigiflazz(order) {
 
   const payload = {
     username: username,
-    buyer_sku_code: order.sku_code || order.item_name, // Pastikan SKU DigiFlazz terbaca
+    buyer_sku_code: order.sku_code || order.item_name,
     customer_no: customerNo,
     ref_id: order.invoice,
     sign: sign,
@@ -94,35 +92,60 @@ export default async function handler(req, res) {
 
       // Jika pesanan belum diproses (masih PENDING)
       if (order.status !== "SUCCESS") {
-        let digiResult = null;
-        let finalStatus = "PROCESSING"; // Berubah ke PROCESSING saat ditembak ke provider
+        // A. CABANG TRANSAKSI: DEPOSIT SALDO MGS (DEP-)
+        if (invoiceNumber.startsWith("DEP-") && order.user_id) {
+          try {
+            const { error: balanceErr } = await supabase.rpc("add_user_balance", {
+              user_uuid: order.user_id,
+              amount: Number(order.price)
+            });
 
-        try {
-          // 2. Eksekusi tembak item game ke DigiFlazz
-          digiResult = await orderDigiflazz(order);
-          console.log("DigiFlazz Response:", digiResult);
+            if (balanceErr) throw balanceErr;
 
-          const digiStatus = digiResult?.data?.status;
-          if (digiStatus === "Sukses") {
-            finalStatus = "SUCCESS";
-          } else if (digiStatus === "Gagal") {
-            finalStatus = "FAILED";
+            await supabase
+              .from("orders")
+              .update({
+                status: "SUCCESS",
+                payment_data: body
+              })
+              .ilike("invoice", invoiceNumber.trim());
+
+            console.log(`Deposit ${invoiceNumber} berhasil! Saldo user ${order.user_id} bertambah Rp ${order.price}`);
+          } catch (depositErr) {
+            console.error("Gagal menambahkan saldo user:", depositErr);
           }
-        } catch (dfErr) {
-          console.error("Error panggil DigiFlazz API:", dfErr);
+        } 
+        // B. CABANG TRANSAKSI: TOP-UP GAME (MGS-)
+        else {
+          let digiResult = null;
+          let finalStatus = "PROCESSING";
+
+          try {
+            digiResult = await orderDigiflazz(order);
+            console.log("DigiFlazz Response:", digiResult);
+
+            const digiStatus = digiResult?.data?.status;
+            if (digiStatus === "Sukses") {
+              finalStatus = "SUCCESS";
+            } else if (digiStatus === "Gagal") {
+              finalStatus = "FAILED";
+            }
+          } catch (dfErr) {
+            console.error("Error panggil DigiFlazz API:", dfErr);
+          }
+
+          // Update status pesanan di database Supabase
+          await supabase
+            .from("orders")
+            .update({
+              status: finalStatus,
+              payment_data: body,
+              provider_response: digiResult
+            })
+            .ilike("invoice", invoiceNumber.trim());
+
+          console.log(`Pesanan ${invoiceNumber} berhasil diperbarui ke status: ${finalStatus}`);
         }
-
-        // 3. Update status pesanan di database Supabase
-        await supabase
-          .from("orders")
-          .update({
-            status: finalStatus,
-            payment_data: body,
-            provider_response: digiResult
-          })
-          .ilike("invoice", invoiceNumber.trim());
-
-        console.log(`Pesanan ${invoiceNumber} berhasil diperbarui ke status: ${finalStatus}`);
       }
     }
 
