@@ -1,3 +1,4 @@
-sync-digiflazz.js
 node_modules
 .env
+.env.local
+.env.*.local

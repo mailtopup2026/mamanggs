@@ -383,7 +383,9 @@ document.addEventListener("DOMContentLoaded", async () => {
     const isUsingWallet = selectedPayment.toLowerCase().includes("saldo");
     let orderStatus = "PENDING";
     const totalToPay = Number(finalCalculatedPrice);
+    let dokuPaymentData = null;
 
+    // 1. PEMBAYARAN MENGGUNAKAN SALDO INTERNAL MAMANGGS
     if (isUsingWallet) {
       if (!userUuid) {
         alert("Metode pembayaran Saldo Akun hanya berlaku untuk member yang sudah login. Silakan Login terlebih dahulu!");
@@ -427,8 +429,38 @@ document.addEventListener("DOMContentLoaded", async () => {
         checkoutBtn.innerHTML = '<i class="fa-solid fa-bolt"></i> Beli Sekarang';
         return;
       }
+    } else {
+      // 2. PEMBAYARAN MENGGUNAKAN DOKU PAYMENT GATEWAY (QRIS / VA)
+      try {
+        const dokuRes = await fetch("/api/create-payment", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            orderId: invoiceNumber,
+            amount: totalToPay,
+            paymentMethod: selectedPayment,
+            customerPhone: whatsapp,
+            customerName: verifiedNickname || "Pelanggan MamangGS"
+          })
+        });
+
+        const dokuResult = await dokuRes.json();
+
+        if (!dokuRes.ok || !dokuResult.success) {
+          throw new Error(dokuResult.error || "Gagal membuat tagihan DOKU.");
+        }
+
+        dokuPaymentData = dokuResult.data;
+      } catch (err) {
+        console.error("DOKU Gateway Error:", err);
+        alert(`Gagal memproses gateway pembayaran: ${err.message}`);
+        checkoutBtn.disabled = false;
+        checkoutBtn.innerHTML = '<i class="fa-solid fa-bolt"></i> Beli Sekarang';
+        return;
+      }
     }
 
+    // 3. SIMPAN PESANAN KE SUPABASE
     try {
       if (!window.supabase) throw new Error("Koneksi Supabase belum siap.");
 
@@ -442,7 +474,8 @@ document.addEventListener("DOMContentLoaded", async () => {
         price: totalToPay,
         payment_method: selectedPayment,
         whatsapp: whatsapp,
-        status: orderStatus
+        status: orderStatus,
+        payment_data: dokuPaymentData || null
       };
 
       if (userUuid) {
@@ -450,7 +483,6 @@ document.addEventListener("DOMContentLoaded", async () => {
       }
 
       const { error } = await window.supabase.from("orders").insert([orderPayload]);
-
       if (error) throw error;
 
       if (isUsingWallet) {
