@@ -7,7 +7,8 @@ document.addEventListener("DOMContentLoaded", async () => {
       title: "Mobile Legends: Bang Bang",
       dev: "Moonton",
       banner: "https://images.unsplash.com/photo-1563089145-599997674d42?auto=format&fit=crop&w=600&q=80",
-      hasZone: true
+      hasZone: true,
+      supportsCheck: true
     },
     ff: {
       code: "ff",
@@ -15,7 +16,8 @@ document.addEventListener("DOMContentLoaded", async () => {
       title: "Free Fire",
       dev: "Garena",
       banner: "https://images.unsplash.com/photo-1579373903781-fd5c0c30c4cd?auto=format&fit=crop&w=600&q=80",
-      hasZone: false
+      hasZone: false,
+      supportsCheck: true
     },
     pubg: {
       code: "pubg",
@@ -23,7 +25,8 @@ document.addEventListener("DOMContentLoaded", async () => {
       title: "PUBG Mobile",
       dev: "Level Infinite",
       banner: "https://images.unsplash.com/photo-1542751371-adc38448a05e?auto=format&fit=crop&w=600&q=80",
-      hasZone: false
+      hasZone: false,
+      supportsCheck: true
     },
     codm: {
       code: "codm",
@@ -31,7 +34,8 @@ document.addEventListener("DOMContentLoaded", async () => {
       title: "Call of Duty: Mobile",
       dev: "Garena / Activision",
       banner: "https://images.unsplash.com/photo-1538481199705-c710c4e965fc?auto=format&fit=crop&w=600&q=80",
-      hasZone: false
+      hasZone: false,
+      supportsCheck: true
     },
     aov: {
       code: "aov",
@@ -39,7 +43,8 @@ document.addEventListener("DOMContentLoaded", async () => {
       title: "Arena of Valor (AOV)",
       dev: "Garena",
       banner: "https://images.unsplash.com/photo-1511512578047-dfb367046420?auto=format&fit=crop&w=600&q=80",
-      hasZone: false
+      hasZone: false,
+      supportsCheck: true
     },
     ragnarok: {
       code: "ragnarok",
@@ -47,7 +52,8 @@ document.addEventListener("DOMContentLoaded", async () => {
       title: "Ragnarok M: Eternal Love",
       dev: "Gravity Interactive",
       banner: "https://images.unsplash.com/photo-1579373903781-fd5c0c30c4cd?auto=format&fit=crop&w=600&q=80",
-      hasZone: true
+      hasZone: true,
+      supportsCheck: false
     },
     whiteout: {
       code: "whiteout",
@@ -55,7 +61,8 @@ document.addEventListener("DOMContentLoaded", async () => {
       title: "Whiteout Survival",
       dev: "Century Games",
       banner: "https://images.unsplash.com/photo-1542751371-adc38448a05e?auto=format&fit=crop&w=600&q=80",
-      hasZone: false
+      hasZone: false,
+      supportsCheck: false
     },
     lords: {
       code: "lords",
@@ -63,7 +70,8 @@ document.addEventListener("DOMContentLoaded", async () => {
       title: "Lords Mobile",
       dev: "IGG",
       banner: "https://images.unsplash.com/photo-1563089145-599997674d42?auto=format&fit=crop&w=600&q=80",
-      hasZone: false
+      hasZone: false,
+      supportsCheck: false
     },
     pb: {
       code: "pb",
@@ -71,7 +79,8 @@ document.addEventListener("DOMContentLoaded", async () => {
       title: "Point Blank",
       dev: "Zepetto",
       banner: "https://images.unsplash.com/photo-1542751371-adc38448a05e?auto=format&fit=crop&w=600&q=80",
-      hasZone: false
+      hasZone: false,
+      supportsCheck: false
     },
     laplace: {
       code: "laplace",
@@ -79,7 +88,8 @@ document.addEventListener("DOMContentLoaded", async () => {
       title: "Laplace M",
       dev: "ZlongGames",
       banner: "https://images.unsplash.com/photo-1579373903781-fd5c0c30c4cd?auto=format&fit=crop&w=600&q=80",
-      hasZone: true
+      hasZone: true,
+      supportsCheck: false
     },
     au2: {
       code: "au2",
@@ -87,7 +97,8 @@ document.addEventListener("DOMContentLoaded", async () => {
       title: "AU2 Mobile",
       dev: "VTC Game",
       banner: "https://images.unsplash.com/photo-1563089145-599997674d42?auto=format&fit=crop&w=600&q=80",
-      hasZone: true
+      hasZone: true,
+      supportsCheck: false
     },
     garena: {
       code: "garena",
@@ -95,7 +106,8 @@ document.addEventListener("DOMContentLoaded", async () => {
       title: "Garena Shell",
       dev: "Garena",
       banner: "https://images.unsplash.com/photo-1511512578047-dfb367046420?auto=format&fit=crop&w=600&q=80",
-      hasZone: false
+      hasZone: false,
+      supportsCheck: false
     },
     genshin: {
       code: "genshin",
@@ -103,7 +115,8 @@ document.addEventListener("DOMContentLoaded", async () => {
       title: "Genshin Impact",
       dev: "HoYoverse",
       banner: "https://images.unsplash.com/photo-1538481199705-c710c4e965fc?auto=format&fit=crop&w=600&q=80",
-      hasZone: true
+      hasZone: true,
+      supportsCheck: true
     },
     valorant: {
       code: "valorant",
@@ -111,7 +124,8 @@ document.addEventListener("DOMContentLoaded", async () => {
       title: "Valorant Points",
       dev: "Riot Games",
       banner: "https://images.unsplash.com/photo-1542751371-adc38448a05e?auto=format&fit=crop&w=600&q=80",
-      hasZone: false
+      hasZone: false,
+      supportsCheck: false
     },
     hok: {
       code: "hok",
@@ -119,7 +133,8 @@ document.addEventListener("DOMContentLoaded", async () => {
       title: "Honor of Kings",
       dev: "Level Infinite",
       banner: "https://images.unsplash.com/photo-1563089145-599997674d42?auto=format&fit=crop&w=600&q=80",
-      hasZone: false
+      hasZone: false,
+      supportsCheck: true
     }
   };
 
@@ -291,13 +306,12 @@ document.addEventListener("DOMContentLoaded", async () => {
   }
 
   // ==========================================
-  // AMBIL & RENDER NOMINAL DARI SUPABASE (SINKRON DENGAN ADMIN PANEL)
+  // AMBIL & RENDER NOMINAL DARI SUPABASE
   // ==========================================
   const nominalContainer = document.getElementById("nominalContainer");
   nominalContainer.innerHTML = `<div style="grid-column: 1/-1; text-align: center; color: #888; padding: 20px;"><i class="fa-solid fa-spinner fa-spin"></i> Memuat katalog produk...</div>`;
 
   try {
-    // 1. Sinkronisasi Cover Banner dari database jika ada
     try {
       const { data: dbCover } = await window.supabase
         .from("game_covers")
@@ -310,7 +324,6 @@ document.addEventListener("DOMContentLoaded", async () => {
       }
     } catch (coverErr) {}
 
-    // 2. Ambil produk aktif dari Supabase berdasarkan brandQuery / game_code
     let query = window.supabase
       .from("products")
       .select("*")
@@ -442,7 +455,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   }
 
   // ==========================================
-  // FITUR AUTO CEK NICKNAME VIA PROXY
+  // FITUR CEK NICKNAME & NOTICE INPUT MANUAL
   // ==========================================
   const userIdInput = document.getElementById("userIdInput");
   const zoneIdInput = document.getElementById("zoneIdInput");
@@ -451,66 +464,88 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   let checkTimeout = null;
 
-  async function checkNickname() {
-    const uid = userIdInput.value.trim();
-    const zid = currentGame.hasZone ? (zoneIdInput ? zoneIdInput.value.trim() : "") : "";
+  if (currentGame.supportsCheck) {
+    // Mode Otomatis (MLBB, FF, PUBG, Genshin, HOK, dll.)
+    async function checkNickname() {
+      const uid = userIdInput.value.trim();
+      const zid = currentGame.hasZone ? (zoneIdInput ? zoneIdInput.value.trim() : "") : "";
 
-    if (!uid || (currentGame.hasZone && !zid)) {
-      nicknameBox.style.display = "none";
-      verifiedNickname = null;
-      return;
-    }
-
-    if (uid.length < 4) return;
-
-    idCheckSpinner.style.display = "block";
-    nicknameBox.style.display = "none";
-
-    try {
-      const queryParams = new URLSearchParams({
-        game: currentGame.code,
-        id: uid,
-        zone: zid
-      });
-
-      const res = await fetch(`/api/check-id?${queryParams.toString()}`);
-      const data = await res.json();
-
-      if (!res.ok || !data.success) {
-        throw new Error(data.message || "User ID / Server tidak ditemukan.");
+      if (!uid || (currentGame.hasZone && !zid)) {
+        nicknameBox.style.display = "none";
+        verifiedNickname = null;
+        return;
       }
 
-      verifiedNickname = data.name;
-      nicknameBox.className = "nickname-result-box";
-      nicknameBox.innerHTML = `
-        <i class="fa-solid fa-circle-check"></i>
-        <span>Nickname Akun: <strong>${data.name}</strong> (Terverifikasi)</span>
-      `;
-      nicknameBox.style.display = "flex";
-    } catch (err) {
-      console.error("Cek ID Error:", err);
-      nicknameBox.className = "nickname-result-box error";
-      nicknameBox.innerHTML = `
-        <i class="fa-solid fa-circle-xmark"></i>
-        <span>${err.message || "User ID / Zone ID tidak valid."}</span>
-      `;
-      nicknameBox.style.display = "flex";
-      verifiedNickname = null;
-    } finally {
-      idCheckSpinner.style.display = "none";
+      if (uid.length < 4) return;
+
+      idCheckSpinner.style.display = "block";
+      nicknameBox.style.display = "none";
+
+      try {
+        const queryParams = new URLSearchParams({
+          game: currentGame.code,
+          id: uid,
+          zone: zid
+        });
+
+        const res = await fetch(`/api/check-id?${queryParams.toString()}`);
+        const data = await res.json();
+
+        if (!res.ok || !data.success) {
+          throw new Error(data.message || "User ID / Server tidak ditemukan.");
+        }
+
+        verifiedNickname = data.name;
+        nicknameBox.className = "nickname-result-box";
+        nicknameBox.innerHTML = `
+          <i class="fa-solid fa-circle-check"></i>
+          <span>Nickname Akun: <strong>${data.name}</strong> (Terverifikasi)</span>
+        `;
+        nicknameBox.style.display = "flex";
+      } catch (err) {
+        console.error("Cek ID Error:", err);
+        nicknameBox.className = "nickname-result-box error";
+        nicknameBox.innerHTML = `
+          <i class="fa-solid fa-circle-xmark"></i>
+          <span>${err.message || "User ID / Zone ID tidak valid."}</span>
+        `;
+        nicknameBox.style.display = "flex";
+        verifiedNickname = null;
+      } finally {
+        idCheckSpinner.style.display = "none";
+      }
     }
-  }
 
-  userIdInput.addEventListener("input", () => {
-    clearTimeout(checkTimeout);
-    checkTimeout = setTimeout(checkNickname, 700);
-  });
-
-  if (zoneIdInput) {
-    zoneIdInput.addEventListener("input", () => {
+    userIdInput.addEventListener("input", () => {
       clearTimeout(checkTimeout);
       checkTimeout = setTimeout(checkNickname, 700);
     });
+
+    if (zoneIdInput) {
+      zoneIdInput.addEventListener("input", () => {
+        clearTimeout(checkTimeout);
+        checkTimeout = setTimeout(checkNickname, 700);
+      });
+    }
+  } else {
+    // Mode Input Manual: Tampilkan Notice Box Informatif + Tautan Imsela
+    if (nicknameBox) {
+      nicknameBox.className = "nickname-result-box";
+      nicknameBox.style.background = "rgba(56, 189, 248, 0.08)";
+      nicknameBox.style.borderColor = "rgba(56, 189, 248, 0.3)";
+      nicknameBox.style.color = "#94a3b8";
+      nicknameBox.innerHTML = `
+        <i class="fa-solid fa-circle-info" style="color: #38bdf8; font-size: 1.1rem; margin-top: 2px;"></i>
+        <div style="font-size: 0.83rem; line-height: 1.45;">
+          <span>Pastikan <strong>User ID</strong> sudah benar sebelum checkout.</span><br>
+          <span style="font-size: 0.78rem; color: #64748b;">Kamu juga bisa cek nama akun di: </span>
+          <a href="https://imsela.com/tools/gameidchecker/" target="_blank" rel="noopener noreferrer" style="color: #38bdf8; font-weight: 700; text-decoration: underline; font-size: 0.78rem;">
+            Imsela Game ID Checker <i class="fa-solid fa-arrow-up-right-from-square" style="font-size: 0.7rem;"></i>
+          </a>
+        </div>
+      `;
+      nicknameBox.style.display = "flex";
+    }
   }
 
   // ==========================================
