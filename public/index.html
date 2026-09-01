@@ -23,15 +23,73 @@
       overflow-x: hidden !important;
     }
 
-    /* --- FIX 2: TINGGI CAROUSEL --- */
-    .carousel-container {
-      position: relative;
+    /* --- FIX 2: KUNCI POSISI BANNER SLIDER & TITIK DOT AGAR SELALU RAPAT DI BAWAH BANNER --- */
+    .banner-section {
+      position: relative !important;
+      max-width: 1200px;
       width: 100%;
-      height: 360px; /* Tambahan tinggi agar titik dot tidak jatuh */
-      border-radius: 18px;
-      overflow: hidden;
-      background: #0f172a;
-      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.4);
+      margin: 15px auto 25px !important;
+      padding: 0 16px !important;
+      box-sizing: border-box;
+      display: flex !important;
+      flex-direction: column !important;
+      align-items: center !important;
+    }
+
+    .carousel-container {
+      position: relative !important;
+      width: 100% !important;
+      height: 360px !important;
+      border-radius: 18px !important;
+      overflow: hidden !important;
+      background: #0f172a !important;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.4) !important;
+    }
+
+    .carousel-slide {
+      position: absolute !important;
+      inset: 0 !important;
+      width: 100% !important;
+      height: 100% !important;
+      display: none;
+      background-size: cover !important;
+      background-position: center !important;
+      text-decoration: none !important;
+    }
+
+    .carousel-slide.active {
+      display: block !important;
+    }
+
+    /* Titik dot dipaksa STATIC dan nempel langsung di bawah carousel */
+    .carousel-dots {
+      position: static !important;
+      inset: auto !important;
+      transform: none !important;
+      margin-top: 14px !important;
+      margin-bottom: 5px !important;
+      display: flex !important;
+      justify-content: center !important;
+      align-items: center !important;
+      gap: 8px !important;
+      width: 100% !important;
+      z-index: 10 !important;
+    }
+
+    .carousel-dots .dot {
+      width: 8px !important;
+      height: 8px !important;
+      border-radius: 50% !important;
+      background: rgba(255, 255, 255, 0.25) !important;
+      transition: all 0.3s ease !important;
+      cursor: pointer !important;
+      display: inline-block !important;
+    }
+
+    .carousel-dots .dot.active {
+      width: 24px !important;
+      border-radius: 6px !important;
+      background: #f59e0b !important;
     }
 
     /* 1. INFINITE AUTO-SCROLL TICKER (PASTI TER-MURAAHH) */
@@ -128,7 +186,6 @@
       display: grid !important;
       grid-template-columns: repeat(3, 1fr) !important;
       gap: 14px !important;
-      /* --- FIX 3: KUNCI LEBAR AGAR TIDAK BOCOR KE KANAN --- */
       width: 100%;
       box-sizing: border-box;
     }
@@ -144,7 +201,6 @@
       text-decoration: none;
       color: #fff;
       transition: all 0.2s ease;
-      /* --- FIX: MENCEGAH TEKS PANJANG MERUSAK GRID --- */
       box-sizing: border-box;
       min-width: 0;
       overflow: hidden;
@@ -305,7 +361,7 @@
       }
       .btn-mobile-icon:hover { border-color: #f59e0b; color: #f59e0b; }
       
-      /* --- FIX 4: TINGGI CAROUSEL KHUSUS DI HP --- */
+      /* Carousel Height di Layar HP */
       .carousel-container {
         height: 180px !important; 
       }
@@ -448,7 +504,7 @@
 
   <!-- WIDGET BANNER PROMINEN: HALL OF FAME LEADERBOARD (AMAN) -->
   <section class="catalog-section" style="max-width: 1200px; width: 100%; margin: 10px auto 50px; padding: 0 16px; box-sizing: border-box;">
-    <div style="background: linear-gradient(135deg, rgba(245, 158, 11, 0.15) 0%, rgba(7, 13, 24, 0.95) 100%); border: 1px solid rgba(245, 158, 11, 0.4); border-radius: var(--radius-md); padding: 24px 28px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.5);">
+    <div style="background: linear-gradient(135deg, rgba(245, 158, 11, 0.15) 0%, rgba(7, 13, 24, 0.95) 100%); border: 1px solid rgba(245, 158, 11, 0.4); border-radius: 24px; padding: 24px 28px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.5);">
       <div style="display: flex; align-items: center; gap: 18px;">
         <div style="width: 55px; height: 55px; border-radius: 14px; background: rgba(245, 158, 11, 0.2); border: 1px solid #f59e0b; display: flex; align-items: center; justify-content: center; font-size: 1.6rem; color: #f59e0b; flex-shrink: 0;">
           <i class="fa-solid fa-crown"></i>
