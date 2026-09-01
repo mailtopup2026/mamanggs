@@ -112,7 +112,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const updatePasswordForm = document.getElementById("updatePasswordForm");
 
   // ==========================================
-  // HANDLER REGISTER
+  // HANDLER REGISTER (DENGAN CEK EMAIL DUPLIKAT)
   // ==========================================
   if (registerForm) {
     registerForm.addEventListener("submit", async (e) => {
@@ -124,7 +124,7 @@ document.addEventListener("DOMContentLoaded", () => {
       }
 
       const name = document.getElementById("regName").value.trim();
-      const email = document.getElementById("regEmail").value.trim();
+      const email = document.getElementById("regEmail").value.trim().toLowerCase();
       const password = document.getElementById("regPassword").value;
       const btn = registerForm.querySelector('button[type="submit"]');
 
@@ -132,6 +132,21 @@ document.addEventListener("DOMContentLoaded", () => {
       btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Mendaftarkan...';
 
       try {
+        // LAPIS 1: Cek apakah email sudah ada di tabel profiles
+        const { data: existingProfile } = await window.supabase
+          .from("profiles")
+          .select("id")
+          .eq("email", email)
+          .maybeSingle();
+
+        if (existingProfile) {
+          showToast("error", "Email Sudah Terdaftar", "Email ini sudah digunakan. Silakan langsung masuk ke akun Anda!");
+          btn.disabled = false;
+          btn.innerHTML = '<i class="fa-solid fa-wand-magic-sparkles"></i> Register';
+          return;
+        }
+
+        // LAPIS 2: Lakukan pendaftaran via Supabase Auth
         const { data, error } = await window.supabase.auth.signUp({
           email: email,
           password: password,
@@ -142,6 +157,14 @@ document.addEventListener("DOMContentLoaded", () => {
         });
 
         if (error) throw error;
+
+        // Cek keamanan Supabase: jika user terdaftar sebelumnya, identities array kosong
+        if (data.user && Array.isArray(data.user.identities) && data.user.identities.length === 0) {
+          showToast("error", "Email Sudah Terdaftar", "Email ini sudah terdaftar! Silakan langsung login.");
+          btn.disabled = false;
+          btn.innerHTML = '<i class="fa-solid fa-wand-magic-sparkles"></i> Register';
+          return;
+        }
 
         if (data.user) {
           await window.supabase.from("profiles").upsert([
@@ -163,7 +186,11 @@ document.addEventListener("DOMContentLoaded", () => {
           window.location.href = "/auth/login.html";
         }, 1500);
       } catch (err) {
-        showToast("error", "Gagal Mendaftar", err.message);
+        let errorMsg = err.message;
+        if (errorMsg.toLowerCase().includes("already registered") || errorMsg.toLowerCase().includes("user already exists")) {
+          errorMsg = "Email ini sudah terdaftar! Silakan langsung login.";
+        }
+        showToast("error", "Gagal Mendaftar", errorMsg);
       } finally {
         btn.disabled = false;
         btn.innerHTML = '<i class="fa-solid fa-wand-magic-sparkles"></i> Register';
