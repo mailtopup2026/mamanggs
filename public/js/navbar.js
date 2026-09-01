@@ -1,3 +1,34 @@
+// ==========================================
+// FUNGSI GLOBAL LOGOUT BERSIH & AMAN
+// ==========================================
+async function handleLogout() {
+  if (!confirm("Yakin ingin keluar akun?")) return;
+
+  function getClient() {
+    if (window.supabaseClient) return window.supabaseClient;
+    if (window.supabase && typeof window.supabase.from === "function") return window.supabase;
+    if (typeof supabase !== "undefined" && typeof supabase.from === "function") return supabase;
+    return null;
+  }
+
+  try {
+    const client = getClient();
+    if (client && client.auth) {
+      await client.auth.signOut();
+    }
+  } catch (err) {
+    console.warn("Error saat sign out Supabase:", err);
+  } finally {
+    // Bersihkan semua local storage & cache session
+    localStorage.removeItem("mgs_user");
+    localStorage.clear();
+    sessionStorage.clear();
+
+    // Arahkan ke beranda dan reload
+    window.location.href = "/";
+  }
+}
+
 document.addEventListener("DOMContentLoaded", async () => {
   function getClient() {
     if (window.supabaseClient) return window.supabaseClient;
@@ -6,7 +37,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     return null;
   }
 
-  // 1. EVENT LISTENER UNTUK MOBILE TOGGLE (Aman jika elemen HTML-nya ada)
+  // 1. EVENT LISTENER UNTUK MOBILE TOGGLE
   const btnMobileSearch = document.getElementById("btnMobileSearchToggle");
   const mobileSearchBar = document.getElementById("mobileSearchBar");
   const mobileSearchInput = document.getElementById("mobileSearchInput");
@@ -52,9 +83,8 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
   });
 
-  // 2. RENDER RAPI (FOKUS DI TOMBOL LOGIN / PROFILE SAJA)
+  // 2. RENDER NAVBAR
   function renderAuthNav(userData, profileData) {
-    // Cari kontainer aksi di navbar (bisa ID baru atau Class lama)
     const desktopNav = document.getElementById("desktopNavActions") || document.querySelector(".nav-actions");
     const mobileAuthSlot = document.getElementById("mobileAuthSlot");
 
@@ -99,7 +129,7 @@ document.addEventListener("DOMContentLoaded", async () => {
             <img src="${avatarUrl}" alt="${name}" style="width: 30px; height: 30px; border-radius: 50%; object-fit: cover; border: 1.5px solid ${isAdmin ? '#ef4444' : '#f59e0b'}; background: #1e293b;">
             <span style="font-weight: 800; font-size: 0.85rem; max-width: 100px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: #ffffff;">${name}</span>
           </a>
-          <button id="navLogoutBtn" title="Keluar Akun" style="background: transparent; border: none; color: var(--text-muted, #94a3b8); cursor: pointer; padding: 4px 8px; font-size: 0.95rem; border-left: 1px solid rgba(255, 255, 255, 0.1); transition: color 0.2s ease;">
+          <button id="navLogoutBtn" onclick="handleLogout()" title="Keluar Akun" style="background: transparent; border: none; color: var(--text-muted, #94a3b8); cursor: pointer; padding: 4px 8px; font-size: 0.95rem; border-left: 1px solid rgba(255, 255, 255, 0.1); transition: color 0.2s ease;">
             <i class="fa-solid fa-power-off"></i>
           </button>
         </div>
@@ -119,30 +149,11 @@ document.addEventListener("DOMContentLoaded", async () => {
         <a href="/dashboard.html" class="mobile-menu-link">
           <i class="fa-solid fa-wallet"></i> Saldo & Akun
         </a>
-        <button id="btnMobileLogout" class="mobile-menu-link" style="width: 100%; background: none; border: none; text-align: left; cursor: pointer; color: #ef4444;">
+        <button id="btnMobileLogout" onclick="handleLogout()" class="mobile-menu-link" style="width: 100%; background: none; border: none; text-align: left; cursor: pointer; color: #ef4444;">
           <i class="fa-solid fa-arrow-right-from-bracket"></i> Keluar
         </button>
       `;
     }
-
-    // EVENT LOGOUT
-    document.getElementById("navLogoutBtn")?.addEventListener("click", async () => {
-      if (confirm("Yakin ingin keluar akun?")) {
-        const client = getClient();
-        if (client) await client.auth.signOut();
-        localStorage.removeItem("mgs_user");
-        window.location.href = "/";
-      }
-    });
-
-    document.getElementById("btnMobileLogout")?.addEventListener("click", async () => {
-      if (confirm("Yakin ingin keluar akun?")) {
-        const client = getClient();
-        if (client) await client.auth.signOut();
-        localStorage.removeItem("mgs_user");
-        window.location.href = "/";
-      }
-    });
   }
 
   // 3. SINKRONISASI SESSION SUPABASE

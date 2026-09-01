@@ -27,7 +27,7 @@
 }
 
 .profile-banner-card::before {
-  content: '';
+  content: "";
   position: absolute;
   top: -50px;
   right: -50px;
@@ -314,6 +314,116 @@
   background: var(--accent-red);
   color: #fff;
   box-shadow: 0 0 12px var(--accent-glow);
+}
+
+/* --- CYBER CONFIRMATION MODAL --- */
+.mgs-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(4, 9, 20, 0.85);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 999999;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  padding: 16px;
+}
+
+.mgs-modal-overlay.show {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.mgs-cyber-modal {
+  width: 100%;
+  max-width: 380px;
+  background: rgba(12, 24, 43, 0.95);
+  border: 1px solid rgba(230, 57, 70, 0.35);
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.8), 0 0 30px rgba(230, 57, 70, 0.2);
+  border-radius: 24px;
+  padding: 28px 24px;
+  text-align: center;
+  transform: scale(0.9) translateY(20px);
+  transition: all 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.mgs-modal-overlay.show .mgs-cyber-modal {
+  transform: scale(1) translateY(0);
+}
+
+.modal-icon-glow {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  background: rgba(230, 57, 70, 0.15);
+  border: 1px solid rgba(230, 57, 70, 0.4);
+  color: var(--accent-red, #e63946);
+  font-size: 1.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 16px;
+  box-shadow: 0 0 20px rgba(230, 57, 70, 0.35);
+}
+
+.mgs-cyber-modal h3 {
+  font-size: 1.25rem;
+  font-weight: 800;
+  color: #fff;
+  margin-bottom: 8px;
+}
+
+.mgs-cyber-modal p {
+  font-size: 0.85rem;
+  color: var(--text-muted, #94a3b8);
+  line-height: 1.5;
+  margin-bottom: 24px;
+}
+
+.modal-actions-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.btn-modal-cancel {
+  padding: 12px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  color: #fff;
+  font-weight: 700;
+  font-size: 0.88rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btn-modal-cancel:hover {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 255, 255, 0.2);
+}
+
+.btn-modal-confirm {
+  padding: 12px;
+  background: var(--accent-red, #e63946);
+  border: none;
+  border-radius: 12px;
+  color: #fff;
+  font-weight: 800;
+  font-size: 0.88rem;
+  cursor: pointer;
+  box-shadow: 0 4px 15px rgba(230, 57, 70, 0.4);
+  transition: all 0.2s ease;
+}
+
+.btn-modal-confirm:hover {
+  background: var(--accent-red-hover, #d62828);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(230, 57, 70, 0.6);
 }
 
 @media (max-width: 900px) {

@@ -137,17 +137,50 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 
-  // Tombol Logout
-  document.getElementById("logoutBtn").addEventListener("click", async () => {
-    if (confirm("Apakah Anda yakin ingin keluar?")) {
-      if (window.supabase) await window.supabase.auth.signOut();
-      localStorage.removeItem("mgs_user");
-      window.location.href = "/";
-    }
-  });
+  // ==========================================
+  // CUSTOM CYBER MODAL LOGOUT HANDLER
+  // ==========================================
+  const logoutBtn = document.getElementById("logoutBtn");
+  const logoutModal = document.getElementById("logoutModalOverlay");
+  const btnCancelLogout = document.getElementById("btnCancelLogout");
+  const btnConfirmLogout = document.getElementById("btnConfirmLogout");
+
+  if (logoutBtn && logoutModal) {
+    logoutBtn.addEventListener("click", () => {
+      logoutModal.classList.add("show");
+    });
+
+    btnCancelLogout?.addEventListener("click", () => {
+      logoutModal.classList.remove("show");
+    });
+
+    logoutModal.addEventListener("click", (e) => {
+      if (e.target === logoutModal) {
+        logoutModal.classList.remove("show");
+      }
+    });
+
+    btnConfirmLogout?.addEventListener("click", async () => {
+      btnConfirmLogout.disabled = true;
+      btnConfirmLogout.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Keluar...';
+
+      try {
+        if (window.supabase && window.supabase.auth) {
+          await window.supabase.auth.signOut();
+        }
+      } catch (err) {
+        console.warn("Gagal sign out Supabase:", err);
+      } finally {
+        localStorage.removeItem("mgs_user");
+        localStorage.clear();
+        sessionStorage.clear();
+        window.location.href = "/";
+      }
+    });
+  }
 
   // Tombol Isi Saldo
-  document.getElementById("btnDeposit").addEventListener("click", () => {
+  document.getElementById("btnDeposit")?.addEventListener("click", () => {
     alert("Fitur Deposit Saldo Instan QRIS akan aktif di Step Integrasi Payment Gateway!");
   });
 });

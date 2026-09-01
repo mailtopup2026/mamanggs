@@ -145,6 +145,24 @@
     </div>
   </footer>
 
+  <!-- CYBER CUSTOM CONFIRMATION MODAL -->
+  <div class="mgs-modal-overlay" id="logoutModalOverlay">
+    <div class="mgs-cyber-modal">
+      <div class="modal-icon-glow">
+        <i class="fa-solid fa-power-off"></i>
+      </div>
+      <h3>Konfirmasi Keluar</h3>
+      <p>Apakah kamu yakin ingin mengakhiri sesi dan keluar dari akun MamangGS?</p>
+      <div class="modal-actions-grid">
+        <button type="button" class="btn-modal-cancel" id="btnCancelLogout">Batal</button>
+        <button type="button" class="btn-modal-confirm" id="btnConfirmLogout">Ya, Keluar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- CDN SUPABASE JS (WAJIB AGAR CLIENT SUPABASE AKTIF) -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
   <!-- JS MODULAR -->
   <script src="/js/particles.js"></script>
   <script src="/js/supabase.js"></script>
