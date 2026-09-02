@@ -7,6 +7,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 
   let allGamesData = [];
   let flashSaleInterval;
+  let currentActiveFilter = "all";
 
   // ==========================================
   // DICTIONARY ALIAS & SINGKATAN POPULER
@@ -230,21 +231,59 @@ document.addEventListener("DOMContentLoaded", async function () {
   }
 
   // ==========================================
-  // 3. LOAD KATALOG GAME & LIVE FILTER SEARCH
+  // 3. LOAD KATALOG GABUNGAN (DIGIFLAZZ + MANUAL)
   // ==========================================
   async function loadGames() {
     try {
-      const { data: games, error } = await window.supabase
+      // 1. Ambil game otomatis Digiflazz
+      const { data: digiGames, error: digiErr } = await window.supabase
         .from('game_categories')
         .select('*')
         .order('sort_order', { ascending: true })
         .order('created_at', { ascending: true });
 
-      if (error) throw error;
-      allGamesData = games || [];
+      if (digiErr) throw digiErr;
+
+      // 2. Ambil game manual (Via Login)
+      const { data: manualGames, error: manualErr } = await window.supabase
+        .from('manual_games')
+        .select('*')
+        .eq('is_active', true)
+        .order('created_at', { ascending: false });
+
+      if (manualErr) {
+        console.warn("Tabel manual_games belum terisi:", manualErr.message);
+      }
+
+      // Normalisasi format game Digiflazz
+      const normalizedDigi = (digiGames || []).map(g => ({
+        id: g.id,
+        game_code: g.game_code,
+        title: g.title,
+        developer: g.developer,
+        image_url: g.image_url,
+        is_popular: g.is_popular,
+        item_type: 'direct', // Tipe Top Up Otomatis (ID)
+        target_url: `/order.html?game=${g.game_code}`
+      }));
+
+      // Normalisasi format game Manual
+      const normalizedManual = (manualGames || []).map(m => ({
+        id: m.id,
+        game_code: m.slug,
+        title: m.name,
+        developer: m.publisher,
+        image_url: m.image_url,
+        is_popular: false,
+        item_type: 'via_login', // Tipe Manual / Jastip
+        target_url: `/order.html?game=${m.slug}&type=manual`
+      }));
+
+      // Gabungkan kedua list data
+      allGamesData = [...normalizedManual, ...normalizedDigi];
 
       renderPopularGames(allGamesData.filter(g => g.is_popular));
-      renderMainCatalog("all");
+      renderMainCatalog(currentActiveFilter);
 
     } catch (err) {
       console.error("Gagal load game categories:", err.message);
@@ -262,7 +301,7 @@ document.addEventListener("DOMContentLoaded", async function () {
     }
 
     container.innerHTML = popularGames.map(game => `
-      <a href="/order.html?game=${game.game_code}" class="popular-compact-card" data-title="${game.title}" data-code="${game.game_code}">
+      <a href="${game.target_url}" class="popular-compact-card" data-title="${game.title}" data-code="${game.game_code}">
         <img src="${game.image_url}" alt="${game.title}">
         <div style="overflow: hidden;">
           <h4 style="font-size: 0.88rem; font-weight: 800; margin: 0 0 2px; white-space: nowrap; text-overflow: ellipsis; overflow: hidden;">${game.title}</h4>
@@ -272,13 +311,20 @@ document.addEventListener("DOMContentLoaded", async function () {
     `).join("");
   }
 
-  function renderMainCatalog(filterType, searchQuery = "") {
+  function renderMainCatalog(filterType = "all", searchQuery = "") {
     const container = document.getElementById("mainCatalogGrid");
     if (!container) return;
 
     let list = allGamesData;
 
-    // Filter berdasarkan query pencarian (termasuk deteksi alias/singkatan)
+    // 1. Filter Kategori Tab (All vs Direct vs Via Login)
+    if (filterType === "direct") {
+      list = list.filter(g => g.item_type === "direct");
+    } else if (filterType === "via_login") {
+      list = list.filter(g => g.item_type === "via_login");
+    }
+
+    // 2. Filter Search Query
     if (searchQuery && searchQuery.trim() !== "") {
       list = list.filter(game => isGameMatched(game, searchQuery));
     }
@@ -287,28 +333,36 @@ document.addEventListener("DOMContentLoaded", async function () {
       container.innerHTML = `
         <div style="grid-column: 1/-1; text-align: center; color: #64748b; padding: 40px;">
           <i class="fa-solid fa-magnifying-glass" style="font-size: 2rem; margin-bottom: 10px; display: block; color: var(--accent-red, #e63946);"></i>
-          Game "${searchQuery}" tidak ditemukan. Coba gunakan kata kunci atau singkatan lain.
+          Game tidak ditemukan untuk filter ini. Coba kata kunci lain.
         </div>
       `;
       return;
     }
 
-    container.innerHTML = list.map(game => `
-      <a href="/order.html?game=${game.game_code}" class="catalog-poster-card" data-title="${game.title}" data-code="${game.game_code}">
-        <img src="${game.image_url}" alt="${game.title}" loading="lazy">
-        <div style="padding: 12px 14px;">
-          <h3 style="font-size: 0.95rem; font-weight: 800; margin: 0 0 4px; color: #fff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${game.title}</h3>
-          <p style="font-size: 0.76rem; color: #94a3b8; margin: 0;">${game.developer}</p>
-        </div>
-      </a>
-    `).join("");
+    container.innerHTML = list.map(game => {
+      const isManual = game.item_type === 'via_login';
+      const badgeHtml = isManual
+        ? `<span style="position: absolute; top: 10px; left: 10px; background: rgba(16, 185, 129, 0.9); color: #042f2e; font-size: 0.65rem; font-weight: 900; padding: 3px 8px; border-radius: 6px; text-transform: uppercase; letter-spacing: 0.5px; z-index: 2;">Via Login</span>`
+        : '';
+
+      return `
+        <a href="${game.target_url}" class="catalog-poster-card" data-title="${game.title}" data-code="${game.game_code}" style="position: relative;">
+          ${badgeHtml}
+          <img src="${game.image_url}" alt="${game.title}" loading="lazy">
+          <div style="padding: 12px 14px;">
+            <h3 style="font-size: 0.95rem; font-weight: 800; margin: 0 0 4px; color: #fff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${game.title}</h3>
+            <p style="font-size: 0.76rem; color: #94a3b8; margin: 0;">${game.developer}</p>
+          </div>
+        </a>
+      `;
+    }).join("");
   }
 
   // ==========================================
   // 4. GLOBAL LIVE SEARCH FUNCTION
   // ==========================================
   window.filterGamesCatalog = function (query) {
-    renderMainCatalog("all", query);
+    renderMainCatalog(currentActiveFilter, query);
 
     // Filter juga section "Populer Sekarang" jika ada
     const popularCards = document.querySelectorAll(".popular-compact-card");
@@ -328,15 +382,23 @@ document.addEventListener("DOMContentLoaded", async function () {
     });
   }
 
+  // Listener input search mobile
+  const mobileSearch = document.getElementById("mobileSearchInput");
+  if (mobileSearch) {
+    mobileSearch.addEventListener("input", (e) => {
+      window.filterGamesCatalog(e.target.value);
+    });
+  }
+
   // Event Listener Tab Filter Katalog
   const tabButtons = document.querySelectorAll(".catalog-tab-pill");
   tabButtons.forEach(btn => {
     btn.addEventListener("click", function () {
       tabButtons.forEach(b => b.classList.remove("active"));
       this.classList.add("active");
-      const filter = this.getAttribute("data-filter") || "all";
-      const currentQuery = desktopSearch ? desktopSearch.value : "";
-      renderMainCatalog(filter, currentQuery);
+      currentActiveFilter = this.getAttribute("data-filter") || "all";
+      const currentQuery = (desktopSearch && desktopSearch.value) || (mobileSearch && mobileSearch.value) || "";
+      renderMainCatalog(currentActiveFilter, currentQuery);
     });
   });
 

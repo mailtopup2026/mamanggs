@@ -15,14 +15,12 @@
 </head>
 <body class="admin-body">
 
-  <!-- FULLSCREEN LOADER SCREEN -->
   <div id="adminAuthLoader" style="position: fixed; inset: 0; background: #070d18; z-index: 999999; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 14px;">
     <i class="fa-solid fa-shield-halved fa-spin" style="font-size: 2.4rem; color: #10b981;"></i>
     <p style="color: #8e9bb0; font-size: 0.88rem; font-weight: 600;">Memuat Dashboard MamangGS...</p>
   </div>
 
   <div class="admin-layout">
-    <!-- SIDEBAR NAVIGASI KIRI -->
     <aside class="admin-sidebar">
       <div class="sidebar-brand">
         <a href="/" class="brand-logo">
@@ -62,6 +60,9 @@
         <button class="tab-btn" data-tab="productsTab">
           <i class="fa-solid fa-tags"></i> <span>Katalog & Harga</span>
         </button>
+        <button class="tab-btn" data-tab="manualGamesTab">
+          <i class="fa-solid fa-handshake-angle" style="color: #10b981;"></i> <span>Katalog Manual (Login)</span>
+        </button>
         <button class="tab-btn" data-tab="articlesTab">
           <i class="fa-solid fa-file-pen"></i> <span>Artikel Blog</span>
         </button>
@@ -82,12 +83,8 @@
       </div>
     </aside>
 
-    <!-- AREA KONTEN UTAMA DI KANAN -->
     <main class="admin-main">
 
-      <!-- ==========================================
-           TAB 0: DASHBOARD UTAMA & ANALYTICS
-           ========================================== -->
       <section id="dashboardTab" class="tab-content active">
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; flex-wrap: wrap; gap: 12px;">
           <div>
@@ -97,7 +94,6 @@
           <button class="btn-refresh" onclick="window.loadDashboardData()"><i class="fa-solid fa-rotate-right"></i> Refresh Data</button>
         </div>
 
-        <!-- STATISTIK GRID LENGKAP -->
         <div class="admin-stats-grid">
           <div class="stat-card">
             <div class="stat-icon income"><i class="fa-solid fa-money-bill-wave"></i></div>
@@ -171,9 +167,6 @@
         </div>
       </section>
 
-      <!-- ==========================================
-           TAB 1: KELOLA TRANSAKSI
-           ========================================== -->
       <section id="ordersTab" class="tab-content">
         <div class="section-card">
           <div class="table-header-bar">
@@ -211,9 +204,6 @@
         </div>
       </section>
 
-      <!-- ==========================================
-           TAB 2: KELOLA SALDO MEMBER
-           ========================================== -->
       <section id="balanceTab" class="tab-content">
         <div class="section-card">
           <div class="table-header-bar">
@@ -240,9 +230,6 @@
         </div>
       </section>
 
-      <!-- ==========================================
-           TAB BARU: KELOLA BANNER PROMO
-           ========================================== -->
       <section id="bannersTab" class="tab-content">
         <div class="section-card">
           <div class="table-header-bar">
@@ -271,9 +258,6 @@
         </div>
       </section>
 
-      <!-- ==========================================
-           TAB BARU: COVER KATALOG GAME
-           ========================================== -->
       <section id="gamesTab" class="tab-content">
         <div class="section-card">
           <div class="table-header-bar">
@@ -303,9 +287,6 @@
         </div>
       </section>
 
-      <!-- ==========================================
-           TAB BARU: EVENT FLASH SALE
-           ========================================== -->
       <section id="flashSaleTab" class="tab-content">
         <div class="section-card">
           <div class="table-header-bar">
@@ -336,9 +317,6 @@
         </div>
       </section>
 
-      <!-- ==========================================
-           TAB 4: KATALOG PRODUK & HARGA
-           ========================================== -->
       <section id="productsTab" class="tab-content">
         <div class="section-card">
           <div class="table-header-bar" style="margin-bottom: 20px;">
@@ -373,9 +351,49 @@
         </div>
       </section>
 
-      <!-- ==========================================
-           TAB 3: KELOLA ARTIKEL BLOG
-           ========================================== -->
+      <section id="manualGamesTab" class="tab-content">
+        
+        <div class="section-card" style="margin-bottom: 20px; background: rgba(16, 185, 129, 0.05); border-color: rgba(16, 185, 129, 0.3);">
+          <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
+            <div>
+              <h3 style="color: #10b981; margin: 0 0 5px 0;"><i class="fa-solid fa-money-bill-transfer"></i> Pengaturan Kurs USD</h3>
+              <p style="font-size: 0.85rem; color: #94a3b8; margin: 0;">Nilai tukar ini akan dikalikan otomatis dengan jumlah pack USD yang diinput pembeli.</p>
+            </div>
+            <div style="display: flex; align-items: center; gap: 10px;">
+              <span style="color: #fff; font-weight: 700;">Rp</span>
+              <input type="number" id="inputUsdRate" class="admin-input" style="width: 120px;" placeholder="17000">
+              <button class="btn-submit-action" style="width: auto; margin: 0; padding: 8px 16px; background: #10b981;" onclick="updateUsdRate()">Simpan Kurs</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="section-card">
+          <div class="table-header-bar">
+            <h3><i class="fa-solid fa-handshake-angle" style="color: #10b981;"></i> Daftar Game Via Login (Jastip)</h3>
+            <button class="btn-submit-action" style="width: auto; margin: 0; padding: 8px 16px; font-size: 0.85rem; background: #10b981;" onclick="openManualGameModal()">
+              <i class="fa-solid fa-plus"></i> Tambah Game Manual
+            </button>
+          </div>
+
+          <div class="table-responsive">
+            <table class="admin-table">
+              <thead>
+                <tr>
+                  <th>Poster</th>
+                  <th>Nama Game</th>
+                  <th>Developer</th>
+                  <th>Status</th>
+                  <th>Aksi</th>
+                </tr>
+              </thead>
+              <tbody id="manualGamesTableBody">
+                <tr><td colspan="5" style="text-align: center; padding: 25px;">Memuat data game manual...</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
       <section id="articlesTab" class="tab-content">
         <div class="section-card">
           <div class="table-header-bar">
@@ -407,7 +425,6 @@
     </main>
   </div>
 
-  <!-- MODAL MANUAL TOP UP SALDO -->
   <div class="modal-backdrop" id="balanceModal">
     <div class="modal-card">
       <div class="modal-header">
@@ -425,7 +442,6 @@
     </div>
   </div>
 
-  <!-- MODAL EDIT HARGA PRODUK -->
   <div class="modal-backdrop" id="priceModal">
     <div class="modal-card">
       <div class="modal-header">
@@ -447,7 +463,6 @@
     </div>
   </div>
 
-  <!-- MODAL TAMBAH BANNER -->
   <div class="modal-backdrop" id="bannerModal">
     <div class="modal-card">
       <div class="modal-header">
@@ -472,7 +487,6 @@
     </div>
   </div>
 
-  <!-- MODAL TAMBAH/EDIT COVER GAME -->
   <div class="modal-backdrop" id="gameModal">
     <div class="modal-card">
       <div class="modal-header">
@@ -507,7 +521,6 @@
     </div>
   </div>
 
-  <!-- MODAL SETUP FLASH SALE -->
   <div class="modal-backdrop" id="flashSaleModal">
     <div class="modal-card">
       <div class="modal-header">
@@ -535,6 +548,33 @@
         </div>
         <button id="btnSubmitFlash" class="btn-submit-action" style="background: linear-gradient(135deg, #f59e0b, #d97706); margin-top: 15px;" onclick="submitFlashSale()">
           <i class="fa-solid fa-bolt"></i> Terbitkan Flash Sale
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal-backdrop" id="manualGameModal">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3 id="manualGameModalTitle"><i class="fa-solid fa-upload"></i> Tambah Game Manual</h3>
+        <button class="btn-close-modal" onclick="closeManualGameModal()"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+      <div class="modal-body">
+        <input type="hidden" id="manualGameIdInput"> <div class="form-group" style="margin-bottom: 12px;">
+          <label style="font-size: 0.8rem; color: #94a3b8;">Nama Game</label>
+          <input type="text" id="manualGameNameInput" placeholder="Contoh: Whiteout Survival" class="admin-input" style="width: 100%; box-sizing: border-box; margin-top: 6px;">
+        </div>
+        <div class="form-group" style="margin-bottom: 12px;">
+          <label style="font-size: 0.8rem; color: #94a3b8;">Publisher / Developer</label>
+          <input type="text" id="manualGamePubInput" placeholder="Contoh: Century Games" class="admin-input" style="width: 100%; box-sizing: border-box; margin-top: 6px;">
+        </div>
+        <div class="form-group" style="margin-bottom: 12px;">
+          <label style="font-size: 0.8rem; color: #94a3b8;">Upload Poster Game (Gambar dari HP/Laptop)</label>
+          <input type="file" id="manualGameFileInput" accept="image/*" class="admin-input" style="width: 100%; box-sizing: border-box; margin-top: 6px; padding: 6px;">
+          <p style="font-size: 0.75rem; color: #f59e0b; margin-top: 4px;" id="manualGameFileHint">*Kosongkan file ini jika hanya ingin mengedit nama/publisher.</p>
+        </div>
+        <button id="btnSubmitManualGame" class="btn-submit-action" onclick="submitManualGame()" style="background: #10b981; margin-top: 15px;">
+          <i class="fa-solid fa-cloud-arrow-up"></i> Simpan Game Manual
         </button>
       </div>
     </div>

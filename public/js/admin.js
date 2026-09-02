@@ -6,6 +6,7 @@ let allProducts = [];
 let allBanners = [];
 let allGameCategories = [];
 let allFlashSales = [];
+let allManualGames = []; // BARU
 let selectedTargetUser = null;
 let selectedSku = null;
 let activeGameFilter = "ALL";
@@ -284,6 +285,184 @@ window.deleteFlashSale = async function(id) {
   else window.fetchAdminFlashSale();
 };
 
+
+// ==========================================
+// 1.5. BARU: MANUAL GAMES & USD RATE ACTIONS
+// ==========================================
+
+window.fetchUsdRate = async function() {
+  try {
+    const { data, error } = await window.supabase.from('app_settings').select('setting_value').eq('setting_key', 'usd_rate').single();
+    if (data) {
+      document.getElementById("inputUsdRate").value = data.setting_value;
+    }
+  } catch (err) {
+    console.error("Gagal load USD rate:", err);
+  }
+};
+
+window.updateUsdRate = async function() {
+  const newRate = document.getElementById("inputUsdRate").value;
+  if (!newRate) return alert("Kurs tidak boleh kosong!");
+  
+  try {
+    const { error } = await window.supabase.from('app_settings').update({ setting_value: newRate }).eq('setting_key', 'usd_rate');
+    if (error) throw error;
+    alert("Kurs USD berhasil diupdate dan otomatis sinkron ke website pembeli!");
+  } catch (err) {
+    alert("Gagal update kurs: " + err.message);
+  }
+};
+
+window.fetchManualGames = async function() {
+  const tbody = document.getElementById("manualGamesTableBody");
+  if (!tbody) return;
+
+  tbody.innerHTML = `<tr><td colspan="5" style="text-align: center; padding: 25px;"><i class="fa-solid fa-spinner fa-spin"></i> Memuat data...</td></tr>`;
+
+  try {
+    const { data, error } = await window.supabase.from("manual_games").select("*").order("created_at", { ascending: false });
+    if (error) throw error;
+    allManualGames = data || [];
+
+    if (allManualGames.length === 0) {
+      tbody.innerHTML = `<tr><td colspan="5" style="text-align: center; padding: 25px; color: #94a3b8;">Belum ada game manual. Klik tombol tambah.</td></tr>`;
+      return;
+    }
+
+    tbody.innerHTML = allManualGames.map(g => {
+      const statusBadge = g.is_active 
+        ? `<span class="badge-status success">AKTIF</span>` 
+        : `<span class="badge-status cancelled">NONAKTIF</span>`;
+
+      return `
+        <tr>
+          <td><img src="${g.image_url}" alt="${g.name}" style="width: 50px; height: 50px; border-radius: 10px; object-fit: cover; background: #0b1120;"></td>
+          <td><strong style="color: #fff;">${g.name}</strong><br><span style="font-size:0.75rem; color:#10b981;">ID: ${g.slug}</span></td>
+          <td><span style="color: #94a3b8;">${g.publisher}</span></td>
+          <td>${statusBadge}</td>
+          <td>
+            <div class="btn-action-group">
+              <button class="btn-action-sm ${g.is_active ? 'btn-adjust' : 'btn-success'}" onclick="toggleManualGameStatus('${g.id}', ${!g.is_active})" title="Ubah Status">
+                <i class="fa-solid ${g.is_active ? 'fa-eye-slash' : 'fa-eye'}"></i>
+              </button>
+              <button class="btn-action-sm btn-adjust" onclick="openManualGameEdit('${g.id}')" title="Edit Game">
+                <i class="fa-solid fa-pen-to-square"></i>
+              </button>
+              <button class="btn-action-sm btn-cancel" onclick="deleteManualGame('${g.id}')" title="Hapus Game">
+                <i class="fa-solid fa-trash-can"></i>
+              </button>
+            </div>
+          </td>
+        </tr>
+      `;
+    }).join("");
+  } catch (err) {
+    tbody.innerHTML = `<tr><td colspan="5" style="text-align: center; color: var(--accent-red);">${err.message}</td></tr>`;
+  }
+};
+
+window.openManualGameModal = function() {
+  document.getElementById("manualGameModalTitle").innerHTML = '<i class="fa-solid fa-upload"></i> Tambah Game Manual';
+  document.getElementById("manualGameIdInput").value = "";
+  document.getElementById("manualGameNameInput").value = "";
+  document.getElementById("manualGamePubInput").value = "";
+  document.getElementById("manualGameFileInput").value = "";
+  document.getElementById("manualGameFileHint").style.display = "none"; // Sembunyikan hint edit
+  document.getElementById("manualGameModal")?.classList.add("show");
+};
+
+window.openManualGameEdit = function(id) {
+  const g = allManualGames.find(item => String(item.id) === String(id));
+  if(!g) return;
+
+  document.getElementById("manualGameModalTitle").innerHTML = '<i class="fa-solid fa-pen"></i> Edit Game Manual';
+  document.getElementById("manualGameIdInput").value = g.id;
+  document.getElementById("manualGameNameInput").value = g.name;
+  document.getElementById("manualGamePubInput").value = g.publisher;
+  document.getElementById("manualGameFileInput").value = ""; // Reset file input
+  document.getElementById("manualGameFileHint").style.display = "block"; // Tampilkan hint
+  document.getElementById("manualGameModal")?.classList.add("show");
+};
+
+window.closeManualGameModal = function() {
+  document.getElementById("manualGameModal")?.classList.remove("show");
+};
+
+window.submitManualGame = async function() {
+  const editId = document.getElementById("manualGameIdInput").value;
+  const name = document.getElementById("manualGameNameInput")?.value.trim();
+  const publisher = document.getElementById("manualGamePubInput")?.value.trim();
+  const fileInput = document.getElementById("manualGameFileInput");
+  const file = fileInput.files[0];
+
+  if (!name || !publisher) return alert("Nama Game dan Publisher wajib diisi!");
+  if (!editId && !file) return alert("Pilih file gambar poster terlebih dahulu untuk game baru!");
+
+  const btn = document.getElementById("btnSubmitManualGame");
+  btn.disabled = true;
+  btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Menyimpan...';
+
+  try {
+    let finalImageUrl = "";
+    const slug = name.toLowerCase().replace(/[^a-z0-9]+/g, '-');
+
+    // Jika user upload file gambar
+    if (file) {
+      const fileExt = file.name.split('.').pop();
+      const fileName = `${Date.now()}-${slug}.${fileExt}`;
+      
+      const { data: uploadData, error: uploadError } = await window.supabase.storage
+        .from('game-posters')
+        .upload(fileName, file);
+
+      if (uploadError) throw uploadError;
+
+      const { data: publicUrlData } = window.supabase.storage.from('game-posters').getPublicUrl(fileName);
+      finalImageUrl = publicUrlData.publicUrl;
+    }
+
+    if (editId) {
+      // PROSES EDIT
+      const updateData = { name, slug, publisher };
+      if (finalImageUrl) updateData.image_url = finalImageUrl; // Update gambar hanya jika ada file baru
+
+      const { error } = await window.supabase.from("manual_games").update(updateData).eq("id", editId);
+      if (error) throw error;
+      alert("Game manual berhasil diubah!");
+    } else {
+      // PROSES TAMBAH BARU
+      const { error } = await window.supabase.from("manual_games").insert([{
+        name, slug, publisher, image_url: finalImageUrl, category: 'via_login', is_active: true
+      }]);
+      if (error) throw error;
+      alert("Game manual berhasil ditambahkan!");
+    }
+
+    window.closeManualGameModal();
+    window.fetchManualGames();
+  } catch (err) {
+    alert("Terjadi kesalahan: " + err.message);
+  } finally {
+    btn.disabled = false;
+    btn.innerHTML = '<i class="fa-solid fa-cloud-arrow-up"></i> Simpan Game Manual';
+  }
+};
+
+window.toggleManualGameStatus = async function(id, status) {
+  const { error } = await window.supabase.from("manual_games").update({ is_active: status }).eq("id", id);
+  if (error) alert("Gagal update status: " + error.message);
+  else window.fetchManualGames();
+};
+
+window.deleteManualGame = async function(id) {
+  if (!confirm("Yakin ingin menghapus game ini dari daftar?")) return;
+  const { error } = await window.supabase.from("manual_games").delete().eq("id", id);
+  if (error) alert("Gagal menghapus game: " + error.message);
+  else window.fetchManualGames();
+};
+
+
 // ==========================================
 // 2. MAIN DOM INITIALIZATION
 // ==========================================
@@ -362,6 +541,12 @@ document.addEventListener("DOMContentLoaded", async () => {
       if (btn.dataset.tab === "bannersTab") window.fetchAdminBanners();
       if (btn.dataset.tab === "gamesTab") window.fetchAdminGames();
       if (btn.dataset.tab === "flashSaleTab") window.fetchAdminFlashSale();
+      
+      // TRIGGER BARU UNTUK TAB MANUAL GAMES
+      if (btn.dataset.tab === "manualGamesTab") {
+        window.fetchUsdRate();
+        window.fetchManualGames();
+      }
     });
   });
 
