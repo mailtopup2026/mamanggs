@@ -378,7 +378,6 @@ document.addEventListener("DOMContentLoaded", async () => {
     // ALUR JASTIP USD DINAMIS (WHITEOUT SURVIVAL / MANUAL)
     // ----------------------------------------------------
     try {
-      // Ambil kurs live dari app_settings
       const { data: rateData } = await window.supabase
         .from("app_settings")
         .select("setting_value")
@@ -531,9 +530,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     });
   });
 
-  // ==========================================
-  // MODAL SALDO TIDAK CUKUP (VERSI AMAN & BERSIH)
-  // ==========================================
+  // Modal Saldo Tidak Cukup
   function showInsufficientBalanceModal(currentBal, totalPay) {
     const modalEl = document.getElementById("insufficientBalanceModal");
     const userBalEl = document.getElementById("modalUserBalanceText");
@@ -545,15 +542,9 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     if (modalEl) {
       modalEl.style.display = "flex";
-      
-      // Tombol Tutup
       if (btnClose) {
-        btnClose.onclick = () => {
-          modalEl.style.display = "none";
-        };
+        btnClose.onclick = () => { modalEl.style.display = "none"; };
       }
-      
-      // Klik di luar area modal untuk tutup
       modalEl.onclick = (e) => {
         if (e.target === modalEl) modalEl.style.display = "none";
       };
@@ -585,18 +576,11 @@ document.addEventListener("DOMContentLoaded", async () => {
       nicknameBox.style.display = "none";
 
       try {
-        const queryParams = new URLSearchParams({
-          game: currentGame.code,
-          id: uid,
-          zone: zid
-        });
-
+        const queryParams = new URLSearchParams({ game: currentGame.code, id: uid, zone: zid });
         const res = await fetch(`/api/check-id?${queryParams.toString()}`);
         const data = await res.json();
 
-        if (!res.ok || !data.success) {
-          throw new Error(data.message || "User ID / Server tidak ditemukan.");
-        }
+        if (!res.ok || !data.success) throw new Error(data.message || "User ID / Server tidak ditemukan.");
 
         verifiedNickname = data.name;
         nicknameBox.className = "nickname-result-box";
@@ -653,22 +637,10 @@ document.addEventListener("DOMContentLoaded", async () => {
     const zoneId = (!isManualGame && currentGame.hasZone) ? zoneIdInput.value.trim() : null;
     const whatsapp = document.getElementById("whatsappInput").value.trim();
 
-    if (!selectedItem) {
-      alert("Harap pilih salah satu nominal produk!");
-      return;
-    }
-    if (!userId) {
-      alert(isManualGame ? "Harap masukkan identitas/nama akun game kamu!" : "Harap masukkan User ID akun game kamu!");
-      return;
-    }
-    if (!isManualGame && currentGame.hasZone && !zoneId) {
-      alert("Harap masukkan Zone ID / Server game kamu!");
-      return;
-    }
-    if (!whatsapp) {
-      alert("Harap masukkan nomor WhatsApp aktif!");
-      return;
-    }
+    if (!selectedItem) return alert("Harap pilih salah satu nominal produk!");
+    if (!userId) return alert(isManualGame ? "Harap masukkan identitas/nama akun game kamu!" : "Harap masukkan User ID akun game kamu!");
+    if (!isManualGame && currentGame.hasZone && !zoneId) return alert("Harap masukkan Zone ID / Server game kamu!");
+    if (!whatsapp) return alert("Harap masukkan nomor WhatsApp aktif!");
 
     checkoutBtn.disabled = true;
     checkoutBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Memproses Pesanan...';
@@ -682,9 +654,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     try {
       if (window.supabase) {
         const { data: sessionData } = await window.supabase.auth.getSession();
-        if (sessionData?.session?.user?.id) {
-          userUuid = sessionData.session.user.id;
-        }
+        if (sessionData?.session?.user?.id) userUuid = sessionData.session.user.id;
       }
     } catch (e) {}
 
@@ -703,7 +673,6 @@ document.addEventListener("DOMContentLoaded", async () => {
     const totalToPay = Number(finalCalculatedPrice);
     let dokuPaymentData = null;
 
-    // 1. PEMBAYARAN VIA SALDO MGS
     if (isUsingWallet) {
       if (!userUuid) {
         alert("Metode Saldo MGS hanya berlaku untuk member yang sudah login.");
@@ -734,9 +703,7 @@ document.addEventListener("DOMContentLoaded", async () => {
           amount: totalToPay
         });
 
-        if (deductErr || !deductSuccess) {
-          throw new Error("Gagal memproses pemotongan saldo. Silakan coba lagi.");
-        }
+        if (deductErr || !deductSuccess) throw new Error("Gagal memproses pemotongan saldo. Silakan coba lagi.");
 
         orderStatus = "SUCCESS";
       } catch (err) {
@@ -746,7 +713,6 @@ document.addEventListener("DOMContentLoaded", async () => {
         return;
       }
     } else {
-      // 2. PEMBAYARAN VIA DOKU GATEWAY
       try {
         const dokuRes = await fetch("/api/create-payment", {
           method: "POST",
@@ -761,9 +727,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         });
 
         const dokuResult = await dokuRes.json();
-        if (!dokuRes.ok || !dokuResult.success) {
-          throw new Error(dokuResult.error || "Gagal membuat tagihan pembayaran.");
-        }
+        if (!dokuRes.ok || !dokuResult.success) throw new Error(dokuResult.error || "Gagal membuat tagihan pembayaran.");
 
         dokuPaymentData = dokuResult.data;
       } catch (err) {
@@ -774,7 +738,6 @@ document.addEventListener("DOMContentLoaded", async () => {
       }
     }
 
-    // 3. SIMPAN PESANAN KE SUPABASE
     try {
       const orderPayload = {
         invoice: invoiceNumber,
@@ -797,9 +760,7 @@ document.addEventListener("DOMContentLoaded", async () => {
       const { error } = await window.supabase.from("orders").insert([orderPayload]);
       if (error) throw error;
 
-      // REDIRECT PESANAN
       if (isManualGame) {
-        // Alur Khusus Jastip: Notifikasi WhatsApp Konfirmasi
         const waMsg = encodeURIComponent(
 `Halo Admin MamangGS! Saya baru saja melakukan pembayaran Top Up Jastip (Via Login).
 
@@ -834,7 +795,6 @@ Saya siap mengirimkan data login dan screenshot bundle yang ingin dibeli.`
         return;
       }
 
-      // Alur Standar Digiflazz
       if (isUsingWallet) {
         alert("Pembayaran Berhasil! Pesanan otomatis diproses.");
         window.location.href = `/order-status.html?inv=${encodeURIComponent(invoiceNumber)}`;

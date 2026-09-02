@@ -1,890 +1,324 @@
-document.addEventListener("DOMContentLoaded", async () => {
-  // Metadata Game Default (Digiflazz)
-  const gamesMeta = {
-    mlbb: {
-      code: "mlbb",
-      brandQuery: "MOBILE LEGEND",
-      title: "Mobile Legends: Bang Bang",
-      dev: "Moonton",
-      banner: "https://images.unsplash.com/photo-1563089145-599997674d42?auto=format&fit=crop&w=600&q=80",
-      hasZone: true,
-      supportsCheck: true
-    },
-    ff: {
-      code: "ff",
-      brandQuery: "FREE FIRE",
-      title: "Free Fire",
-      dev: "Garena",
-      banner: "https://images.unsplash.com/photo-1579373903781-fd5c0c30c4cd?auto=format&fit=crop&w=600&q=80",
-      hasZone: false,
-      supportsCheck: true
-    },
-    pubg: {
-      code: "pubg",
-      brandQuery: "PUBG",
-      title: "PUBG Mobile",
-      dev: "Level Infinite",
-      banner: "https://images.unsplash.com/photo-1542751371-adc38448a05e?auto=format&fit=crop&w=600&q=80",
-      hasZone: false,
-      supportsCheck: true
-    },
-    codm: {
-      code: "codm",
-      brandQuery: "CALL OF DUTY",
-      title: "Call of Duty: Mobile",
-      dev: "Garena / Activision",
-      banner: "https://images.unsplash.com/photo-1538481199705-c710c4e965fc?auto=format&fit=crop&w=600&q=80",
-      hasZone: false,
-      supportsCheck: true
-    },
-    aov: {
-      code: "aov",
-      brandQuery: "ARENA OF VALOR",
-      title: "Arena of Valor (AOV)",
-      dev: "Garena",
-      banner: "https://images.unsplash.com/photo-1511512578047-dfb367046420?auto=format&fit=crop&w=600&q=80",
-      hasZone: false,
-      supportsCheck: true
-    },
-    ragnarok: {
-      code: "ragnarok",
-      brandQuery: "RAGNAROK",
-      title: "Ragnarok M: Eternal Love",
-      dev: "Gravity Interactive",
-      banner: "https://images.unsplash.com/photo-1579373903781-fd5c0c30c4cd?auto=format&fit=crop&w=600&q=80",
-      hasZone: true,
-      supportsCheck: false
-    },
-    whiteout: {
-      code: "whiteout",
-      brandQuery: "WHITEOUT",
-      title: "Whiteout Survival",
-      dev: "Century Games",
-      banner: "https://images.unsplash.com/photo-1542751371-adc38448a05e?auto=format&fit=crop&w=600&q=80",
-      hasZone: false,
-      supportsCheck: false
-    },
-    lords: {
-      code: "lords",
-      brandQuery: "LORDS MOBILE",
-      title: "Lords Mobile",
-      dev: "IGG",
-      banner: "https://images.unsplash.com/photo-1563089145-599997674d42?auto=format&fit=crop&w=600&q=80",
-      hasZone: false,
-      supportsCheck: false
-    },
-    pb: {
-      code: "pb",
-      brandQuery: "POINT BLANK",
-      title: "Point Blank",
-      dev: "Zepetto",
-      banner: "https://images.unsplash.com/photo-1542751371-adc38448a05e?auto=format&fit=crop&w=600&q=80",
-      hasZone: false,
-      supportsCheck: false
-    },
-    laplace: {
-      code: "laplace",
-      brandQuery: "LAPLACE",
-      title: "Laplace M",
-      dev: "ZlongGames",
-      banner: "https://images.unsplash.com/photo-1579373903781-fd5c0c30c4cd?auto=format&fit=crop&w=600&q=80",
-      hasZone: true,
-      supportsCheck: false
-    },
-    au2: {
-      code: "au2",
-      brandQuery: "AU2",
-      title: "AU2 Mobile",
-      dev: "VTC Game",
-      banner: "https://images.unsplash.com/photo-1563089145-599997674d42?auto=format&fit=crop&w=600&q=80",
-      hasZone: true,
-      supportsCheck: false
-    },
-    garena: {
-      code: "garena",
-      brandQuery: "GARENA",
-      title: "Garena Shell",
-      dev: "Garena",
-      banner: "https://images.unsplash.com/photo-1511512578047-dfb367046420?auto=format&fit=crop&w=600&q=80",
-      hasZone: false,
-      supportsCheck: false
-    },
-    genshin: {
-      code: "genshin",
-      brandQuery: "GENSHIN",
-      title: "Genshin Impact",
-      dev: "HoYoverse",
-      banner: "https://images.unsplash.com/photo-1538481199705-c710c4e965fc?auto=format&fit=crop&w=600&q=80",
-      hasZone: true,
-      supportsCheck: true
-    },
-    valorant: {
-      code: "valorant",
-      brandQuery: "VALORANT",
-      title: "Valorant Points",
-      dev: "Riot Games",
-      banner: "https://images.unsplash.com/photo-1542751371-adc38448a05e?auto=format&fit=crop&w=600&q=80",
-      hasZone: false,
-      supportsCheck: false
-    },
-    hok: {
-      code: "hok",
-      brandQuery: "HONOR OF KINGS",
-      title: "Honor of Kings",
-      dev: "Level Infinite",
-      banner: "https://images.unsplash.com/photo-1563089145-599997674d42?auto=format&fit=crop&w=600&q=80",
-      hasZone: false,
-      supportsCheck: true
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Top Up Game - MamangGS</title>
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  
+  <link rel="stylesheet" href="/css/global.css">
+  <link rel="stylesheet" href="/css/order.css">
+
+  <style>
+    html, body {
+      overflow-x: hidden !important;
+      max-width: 100% !important;
     }
-  };
-
-  const params = new URLSearchParams(window.location.search);
-  const gameKey = (params.get("game") || "mlbb").toLowerCase();
-  const urlType = params.get("type");
-
-  let isManualGame = (urlType === "manual");
-  let currentGame = gamesMeta[gameKey] || {
-    code: gameKey,
-    brandQuery: gameKey.toUpperCase(),
-    title: gameKey.toUpperCase(),
-    dev: "Official",
-    banner: "https://images.unsplash.com/photo-1542751371-adc38448a05e?auto=format&fit=crop&w=600&q=80",
-    hasZone: false,
-    supportsCheck: false
-  };
-
-  // 1. CEK APAKAH INI GAME MANUAL DARI DATABASE
-  try {
-    const { data: manualData } = await window.supabase
-      .from("manual_games")
-      .select("*")
-      .eq("slug", gameKey)
-      .maybeSingle();
-
-    if (manualData) {
-      isManualGame = true;
-      currentGame = {
-        code: manualData.slug,
-        title: manualData.name,
-        dev: manualData.publisher || "Century Games",
-        banner: manualData.image_url,
-        hasZone: false,
-        supportsCheck: false
-      };
+    *, *::before, *::after {
+      box-sizing: border-box !important;
     }
-  } catch (err) {
-    console.warn("Pengecekan manual game:", err);
-  }
-
-  // Update Tampilan Informasi Game
-  if (document.getElementById("gameTitle")) document.getElementById("gameTitle").innerText = currentGame.title;
-  if (document.getElementById("gameDev")) document.getElementById("gameDev").innerText = currentGame.dev;
-  if (document.getElementById("gameBanner")) document.getElementById("gameBanner").src = currentGame.banner;
-
-  const zoneGroup = document.getElementById("zoneGroup");
-  if (!currentGame.hasZone && zoneGroup) zoneGroup.style.display = "none";
-
-  let selectedItem = null;
-  let selectedPayment = "Pilih Cara Pembayaran";
-  let verifiedNickname = null;
-  let cachedUserBalance = 0;
-  let liveUsdRate = 17000;
-
-  let appliedPromo = null;
-  let currentDiscountAmount = 0;
-  let finalCalculatedPrice = 0;
-
-  // ==========================================
-  // LOGIKA TAMPILAN JASTIP (MANUAL VIA LOGIN)
-  // ==========================================
-  if (isManualGame) {
-    const stepAccountTitle = document.getElementById("stepAccountTitle");
-    if (stepAccountTitle) stepAccountTitle.innerText = "Informasi Akun Game";
-
-    const labelUser = document.getElementById("labelUserId");
-    if (labelUser) labelUser.innerText = "Akun / ID Game / Nama Karakter";
-
-    const userInput = document.getElementById("userIdInput");
-    if (userInput) userInput.placeholder = "Masukkan ID atau nama karakter game";
-
-    if (zoneGroup) zoneGroup.style.display = "none";
-
-    const instructionList = document.getElementById("instructionList");
-    if (instructionList) {
-      instructionList.innerHTML = `
-        <li>Pilih paket pack USD yang sesuai dengan harga bundle in-game Anda.</li>
-        <li>Pilih jalur pembayaran (Otomatis DOKU / Saldo MGS).</li>
-        <li>Gunakan kupon promo jika memiliki kode diskon.</li>
-        <li>Masukkan nomor WhatsApp aktif Anda.</li>
-        <li>Setelah pembayaran selesai, konfirmasi ke WhatsApp Admin untuk proses login & pengisian bundle.</li>
-      `;
-    }
-
-    const rateNotice = document.getElementById("manualRateNoticeBox");
-    if (rateNotice) rateNotice.style.display = "block";
-  }
-
-  // ==========================================
-  // SINKRONISASI SALDO USER
-  // ==========================================
-  async function syncUserBalanceDisplay() {
-    try {
-      if (!window.supabase) return;
-      const { data: sessionData } = await window.supabase.auth.getSession();
-      const userUuid = sessionData?.session?.user?.id;
-
-      if (userUuid) {
-        const { data: profile } = await window.supabase
-          .from("profiles")
-          .select("balance")
-          .eq("id", userUuid)
-          .maybeSingle();
-
-        if (profile && profile.balance !== undefined) {
-          cachedUserBalance = Number(profile.balance || 0);
-
-          document.querySelectorAll(".payment-card").forEach(card => {
-            const spanText = card.querySelector(".payment-brand span");
-            if (spanText && spanText.innerText.toLowerCase().includes("saldo")) {
-              spanText.innerHTML = `Saldo MGS <small style="color: #10b981; font-size: 0.78rem; font-weight: 700;">(Rp ${cachedUserBalance.toLocaleString("id-ID")})</small>`;
-            }
-          });
-        }
+    @media (max-width: 768px) {
+      .order-wrapper {
+        width: 100% !important;
+        padding: 15px !important;
+        margin: 0 !important;
+        display: flex !important;
+        flex-direction: column !important;
       }
-    } catch (e) {
-      console.warn("Gagal sinkron saldo:", e);
-    }
-  }
-
-  const checkBalanceInterval = setInterval(() => {
-    if (window.supabase) {
-      clearInterval(checkBalanceInterval);
-      syncUserBalanceDisplay();
-    }
-  }, 100);
-
-  // ==========================================
-  // KALKULASI HARGA & PROMO
-  // ==========================================
-  function updateCheckoutPricing() {
-    if (!selectedItem) return;
-
-    const originalPriceEl = document.getElementById("summaryOriginalPrice");
-    const discountRow = document.getElementById("rowDiscount");
-    const discountValEl = document.getElementById("summaryDiscountValue");
-    const promoCodeEl = document.getElementById("summaryPromoCode");
-    const finalPriceEl = document.getElementById("summaryFinalPrice");
-
-    const basePrice = Number(selectedItem.price || 0);
-    currentDiscountAmount = 0;
-
-    if (appliedPromo) {
-      if (basePrice < Number(appliedPromo.min_order)) {
-        appliedPromo = null;
-        showPromoFeedback(`Kupon dibatalkan: Syarat minimal belanja Rp ${Number(appliedPromo?.min_order || 0).toLocaleString("id-ID")}`, false);
-      } else {
-        if (appliedPromo.discount_type === "FIXED") {
-          currentDiscountAmount = Number(appliedPromo.discount_value);
-        } else if (appliedPromo.discount_type === "PERCENT") {
-          let calc = (basePrice * Number(appliedPromo.discount_value)) / 100;
-          if (appliedPromo.max_discount && calc > Number(appliedPromo.max_discount)) {
-            calc = Number(appliedPromo.max_discount);
-          }
-          currentDiscountAmount = calc;
-        }
+      .game-info-sidebar, .order-steps-container, .step-card {
+        width: 100% !important;
+        max-width: 100% !important;
+        margin-left: 0 !important;
+        margin-right: 0 !important;
+      }
+      .form-grid-account {
+        display: grid !important;
+        grid-template-columns: 1fr !important; 
+        gap: 12px !important;
+      }
+      .nominal-grid {
+        display: grid !important;
+        grid-template-columns: repeat(2, 1fr) !important;
+        gap: 10px !important;
+      }
+      .payment-grid {
+        display: grid !important;
+        grid-template-columns: 1fr !important; 
+        gap: 10px !important;
       }
     }
+  </style>
+</head>
+<body>
 
-    finalCalculatedPrice = Math.max(0, basePrice - currentDiscountAmount);
+  <header class="navbar">
+    <div class="navbar-container">
+      <a href="/" class="brand-logo">
+        <div class="logo-video-wrap"><video autoplay loop muted playsinline class="logo-video"><source src="/assets/images/logo.mp4" type="video/mp4"></video></div>
+      </a>
 
-    if (originalPriceEl) originalPriceEl.innerText = `Rp ${basePrice.toLocaleString("id-ID")}`;
+      <div class="nav-search desktop-only">
+        <i class="fa-solid fa-magnifying-glass"></i>
+        <input type="text" placeholder="Cari Game Lainnya...">
+      </div>
 
-    if (currentDiscountAmount > 0 && appliedPromo) {
-      if (discountRow) discountRow.style.display = "flex";
-      if (promoCodeEl) promoCodeEl.innerText = appliedPromo.code;
-      if (discountValEl) discountValEl.innerText = `- Rp ${Number(currentDiscountAmount).toLocaleString("id-ID")}`;
-    } else {
-      if (discountRow) discountRow.style.display = "none";
-    }
+      <div class="nav-actions desktop-only" id="desktopNavActions">
+        <a href="/blog.html" class="btn-nav-login" style="background: rgba(56, 189, 248, 0.15); border-color: rgba(56, 189, 248, 0.4); color: #38bdf8;">
+          <i class="fa-solid fa-newspaper"></i> Blog
+        </a>
+        <a href="/leaderboard.html" class="btn-nav-login" style="background: rgba(245, 158, 11, 0.15); border-color: rgba(245, 158, 11, 0.4); color: #f59e0b;">
+          <i class="fa-solid fa-crown"></i> Leaderboard
+        </a>
+        <a href="/auth/login.html" class="btn-nav-login" id="navLoginBtn"><i class="fa-solid fa-right-to-bracket"></i> Masuk</a>
+        <a href="/auth/register.html" class="btn-nav-register" id="navRegisterBtn"><i class="fa-solid fa-user-plus"></i> Daftar</a>
+      </div>
 
-    if (finalPriceEl) finalPriceEl.innerText = `Rp ${Number(finalCalculatedPrice).toLocaleString("id-ID")}`;
-  }
+      <div class="mobile-nav-toggle-group">
+        <button id="btnMobileMenuToggle" class="btn-mobile-icon" title="Menu Lengkap">
+          <i class="fa-solid fa-ellipsis-vertical"></i>
+        </button>
+      </div>
+    </div>
 
-  function showPromoFeedback(message, isSuccess) {
-    const msgEl = document.getElementById("promoMessage");
-    if (!msgEl) return;
-    msgEl.style.display = "block";
-    msgEl.style.color = isSuccess ? "#10b981" : "#e63946";
-    msgEl.innerText = message;
-  }
-
-  // Listener Promo
-  const btnApplyPromo = document.getElementById("btnApplyPromo");
-  if (btnApplyPromo) {
-    btnApplyPromo.addEventListener("click", async () => {
-      const codeInput = document.getElementById("inputPromoCode");
-      const code = codeInput?.value.trim().toUpperCase();
-
-      if (!code) {
-        showPromoFeedback("Ketik kode promo terlebih dahulu!", false);
-        return;
-      }
-
-      const basePrice = Number(selectedItem?.price || 0);
-
-      try {
-        const { data: promo, error } = await window.supabase
-          .from("promos")
-          .select("*")
-          .eq("code", code)
-          .eq("is_active", true)
-          .single();
-
-        if (error || !promo) {
-          appliedPromo = null;
-          showPromoFeedback("Kode promo tidak valid atau telah berakhir.", false);
-          updateCheckoutPricing();
-          return;
-        }
-
-        if (basePrice < Number(promo.min_order)) {
-          appliedPromo = null;
-          showPromoFeedback(`Minimal belanja untuk kupon ini adalah Rp ${Number(promo.min_order).toLocaleString("id-ID")}`, false);
-          updateCheckoutPricing();
-          return;
-        }
-
-        appliedPromo = promo;
-        const infoDiskon = promo.discount_type === "FIXED" 
-          ? `Rp ${Number(promo.discount_value).toLocaleString("id-ID")}` 
-          : `${promo.discount_value}%`;
-
-        showPromoFeedback(`🎉 Promo diterapkan! Hemat ${infoDiskon}`, true);
-        updateCheckoutPricing();
-      } catch (err) {
-        showPromoFeedback("Terjadi kesalahan memeriksa kupon.", false);
-      }
-    });
-  }
-
-  // ==========================================
-  // RENDER NOMINAL PRODUK (DIGIFLAZZ VS JASTIP USD)
-  // ==========================================
-  const nominalContainer = document.getElementById("nominalContainer");
-  nominalContainer.innerHTML = `<div style="grid-column: 1/-1; text-align: center; color: #888; padding: 20px;"><i class="fa-solid fa-spinner fa-spin"></i> Memuat katalog produk...</div>`;
-
-  if (isManualGame) {
-    // ----------------------------------------------------
-    // ALUR JASTIP USD DINAMIS (WHITEOUT SURVIVAL / MANUAL)
-    // ----------------------------------------------------
-    try {
-      // Ambil kurs live dari app_settings
-      const { data: rateData } = await window.supabase
-        .from("app_settings")
-        .select("setting_value")
-        .eq("setting_key", "usd_rate")
-        .single();
-
-      if (rateData && rateData.setting_value) {
-        liveUsdRate = Number(rateData.setting_value);
-      }
-
-      const manualLiveRateText = document.getElementById("manualLiveRateText");
-      if (manualLiveRateText) manualLiveRateText.innerText = liveUsdRate.toLocaleString("id-ID");
-
-      // Daftar tier USD sesuai harga in-game
-      const usdPacks = [
-        { usd: 1, labelInGame: "Setara pack Rp 19.000 in-game" },
-        { usd: 2, labelInGame: "Setara pack Rp 29.000 in-game" },
-        { usd: 3, labelInGame: "Setara pack Rp 49.000 in-game" },
-        { usd: 5, labelInGame: "Setara pack Rp 89.000 in-game" },
-        { usd: 10, labelInGame: "Setara pack Rp 169.000 in-game" },
-        { usd: 20, labelInGame: "Setara pack Rp 369.000 in-game" },
-        { usd: 50, labelInGame: "Setara pack Rp 799.000 in-game" },
-        { usd: 100, labelInGame: "Setara pack Rp 1.699.000 in-game" }
-      ];
-
-      nominalContainer.innerHTML = "";
-
-      usdPacks.forEach((pack, index) => {
-        const itemPrice = pack.usd * liveUsdRate;
-        const itemObj = {
-          sku: `MANUAL-${currentGame.code.toUpperCase()}-${pack.usd}USD`,
-          name: `Bundle Pack $${pack.usd} USD`,
-          price: itemPrice,
-          usd_amount: pack.usd
-        };
-
-        if (index === 0) selectedItem = itemObj;
-
-        const card = document.createElement("div");
-        card.className = "nominal-card" + (index === 0 ? " selected" : "");
-        card.innerHTML = `
-          <div class="nominal-title" style="font-size: 0.95rem; font-weight: 800; color: #fff;">Pack $${pack.usd} USD</div>
-          <div style="font-size: 0.72rem; color: #94a3b8; margin: 3px 0;">${pack.labelInGame}</div>
-          <div class="nominal-price" style="color: #10b981; font-weight: 800;">Rp ${itemPrice.toLocaleString("id-ID")}</div>
-        `;
-
-        card.addEventListener("click", () => {
-          document.querySelectorAll(".nominal-card").forEach((c) => c.classList.remove("selected"));
-          card.classList.add("selected");
-          selectedItem = itemObj;
-          updateCheckoutPricing();
-        });
-
-        nominalContainer.appendChild(card);
-      });
-
-      updateCheckoutPricing();
-    } catch (err) {
-      console.error("Gagal load rate jastip:", err);
-      nominalContainer.innerHTML = `<div style="grid-column: 1/-1; text-align: center; color: #e63946; padding: 20px;">Gagal memuat tier kurs USD.</div>`;
-    }
-
-  } else {
-    // ----------------------------------------------------
-    // ALUR DIGIFLAZZ BIASA
-    // ----------------------------------------------------
-    try {
-      try {
-        const { data: dbCover } = await window.supabase
-          .from("game_covers")
-          .select("*")
-          .ilike("game_code", currentGame.code)
-          .maybeSingle();
-
-        if (dbCover && dbCover.banner_url && document.getElementById("gameBanner")) {
-          document.getElementById("gameBanner").src = dbCover.banner_url;
-        }
-      } catch (coverErr) {}
-
-      let query = window.supabase
-        .from("products")
-        .select("*")
-        .eq("buyer_product_status", true);
-
-      if (currentGame.brandQuery) {
-        query = query.ilike("brand", `%${currentGame.brandQuery}%`);
-      } else {
-        query = query.ilike("game_code", `%${currentGame.code}%`);
-      }
-
-      const { data: dbProducts, error: dbError } = await query.order("price_sell", { ascending: true });
-
-      if (dbError) throw dbError;
-
-      if (!dbProducts || dbProducts.length === 0) {
-        nominalContainer.innerHTML = `<div style="grid-column: 1/-1; text-align: center; color: #94a3b8; padding: 20px;">Produk game ini sedang disiapkan atau dinonaktifkan di Admin.</div>`;
-      } else {
-        nominalContainer.innerHTML = "";
-
-        dbProducts.forEach((prod, index) => {
-          const itemObj = {
-            sku: prod.buyer_sku_code,
-            name: prod.product_name,
-            price: Number(prod.price_sell)
-          };
-
-          if (index === 0) selectedItem = itemObj;
-
-          const card = document.createElement("div");
-          card.className = "nominal-card" + (index === 0 ? " selected" : "");
-          const formattedPrice = Number(prod.price_sell).toLocaleString("id-ID");
-          
-          card.innerHTML = `
-            <div class="nominal-title">${prod.product_name}</div>
-            <div class="nominal-price">Rp ${formattedPrice}</div>
-          `;
-
-          card.addEventListener("click", () => {
-            document.querySelectorAll(".nominal-card").forEach((c) => c.classList.remove("selected"));
-            card.classList.add("selected");
-            selectedItem = itemObj;
-            updateCheckoutPricing();
-          });
-
-          nominalContainer.appendChild(card);
-        });
-
-        updateCheckoutPricing();
-      }
-    } catch (err) {
-      console.error("Gagal mengambil produk:", err);
-      nominalContainer.innerHTML = `<div style="grid-column: 1/-1; text-align: center; color: #e63946; padding: 20px;">Gagal memuat katalog produk.</div>`;
-    }
-  }
-
-  // Handle Pilih Metode Bayar
-  const checkoutBtn = document.getElementById("checkoutBtn");
-  document.querySelectorAll(".payment-card").forEach((card) => {
-    card.addEventListener("click", () => {
-      document.querySelectorAll(".payment-card").forEach((c) => c.classList.remove("selected"));
-      card.classList.add("selected");
-      const spanTitle = card.querySelector(".payment-brand span");
-      if (spanTitle) selectedPayment = spanTitle.innerText.trim();
-
-      if (selectedPayment.toLowerCase().includes("saldo")) {
-        checkoutBtn.innerHTML = '<i class="fa-solid fa-bolt"></i> Bayar Pakai Saldo MGS';
-      } else {
-        checkoutBtn.innerHTML = '<i class="fa-solid fa-bolt"></i> Beli dan Pilih Cara Pembayaran';
-      }
-    });
-  });
-
-  // Modal Saldo Tidak Cukup
-  function showInsufficientBalanceModal(currentBal, totalPay) {
-    const oldModal = document.getElementById("cyberBalanceModal");
-    if (oldModal) oldModal.remove();
-
-    const formattedBal = Number(currentBal || 0).toLocaleString("id-ID");
-    const formattedPay = Number(totalPay || 0).toLocaleString("id-ID");
-
-    const modalHTML = `
-      <div id="cyberBalanceModal" style="position: fixed; inset: 0; z-index: 99999; background: rgba(3, 7, 18, 0.85); backdrop-filter: blur(8px); display: flex; align-items: center; justify-content: center; padding: 16px;">
-        <div style="background: linear-gradient(145deg, #0d1527, #070b14); border: 1px solid rgba(230, 57, 70, 0.4); box-shadow: 0 20px 50px rgba(0, 0, 0, 0.8), 0 0 30px rgba(230, 57, 70, 0.2); border-radius: 20px; max-width: 420px; width: 100%; padding: 26px; text-align: center; position: relative;">
-          
-          <div style="width: 58px; height: 58px; border-radius: 16px; background: rgba(230, 57, 70, 0.15); border: 1px solid rgba(230, 57, 70, 0.4); display: flex; align-items: center; justify-content: center; color: #ff4d5a; font-size: 1.6rem; margin: 0 auto 16px;">
-            <i class="fa-solid fa-triangle-exclamation"></i>
-          </div>
-
-          <h3 style="margin: 0 0 8px; font-size: 1.25rem; font-weight: 800; color: #fff;">Saldo MGS Tidak Cukup</h3>
-          <p style="color: #94a3b8; font-size: 0.86rem; margin: 0 0 20px; line-height: 1.5;">Saldo dompet internal akun Anda tidak mencukupi untuk menyelesaikan transaksi ini.</p>
-
-          <div style="background: rgba(15, 23, 42, 0.7); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 14px; padding: 16px; margin-bottom: 22px; text-align: left; font-size: 0.88rem;">
-            <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
-              <span style="color: #94a3b8;">Saldo Saat Ini:</span>
-              <strong style="color: #fff;">Rp ${formattedBal}</strong>
-            </div>
-            <div style="display: flex; justify-content: space-between; border-top: 1px solid rgba(255,255,255,0.06); padding-top: 10px;">
-              <span style="color: #94a3b8;">Total Tagihan:</span>
-              <strong style="color: #ff4d5a; font-size: 1rem;">Rp ${formattedPay}</strong>
-            </div>
-          </div>
-
-          <div style="display: flex; gap: 10px;">
-            <button id="btnDismissCyberModal" type="button" style="flex: 1; background: rgba(255, 255, 255, 0.06); border: 1px solid rgba(255, 255, 255, 0.12); color: #cbd5e1; padding: 12px; border-radius: 10px; font-weight: 700; cursor: pointer; font-family: inherit; font-size: 0.9rem;">
-              Batal
-            </button>
-            <a href="/dashboard.html" style="flex: 1.2; background: #e63946; color: #fff; text-decoration: none; padding: 12px; border-radius: 10px; font-weight: 800; display: flex; align-items: center; justify-content: center; gap: 8px; box-shadow: 0 4px 18px rgba(230, 57, 70, 0.45); font-size: 0.9rem;">
-              <i class="fa-solid fa-circle-plus"></i> Isi Saldo
-            </a>
-          </div>
-
+    <div id="mobileMenuDropdown" class="mobile-menu-drawer">
+      <div class="mobile-menu-header">
+        <span style="font-weight: 800; font-size: 0.88rem; color: #fff;">Menu MamangGS</span>
+        <button id="btnCloseMobileMenu" style="background: none; border: none; color: #94a3b8; font-size: 1.1rem; cursor: pointer;">✕</button>
+      </div>
+      <div id="mobileMenuList" class="mobile-menu-items">
+        <a href="/" class="mobile-menu-link">
+          <i class="fa-solid fa-house" style="color: #3b82f6;"></i> Beranda
+        </a>
+        <a href="/leaderboard.html" class="mobile-menu-link">
+          <i class="fa-solid fa-crown" style="color: #f59e0b;"></i> Leaderboard Sultan
+        </a>
+        <a href="/blog.html" class="mobile-menu-link">
+          <i class="fa-solid fa-newspaper" style="color: #38bdf8;"></i> Blog & Tips Game
+        </a>
+        <a href="/order-status.html" class="mobile-menu-link" style="color: #10b981;">
+          <i class="fa-solid fa-receipt"></i> Lacak Pesanan
+        </a>
+        <hr style="border: none; border-top: 1px solid rgba(255,255,255,0.08); margin: 8px 0;">
+        <div id="mobileAuthSlot">
+          <a href="/auth/login.html" class="mobile-menu-link"><i class="fa-solid fa-right-to-bracket"></i> Masuk Akun</a>
+          <a href="/auth/register.html" class="mobile-menu-link" style="color: #f59e0b;"><i class="fa-solid fa-user-plus"></i> Daftar Member</a>
         </div>
       </div>
-    `;
+    </div>
+  </header>
 
-    document.body.insertAdjacentHTML("beforeend", modalHTML);
+  <main class="order-wrapper">
+    <aside class="game-info-sidebar">
+      <img src="" alt="Game Banner" class="game-banner-img" id="gameBanner">
+      <h2 id="gameTitle">Nama Game</h2>
+      <p id="gameDev">Publisher</p>
 
-    const cyberModal = document.getElementById("cyberBalanceModal");
-    const dismissBtn = document.getElementById("btnDismissCyberModal");
+      <div class="instruction-box">
+        <h4><i class="fa-solid fa-circle-info"></i> Petunjuk Pengisian:</h4>
+        <ol id="instructionList">
+          <li>Masukkan User ID & Zone ID akun Anda.</li>
+          <li>Pilih paket item / nominal yang diinginkan.</li>
+          <li>Pilih jalur pembayaran (Pilih Cara Pembayaran atau Saldo MGS).</li>
+          <li>Gunakan voucher diskon (jika ada).</li>
+          <li>Masukkan nomor WhatsApp untuk notifikasi invoice.</li>
+          <li>Klik tombol <strong>Beli dan Pilih Cara Pembayaran</strong>.</li>
+        </ol>
+      </div>
+    </aside>
 
-    dismissBtn?.addEventListener("click", () => cyberModal.remove());
-    cyberModal?.addEventListener("click", (e) => {
-      if (e.target === cyberModal) cyberModal.remove();
-    });
-  }
-
-  // Cek ID / Nickname Otomatis
-  const userIdInput = document.getElementById("userIdInput");
-  const zoneIdInput = document.getElementById("zoneIdInput");
-  const idCheckSpinner = document.getElementById("idCheckSpinner");
-  const nicknameBox = document.getElementById("nicknameBox");
-
-  let checkTimeout = null;
-
-  if (!isManualGame && currentGame.supportsCheck) {
-    async function checkNickname() {
-      const uid = userIdInput.value.trim();
-      const zid = currentGame.hasZone ? (zoneIdInput ? zoneIdInput.value.trim() : "") : "";
-
-      if (!uid || (currentGame.hasZone && !zid)) {
-        nicknameBox.style.display = "none";
-        verifiedNickname = null;
-        return;
-      }
-
-      if (uid.length < 4) return;
-
-      idCheckSpinner.style.display = "block";
-      nicknameBox.style.display = "none";
-
-      try {
-        const queryParams = new URLSearchParams({
-          game: currentGame.code,
-          id: uid,
-          zone: zid
-        });
-
-        const res = await fetch(`/api/check-id?${queryParams.toString()}`);
-        const data = await res.json();
-
-        if (!res.ok || !data.success) {
-          throw new Error(data.message || "User ID / Server tidak ditemukan.");
-        }
-
-        verifiedNickname = data.name;
-        nicknameBox.className = "nickname-result-box";
-        nicknameBox.innerHTML = `
-          <i class="fa-solid fa-circle-check"></i>
-          <span>Nickname Akun: <strong>${data.name}</strong> (Terverifikasi)</span>
-        `;
-        nicknameBox.style.display = "flex";
-      } catch (err) {
-        nicknameBox.className = "nickname-result-box error";
-        nicknameBox.innerHTML = `
-          <i class="fa-solid fa-circle-xmark"></i>
-          <span>${err.message || "User ID / Zone ID tidak valid."}</span>
-        `;
-        nicknameBox.style.display = "flex";
-        verifiedNickname = null;
-      } finally {
-        idCheckSpinner.style.display = "none";
-      }
-    }
-
-    userIdInput.addEventListener("input", () => {
-      clearTimeout(checkTimeout);
-      checkTimeout = setTimeout(checkNickname, 700);
-    });
-
-    if (zoneIdInput) {
-      zoneIdInput.addEventListener("input", () => {
-        clearTimeout(checkTimeout);
-        checkTimeout = setTimeout(checkNickname, 700);
-      });
-    }
-  } else if (!isManualGame) {
-    if (nicknameBox) {
-      nicknameBox.className = "nickname-result-box";
-      nicknameBox.style.background = "rgba(56, 189, 248, 0.08)";
-      nicknameBox.style.borderColor = "rgba(56, 189, 248, 0.3)";
-      nicknameBox.style.color = "#94a3b8";
-      nicknameBox.innerHTML = `
-        <i class="fa-solid fa-circle-info" style="color: #38bdf8; font-size: 1.1rem; margin-top: 2px;"></i>
-        <div style="font-size: 0.83rem; line-height: 1.45;">
-          <span>Pastikan <strong>User ID</strong> sudah benar sebelum checkout.</span>
+    <div class="order-steps-container">
+      <!-- STEP 1: DATA AKUN -->
+      <section class="step-card">
+        <div class="step-header">
+          <div class="step-number">1</div>
+          <h3 id="stepAccountTitle">Masukkan Data Akun</h3>
         </div>
-      `;
-      nicknameBox.style.display = "flex";
-    }
-  }
+        <div class="form-grid-account">
+          <div class="form-group" id="userGroup">
+            <label for="userIdInput" id="labelUserId">User ID Game</label>
+            <div class="input-with-loader">
+              <input type="text" id="userIdInput" placeholder="Contoh: 12345678">
+              <span class="input-spinner" id="idCheckSpinner" style="display: none;"><i class="fa-solid fa-spinner fa-spin"></i></span>
+            </div>
+          </div>
+          <div class="form-group" id="zoneGroup">
+            <label for="zoneIdInput">Zone ID / Server</label>
+            <input type="text" id="zoneIdInput" placeholder="Contoh: (2026)">
+          </div>
+        </div>
+        <div class="nickname-result-box" id="nicknameBox" style="display: none;">
+          <i class="fa-solid fa-circle-check"></i>
+          <span>Nickname Akun: <strong id="nicknameText">-</strong></span>
+        </div>
+      </section>
 
-  // ==========================================
-  // CHECKOUT HANDLER
-  // ==========================================
-  checkoutBtn.addEventListener("click", async () => {
-    const userId = userIdInput.value.trim();
-    const zoneId = (!isManualGame && currentGame.hasZone) ? zoneIdInput.value.trim() : null;
-    const whatsapp = document.getElementById("whatsappInput").value.trim();
+      <!-- STEP 2: NOMINAL ITEM -->
+      <section class="step-card">
+        <div class="step-header">
+          <div class="step-number">2</div>
+          <h3>Pilih Nominal Item</h3>
+        </div>
 
-    if (!selectedItem) {
-      alert("Harap pilih salah satu nominal produk!");
-      return;
-    }
-    if (!userId) {
-      alert(isManualGame ? "Harap masukkan identitas/nama akun game kamu!" : "Harap masukkan User ID akun game kamu!");
-      return;
-    }
-    if (!isManualGame && currentGame.hasZone && !zoneId) {
-      alert("Harap masukkan Zone ID / Server game kamu!");
-      return;
-    }
-    if (!whatsapp) {
-      alert("Harap masukkan nomor WhatsApp aktif!");
-      return;
-    }
+        <!-- LIVE RATE BOX JASTIP -->
+        <div id="manualRateNoticeBox" style="display: none; margin-bottom: 16px; background: rgba(16, 185, 129, 0.08); border: 1px solid rgba(16, 185, 129, 0.3); border-radius: 12px; padding: 14px;">
+          <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px;">
+            <div>
+              <span style="font-size: 0.8rem; color: #94a3b8; display: block;">⚡ Rate Khusus Jastip Hari Ini:</span>
+              <strong style="font-size: 1.15rem; color: #10b981; font-weight: 800;">
+                Rp <span id="manualLiveRateText">...</span> <span style="font-size: 0.85rem; color: #fff;">/ $1 USD</span>
+              </strong>
+            </div>
+            <span style="background: rgba(16, 185, 129, 0.2); color: #34d399; font-size: 0.72rem; font-weight: 800; padding: 4px 10px; border-radius: 6px; text-transform: uppercase;">
+              Lebih Hemat
+            </span>
+          </div>
+          <p style="margin: 8px 0 0 0; font-size: 0.76rem; color: #94a3b8; line-height: 1.4;">
+            Pilih paket pack USD yang sesuai dengan harga bundle pada aplikasi game Anda.
+          </p>
+        </div>
 
-    checkoutBtn.disabled = true;
-    checkoutBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Memproses Pesanan...';
+        <div class="nominal-grid" id="nominalContainer">
+          <!-- Render dinamis via JS -->
+        </div>
+      </section>
 
-    const now = new Date();
-    const dateStr = now.getFullYear().toString() + String(now.getMonth() + 1).padStart(2, "0") + String(now.getDate()).padStart(2, "0");
-    const randomDigits = Math.floor(1000 + Math.random() * 9000);
-    const invoiceNumber = `MGS-${dateStr}-${randomDigits}`;
+      <!-- STEP 3: METODE PEMBAYARAN -->
+      <section class="step-card">
+        <div class="step-header">
+          <div class="step-number">3</div>
+          <h3>Pilih Metode Pembayaran</h3>
+        </div>
+        <div class="payment-grid">
+          <div class="payment-card selected">
+            <div class="payment-brand">
+              <i class="fa-solid fa-credit-card payment-icon" style="color: #e63946;"></i>
+              <span>Pilih Cara Pembayaran</span>
+            </div>
+            <span class="payment-fee" style="background: rgba(16, 185, 129, 0.15); color: #10b981;">Otomatis</span>
+          </div>
 
-    let userUuid = null;
-    try {
-      if (window.supabase) {
-        const { data: sessionData } = await window.supabase.auth.getSession();
-        if (sessionData?.session?.user?.id) {
-          userUuid = sessionData.session.user.id;
-        }
-      }
-    } catch (e) {}
+          <div class="payment-card">
+            <div class="payment-brand">
+              <i class="fa-solid fa-wallet payment-icon" style="color: #f59e0b;"></i>
+              <span>Saldo MGS</span>
+            </div>
+            <span class="payment-fee" style="background: rgba(245, 158, 11, 0.15); color: #f59e0b;">Bebas Admin</span>
+          </div>
+        </div>
+      </section>
 
-    if (!userUuid) {
-      const storedUser = localStorage.getItem("mgs_user");
-      if (storedUser) {
-        try {
-          const u = JSON.parse(storedUser);
-          userUuid = u.id || null;
-        } catch (e) {}
-      }
-    }
+      <!-- STEP 4: KONFIRMASI -->
+      <section class="step-card">
+        <div class="step-header">
+          <div class="step-number">4</div>
+          <h3>Kupon Promo & Konfirmasi</h3>
+        </div>
+        
+        <div class="form-group" style="margin-bottom: 16px;">
+          <label for="whatsappInput">Nomor WhatsApp Aktif</label>
+          <input type="tel" id="whatsappInput" placeholder="08xxxxxxxxxx">
+        </div>
 
-    const isUsingWallet = selectedPayment.toLowerCase().includes("saldo");
-    let orderStatus = "PENDING";
-    const totalToPay = Number(finalCalculatedPrice);
-    let dokuPaymentData = null;
+        <div class="promo-box-wrapper" style="margin-bottom: 16px; background: var(--navy-base); border: 1px solid var(--border-color); border-radius: 10px; padding: 14px;">
+          <label style="display: block; font-size: 0.85rem; font-weight: 700; color: #fff; margin-bottom: 8px;">
+            <i class="fa-solid fa-ticket" style="color: #f59e0b;"></i> Punya Kode Promo?
+          </label>
+          <div style="display: flex; gap: 8px;">
+            <input type="text" id="inputPromoCode" placeholder="Contoh: MAMANGHEMAT" style="flex: 1; padding: 10px 14px; background: var(--navy-card); border: 1px solid var(--border-color); color: #fff; border-radius: 8px; font-size: 0.88rem; outline: none; text-transform: uppercase;">
+            <button type="button" id="btnApplyPromo" style="background: var(--accent-red); color: #fff; border: none; padding: 10px 18px; border-radius: 8px; font-weight: 700; cursor: pointer; font-size: 0.85rem; transition: var(--transition);">
+              Terapkan
+            </button>
+          </div>
+          <div id="promoMessage" style="display: none; margin-top: 8px; font-size: 0.82rem; font-weight: 600;"></div>
+        </div>
 
-    // 1. PEMBAYARAN VIA SALDO MGS
-    if (isUsingWallet) {
-      if (!userUuid) {
-        alert("Metode Saldo MGS hanya berlaku untuk member yang sudah login.");
-        checkoutBtn.disabled = false;
-        checkoutBtn.innerHTML = '<i class="fa-solid fa-bolt"></i> Bayar Pakai Saldo MGS';
-        return;
-      }
+        <div class="checkout-summary" style="margin-bottom: 16px; background: rgba(7, 13, 24, 0.6); border: 1px solid var(--border-color); border-radius: 10px; padding: 14px;">
+          <div style="display: flex; justify-content: space-between; font-size: 0.85rem; color: var(--text-muted); margin-bottom: 6px;">
+            <span>Harga Produk</span>
+            <span id="summaryOriginalPrice">Rp 0</span>
+          </div>
+          <div id="rowDiscount" style="display: none; justify-content: space-between; font-size: 0.85rem; color: #10b981; margin-bottom: 6px;">
+            <span>Diskon Promo (<span id="summaryPromoCode">-</span>)</span>
+            <span id="summaryDiscountValue">- Rp 0</span>
+          </div>
+          <div style="display: flex; justify-content: space-between; font-size: 1.05rem; font-weight: 800; color: #fff; border-top: 1px solid rgba(255,255,255,0.08); padding-top: 8px; margin-top: 6px;">
+            <span>Total Tagihan</span>
+            <span id="summaryFinalPrice" style="color: #f59e0b;">Rp 0</span>
+          </div>
+        </div>
 
-      try {
-        const { data: profile, error: profileErr } = await window.supabase
-          .from("profiles")
-          .select("balance")
-          .eq("id", userUuid)
-          .single();
+        <button class="btn-checkout" id="checkoutBtn">
+          <i class="fa-solid fa-bolt"></i> Beli dan Pilih Cara Pembayaran
+        </button>
+      </section>
+    </div>
+  </main>
 
-        if (profileErr || !profile) throw new Error("Gagal mengambil data saldo akun.");
+  <!-- MODAL SALDO TIDAK CUKUP (DEFAULT TERSEMBUNYI) -->
+  <div id="insufficientBalanceModal" style="display: none; position: fixed; inset: 0; z-index: 99999; background: rgba(3, 7, 18, 0.85); backdrop-filter: blur(8px); align-items: center; justify-content: center; padding: 16px;">
+    <div style="background: linear-gradient(145deg, #0d1527, #070b14); border: 1px solid rgba(230, 57, 70, 0.35); box-shadow: 0 20px 50px rgba(0, 0, 0, 0.8); border-radius: 20px; max-width: 420px; width: 100%; padding: 24px; text-align: center;">
+      <div style="width: 54px; height: 54px; border-radius: 14px; background: rgba(230, 57, 70, 0.15); border: 1px solid rgba(230, 57, 70, 0.3); display: flex; align-items: center; justify-content: center; color: #ff4d5a; font-size: 1.5rem; margin: 0 auto 16px;">
+        <i class="fa-solid fa-triangle-exclamation"></i>
+      </div>
+      <h3 style="margin: 0 0 8px; font-size: 1.2rem; font-weight: 800; color: #fff;">Saldo MGS Tidak Cukup</h3>
+      <p style="color: #94a3b8; font-size: 0.85rem; margin: 0 0 20px; line-height: 1.5;">Saldo dompet akun Anda tidak mencukupi untuk melakukan transaksi ini.</p>
+      <div style="background: rgba(15, 23, 42, 0.6); border: 1px solid rgba(255, 255, 255, 0.06); border-radius: 12px; padding: 14px; margin-bottom: 20px; text-align: left; font-size: 0.85rem;">
+        <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+          <span style="color: #94a3b8;">Saldo Anda:</span>
+          <strong id="modalUserBalanceText" style="color: #fff;">Rp 0</strong>
+        </div>
+        <div style="display: flex; justify-content: space-between;">
+          <span style="color: #94a3b8;">Total Tagihan:</span>
+          <strong id="modalRequiredAmountText" style="color: #ff4d5a;">Rp 0</strong>
+        </div>
+      </div>
+      <div style="display: flex; gap: 10px;">
+        <button id="btnCloseBalModal" type="button" style="flex: 1; background: rgba(255, 255, 255, 0.06); border: 1px solid rgba(255, 255, 255, 0.1); color: #cbd5e1; padding: 12px; border-radius: 10px; font-weight: 700; cursor: pointer;">Tutup</button>
+        <a href="/dashboard.html" style="flex: 1; background: #e63946; color: #fff; text-decoration: none; padding: 12px; border-radius: 10px; font-weight: 800; display: flex; align-items: center; justify-content: center; gap: 6px;">
+          <i class="fa-solid fa-plus-circle"></i> Isi Saldo
+        </a>
+      </div>
+    </div>
+  </div>
 
-        const currentBal = Number(profile.balance) || 0;
-        if (currentBal < totalToPay) {
-          showInsufficientBalanceModal(currentBal, totalToPay);
-          checkoutBtn.disabled = false;
-          checkoutBtn.innerHTML = '<i class="fa-solid fa-bolt"></i> Bayar Pakai Saldo MGS';
-          return;
-        }
+  <footer class="footer">
+    <div class="footer-container">
+      <div class="footer-brand">
+        <div class="brand-logo">
+          <div class="logo-video-wrap"><video autoplay loop muted playsinline class="logo-video"><source src="/assets/images/logo.mp4" type="video/mp4"></video></div>
+        </div>
+        <p>Platform top up game otomatis, murah, dan terpercaya 24 jam nonstop.</p>
+      </div>
+      <div class="footer-col">
+        <h4>Menu Navigasi</h4>
+        <ul class="footer-links">
+          <li><a href="/">Beranda</a></li>
+          <li><a href="/order-status.html">Lacak Pesanan</a></li>
+          <li><a href="/leaderboard.html">Leaderboard</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Bantuan & Legal</h4>
+        <ul class="footer-links">
+          <li><a href="/privacy-policy.html">Kebijakan Privasi</a></li>
+          <li><a href="/terms.html">Syarat & Ketentuan</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>&copy; 2026 MamangGS. All rights reserved.</p>
+    </div>
+  </footer>
 
-        const { data: deductSuccess, error: deductErr } = await window.supabase.rpc("deduct_user_balance", {
-          user_uuid: userUuid,
-          amount: totalToPay
-        });
-
-        if (deductErr || !deductSuccess) {
-          throw new Error("Gagal memproses pemotongan saldo. Silakan coba lagi.");
-        }
-
-        orderStatus = "SUCCESS";
-      } catch (err) {
-        alert(err.message);
-        checkoutBtn.disabled = false;
-        checkoutBtn.innerHTML = '<i class="fa-solid fa-bolt"></i> Bayar Pakai Saldo MGS';
-        return;
-      }
-    } else {
-      // 2. PEMBAYARAN VIA DOKU GATEWAY
-      try {
-        const dokuRes = await fetch("/api/create-payment", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            orderId: invoiceNumber,
-            amount: totalToPay,
-            paymentMethod: selectedPayment,
-            customerPhone: whatsapp,
-            customerName: verifiedNickname || "Pelanggan MamangGS"
-          })
-        });
-
-        const dokuResult = await dokuRes.json();
-        if (!dokuRes.ok || !dokuResult.success) {
-          throw new Error(dokuResult.error || "Gagal membuat tagihan pembayaran.");
-        }
-
-        dokuPaymentData = dokuResult.data;
-      } catch (err) {
-        alert(`Gagal gateway: ${err.message}`);
-        checkoutBtn.disabled = false;
-        checkoutBtn.innerHTML = '<i class="fa-solid fa-bolt"></i> Beli dan Pilih Cara Pembayaran';
-        return;
-      }
-    }
-
-    // 3. SIMPAN PESANAN KE SUPABASE
-    try {
-      const orderPayload = {
-        invoice: invoiceNumber,
-        game_code: currentGame.code,
-        game_title: currentGame.title,
-        account_id: userId,
-        zone_id: zoneId || null,
-        sku_code: selectedItem.sku,
-        item_name: selectedItem.name,
-        price: totalToPay,
-        payment_method: selectedPayment,
-        whatsapp: whatsapp,
-        status: orderStatus,
-        payment_data: dokuPaymentData || null,
-        provider: isManualGame ? "manual" : "digiflazz"
-      };
-
-      if (userUuid) orderPayload.user_id = userUuid;
-
-      const { error } = await window.supabase.from("orders").insert([orderPayload]);
-      if (error) throw error;
-
-      // REDIRECT PESANAN
-      if (isManualGame) {
-        // Alur Khusus Jastip: Notifikasi WhatsApp Konfirmasi
-        const waMsg = encodeURIComponent(
-`Halo Admin MamangGS! Saya baru saja melakukan pembayaran Top Up Jastip (Via Login).
-
-📄 *Invoice:* ${invoiceNumber}
-🎮 *Game:* ${currentGame.title}
-📦 *Paket:* ${selectedItem.name}
-💰 *Total Bayar:* Rp ${totalToPay.toLocaleString("id-ID")}
-📱 *WhatsApp Saya:* ${whatsapp}
-👤 *Akun/Karakter:* ${userId}
-
-Saya siap mengirimkan data login dan screenshot bundle yang ingin dibeli.`
-        );
-
-        if (isUsingWallet) {
-          alert("Pembayaran Berhasil! Mengalihkan ke WhatsApp Admin untuk proses pengisian...");
-          window.location.href = `https://api.whatsapp.com/send?phone=6282210817006&text=${waMsg}`;
-          return;
-        }
-
-        const paymentUrl =
-          dokuPaymentData?.response?.payment?.url ||
-          dokuPaymentData?.payment?.url ||
-          dokuPaymentData?.response?.url ||
-          dokuPaymentData?.payment_url ||
-          dokuPaymentData?.url;
-
-        if (paymentUrl) {
-          window.location.href = paymentUrl;
-        } else {
-          window.location.href = `/order-status.html?inv=${encodeURIComponent(invoiceNumber)}`;
-        }
-        return;
-      }
-
-      // Alur Standar Digiflazz
-      if (isUsingWallet) {
-        alert("Pembayaran Berhasil! Pesanan otomatis diproses.");
-        window.location.href = `/order-status.html?inv=${encodeURIComponent(invoiceNumber)}`;
-        return;
-      }
-
-      const paymentUrl =
-        dokuPaymentData?.response?.payment?.url ||
-        dokuPaymentData?.payment?.url ||
-        dokuPaymentData?.response?.url ||
-        dokuPaymentData?.payment_url ||
-        dokuPaymentData?.url;
-
-      if (paymentUrl) {
-        window.location.href = paymentUrl;
-      } else {
-        window.location.href = `/order-status.html?inv=${encodeURIComponent(invoiceNumber)}`;
-      }
-    } catch (err) {
-      console.error("Error order:", err);
-      alert("Gagal membuat pesanan: " + err.message);
-      checkoutBtn.disabled = false;
-      checkoutBtn.innerHTML = selectedPayment.toLowerCase().includes("saldo")
-        ? '<i class="fa-solid fa-bolt"></i> Bayar Pakai Saldo MGS'
-        : '<i class="fa-solid fa-bolt"></i> Beli dan Pilih Cara Pembayaran';
-    }
-  });
-});
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="/js/particles.js"></script>
+  <script src="/js/supabase.js"></script>
+  <script src="/js/navbar.js"></script>
+  <script src="/js/order.js?v=final"></script>
+  <script src="/js/floating-hub.js"></script>
+</body>
+</html>
