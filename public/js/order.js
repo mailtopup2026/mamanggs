@@ -1,5 +1,5 @@
 document.addEventListener("DOMContentLoaded", async () => {
-  // 1. DAFTAR LENGKAP METADATA GAME (SINKRON DENGAN BERANDA & ADMIN PANEL)
+  // Metadata Game Default (Digiflazz)
   const gamesMeta = {
     mlbb: {
       code: "mlbb",
@@ -140,30 +140,92 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   const params = new URLSearchParams(window.location.search);
   const gameKey = (params.get("game") || "mlbb").toLowerCase();
-  const currentGame = gamesMeta[gameKey] || gamesMeta["mlbb"];
+  const urlType = params.get("type");
 
-  // Set Info Game di UI
+  let isManualGame = (urlType === "manual");
+  let currentGame = gamesMeta[gameKey] || {
+    code: gameKey,
+    brandQuery: gameKey.toUpperCase(),
+    title: gameKey.toUpperCase(),
+    dev: "Official",
+    banner: "https://images.unsplash.com/photo-1542751371-adc38448a05e?auto=format&fit=crop&w=600&q=80",
+    hasZone: false,
+    supportsCheck: false
+  };
+
+  // 1. CEK APAKAH INI GAME MANUAL DARI DATABASE
+  try {
+    const { data: manualData } = await window.supabase
+      .from("manual_games")
+      .select("*")
+      .eq("slug", gameKey)
+      .maybeSingle();
+
+    if (manualData) {
+      isManualGame = true;
+      currentGame = {
+        code: manualData.slug,
+        title: manualData.name,
+        dev: manualData.publisher || "Century Games",
+        banner: manualData.image_url,
+        hasZone: false,
+        supportsCheck: false
+      };
+    }
+  } catch (err) {
+    console.warn("Pengecekan manual game:", err);
+  }
+
+  // Update Tampilan Informasi Game
   if (document.getElementById("gameTitle")) document.getElementById("gameTitle").innerText = currentGame.title;
   if (document.getElementById("gameDev")) document.getElementById("gameDev").innerText = currentGame.dev;
   if (document.getElementById("gameBanner")) document.getElementById("gameBanner").src = currentGame.banner;
 
   const zoneGroup = document.getElementById("zoneGroup");
-  if (!currentGame.hasZone && zoneGroup) {
-    zoneGroup.style.display = "none";
-  }
+  if (!currentGame.hasZone && zoneGroup) zoneGroup.style.display = "none";
 
   let selectedItem = null;
   let selectedPayment = "Pilih Cara Pembayaran";
   let verifiedNickname = null;
   let cachedUserBalance = 0;
+  let liveUsdRate = 17000;
 
-  // Variabel Kupon Promo
   let appliedPromo = null;
   let currentDiscountAmount = 0;
   let finalCalculatedPrice = 0;
 
   // ==========================================
-  // SINKRONISASI SALDO USER AKTIF
+  // LOGIKA TAMPILAN JASTIP (MANUAL VIA LOGIN)
+  // ==========================================
+  if (isManualGame) {
+    const stepAccountTitle = document.getElementById("stepAccountTitle");
+    if (stepAccountTitle) stepAccountTitle.innerText = "Informasi Akun Game";
+
+    const labelUser = document.getElementById("labelUserId");
+    if (labelUser) labelUser.innerText = "Akun / ID Game / Nama Karakter";
+
+    const userInput = document.getElementById("userIdInput");
+    if (userInput) userInput.placeholder = "Masukkan ID atau nama karakter game";
+
+    if (zoneGroup) zoneGroup.style.display = "none";
+
+    const instructionList = document.getElementById("instructionList");
+    if (instructionList) {
+      instructionList.innerHTML = `
+        <li>Pilih paket pack USD yang sesuai dengan harga bundle in-game Anda.</li>
+        <li>Pilih jalur pembayaran (Otomatis DOKU / Saldo MGS).</li>
+        <li>Gunakan kupon promo jika memiliki kode diskon.</li>
+        <li>Masukkan nomor WhatsApp aktif Anda.</li>
+        <li>Setelah pembayaran selesai, konfirmasi ke WhatsApp Admin untuk proses login & pengisian bundle.</li>
+      `;
+    }
+
+    const rateNotice = document.getElementById("manualRateNoticeBox");
+    if (rateNotice) rateNotice.style.display = "block";
+  }
+
+  // ==========================================
+  // SINKRONISASI SALDO USER
   // ==========================================
   async function syncUserBalanceDisplay() {
     try {
@@ -190,7 +252,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         }
       }
     } catch (e) {
-      console.warn("Gagal sinkron saldo di menu checkout:", e);
+      console.warn("Gagal sinkron saldo:", e);
     }
   }
 
@@ -256,7 +318,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     msgEl.innerText = message;
   }
 
-  // Listener Klaim Voucher Promo
+  // Listener Promo
   const btnApplyPromo = document.getElementById("btnApplyPromo");
   if (btnApplyPromo) {
     btnApplyPromo.addEventListener("click", async () => {
@@ -306,62 +368,61 @@ document.addEventListener("DOMContentLoaded", async () => {
   }
 
   // ==========================================
-  // AMBIL & RENDER NOMINAL DARI SUPABASE
+  // RENDER NOMINAL PRODUK (DIGIFLAZZ VS JASTIP USD)
   // ==========================================
   const nominalContainer = document.getElementById("nominalContainer");
   nominalContainer.innerHTML = `<div style="grid-column: 1/-1; text-align: center; color: #888; padding: 20px;"><i class="fa-solid fa-spinner fa-spin"></i> Memuat katalog produk...</div>`;
 
-  try {
+  if (isManualGame) {
+    // ----------------------------------------------------
+    // ALUR JASTIP USD DINAMIS (WHITEOUT SURVIVAL / MANUAL)
+    // ----------------------------------------------------
     try {
-      const { data: dbCover } = await window.supabase
-        .from("game_covers")
-        .select("*")
-        .ilike("game_code", currentGame.code)
-        .maybeSingle();
+      // Ambil kurs live dari app_settings
+      const { data: rateData } = await window.supabase
+        .from("app_settings")
+        .select("setting_value")
+        .eq("setting_key", "usd_rate")
+        .single();
 
-      if (dbCover && dbCover.banner_url && document.getElementById("gameBanner")) {
-        document.getElementById("gameBanner").src = dbCover.banner_url;
+      if (rateData && rateData.setting_value) {
+        liveUsdRate = Number(rateData.setting_value);
       }
-    } catch (coverErr) {}
 
-    let query = window.supabase
-      .from("products")
-      .select("*")
-      .eq("buyer_product_status", true);
+      const manualLiveRateText = document.getElementById("manualLiveRateText");
+      if (manualLiveRateText) manualLiveRateText.innerText = liveUsdRate.toLocaleString("id-ID");
 
-    if (currentGame.brandQuery) {
-      query = query.ilike("brand", `%${currentGame.brandQuery}%`);
-    } else {
-      query = query.ilike("game_code", `%${currentGame.code}%`);
-    }
+      // Daftar tier USD sesuai harga in-game
+      const usdPacks = [
+        { usd: 1, labelInGame: "Setara pack Rp 19.000 in-game" },
+        { usd: 2, labelInGame: "Setara pack Rp 29.000 in-game" },
+        { usd: 3, labelInGame: "Setara pack Rp 49.000 in-game" },
+        { usd: 5, labelInGame: "Setara pack Rp 89.000 in-game" },
+        { usd: 10, labelInGame: "Setara pack Rp 169.000 in-game" },
+        { usd: 20, labelInGame: "Setara pack Rp 369.000 in-game" },
+        { usd: 50, labelInGame: "Setara pack Rp 799.000 in-game" },
+        { usd: 100, labelInGame: "Setara pack Rp 1.699.000 in-game" }
+      ];
 
-    const { data: dbProducts, error: dbError } = await query.order("price_sell", { ascending: true });
-
-    if (dbError) throw dbError;
-
-    if (!dbProducts || dbProducts.length === 0) {
-      nominalContainer.innerHTML = `<div style="grid-column: 1/-1; text-align: center; color: #94a3b8; padding: 20px;">Produk game ini sedang disiapkan atau dinonaktifkan di Admin.</div>`;
-    } else {
       nominalContainer.innerHTML = "";
 
-      dbProducts.forEach((prod, index) => {
+      usdPacks.forEach((pack, index) => {
+        const itemPrice = pack.usd * liveUsdRate;
         const itemObj = {
-          sku: prod.buyer_sku_code,
-          name: prod.product_name,
-          price: Number(prod.price_sell)
+          sku: `MANUAL-${currentGame.code.toUpperCase()}-${pack.usd}USD`,
+          name: `Bundle Pack $${pack.usd} USD`,
+          price: itemPrice,
+          usd_amount: pack.usd
         };
 
-        if (index === 0) {
-          selectedItem = itemObj;
-        }
+        if (index === 0) selectedItem = itemObj;
 
         const card = document.createElement("div");
         card.className = "nominal-card" + (index === 0 ? " selected" : "");
-        const formattedPrice = Number(prod.price_sell).toLocaleString("id-ID");
-        
         card.innerHTML = `
-          <div class="nominal-title">${prod.product_name}</div>
-          <div class="nominal-price">Rp ${formattedPrice}</div>
+          <div class="nominal-title" style="font-size: 0.95rem; font-weight: 800; color: #fff;">Pack $${pack.usd} USD</div>
+          <div style="font-size: 0.72rem; color: #94a3b8; margin: 3px 0;">${pack.labelInGame}</div>
+          <div class="nominal-price" style="color: #10b981; font-weight: 800;">Rp ${itemPrice.toLocaleString("id-ID")}</div>
         `;
 
         card.addEventListener("click", () => {
@@ -375,10 +436,82 @@ document.addEventListener("DOMContentLoaded", async () => {
       });
 
       updateCheckoutPricing();
+    } catch (err) {
+      console.error("Gagal load rate jastip:", err);
+      nominalContainer.innerHTML = `<div style="grid-column: 1/-1; text-align: center; color: #e63946; padding: 20px;">Gagal memuat tier kurs USD.</div>`;
     }
-  } catch (err) {
-    console.error("Gagal mengambil produk:", err);
-    nominalContainer.innerHTML = `<div style="grid-column: 1/-1; text-align: center; color: #e63946; padding: 20px;">Gagal memuat katalog produk.</div>`;
+
+  } else {
+    // ----------------------------------------------------
+    // ALUR DIGIFLAZZ BIASA
+    // ----------------------------------------------------
+    try {
+      try {
+        const { data: dbCover } = await window.supabase
+          .from("game_covers")
+          .select("*")
+          .ilike("game_code", currentGame.code)
+          .maybeSingle();
+
+        if (dbCover && dbCover.banner_url && document.getElementById("gameBanner")) {
+          document.getElementById("gameBanner").src = dbCover.banner_url;
+        }
+      } catch (coverErr) {}
+
+      let query = window.supabase
+        .from("products")
+        .select("*")
+        .eq("buyer_product_status", true);
+
+      if (currentGame.brandQuery) {
+        query = query.ilike("brand", `%${currentGame.brandQuery}%`);
+      } else {
+        query = query.ilike("game_code", `%${currentGame.code}%`);
+      }
+
+      const { data: dbProducts, error: dbError } = await query.order("price_sell", { ascending: true });
+
+      if (dbError) throw dbError;
+
+      if (!dbProducts || dbProducts.length === 0) {
+        nominalContainer.innerHTML = `<div style="grid-column: 1/-1; text-align: center; color: #94a3b8; padding: 20px;">Produk game ini sedang disiapkan atau dinonaktifkan di Admin.</div>`;
+      } else {
+        nominalContainer.innerHTML = "";
+
+        dbProducts.forEach((prod, index) => {
+          const itemObj = {
+            sku: prod.buyer_sku_code,
+            name: prod.product_name,
+            price: Number(prod.price_sell)
+          };
+
+          if (index === 0) selectedItem = itemObj;
+
+          const card = document.createElement("div");
+          card.className = "nominal-card" + (index === 0 ? " selected" : "");
+          const formattedPrice = Number(prod.price_sell).toLocaleString("id-ID");
+          
+          card.innerHTML = `
+            <div class="nominal-title">${prod.product_name}</div>
+            <div class="nominal-price">Rp ${formattedPrice}</div>
+          `;
+
+          card.addEventListener("click", () => {
+            document.querySelectorAll(".nominal-card").forEach((c) => c.classList.remove("selected"));
+            card.classList.add("selected");
+            selectedItem = itemObj;
+            updateCheckoutPricing();
+          });
+
+          nominalContainer.appendChild(card);
+        });
+
+        updateCheckoutPricing();
+      }
+    } catch (err) {
+      console.error("Gagal mengambil produk:", err);
+      nominalContainer.innerHTML = `<div style="grid-column: 1/-1; text-align: center; color: #e63946; padding: 20px;">Gagal memuat katalog produk.</div>`;
+    }
   }
 
   // Handle Pilih Metode Bayar
@@ -398,9 +531,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     });
   });
 
-  // ==========================================
-  // MODAL POP-UP SALDO TIDAK CUKUP (CYBERPUNK AUTO-INJECT)
-  // ==========================================
+  // Modal Saldo Tidak Cukup
   function showInsufficientBalanceModal(currentBal, totalPay) {
     const oldModal = document.getElementById("cyberBalanceModal");
     if (oldModal) oldModal.remove();
@@ -454,9 +585,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     });
   }
 
-  // ==========================================
-  // FITUR CEK NICKNAME & NOTICE INPUT MANUAL
-  // ==========================================
+  // Cek ID / Nickname Otomatis
   const userIdInput = document.getElementById("userIdInput");
   const zoneIdInput = document.getElementById("zoneIdInput");
   const idCheckSpinner = document.getElementById("idCheckSpinner");
@@ -464,8 +593,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   let checkTimeout = null;
 
-  if (currentGame.supportsCheck) {
-    // Mode Otomatis (MLBB, FF, PUBG, Genshin, HOK, dll.)
+  if (!isManualGame && currentGame.supportsCheck) {
     async function checkNickname() {
       const uid = userIdInput.value.trim();
       const zid = currentGame.hasZone ? (zoneIdInput ? zoneIdInput.value.trim() : "") : "";
@@ -503,7 +631,6 @@ document.addEventListener("DOMContentLoaded", async () => {
         `;
         nicknameBox.style.display = "flex";
       } catch (err) {
-        console.error("Cek ID Error:", err);
         nicknameBox.className = "nickname-result-box error";
         nicknameBox.innerHTML = `
           <i class="fa-solid fa-circle-xmark"></i>
@@ -527,8 +654,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         checkTimeout = setTimeout(checkNickname, 700);
       });
     }
-  } else {
-    // Mode Input Manual: Tampilkan Notice Box Informatif + Tautan Imsela
+  } else if (!isManualGame) {
     if (nicknameBox) {
       nicknameBox.className = "nickname-result-box";
       nicknameBox.style.background = "rgba(56, 189, 248, 0.08)";
@@ -537,11 +663,7 @@ document.addEventListener("DOMContentLoaded", async () => {
       nicknameBox.innerHTML = `
         <i class="fa-solid fa-circle-info" style="color: #38bdf8; font-size: 1.1rem; margin-top: 2px;"></i>
         <div style="font-size: 0.83rem; line-height: 1.45;">
-          <span>Pastikan <strong>User ID</strong> sudah benar sebelum checkout.</span><br>
-          <span style="font-size: 0.78rem; color: #64748b;">Kamu juga bisa cek nama akun di: </span>
-          <a href="https://imsela.com/tools/gameidchecker/" target="_blank" rel="noopener noreferrer" style="color: #38bdf8; font-weight: 700; text-decoration: underline; font-size: 0.78rem;">
-            Imsela Game ID Checker <i class="fa-solid fa-arrow-up-right-from-square" style="font-size: 0.7rem;"></i>
-          </a>
+          <span>Pastikan <strong>User ID</strong> sudah benar sebelum checkout.</span>
         </div>
       `;
       nicknameBox.style.display = "flex";
@@ -553,7 +675,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   // ==========================================
   checkoutBtn.addEventListener("click", async () => {
     const userId = userIdInput.value.trim();
-    const zoneId = currentGame.hasZone ? zoneIdInput.value.trim() : null;
+    const zoneId = (!isManualGame && currentGame.hasZone) ? zoneIdInput.value.trim() : null;
     const whatsapp = document.getElementById("whatsappInput").value.trim();
 
     if (!selectedItem) {
@@ -561,10 +683,10 @@ document.addEventListener("DOMContentLoaded", async () => {
       return;
     }
     if (!userId) {
-      alert("Harap masukkan User ID akun game kamu!");
+      alert(isManualGame ? "Harap masukkan identitas/nama akun game kamu!" : "Harap masukkan User ID akun game kamu!");
       return;
     }
-    if (currentGame.hasZone && !zoneId) {
+    if (!isManualGame && currentGame.hasZone && !zoneId) {
       alert("Harap masukkan Zone ID / Server game kamu!");
       return;
     }
@@ -606,10 +728,10 @@ document.addEventListener("DOMContentLoaded", async () => {
     const totalToPay = Number(finalCalculatedPrice);
     let dokuPaymentData = null;
 
-    // 1. PEMBAYARAN MENGGUNAKAN SALDO INTERNAL
+    // 1. PEMBAYARAN VIA SALDO MGS
     if (isUsingWallet) {
       if (!userUuid) {
-        alert("Metode pembayaran Saldo MGS hanya berlaku untuk member yang sudah login. Silakan Login terlebih dahulu!");
+        alert("Metode Saldo MGS hanya berlaku untuk member yang sudah login.");
         checkoutBtn.disabled = false;
         checkoutBtn.innerHTML = '<i class="fa-solid fa-bolt"></i> Bayar Pakai Saldo MGS';
         return;
@@ -625,8 +747,6 @@ document.addEventListener("DOMContentLoaded", async () => {
         if (profileErr || !profile) throw new Error("Gagal mengambil data saldo akun.");
 
         const currentBal = Number(profile.balance) || 0;
-
-        // Tampilkan Modal Cyber Pop-up jika saldo kurang
         if (currentBal < totalToPay) {
           showInsufficientBalanceModal(currentBal, totalToPay);
           checkoutBtn.disabled = false;
@@ -645,14 +765,13 @@ document.addEventListener("DOMContentLoaded", async () => {
 
         orderStatus = "SUCCESS";
       } catch (err) {
-        console.error("Wallet error:", err);
         alert(err.message);
         checkoutBtn.disabled = false;
         checkoutBtn.innerHTML = '<i class="fa-solid fa-bolt"></i> Bayar Pakai Saldo MGS';
         return;
       }
     } else {
-      // 2. PEMBAYARAN MENGGUNAKAN DOKU PAYMENT GATEWAY
+      // 2. PEMBAYARAN VIA DOKU GATEWAY
       try {
         const dokuRes = await fetch("/api/create-payment", {
           method: "POST",
@@ -667,15 +786,13 @@ document.addEventListener("DOMContentLoaded", async () => {
         });
 
         const dokuResult = await dokuRes.json();
-
         if (!dokuRes.ok || !dokuResult.success) {
-          throw new Error(dokuResult.error || "Gagal membuat tagihan DOKU.");
+          throw new Error(dokuResult.error || "Gagal membuat tagihan pembayaran.");
         }
 
         dokuPaymentData = dokuResult.data;
       } catch (err) {
-        console.error("DOKU Gateway Error:", err);
-        alert(`Gagal memproses gateway pembayaran: ${err.message}`);
+        alert(`Gagal gateway: ${err.message}`);
         checkoutBtn.disabled = false;
         checkoutBtn.innerHTML = '<i class="fa-solid fa-bolt"></i> Beli dan Pilih Cara Pembayaran';
         return;
@@ -684,8 +801,6 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     // 3. SIMPAN PESANAN KE SUPABASE
     try {
-      if (!window.supabase) throw new Error("Koneksi Supabase belum siap.");
-
       const orderPayload = {
         invoice: invoiceNumber,
         game_code: currentGame.code,
@@ -698,19 +813,55 @@ document.addEventListener("DOMContentLoaded", async () => {
         payment_method: selectedPayment,
         whatsapp: whatsapp,
         status: orderStatus,
-        payment_data: dokuPaymentData || null
+        payment_data: dokuPaymentData || null,
+        provider: isManualGame ? "manual" : "digiflazz"
       };
 
-      if (userUuid) {
-        orderPayload.user_id = userUuid;
-      }
+      if (userUuid) orderPayload.user_id = userUuid;
 
       const { error } = await window.supabase.from("orders").insert([orderPayload]);
       if (error) throw error;
 
-      // REDIRECT LOGIC
+      // REDIRECT PESANAN
+      if (isManualGame) {
+        // Alur Khusus Jastip: Notifikasi WhatsApp Konfirmasi
+        const waMsg = encodeURIComponent(
+`Halo Admin MamangGS! Saya baru saja melakukan pembayaran Top Up Jastip (Via Login).
+
+📄 *Invoice:* ${invoiceNumber}
+🎮 *Game:* ${currentGame.title}
+📦 *Paket:* ${selectedItem.name}
+💰 *Total Bayar:* Rp ${totalToPay.toLocaleString("id-ID")}
+📱 *WhatsApp Saya:* ${whatsapp}
+👤 *Akun/Karakter:* ${userId}
+
+Saya siap mengirimkan data login dan screenshot bundle yang ingin dibeli.`
+        );
+
+        if (isUsingWallet) {
+          alert("Pembayaran Berhasil! Mengalihkan ke WhatsApp Admin untuk proses pengisian...");
+          window.location.href = `https://api.whatsapp.com/send?phone=6282210817006&text=${waMsg}`;
+          return;
+        }
+
+        const paymentUrl =
+          dokuPaymentData?.response?.payment?.url ||
+          dokuPaymentData?.payment?.url ||
+          dokuPaymentData?.response?.url ||
+          dokuPaymentData?.payment_url ||
+          dokuPaymentData?.url;
+
+        if (paymentUrl) {
+          window.location.href = paymentUrl;
+        } else {
+          window.location.href = `/order-status.html?inv=${encodeURIComponent(invoiceNumber)}`;
+        }
+        return;
+      }
+
+      // Alur Standar Digiflazz
       if (isUsingWallet) {
-        alert("Pembayaran Berhasil! Saldo MGS Anda telah dipotong dan pesanan langsung diproses.");
+        alert("Pembayaran Berhasil! Pesanan otomatis diproses.");
         window.location.href = `/order-status.html?inv=${encodeURIComponent(invoiceNumber)}`;
         return;
       }
