@@ -275,7 +275,32 @@
       display: block;
     }
 
-    /* 4. NAVBAR MOBILE CONTROLS */
+    /* 4. NAVBAR CONTROLS & WA COMMUNITY BUTTON */
+    .btn-wa-community-header {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      background: rgba(37, 211, 102, 0.12);
+      color: #25d366;
+      border: 1px solid rgba(37, 211, 102, 0.35);
+      border-radius: 8px;
+      padding: 0 10px;
+      height: 36px;
+      font-size: 0.75rem;
+      font-weight: 700;
+      text-decoration: none;
+      white-space: nowrap;
+      transition: all 0.2s ease;
+      box-sizing: border-box;
+    }
+
+    .btn-wa-community-header:hover {
+      background: #25d366;
+      color: #0b1120;
+      border-color: #25d366;
+      transform: translateY(-1px);
+    }
+
     .mobile-nav-toggle-group {
       display: none;
     }
@@ -355,7 +380,7 @@
 
     @media (max-width: 768px) {
       .desktop-only { display: none !important; }
-      .mobile-nav-toggle-group { display: flex; align-items: center; gap: 8px; }
+      .mobile-nav-toggle-group { display: flex; align-items: center; gap: 6px; }
       .btn-mobile-icon {
         width: 36px; height: 36px; background: #1e293b; border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 8px; color: #fff; display: flex; align-items: center; justify-content: center; font-size: 0.95rem; cursor: pointer;
       }
@@ -382,12 +407,11 @@
 </head>
 <body>
 
-  <!-- NAVBAR (AMAN) -->
+  <!-- NAVBAR -->
   <header class="navbar">
     <div class="navbar-container">
       <a href="/" class="brand-logo">
         <div class="logo-video-wrap"><video autoplay loop muted playsinline class="logo-video"><source src="/assets/images/logo.mp4" type="video/mp4"></video></div>
-        
       </a>
 
       <div class="nav-search desktop-only">
@@ -396,6 +420,9 @@
       </div>
 
       <div class="nav-actions desktop-only" id="desktopNavActions">
+        <a href="https://chat.whatsapp.com/LMXedsvhIZGHVUlvaqpI5q?s=cl&p=a&mlu=4&ilr=4" target="_blank" rel="noopener noreferrer" class="btn-nav-login" style="background: rgba(37, 211, 102, 0.15); border-color: rgba(37, 211, 102, 0.4); color: #25d366;">
+          <i class="fa-brands fa-whatsapp"></i> Gabung Komunitas
+        </a>
         <a href="/leaderboard.html" class="btn-nav-login" style="background: rgba(245, 158, 11, 0.15); border-color: rgba(245, 158, 11, 0.4); color: #f59e0b;">
           <i class="fa-solid fa-crown"></i> Leaderboard
         </a>
@@ -413,6 +440,10 @@
         <button id="btnMobileMenuToggle" class="btn-mobile-icon" title="Menu Lengkap">
           <i class="fa-solid fa-ellipsis-vertical"></i>
         </button>
+        <!-- Tombol Gabung Komunitas di samping titik 3 (Mobile) -->
+        <a href="https://chat.whatsapp.com/LMXedsvhIZGHVUlvaqpI5q?s=cl&p=a&mlu=4&ilr=4" target="_blank" rel="noopener noreferrer" class="btn-wa-community-header" title="Gabung Komunitas WA">
+          <i class="fa-brands fa-whatsapp"></i> Gabung Komunitas
+        </a>
       </div>
     </div>
 
@@ -426,6 +457,7 @@
         <button id="btnCloseMobileMenu" style="background: none; border: none; color: #94a3b8; font-size: 1.1rem; cursor: pointer;">✕</button>
       </div>
       <div id="mobileMenuList" class="mobile-menu-items">
+        <a href="https://chat.whatsapp.com/LMXedsvhIZGHVUlvaqpI5q?s=cl&p=a&mlu=4&ilr=4" target="_blank" rel="noopener noreferrer" class="mobile-menu-link" style="color: #25d366;"><i class="fa-brands fa-whatsapp"></i> Komunitas WhatsApp</a>
         <a href="/leaderboard.html" class="mobile-menu-link"><i class="fa-solid fa-crown" style="color: #f59e0b;"></i> Leaderboard Sultan</a>
         <a href="/blog.html" class="mobile-menu-link"><i class="fa-solid fa-newspaper" style="color: #38bdf8;"></i> Blog & Tips Game</a>
         <a href="/order-status.html" class="mobile-menu-link"><i class="fa-solid fa-receipt" style="color: #10b981;"></i> Lacak Pesanan</a>
@@ -502,7 +534,7 @@
     </div>
   </section>
 
-  <!-- WIDGET BANNER PROMINEN: HALL OF FAME LEADERBOARD (AMAN) -->
+  <!-- WIDGET BANNER PROMINEN: HALL OF FAME LEADERBOARD -->
   <section class="catalog-section" style="max-width: 1200px; width: 100%; margin: 10px auto 50px; padding: 0 16px; box-sizing: border-box;">
     <div style="background: linear-gradient(135deg, rgba(245, 158, 11, 0.15) 0%, rgba(7, 13, 24, 0.95) 100%); border: 1px solid rgba(245, 158, 11, 0.4); border-radius: 24px; padding: 24px 28px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.5);">
       <div style="display: flex; align-items: center; gap: 18px;">
@@ -521,7 +553,7 @@
     </div>
   </section>
 
-  <!-- LIVE SALES POP-UP NOTIFICATION (AMAN) -->
+  <!-- LIVE SALES POP-UP NOTIFICATION -->
   <div class="live-sales-toast" id="liveSalesToast">
     <div class="live-sales-icon">
       <i class="fa-solid fa-circle-check"></i>
@@ -532,13 +564,12 @@
     </div>
   </div>
 
-  <!-- FOOTER (AMAN) -->
+  <!-- FOOTER -->
   <footer class="footer">
     <div class="footer-container">
       <div class="footer-brand">
         <div class="brand-logo">
           <div class="logo-video-wrap"><video autoplay loop muted playsinline class="logo-video"><source src="/assets/images/logo.mp4" type="video/mp4"></video></div>
-          
         </div>
         <p>Platform top up game otomatis, murah, dan terpercaya 24 jam nonstop.</p>
       </div>
@@ -563,7 +594,7 @@
     </div>
   </footer>
 
-  <!-- SUPABASE & JS MODULAR (AMAN) -->
+  <!-- SUPABASE & JS MODULAR -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="/js/particles.js"></script>
   <script src="/js/supabase.js"></script>
