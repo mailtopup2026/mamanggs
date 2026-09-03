@@ -1,21 +1,41 @@
 @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&display=swap');
 
 :root {
-  --navy-dark: #070d18;
-  --navy-base: #0c182b;
-  --navy-card: #13243d;
-  --navy-card-hover: #1b3254;
-  --border-color: rgba(255, 255, 255, 0.08);
+  /* DARK MATTE BASE (Pengganti Navy) */
+  --navy-dark: #090a0e;        /* Header, footer, & modal overlay */
+  --navy-base: #0f1016;        /* Latar belakang utama seluruh web */
+  --navy-card: #161822;        /* Background kartu produk & container */
+  --navy-card-hover: #1f2230;  /* Efek kartu saat di-hover/disentuh */
+  --border-color: rgba(255, 255, 255, 0.07);
 
-  --accent-red: #e63946;
-  --accent-red-hover: #d62828;
-  --accent-glow: rgba(230, 57, 70, 0.35);
+  /* BRAND ACCENT: VOLTAGE NEON LIME (Sesuai referensi Streamo UI) */
+  --accent-red: #ccff00;       /* Tombol beli/aksi utama (sekarang neon terang) */
+  --accent-red-hover: #b3e600; /* Warna tombol saat disentuh */
+  --accent-glow: rgba(204, 255, 0, 0.28); /* Efek glow neon */
 
-  --accent-gold: #f59e0b;
-  --accent-gold-glow: rgba(245, 158, 11, 0.4);
+  /* SECONDARY ACCENT: CYBER GOLD */
+  --accent-gold: #facc15;
+  --accent-gold-glow: rgba(250, 204, 21, 0.3);
 
-  --text-main: #ffffff;
-  --text-muted: #8e9bb0;
+  /* TYPOGRAPHY */
+  --text-main: #f8fafc;
+  --text-muted: #84889a;
+}
+
+/* Kontras teks untuk tombol berlatar Neon */
+.btn-checkout, 
+#btnApplyPromo,
+.btn-nav-register {
+  color: #0c0d12 !important; /* Teks jadi hitam tebal di atas tombol neon */
+  font-weight: 800 !important;
+}
+
+/* Garis sorot kartu yang dipilih menjadi Neon */
+.nominal-card.selected,
+.payment-card.selected {
+  border-color: #ccff00 !important;
+  box-shadow: 0 0 16px rgba(204, 255, 0, 0.15) !important;
+}
 
   --radius-sm: 8px;
   --radius-md: 14px;
