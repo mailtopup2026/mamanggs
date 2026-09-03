@@ -391,7 +391,6 @@ document.addEventListener("DOMContentLoaded", async () => {
       const manualLiveRateText = document.getElementById("manualLiveRateText");
       if (manualLiveRateText) manualLiveRateText.innerText = liveUsdRate.toLocaleString("id-ID");
 
-      // Daftar tier USD sesuai harga in-game
       const usdPacks = [
         { usd: 1, labelInGame: "Setara pack Rp 19.000 in-game" },
         { usd: 2, labelInGame: "Setara pack Rp 29.000 in-game" },
@@ -550,7 +549,9 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
   }
 
-  // Cek ID / Nickname Otomatis
+  // ==========================================
+  // CEK ID / NICKNAME OTOMATIS & HINT BOX
+  // ==========================================
   const userIdInput = document.getElementById("userIdInput");
   const zoneIdInput = document.getElementById("zoneIdInput");
   const idCheckSpinner = document.getElementById("idCheckSpinner");
@@ -558,21 +559,62 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   let checkTimeout = null;
 
+  // Fungsi untuk merender kotak petunjuk awal
+  function renderDefaultAccountHint() {
+    if (!nicknameBox || isManualGame) return;
+
+    nicknameBox.className = "nickname-result-box";
+    nicknameBox.style.background = "rgba(56, 189, 248, 0.08)";
+    nicknameBox.style.borderColor = "rgba(56, 189, 248, 0.3)";
+    nicknameBox.style.color = "#94a3b8";
+
+    if (currentGame.supportsCheck) {
+      // Tampilan dengan tautan Imsela Checker (seperti di screenshot 2)
+      nicknameBox.innerHTML = `
+        <i class="fa-solid fa-circle-info" style="color: #38bdf8; font-size: 1.1rem; margin-top: 2px; flex-shrink: 0;"></i>
+        <div style="font-size: 0.83rem; line-height: 1.45;">
+          <div>Pastikan <strong>User ID</strong> sudah benar sebelum checkout.</div>
+          <div style="margin-top: 2px;">
+            Kamu juga bisa cek nama akun di: 
+            <a href="https://imsela.com/checker" target="_blank" rel="noopener noreferrer" style="color: #38bdf8; text-decoration: underline; font-weight: 600;">
+              Imsela Game ID Checker <i class="fa-solid fa-arrow-up-right-from-square" style="font-size: 0.72rem;"></i>
+            </a>
+          </div>
+        </div>
+      `;
+    } else {
+      // Tampilan standar tanpa link untuk game yang tidak didukung
+      nicknameBox.innerHTML = `
+        <i class="fa-solid fa-circle-info" style="color: #38bdf8; font-size: 1.1rem; margin-top: 2px; flex-shrink: 0;"></i>
+        <div style="font-size: 0.83rem; line-height: 1.45;">
+          <span>Pastikan <strong>User ID</strong> sudah benar sebelum checkout.</span>
+        </div>
+      `;
+    }
+
+    nicknameBox.style.display = "flex";
+  }
+
+  // Tampilkan petunjuk awal saat halaman dibuka
+  renderDefaultAccountHint();
+
   if (!isManualGame && currentGame.supportsCheck) {
     async function checkNickname() {
       const uid = userIdInput.value.trim();
       const zid = currentGame.hasZone ? (zoneIdInput ? zoneIdInput.value.trim() : "") : "";
 
       if (!uid || (currentGame.hasZone && !zid)) {
-        nicknameBox.style.display = "none";
+        renderDefaultAccountHint();
         verifiedNickname = null;
         return;
       }
 
-      if (uid.length < 4) return;
+      if (uid.length < 4) {
+        renderDefaultAccountHint();
+        return;
+      }
 
-      idCheckSpinner.style.display = "block";
-      nicknameBox.style.display = "none";
+      if (idCheckSpinner) idCheckSpinner.style.display = "block";
 
       try {
         const queryParams = new URLSearchParams({ game: currentGame.code, id: uid, zone: zid });
@@ -583,21 +625,27 @@ document.addEventListener("DOMContentLoaded", async () => {
 
         verifiedNickname = data.name;
         nicknameBox.className = "nickname-result-box";
+        nicknameBox.style.background = "rgba(16, 185, 129, 0.1)";
+        nicknameBox.style.borderColor = "rgba(16, 185, 129, 0.4)";
+        nicknameBox.style.color = "#fff";
         nicknameBox.innerHTML = `
-          <i class="fa-solid fa-circle-check"></i>
-          <span>Nickname Akun: <strong>${data.name}</strong> (Terverifikasi)</span>
+          <i class="fa-solid fa-circle-check" style="color: #10b981; font-size: 1.1rem;"></i>
+          <span>Nickname Akun: <strong style="color: #10b981;">${data.name}</strong> (Terverifikasi)</span>
         `;
         nicknameBox.style.display = "flex";
       } catch (err) {
         nicknameBox.className = "nickname-result-box error";
+        nicknameBox.style.background = "rgba(239, 68, 68, 0.1)";
+        nicknameBox.style.borderColor = "rgba(239, 68, 68, 0.4)";
+        nicknameBox.style.color = "#ef4444";
         nicknameBox.innerHTML = `
-          <i class="fa-solid fa-circle-xmark"></i>
+          <i class="fa-solid fa-circle-xmark" style="font-size: 1.1rem;"></i>
           <span>${err.message || "User ID / Zone ID tidak valid."}</span>
         `;
         nicknameBox.style.display = "flex";
         verifiedNickname = null;
       } finally {
-        idCheckSpinner.style.display = "none";
+        if (idCheckSpinner) idCheckSpinner.style.display = "none";
       }
     }
 
@@ -611,20 +659,6 @@ document.addEventListener("DOMContentLoaded", async () => {
         clearTimeout(checkTimeout);
         checkTimeout = setTimeout(checkNickname, 700);
       });
-    }
-  } else if (!isManualGame) {
-    if (nicknameBox) {
-      nicknameBox.className = "nickname-result-box";
-      nicknameBox.style.background = "rgba(56, 189, 248, 0.08)";
-      nicknameBox.style.borderColor = "rgba(56, 189, 248, 0.3)";
-      nicknameBox.style.color = "#94a3b8";
-      nicknameBox.innerHTML = `
-        <i class="fa-solid fa-circle-info" style="color: #38bdf8; font-size: 1.1rem; margin-top: 2px;"></i>
-        <div style="font-size: 0.83rem; line-height: 1.45;">
-          <span>Pastikan <strong>User ID</strong> sudah benar sebelum checkout.</span>
-        </div>
-      `;
-      nicknameBox.style.display = "flex";
     }
   }
 
