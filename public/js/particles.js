@@ -1,8 +1,23 @@
-// PARTICLE CANVAS FLOATING SYSTEM
+// PARTICLE CANVAS FLOATING SYSTEM (CYBER VOLT LIME EDITION)
 document.addEventListener("DOMContentLoaded", () => {
-  const canvas = document.createElement("canvas");
-  canvas.id = "bg-particles";
-  document.body.prepend(canvas);
+  let canvas = document.getElementById("bg-particles");
+
+  // Jika canvas belum ada di HTML, buat otomatis
+  if (!canvas) {
+    canvas = document.createElement("canvas");
+    canvas.id = "bg-particles";
+    document.body.prepend(canvas);
+  }
+
+  // Pastikan style canvas mengunci layar penuh dan berada di layer yang pas
+  canvas.style.position = "fixed";
+  canvas.style.top = "0";
+  canvas.style.left = "0";
+  canvas.style.width = "100vw";
+  canvas.style.height = "100vh";
+  canvas.style.pointerEvents = "none";
+  canvas.style.zIndex = "0"; // Berada tepat di atas background body
+  canvas.style.opacity = "0.85";
 
   const ctx = canvas.getContext("2d");
   let particles = [];
@@ -22,12 +37,20 @@ document.addEventListener("DOMContentLoaded", () => {
     reset() {
       this.x = Math.random() * canvas.width;
       this.y = Math.random() * canvas.height;
-      this.size = Math.random() * 2 + 0.5;
+      this.size = Math.random() * 2.2 + 0.6;
       this.speedX = (Math.random() - 0.5) * 0.4;
-      this.speedY = -Math.random() * 0.6 - 0.2; // Melayang ke atas perlahan
-      this.opacity = Math.random() * 0.7 + 0.2;
-      // Dominan partikel putih dan merah neon
-      this.color = Math.random() > 0.4 ? "255, 255, 255" : "230, 57, 70";
+      this.speedY = -Math.random() * 0.6 - 0.2; // Melayang perlahan ke atas
+      this.opacity = Math.random() * 0.7 + 0.3;
+
+      // Palet: Putih, Volt Lime (#ccff00), dan Cyber Gold
+      const rand = Math.random();
+      if (rand > 0.5) {
+        this.color = "255, 255, 255"; // Kristal Putih
+      } else if (rand > 0.15) {
+        this.color = "204, 255, 0";   // Volt Lime
+      } else {
+        this.color = "250, 204, 21";  // Cyber Gold
+      }
     }
     update() {
       this.x += this.speedX;
@@ -46,7 +69,9 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 
-  for (let i = 0; i < 65; i++) {
+  // Jumlah partikel dioptimalkan untuk mobile & desktop
+  const particleCount = window.innerWidth < 768 ? 45 : 75;
+  for (let i = 0; i < particleCount; i++) {
     particles.push(new Particle());
   }
 
