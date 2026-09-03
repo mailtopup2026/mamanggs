@@ -166,7 +166,7 @@ document.addEventListener("DOMContentLoaded", async () => {
       currentGame = {
         code: manualData.slug,
         title: manualData.name,
-        dev: manualData.publisher || "Century Games",
+        dev: manualData.publisher || "Official",
         banner: manualData.image_url,
         hasZone: false,
         supportsCheck: false
@@ -375,7 +375,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   if (isManualGame) {
     // ----------------------------------------------------
-    // ALUR JASTIP USD DINAMIS (WHITEOUT SURVIVAL / MANUAL)
+    // ALUR JASTIP USD DINAMIS (MANUAL VIA LOGIN)
     // ----------------------------------------------------
     try {
       const { data: rateData } = await window.supabase
@@ -550,7 +550,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   }
 
   // ==========================================
-  // CEK ID / NICKNAME OTOMATIS & HINT BOX
+  // CEK ID / NICKNAME & HINT BOX (GLOBAL UNTUK SEMUA GAME)
   // ==========================================
   const userIdInput = document.getElementById("userIdInput");
   const zoneIdInput = document.getElementById("zoneIdInput");
@@ -559,7 +559,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   let checkTimeout = null;
 
-  // Fungsi untuk merender kotak petunjuk awal
+  // Fungsi merender hint box: OTOMATIS AKTIF DENGAN LINK IMSELA DI SEMUA GAME
   function renderDefaultAccountHint() {
     if (!nicknameBox || isManualGame) return;
 
@@ -568,36 +568,27 @@ document.addEventListener("DOMContentLoaded", async () => {
     nicknameBox.style.borderColor = "rgba(56, 189, 248, 0.3)";
     nicknameBox.style.color = "#94a3b8";
 
-    if (currentGame.supportsCheck) {
-      // Tampilan dengan tautan Imsela Checker (seperti di screenshot 2)
-      nicknameBox.innerHTML = `
-        <i class="fa-solid fa-circle-info" style="color: #38bdf8; font-size: 1.1rem; margin-top: 2px; flex-shrink: 0;"></i>
-        <div style="font-size: 0.83rem; line-height: 1.45;">
-          <div>Pastikan <strong>User ID</strong> sudah benar sebelum checkout.</div>
-          <div style="margin-top: 2px;">
-            Kamu juga bisa cek nama akun di: 
-            <a href="https://imsela.com/checker" target="_blank" rel="noopener noreferrer" style="color: #38bdf8; text-decoration: underline; font-weight: 600;">
-              Imsela Game ID Checker <i class="fa-solid fa-arrow-up-right-from-square" style="font-size: 0.72rem;"></i>
-            </a>
-          </div>
+    // Semua game tanpa terkecuali mendapatkan link bantuan checker Imsela
+    nicknameBox.innerHTML = `
+      <i class="fa-solid fa-circle-info" style="color: #38bdf8; font-size: 1.1rem; margin-top: 2px; flex-shrink: 0;"></i>
+      <div style="font-size: 0.83rem; line-height: 1.45;">
+        <div>Pastikan <strong>User ID</strong> sudah benar sebelum checkout.</div>
+        <div style="margin-top: 2px;">
+          Kamu juga bisa cek nama akun di: 
+          <a href="https://imsela.com/checker" target="_blank" rel="noopener noreferrer" style="color: #38bdf8; text-decoration: underline; font-weight: 600;">
+            Imsela Game ID Checker <i class="fa-solid fa-arrow-up-right-from-square" style="font-size: 0.72rem;"></i>
+          </a>
         </div>
-      `;
-    } else {
-      // Tampilan standar tanpa link untuk game yang tidak didukung
-      nicknameBox.innerHTML = `
-        <i class="fa-solid fa-circle-info" style="color: #38bdf8; font-size: 1.1rem; margin-top: 2px; flex-shrink: 0;"></i>
-        <div style="font-size: 0.83rem; line-height: 1.45;">
-          <span>Pastikan <strong>User ID</strong> sudah benar sebelum checkout.</span>
-        </div>
-      `;
-    }
+      </div>
+    `;
 
     nicknameBox.style.display = "flex";
   }
 
-  // Tampilkan petunjuk awal saat halaman dibuka
+  // Panggil langsung saat halaman dibuka (berlaku untuk semua game)
   renderDefaultAccountHint();
 
+  // Khusus game yang punya fitur auto-check API (seperti MLBB, FF, dll.)
   if (!isManualGame && currentGame.supportsCheck) {
     async function checkNickname() {
       const uid = userIdInput.value.trim();
