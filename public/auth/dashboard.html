@@ -7,165 +7,501 @@
   
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
   
-  <link rel="stylesheet" href="/css/global.css">
-  <link rel="stylesheet" href="/css/dashboard.css">
+  <link rel="stylesheet" href="/css/global.css?v=cyber99">
+  <link rel="stylesheet" href="/css/dashboard.css?v=cyber99">
+
+  <style>
+    html, body {
+      overflow-x: hidden !important;
+      max-width: 100% !important;
+      background-color: #08090d !important;
+      color: #f8fafc;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      margin: 0;
+      padding: 0;
+    }
+    *, *::before, *::after {
+      box-sizing: border-box !important;
+    }
+
+    /* CARD PROFIL */
+    .profile-banner-card {
+      background: #11131a !important;
+      border: 1px solid rgba(255, 255, 255, 0.08) !important;
+      border-radius: 20px;
+      padding: 24px;
+      margin-bottom: 24px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 20px;
+      flex-wrap: wrap;
+      box-shadow: 0 15px 40px rgba(0, 0, 0, 0.6);
+    }
+
+    .profile-info-group {
+      display: flex;
+      align-items: center;
+      gap: 18px;
+      flex: 1 1 300px;
+    }
+
+    .avatar-cyber-wrap {
+      width: 76px;
+      height: 76px;
+      min-width: 76px;
+      border-radius: 20px;
+      background: linear-gradient(145deg, #ccff00, #84a800);
+      padding: 3px;
+      box-shadow: 0 8px 24px rgba(204, 255, 0, 0.25);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .avatar-cyber-wrap img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      border-radius: 17px;
+      background: #151821;
+    }
+
+    .user-meta-header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .user-meta-header h2 {
+      margin: 0;
+      font-size: 1.25rem;
+      font-weight: 800;
+      color: #ffffff;
+      white-space: nowrap;
+    }
+
+    .role-pill {
+      background: rgba(204, 255, 0, 0.12) !important;
+      color: #ccff00 !important;
+      border: 1px solid rgba(204, 255, 0, 0.3) !important;
+      padding: 3px 10px;
+      border-radius: 6px;
+      font-size: 0.72rem;
+      font-weight: 800;
+      letter-spacing: 0.5px;
+    }
+
+    .user-email-text {
+      margin: 4px 0 10px;
+      color: #84889a;
+      font-size: 0.86rem;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      word-break: break-all;
+    }
+
+    .profile-actions-group {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .btn-action-profile {
+      text-decoration: none;
+      padding: 10px 18px;
+      border-radius: 10px;
+      font-size: 0.85rem;
+      font-weight: 700;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      transition: all 0.2s ease;
+      cursor: pointer;
+    }
+
+    .btn-action-edit {
+      background: rgba(250, 204, 21, 0.12) !important;
+      border: 1px solid rgba(250, 204, 21, 0.35) !important;
+      color: #facc15 !important;
+    }
+
+    .btn-action-edit:hover {
+      background: rgba(250, 204, 21, 0.2) !important;
+    }
+
+    .btn-action-logout {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      color: #cbd5e1;
+    }
+
+    .btn-action-logout:hover {
+      background: rgba(239, 68, 68, 0.15);
+      border-color: rgba(239, 68, 68, 0.3);
+      color: #ef4444;
+    }
+
+    /* RIWAYAT TRANSAKSI SCROLLABLE */
+    .history-card-wrapper {
+      background: #11131a !important;
+      border: 1px solid rgba(255, 255, 255, 0.08) !important;
+      border-radius: 20px;
+      padding: 24px;
+      box-shadow: 0 10px 35px rgba(0, 0, 0, 0.5);
+    }
+
+    .table-scroll-container {
+      width: 100%;
+      max-height: 340px;
+      overflow-y: auto;
+      overflow-x: auto;
+      border-radius: 12px;
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      background: #151821 !important;
+    }
+
+    .table-scroll-container::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    .table-scroll-container::-webkit-scrollbar-track {
+      background: #11131a;
+      border-radius: 8px;
+    }
+    .table-scroll-container::-webkit-scrollbar-thumb {
+      background: rgba(255, 255, 255, 0.15);
+      border-radius: 8px;
+    }
+    .table-scroll-container::-webkit-scrollbar-thumb:hover {
+      background: #ccff00;
+    }
+
+    .table-cyber {
+      width: 100%;
+      border-collapse: collapse;
+      text-align: left;
+      font-size: 0.86rem;
+      white-space: nowrap;
+    }
+
+    .table-cyber thead {
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      background: #151821 !important;
+    }
+
+    .table-cyber th {
+      padding: 14px 16px;
+      color: #84889a;
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+      background: #151821 !important;
+    }
+
+    .table-cyber td {
+      padding: 14px 16px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+      vertical-align: middle;
+    }
+
+    .invoice-text {
+      font-family: monospace;
+      color: #ccff00 !important;
+      font-weight: 700;
+      font-size: 0.88rem;
+    }
+
+    .status-badge {
+      padding: 4px 10px;
+      border-radius: 6px;
+      font-size: 0.72rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      display: inline-block;
+    }
+    .status-badge.success {
+      background: rgba(16, 185, 129, 0.15);
+      color: #10b981;
+      border: 1px solid rgba(16, 185, 129, 0.3);
+    }
+    .status-badge.pending {
+      background: rgba(250, 204, 21, 0.15) !important;
+      color: #facc15 !important;
+      border: 1px solid rgba(250, 204, 21, 0.3) !important;
+    }
+    .status-badge.failed {
+      background: rgba(239, 68, 68, 0.15);
+      color: #ef4444;
+      border: 1px solid rgba(239, 68, 68, 0.3);
+    }
+
+    /* MODAL POPUP CYBER DEPOSIT */
+    .modal-backdrop {
+      display: none;
+      position: fixed;
+      inset: 0;
+      z-index: 9999;
+      background: rgba(8, 9, 13, 0.85);
+      backdrop-filter: blur(8px);
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+    }
+
+    .modal-backdrop.show {
+      display: flex;
+    }
+
+    .modal-card-cyber {
+      background: #11131a !important;
+      border: 1px solid rgba(255, 255, 255, 0.1) !important;
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.85), 0 0 30px rgba(204, 255, 0, 0.1) !important;
+      border-radius: 20px;
+      max-width: 460px;
+      width: 100%;
+      padding: 24px;
+      position: relative;
+      animation: modalPop 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    @keyframes modalPop {
+      0% { transform: scale(0.92); opacity: 0; }
+      100% { transform: scale(1); opacity: 1; }
+    }
+
+    .preset-amount-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+      margin-bottom: 16px;
+    }
+
+    .btn-preset-val {
+      background: #151821 !important;
+      border: 1px solid rgba(255, 255, 255, 0.08) !important;
+      color: #cbd5e1;
+      padding: 10px 8px;
+      border-radius: 10px;
+      font-weight: 700;
+      font-size: 0.85rem;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      font-family: inherit;
+    }
+
+    .btn-preset-val:hover {
+      border-color: rgba(204, 255, 0, 0.4) !important;
+      color: #fff;
+    }
+
+    .btn-preset-val.active {
+      background: rgba(204, 255, 0, 0.15) !important;
+      border-color: #ccff00 !important;
+      color: #ccff00 !important;
+      font-weight: 800;
+    }
+  </style>
 </head>
 <body>
 
-  <!-- NAVBAR -->
+  <!-- Kanvas Background Partikel Animasi -->
+  <canvas id="bg-particles"></canvas>
+
+  <!-- NAVBAR RESPONSIVE TITIK 3 -->
   <header class="navbar">
     <div class="navbar-container">
       <a href="/" class="brand-logo">
         <div class="logo-video-wrap"><video autoplay loop muted playsinline class="logo-video"><source src="/assets/images/logo.mp4" type="video/mp4"></video></div>
-        
       </a>
 
-      <div class="nav-actions">
+      <div class="nav-actions desktop-only" id="desktopNavActions">
         <a href="/" class="btn-nav-login"><i class="fa-solid fa-house"></i> Beranda</a>
+        <a href="/leaderboard.html" class="btn-nav-login" style="color: #facc15; border-color: rgba(250, 204, 21, 0.35);"><i class="fa-solid fa-crown"></i> Leaderboard</a>
         <a href="/order-status.html" class="btn-nav-login"><i class="fa-solid fa-magnifying-glass"></i> Lacak</a>
+        <a href="/blog.html" class="btn-nav-login" style="color: #38bdf8; border-color: rgba(56, 189, 248, 0.35);"><i class="fa-solid fa-newspaper"></i> Blog</a>
+      </div>
+
+      <div class="mobile-nav-toggle-group">
+        <button id="btnMobileMenuToggle" class="btn-mobile-icon" title="Menu Lengkap">
+          <i class="fa-solid fa-ellipsis-vertical"></i>
+        </button>
+      </div>
+    </div>
+
+    <!-- MOBILE DROPDOWN DRAWER -->
+    <div id="mobileMenuDropdown" class="mobile-menu-drawer">
+      <div class="mobile-menu-header">
+        <span style="font-weight: 800; font-size: 0.88rem; color: #fff;">Menu MamangGS</span>
+        <button id="btnCloseMobileMenu" style="background: none; border: none; color: #84889a; font-size: 1.1rem; cursor: pointer;">✕</button>
+      </div>
+      <div id="mobileMenuList" class="mobile-menu-items">
+        <a href="/" class="mobile-menu-link"><i class="fa-solid fa-house" style="color: #38bdf8;"></i> Beranda</a>
+        <a href="/leaderboard.html" class="mobile-menu-link"><i class="fa-solid fa-crown" style="color: #facc15;"></i> Leaderboard Sultan</a>
+        <a href="/blog.html" class="mobile-menu-link"><i class="fa-solid fa-newspaper" style="color: #38bdf8;"></i> Blog & Tips Game</a>
+        <a href="/order-status.html" class="mobile-menu-link" style="color: #10b981;"><i class="fa-solid fa-receipt"></i> Lacak Pesanan</a>
+        <hr style="border: none; border-top: 1px solid rgba(255,255,255,0.08); margin: 8px 0;">
+        <button id="btnMobileLogout" class="mobile-menu-link" style="width: 100%; text-align: left; background: none; border: none; color: #ef4444; cursor: pointer; padding: 10px 0; font-family: inherit; font-size: 0.95rem; font-weight: 700;">
+          <i class="fa-solid fa-right-from-bracket"></i> Keluar Akun
+        </button>
       </div>
     </div>
   </header>
 
-  <!-- KONTEN DASHBOARD -->
-  <main class="dashboard-wrapper">
-    <!-- Header Akun -->
-    <div class="profile-overview-card">
-      <div class="profile-left">
-        <div class="user-avatar-circle">
-          <i class="fa-solid fa-user"></i>
+  <!-- KONTEN UTAMA -->
+  <main class="dashboard-wrapper" style="max-width: 960px; margin: 30px auto 80px; padding: 0 16px;">
+    
+    <!-- KARTU BANNER PROFIL -->
+    <div class="profile-banner-card">
+      <div class="profile-info-group">
+        <div class="avatar-cyber-wrap">
+          <img id="userAvatarImg" src="https://api.dicebear.com/7.x/adventurer/svg?seed=Jordyn" alt="Avatar">
         </div>
-        <div class="user-details">
-          <h2><span id="profileName">Memuat...</span> <span class="role-badge" id="profileRole">MEMBER</span></h2>
-          <p id="profileEmail">user@email.com</p>
+        <div class="user-meta" style="min-width: 0;">
+          <div class="user-meta-header">
+            <h2 id="profileName">User</h2>
+            <span class="role-pill" id="profileRole">MEMBER</span>
+          </div>
+          <p class="user-email-text"><i class="fa-solid fa-envelope"></i> <span id="profileEmail">user@email.com</span></p>
+          <div id="dashboardBadges" style="display: flex; gap: 6px; flex-wrap: wrap;"></div>
         </div>
       </div>
-      <button class="btn-logout" id="logoutBtn">
-        <i class="fa-solid fa-right-from-bracket"></i> Keluar Akun
-      </button>
+
+      <div class="profile-actions-group">
+        <a href="/profile.html" class="btn-action-profile btn-action-edit">
+          <i class="fa-solid fa-user-pen"></i> Edit Profil
+        </a>
+        <button class="btn-action-profile btn-action-logout" id="logoutBtn">
+          <i class="fa-solid fa-right-from-bracket"></i> Keluar Akun
+        </button>
+      </div>
     </div>
 
-    <!-- Statistik Dompet & Transaksi -->
+    <!-- STATISTIK GRID -->
     <div class="stats-grid">
-      <div class="stat-card wallet-card">
-        <div class="stat-header">
-          <span>SALDO DOMPET INTERNAL</span>
-          <i class="fa-solid fa-wallet"></i>
+      <div class="card-stat featured">
+        <div class="stat-top">
+          <span class="stat-label">Saldo Dompet Internal</span>
+          <div class="stat-icon"><i class="fa-solid fa-wallet"></i></div>
         </div>
-        <div class="stat-value" id="walletBalance">Rp 0</div>
-        <button class="btn-deposit" id="btnDeposit">
-          <i class="fa-solid fa-plus-circle"></i> Isi Saldo
+        <div class="stat-number" id="walletBalance">Rp 0</div>
+        <button class="btn-topup-wallet" id="btnDeposit">
+          <i class="fa-solid fa-circle-plus"></i> Isi Saldo MGS
         </button>
       </div>
 
-      <div class="stat-card">
-        <div class="stat-header">
-          <span>TOTAL TRANSAKSI</span>
-          <i class="fa-solid fa-receipt"></i>
+      <div class="card-stat">
+        <div class="stat-top">
+          <span class="stat-label">Total Pesanan</span>
+          <div class="stat-icon"><i class="fa-solid fa-receipt"></i></div>
         </div>
-        <div class="stat-value" id="totalOrdersCount">0</div>
-        <span style="font-size: 0.75rem; color: var(--text-muted);">Semua pesanan terdaftar</span>
+        <div class="stat-number" id="totalOrdersCount">0</div>
+        <span class="stat-subtext">Semua transaksi terdata</span>
       </div>
 
-      <div class="stat-card">
-        <div class="stat-header">
-          <span>TIER KEANGGOTAAN</span>
-          <i class="fa-solid fa-crown" style="color: #f59e0b;"></i>
+      <div class="card-stat">
+        <div class="stat-top">
+          <span class="stat-label">Tier Keanggotaan</span>
+          <div class="stat-icon" style="color: #facc15;"><i class="fa-solid fa-crown"></i></div>
         </div>
-        <div class="stat-value" style="font-size: 1.3rem;">Standard Rate</div>
-        <span style="font-size: 0.75rem; color: #10b981;">Hubungi CS untuk Upgrade VIP</span>
+        <div class="stat-number" style="font-size: 1.35rem;">Standard Rate</div>
+        <span class="stat-subtext" style="color: #10b981;"><i class="fa-solid fa-circle-check"></i> Akun Terverifikasi</span>
       </div>
     </div>
 
-    <!-- Riwayat Transaksi -->
-    <div class="history-section">
-      <div class="history-header">
-        <h3><i class="fa-solid fa-clock-rotate-left"></i> Riwayat Transaksi Terbaru</h3>
+    <!-- RIWAYAT TRANSAKSI DENGAN SCROLLING -->
+    <div class="history-card-wrapper">
+      <div class="history-title-row" style="margin-bottom: 16px; display: flex; justify-content: space-between; align-items: center;">
+        <h3 style="margin: 0; font-size: 1.1rem; font-weight: 800; display: flex; align-items: center; gap: 8px;">
+          <i class="fa-solid fa-clock-rotate-left" style="color: #ccff00;"></i> Riwayat Transaksi
+        </h3>
+        <span style="font-size: 0.78rem; color: #84889a;">Gulir untuk melihat semua</span>
       </div>
 
-      <div class="table-responsive">
-        <table class="history-table">
+      <div class="table-scroll-container">
+        <table class="table-cyber">
           <thead>
             <tr>
               <th>No. Invoice</th>
               <th>Game</th>
-              <th>Item Produk</th>
-              <th>Total Bayar</th>
+              <th>Item</th>
+              <th>Total Tagihan</th>
               <th>Status</th>
               <th>Tanggal</th>
             </tr>
           </thead>
           <tbody id="orderHistoryBody">
-            <!-- Data dari Supabase -->
+            <!-- Data dari JS -->
           </tbody>
         </table>
+      </div>
 
-        <div class="empty-state" id="historyEmptyState">
-          <i class="fa-solid fa-box-open"></i>
-          <p>Belum ada riwayat transaksi. Yuk coba top up game favoritmu!</p>
-        </div>
+      <div class="empty-state-cyber" id="historyEmptyState" style="display: none; text-align: center; padding: 40px 20px;">
+        <i class="fa-solid fa-ghost" style="font-size: 2.5rem; color: #334155; margin-bottom: 12px;"></i>
+        <p style="color: #84889a; font-size: 0.9rem; margin: 0 0 16px;">Belum ada riwayat pesanan yang dilakukan.</p>
+        <a href="/" class="btn-empty-order" style="background: rgba(204,255,0,0.12); border: 1px solid rgba(204,255,0,0.35); color: #ccff00; text-decoration: none; padding: 10px 18px; border-radius: 10px; font-weight: 800; font-size: 0.85rem; display: inline-flex; align-items: center; gap: 6px;">
+          <i class="fa-solid fa-bolt"></i> Mulai Top Up Sekarang
+        </a>
       </div>
     </div>
   </main>
 
-  <!-- FOOTER -->
-  <footer class="footer">
-    <div class="footer-container">
-      <div class="footer-brand">
-        <div class="brand-logo">
-          <div class="logo-video-wrap"><video autoplay loop muted playsinline class="logo-video"><source src="/assets/images/logo.mp4" type="video/mp4"></video></div>
-          
+  <!-- MODAL TOP UP SALDO MGS -->
+  <div id="depositModal" class="modal-backdrop">
+    <div class="modal-card-cyber">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+        <div style="display: flex; align-items: center; gap: 10px;">
+          <div style="width: 38px; height: 38px; border-radius: 10px; background: rgba(204, 255, 0, 0.15); border: 1px solid rgba(204, 255, 0, 0.3); display: flex; align-items: center; justify-content: center; color: #ccff00; font-size: 1.1rem;">
+            <i class="fa-solid fa-wallet"></i>
+          </div>
+          <div>
+            <h3 style="margin: 0; font-size: 1.1rem; font-weight: 800; color: #fff;">Isi Saldo MGS</h3>
+            <span style="font-size: 0.75rem; color: #84889a;">Top up saldo instan & otomatis</span>
+          </div>
         </div>
-        <p>Platform top up game otomatis, murah, dan terpercaya 24 jam nonstop.</p>
+        <button id="btnCloseDeposit" style="background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); color: #84889a; width: 32px; height: 32px; border-radius: 8px; font-size: 0.9rem; cursor: pointer; display: flex; align-items: center; justify-content: center;">✕</button>
       </div>
 
-      <div class="footer-col">
-        <h4>Menu Navigasi</h4>
-        <ul class="footer-links">
-          <li><a href="/">Beranda</a></li>
-          <li><a href="/order-status.html">Lacak Pesanan</a></li>
-          <li><a href="/dashboard.html">Dashboard</a></li>
-        </ul>
+      <p style="color: #84889a; font-size: 0.82rem; margin: 0 0 12px;">Pilih nominal instan:</p>
+      
+      <div class="preset-amount-grid">
+        <button type="button" class="btn-preset-val active" data-amount="10000">Rp 10.000</button>
+        <button type="button" class="btn-preset-val" data-amount="25000">Rp 25.000</button>
+        <button type="button" class="btn-preset-val" data-amount="50000">Rp 50.000</button>
+        <button type="button" class="btn-preset-val" data-amount="100000">Rp 100.000</button>
+        <button type="button" class="btn-preset-val" data-amount="200000">Rp 200.000</button>
+        <button type="button" class="btn-preset-val" data-amount="500000">Rp 500.000</button>
       </div>
 
-      <div class="footer-col">
-        <h4>Bantuan & Legal</h4>
-        <ul class="footer-links">
-          <li><a href="/privacy-policy.html">Kebijakan Privasi</a></li>
-          <li><a href="/terms.html">Syarat & Ketentuan</a></li>
-        </ul>
+      <div style="margin-bottom: 20px;">
+        <label style="display: block; font-size: 0.8rem; font-weight: 700; color: #84889a; margin-bottom: 6px;">Atau Ketik Nominal Manual (Min. Rp 10.000)</label>
+        <div style="position: relative;">
+          <span style="position: absolute; left: 14px; top: 50%; transform: translateY(-50%); color: #84889a; font-weight: 700; font-size: 0.9rem;">Rp</span>
+          <input type="number" id="inputDepositVal" value="10000" min="10000" placeholder="10000" style="width: 100%; background: #151821; border: 1px solid rgba(255,255,255,0.1); padding: 12px 14px 12px 40px; border-radius: 10px; color: #fff; font-size: 1rem; font-weight: 800; font-family: inherit; outline: none;">
+        </div>
       </div>
-    </div>
 
-    <div class="footer-bottom">
-      <p>&copy; 2026 MamangGS. All rights reserved.</p>
-    </div>
-  </footer>
-
-  <!-- CYBER CUSTOM CONFIRMATION MODAL -->
-  <div class="mgs-modal-overlay" id="logoutModalOverlay">
-    <div class="mgs-cyber-modal">
-      <div class="modal-icon-glow">
-        <i class="fa-solid fa-power-off"></i>
-      </div>
-      <h3>Konfirmasi Keluar</h3>
-      <p>Apakah kamu yakin ingin mengakhiri sesi dan keluar dari akun MamangGS?</p>
-      <div class="modal-actions-grid">
-        <button type="button" class="btn-modal-cancel" id="btnCancelLogout">Batal</button>
-        <button type="button" class="btn-modal-confirm" id="btnConfirmLogout">Ya, Keluar</button>
-      </div>
+      <button type="button" id="btnSubmitDeposit" style="width: 100%; background: #ccff00; color: #08090d; border: none; padding: 14px; border-radius: 12px; font-weight: 800; font-size: 0.95rem; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; transition: background 0.2s; box-shadow: 0 4px 20px rgba(204, 255, 0, 0.3);">
+        <i class="fa-solid fa-qrcode"></i> Lanjut Pilih Metode Pembayaran
+      </button>
     </div>
   </div>
 
-  <!-- CDN SUPABASE JS (WAJIB AGAR CLIENT SUPABASE AKTIF) -->
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-
   <!-- JS MODULAR -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="/js/particles.js"></script>
   <script src="/js/supabase.js"></script>
+  <script src="/js/navbar.js"></script>
   <script src="/js/dashboard.js"></script>
+  <script src="/js/floating-hub.js"></script>
 </body>
 </html>

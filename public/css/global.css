@@ -551,3 +551,90 @@ a {
   from { opacity: 0; transform: translateY(-10px); }
   to { opacity: 1; transform: translateY(0); }
 }
+
+/* ===================================================
+   UNIVERSAL THEME ENFORCER (LEADERBOARD, BLOG, PROFILE, ADMIN)
+   Menyapu bersih sisa warna navy di seluruh halaman
+   =================================================== */
+
+/* 1. Paksa Semua Background Halaman Gelap Pekat */
+body, html {
+  background-color: #08090d !important;
+}
+
+/* 2. Container Kartu, Podium, & Panel Admin */
+.podium-card,
+.podium-step,
+.leaderboard-table-card,
+.leaderboard-rank-card,
+.blog-card,
+.post-card,
+.article-wrapper,
+.profile-card,
+.edit-profile-card,
+.admin-card,
+.admin-table-container,
+.admin-sidebar,
+.panel-box,
+div[class*="leaderboard-card"],
+div[class*="podium-card"],
+div[class*="blog-card"],
+div[class*="profile-card"] {
+  background: #11131a !important;
+  border-color: rgba(255, 255, 255, 0.08) !important;
+  color: #ffffff !important;
+}
+
+/* 3. Form Input (Edit Profile, Admin Input, Search Blog) */
+.form-control,
+.form-input,
+.edit-profile-card input,
+.admin-card input,
+.admin-card select,
+.admin-card textarea {
+  background: #151821 !important;
+  border: 1px solid rgba(255, 255, 255, 0.1) !important;
+  color: #ffffff !important;
+}
+
+.form-control:focus,
+.form-input:focus,
+.edit-profile-card input:focus,
+.admin-card input:focus {
+  border-color: #ccff00 !important;
+  box-shadow: 0 0 12px rgba(204, 255, 0, 0.15) !important;
+}
+
+/* 4. Podium Leaderboard */
+.podium-rank-1 {
+  background: linear-gradient(180deg, rgba(204, 255, 0, 0.15) 0%, #11131a 100%) !important;
+  border: 1px solid #ccff00 !important;
+}
+
+.podium-rank-2,
+.podium-rank-3 {
+  background: #151821 !important;
+  border: 1px solid rgba(255, 255, 255, 0.08) !important;
+}
+
+/* 5. Tabel di Leaderboard & Admin */
+table th {
+  background: #151821 !important;
+  color: #84889a !important;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08) !important;
+}
+
+table td {
+  border-bottom: 1px solid rgba(255, 255, 255, 0.04) !important;
+  color: #ffffff !important;
+}
+
+/* 6. Tombol Aksi Universal (Simpan Profile, Admin Submit) */
+.btn-save-profile,
+.btn-submit-admin,
+.btn-primary {
+  background: #ccff00 !important;
+  color: #08090d !important;
+  font-weight: 800 !important;
+  border: none !important;
+}
