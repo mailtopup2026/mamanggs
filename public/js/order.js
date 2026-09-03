@@ -421,7 +421,6 @@ document.addEventListener("DOMContentLoaded", async () => {
         card.innerHTML = `
           <div class="nominal-title" style="font-size: 0.95rem; font-weight: 800; color: #fff;">Pack $${pack.usd} USD</div>
           <div style="font-size: 0.72rem; color: #94a3b8; margin: 3px 0;">${pack.labelInGame}</div>
-          <div class="nominal-price" style="color: #10b981; font-weight: 800;">Rp ${itemPrice.toLocaleString("id-ID")}</div>
         `;
 
         card.addEventListener("click", () => {
