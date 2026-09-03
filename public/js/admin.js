@@ -10,6 +10,7 @@ let allManualGames = []; // BARU
 let selectedTargetUser = null;
 let selectedSku = null;
 let activeGameFilter = "ALL";
+let editingBannerId = null; // Penampung state edit banner
 
 // ==========================================
 // 1. GLOBAL ACTION HANDLERS & MODAL BINDINGS
@@ -122,13 +123,31 @@ window.setGameFilter = function(gameName) {
 
 // --- BANNER MODAL & ACTIONS ---
 window.openBannerModal = function() {
+  editingBannerId = null;
   document.getElementById("bannerTitleInput").value = "";
   document.getElementById("bannerUrlInput").value = "";
   document.getElementById("bannerLinkInput").value = "";
+  const btn = document.getElementById("btnSubmitBanner");
+  if (btn) btn.innerHTML = '<i class="fa-solid fa-cloud-arrow-up"></i> Simpan Banner';
+  document.getElementById("bannerModal")?.classList.add("show");
+};
+
+window.openEditBannerModal = function(bannerDataString) {
+  const banner = JSON.parse(decodeURIComponent(bannerDataString));
+  editingBannerId = banner.id;
+
+  if (document.getElementById("bannerTitleInput")) document.getElementById("bannerTitleInput").value = banner.title || "";
+  if (document.getElementById("bannerUrlInput")) document.getElementById("bannerUrlInput").value = banner.image_url || "";
+  if (document.getElementById("bannerLinkInput")) document.getElementById("bannerLinkInput").value = banner.target_url || "";
+
+  const btn = document.getElementById("btnSubmitBanner");
+  if (btn) btn.innerHTML = '<i class="fa-solid fa-check"></i> Update Banner';
+
   document.getElementById("bannerModal")?.classList.add("show");
 };
 
 window.closeBannerModal = function() {
+  editingBannerId = null;
   document.getElementById("bannerModal")?.classList.remove("show");
 };
 
@@ -144,16 +163,34 @@ window.submitBanner = async function() {
   btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Menyimpan...';
 
   try {
-    const { error } = await window.supabase.from("banners").insert([{ title, image_url, target_url, is_active: true }]);
-    if (error) throw error;
-    alert("Banner berhasil ditambahkan!");
+    if (editingBannerId) {
+      // MODE UPDATE (EDIT)
+      const { error } = await window.supabase
+        .from("banners")
+        .update({ title, image_url, target_url, updated_at: new Date().toISOString() })
+        .eq("id", editingBannerId);
+
+      if (error) throw error;
+      alert("Banner berhasil diperbarui!");
+    } else {
+      // MODE TAMBAH BARU
+      const { error } = await window.supabase
+        .from("banners")
+        .insert([{ title, image_url, target_url, is_active: true }]);
+
+      if (error) throw error;
+      alert("Banner baru berhasil ditambahkan!");
+    }
+
     window.closeBannerModal();
     window.fetchAdminBanners();
   } catch (err) {
-    alert("Gagal menambahkan banner: " + err.message);
+    alert("Gagal memproses banner: " + err.message);
   } finally {
     btn.disabled = false;
-    btn.innerHTML = '<i class="fa-solid fa-cloud-arrow-up"></i> Simpan Banner';
+    btn.innerHTML = editingBannerId 
+      ? '<i class="fa-solid fa-check"></i> Update Banner' 
+      : '<i class="fa-solid fa-cloud-arrow-up"></i> Simpan Banner';
   }
 };
 
@@ -175,7 +212,7 @@ window.openGameModal = function() {
   const codeInput = document.getElementById("gameCodeInput");
   if (codeInput) {
     codeInput.value = "";
-    codeInput.readOnly = false; // Buka kunci saat nambah baru
+    codeInput.readOnly = false;
     codeInput.style.opacity = "1";
   }
   document.getElementById("gameTitleInput").value = "";
@@ -185,14 +222,14 @@ window.openGameModal = function() {
   document.getElementById("gameModal")?.classList.add("show");
 };
 
-// BARU: Fungsi khusus edit cover game
+// Fungsi Edit Cover Game
 window.openEditGameModal = function(gameDataString) {
   const game = JSON.parse(decodeURIComponent(gameDataString));
   
   const codeInput = document.getElementById("gameCodeInput");
   if (codeInput) {
     codeInput.value = game.game_code || '';
-    codeInput.readOnly = true; // Kunci kode game agar tidak rusak primary key-nya
+    codeInput.readOnly = true;
     codeInput.style.opacity = "0.6";
   }
   
@@ -309,7 +346,6 @@ window.deleteFlashSale = async function(id) {
   else window.fetchAdminFlashSale();
 };
 
-
 // ==========================================
 // 1.5. BARU: MANUAL GAMES & USD RATE ACTIONS
 // ==========================================
@@ -392,7 +428,7 @@ window.openManualGameModal = function() {
   document.getElementById("manualGameNameInput").value = "";
   document.getElementById("manualGamePubInput").value = "";
   document.getElementById("manualGameFileInput").value = "";
-  document.getElementById("manualGameFileHint").style.display = "none"; // Sembunyikan hint edit
+  document.getElementById("manualGameFileHint").style.display = "none";
   document.getElementById("manualGameModal")?.classList.add("show");
 };
 
@@ -404,8 +440,8 @@ window.openManualGameEdit = function(id) {
   document.getElementById("manualGameIdInput").value = g.id;
   document.getElementById("manualGameNameInput").value = g.name;
   document.getElementById("manualGamePubInput").value = g.publisher;
-  document.getElementById("manualGameFileInput").value = ""; // Reset file input
-  document.getElementById("manualGameFileHint").style.display = "block"; // Tampilkan hint
+  document.getElementById("manualGameFileInput").value = "";
+  document.getElementById("manualGameFileHint").style.display = "block";
   document.getElementById("manualGameModal")?.classList.add("show");
 };
 
@@ -431,7 +467,6 @@ window.submitManualGame = async function() {
     let finalImageUrl = "";
     const slug = name.toLowerCase().replace(/[^a-z0-9]+/g, '-');
 
-    // Jika user upload file gambar
     if (file) {
       const fileExt = file.name.split('.').pop();
       const fileName = `${Date.now()}-${slug}.${fileExt}`;
@@ -447,15 +482,13 @@ window.submitManualGame = async function() {
     }
 
     if (editId) {
-      // PROSES EDIT
       const updateData = { name, slug, publisher };
-      if (finalImageUrl) updateData.image_url = finalImageUrl; // Update gambar hanya jika ada file baru
+      if (finalImageUrl) updateData.image_url = finalImageUrl;
 
       const { error } = await window.supabase.from("manual_games").update(updateData).eq("id", editId);
       if (error) throw error;
       alert("Game manual berhasil diubah!");
     } else {
-      // PROSES TAMBAH BARU
       const { error } = await window.supabase.from("manual_games").insert([{
         name, slug, publisher, image_url: finalImageUrl, category: 'via_login', is_active: true
       }]);
@@ -485,7 +518,6 @@ window.deleteManualGame = async function(id) {
   if (error) alert("Gagal menghapus game: " + error.message);
   else window.fetchManualGames();
 };
-
 
 // ==========================================
 // 2. MAIN DOM INITIALIZATION
@@ -528,7 +560,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
       await window.loadDashboardData();
       await window.fetchAdminArticles();
-      await window.fetchAdminProducts(false); // preload list produk
+      await window.fetchAdminProducts(false);
       hideLoader();
     } catch (e) {
       console.error("Admin init error:", e);
@@ -566,7 +598,6 @@ document.addEventListener("DOMContentLoaded", async () => {
       if (btn.dataset.tab === "gamesTab") window.fetchAdminGames();
       if (btn.dataset.tab === "flashSaleTab") window.fetchAdminFlashSale();
       
-      // TRIGGER BARU UNTUK TAB MANUAL GAMES
       if (btn.dataset.tab === "manualGamesTab") {
         window.fetchUsdRate();
         window.fetchManualGames();
@@ -828,6 +859,8 @@ document.addEventListener("DOMContentLoaded", async () => {
           ? `<span class="badge-status success">AKTIF</span>` 
           : `<span class="badge-status cancelled">NONAKTIF</span>`;
 
+        const safeEncodedBanner = encodeURIComponent(JSON.stringify(b));
+
         return `
           <tr>
             <td><img src="${b.image_url}" alt="${b.title}" style="width: 120px; height: 55px; border-radius: 6px; object-fit: cover; background: #0b1120;"></td>
@@ -839,6 +872,12 @@ document.addEventListener("DOMContentLoaded", async () => {
                 <button class="btn-action-sm ${b.is_active ? 'btn-adjust' : 'btn-success'}" onclick="toggleBannerStatus('${b.id}', ${!b.is_active})" title="${b.is_active ? 'Nonaktifkan' : 'Aktifkan'}">
                   <i class="fa-solid ${b.is_active ? 'fa-eye-slash' : 'fa-eye'}"></i>
                 </button>
+
+                <!-- TOMBOL EDIT BANNER -->
+                <button class="btn-action-sm btn-adjust" onclick="openEditBannerModal('${safeEncodedBanner}')" title="Edit Banner">
+                  <i class="fa-solid fa-pen-to-square"></i>
+                </button>
+
                 <button class="btn-action-sm btn-cancel" onclick="deleteBanner('${b.id}')" title="Hapus Banner">
                   <i class="fa-solid fa-trash-can"></i>
                 </button>
@@ -891,7 +930,7 @@ document.addEventListener("DOMContentLoaded", async () => {
                   <i class="fa-solid fa-star"></i>
                 </button>
                 
-                <!-- TOMBOL EDIT COVER BARU -->
+                <!-- TOMBOL EDIT COVER GAME -->
                 <button class="btn-action-sm btn-adjust" onclick="openEditGameModal('${safeEncodedGame}')" title="Edit Game">
                   <i class="fa-solid fa-pen-to-square"></i>
                 </button>
