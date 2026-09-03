@@ -17,17 +17,25 @@
   <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎮</text></svg>">
 
   <style>
-    /* 1. Pengunci Layar */
+    /* 1. Pengunci Layar Single Scroll */
     html {
-  overflow-x: hidden !important;
-  overflow-y: auto !important;
-}
-body {
-  overflow-x: hidden !important;
-  overflow-y: visible !important;
-  background-color: #08090d !important;
-  color: #ffffff !important;
-}
+      width: 100%;
+      max-width: 100%;
+      overflow-x: hidden !important;
+      overflow-y: auto !important;
+      background-color: #08090d !important;
+    }
+    body {
+      width: 100%;
+      max-width: 100%;
+      overflow-x: hidden !important;
+      overflow-y: visible !important;
+      background-color: #08090d !important;
+      color: #ffffff !important;
+      margin: 0;
+      padding: 0;
+      position: relative;
+    }
 
     /* 2. Banner Slider */
     .banner-section {
@@ -421,13 +429,8 @@ body {
   </style>
 </head>
 <body>
-  <!-- Kanvas Background Partikel Animasi -->
-  <canvas id="bg-particles"></canvas>
 
-  <!-- NAVBAR -->
-  <header class="navbar">
-
-  <!-- NAVBAR -->
+  <!-- NAVBAR TUNGGAL -->
   <header class="navbar" style="background: #08090d !important; border-bottom: 1px solid rgba(255, 255, 255, 0.06) !important;">
     <div class="navbar-container">
       <a href="/" class="brand-logo">
