@@ -10,14 +10,14 @@
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
   
-  <link rel="stylesheet" href="/css/global.css">
-  <link rel="stylesheet" href="/css/dashboard.css">
+  <link rel="stylesheet" href="/css/global.css?v=cyber99">
+  <link rel="stylesheet" href="/css/dashboard.css?v=cyber99">
 
   <style>
     html, body {
       overflow-x: hidden !important;
       max-width: 100% !important;
-      background-color: #090a0e;
+      background-color: #08090d !important;
       color: #f8fafc;
       font-family: 'Plus Jakarta Sans', sans-serif;
       margin: 0;
@@ -29,8 +29,8 @@
 
     /* CARD PROFIL */
     .profile-banner-card {
-      background: linear-gradient(135deg, rgba(230, 57, 70, 0.12), rgba(15, 23, 42, 0.85));
-      border: 1px solid rgba(255, 255, 255, 0.08);
+      background: #11131a !important;
+      border: 1px solid rgba(255, 255, 255, 0.08) !important;
       border-radius: 20px;
       padding: 24px;
       margin-bottom: 24px;
@@ -39,6 +39,7 @@
       align-items: center;
       gap: 20px;
       flex-wrap: wrap;
+      box-shadow: 0 15px 40px rgba(0, 0, 0, 0.6);
     }
 
     .profile-info-group {
@@ -53,9 +54,9 @@
       height: 76px;
       min-width: 76px;
       border-radius: 20px;
-      background: linear-gradient(145deg, #e63946, #800f2f);
+      background: linear-gradient(145deg, #ccff00, #84a800);
       padding: 3px;
-      box-shadow: 0 8px 24px rgba(230, 57, 70, 0.35);
+      box-shadow: 0 8px 24px rgba(204, 255, 0, 0.25);
       display: flex;
       align-items: center;
       justify-content: center;
@@ -66,7 +67,7 @@
       height: 100%;
       object-fit: cover;
       border-radius: 17px;
-      background: #0f172a;
+      background: #151821;
     }
 
     .user-meta-header {
@@ -85,9 +86,9 @@
     }
 
     .role-pill {
-      background: rgba(230, 57, 70, 0.18);
-      color: #ff4d5a;
-      border: 1px solid rgba(230, 57, 70, 0.4);
+      background: rgba(204, 255, 0, 0.12) !important;
+      color: #ccff00 !important;
+      border: 1px solid rgba(204, 255, 0, 0.3) !important;
       padding: 3px 10px;
       border-radius: 6px;
       font-size: 0.72rem;
@@ -97,7 +98,7 @@
 
     .user-email-text {
       margin: 4px 0 10px;
-      color: #94a3b8;
+      color: #84889a;
       font-size: 0.86rem;
       display: flex;
       align-items: center;
@@ -126,13 +127,13 @@
     }
 
     .btn-action-edit {
-      background: rgba(245, 158, 11, 0.12);
-      border: 1px solid rgba(245, 158, 11, 0.4);
-      color: #f59e0b;
+      background: rgba(250, 204, 21, 0.12) !important;
+      border: 1px solid rgba(250, 204, 21, 0.35) !important;
+      color: #facc15 !important;
     }
 
     .btn-action-edit:hover {
-      background: rgba(245, 158, 11, 0.2);
+      background: rgba(250, 204, 21, 0.2) !important;
     }
 
     .btn-action-logout {
@@ -149,10 +150,11 @@
 
     /* RIWAYAT TRANSAKSI SCROLLABLE */
     .history-card-wrapper {
-      background: rgba(15, 23, 42, 0.7);
-      border: 1px solid rgba(255, 255, 255, 0.08);
+      background: #11131a !important;
+      border: 1px solid rgba(255, 255, 255, 0.08) !important;
       border-radius: 20px;
       padding: 24px;
+      box-shadow: 0 10px 35px rgba(0, 0, 0, 0.5);
     }
 
     .table-scroll-container {
@@ -162,7 +164,7 @@
       overflow-x: auto;
       border-radius: 12px;
       border: 1px solid rgba(255, 255, 255, 0.05);
-      background: rgba(8, 14, 26, 0.5);
+      background: #151821 !important;
     }
 
     .table-scroll-container::-webkit-scrollbar {
@@ -170,15 +172,15 @@
       height: 6px;
     }
     .table-scroll-container::-webkit-scrollbar-track {
-      background: rgba(15, 23, 42, 0.6);
+      background: #11131a;
       border-radius: 8px;
     }
     .table-scroll-container::-webkit-scrollbar-thumb {
-      background: rgba(255, 255, 255, 0.2);
+      background: rgba(255, 255, 255, 0.15);
       border-radius: 8px;
     }
     .table-scroll-container::-webkit-scrollbar-thumb:hover {
-      background: rgba(230, 57, 70, 0.6);
+      background: #ccff00;
     }
 
     .table-cyber {
@@ -193,16 +195,17 @@
       position: sticky;
       top: 0;
       z-index: 10;
-      background: #0b1324;
+      background: #151821 !important;
     }
 
     .table-cyber th {
       padding: 14px 16px;
-      color: #94a3b8;
+      color: #84889a;
       font-size: 0.75rem;
       text-transform: uppercase;
       letter-spacing: 0.5px;
       border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+      background: #151821 !important;
     }
 
     .table-cyber td {
@@ -213,7 +216,7 @@
 
     .invoice-text {
       font-family: monospace;
-      color: #ff4d5a;
+      color: #ccff00 !important;
       font-weight: 700;
       font-size: 0.88rem;
     }
@@ -232,9 +235,9 @@
       border: 1px solid rgba(16, 185, 129, 0.3);
     }
     .status-badge.pending {
-      background: rgba(245, 158, 11, 0.15);
-      color: #f59e0b;
-      border: 1px solid rgba(245, 158, 11, 0.3);
+      background: rgba(250, 204, 21, 0.15) !important;
+      color: #facc15 !important;
+      border: 1px solid rgba(250, 204, 21, 0.3) !important;
     }
     .status-badge.failed {
       background: rgba(239, 68, 68, 0.15);
@@ -248,7 +251,7 @@
       position: fixed;
       inset: 0;
       z-index: 9999;
-      background: rgba(3, 7, 18, 0.85);
+      background: rgba(8, 9, 13, 0.85);
       backdrop-filter: blur(8px);
       align-items: center;
       justify-content: center;
@@ -260,9 +263,9 @@
     }
 
     .modal-card-cyber {
-      background: linear-gradient(145deg, #0d1527, #070b14);
-      border: 1px solid rgba(230, 57, 70, 0.3);
-      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.8), 0 0 30px rgba(230, 57, 70, 0.15);
+      background: #11131a !important;
+      border: 1px solid rgba(255, 255, 255, 0.1) !important;
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.85), 0 0 30px rgba(204, 255, 0, 0.1) !important;
       border-radius: 20px;
       max-width: 460px;
       width: 100%;
@@ -284,8 +287,8 @@
     }
 
     .btn-preset-val {
-      background: rgba(255, 255, 255, 0.04);
-      border: 1px solid rgba(255, 255, 255, 0.08);
+      background: #151821 !important;
+      border: 1px solid rgba(255, 255, 255, 0.08) !important;
       color: #cbd5e1;
       padding: 10px 8px;
       border-radius: 10px;
@@ -297,14 +300,15 @@
     }
 
     .btn-preset-val:hover {
-      border-color: rgba(230, 57, 70, 0.5);
+      border-color: rgba(204, 255, 0, 0.4) !important;
       color: #fff;
     }
 
     .btn-preset-val.active {
-      background: rgba(230, 57, 70, 0.15);
-      border-color: #e63946;
-      color: #ff4d5a;
+      background: rgba(204, 255, 0, 0.15) !important;
+      border-color: #ccff00 !important;
+      color: #ccff00 !important;
+      font-weight: 800;
     }
   </style>
 </head>
@@ -319,9 +323,9 @@
 
       <div class="nav-actions desktop-only" id="desktopNavActions">
         <a href="/" class="btn-nav-login"><i class="fa-solid fa-house"></i> Beranda</a>
-        <a href="/leaderboard.html" class="btn-nav-login" style="color: #f59e0b; border-color: rgba(245, 158, 11, 0.4);"><i class="fa-solid fa-crown"></i> Leaderboard</a>
+        <a href="/leaderboard.html" class="btn-nav-login" style="color: #facc15; border-color: rgba(250, 204, 21, 0.35);"><i class="fa-solid fa-crown"></i> Leaderboard</a>
         <a href="/order-status.html" class="btn-nav-login"><i class="fa-solid fa-magnifying-glass"></i> Lacak</a>
-        <a href="/blog.html" class="btn-nav-login" style="color: #38bdf8; border-color: rgba(56, 189, 248, 0.4);"><i class="fa-solid fa-newspaper"></i> Blog</a>
+        <a href="/blog.html" class="btn-nav-login" style="color: #38bdf8; border-color: rgba(56, 189, 248, 0.35);"><i class="fa-solid fa-newspaper"></i> Blog</a>
       </div>
 
       <div class="mobile-nav-toggle-group">
@@ -335,11 +339,11 @@
     <div id="mobileMenuDropdown" class="mobile-menu-drawer">
       <div class="mobile-menu-header">
         <span style="font-weight: 800; font-size: 0.88rem; color: #fff;">Menu MamangGS</span>
-        <button id="btnCloseMobileMenu" style="background: none; border: none; color: #94a3b8; font-size: 1.1rem; cursor: pointer;">✕</button>
+        <button id="btnCloseMobileMenu" style="background: none; border: none; color: #84889a; font-size: 1.1rem; cursor: pointer;">✕</button>
       </div>
       <div id="mobileMenuList" class="mobile-menu-items">
-        <a href="/" class="mobile-menu-link"><i class="fa-solid fa-house" style="color: #3b82f6;"></i> Beranda</a>
-        <a href="/leaderboard.html" class="mobile-menu-link"><i class="fa-solid fa-crown" style="color: #f59e0b;"></i> Leaderboard Sultan</a>
+        <a href="/" class="mobile-menu-link"><i class="fa-solid fa-house" style="color: #38bdf8;"></i> Beranda</a>
+        <a href="/leaderboard.html" class="mobile-menu-link"><i class="fa-solid fa-crown" style="color: #facc15;"></i> Leaderboard Sultan</a>
         <a href="/blog.html" class="mobile-menu-link"><i class="fa-solid fa-newspaper" style="color: #38bdf8;"></i> Blog & Tips Game</a>
         <a href="/order-status.html" class="mobile-menu-link" style="color: #10b981;"><i class="fa-solid fa-receipt"></i> Lacak Pesanan</a>
         <hr style="border: none; border-top: 1px solid rgba(255,255,255,0.08); margin: 8px 0;">
@@ -404,7 +408,7 @@
       <div class="card-stat">
         <div class="stat-top">
           <span class="stat-label">Tier Keanggotaan</span>
-          <div class="stat-icon" style="color: #f59e0b;"><i class="fa-solid fa-crown"></i></div>
+          <div class="stat-icon" style="color: #facc15;"><i class="fa-solid fa-crown"></i></div>
         </div>
         <div class="stat-number" style="font-size: 1.35rem;">Standard Rate</div>
         <span class="stat-subtext" style="color: #10b981;"><i class="fa-solid fa-circle-check"></i> Akun Terverifikasi</span>
@@ -415,9 +419,9 @@
     <div class="history-card-wrapper">
       <div class="history-title-row" style="margin-bottom: 16px; display: flex; justify-content: space-between; align-items: center;">
         <h3 style="margin: 0; font-size: 1.1rem; font-weight: 800; display: flex; align-items: center; gap: 8px;">
-          <i class="fa-solid fa-clock-rotate-left" style="color: #e63946;"></i> Riwayat Transaksi
+          <i class="fa-solid fa-clock-rotate-left" style="color: #ccff00;"></i> Riwayat Transaksi
         </h3>
-        <span style="font-size: 0.78rem; color: #64748b;">Gulir untuk melihat semua</span>
+        <span style="font-size: 0.78rem; color: #84889a;">Gulir untuk melihat semua</span>
       </div>
 
       <div class="table-scroll-container">
@@ -440,8 +444,8 @@
 
       <div class="empty-state-cyber" id="historyEmptyState" style="display: none; text-align: center; padding: 40px 20px;">
         <i class="fa-solid fa-ghost" style="font-size: 2.5rem; color: #334155; margin-bottom: 12px;"></i>
-        <p style="color: #64748b; font-size: 0.9rem; margin: 0 0 16px;">Belum ada riwayat pesanan yang dilakukan.</p>
-        <a href="/" class="btn-empty-order" style="background: rgba(230,57,70,0.15); border: 1px solid rgba(230,57,70,0.3); color: #e63946; text-decoration: none; padding: 10px 18px; border-radius: 10px; font-weight: 700; font-size: 0.85rem; display: inline-flex; align-items: center; gap: 6px;">
+        <p style="color: #84889a; font-size: 0.9rem; margin: 0 0 16px;">Belum ada riwayat pesanan yang dilakukan.</p>
+        <a href="/" class="btn-empty-order" style="background: rgba(204,255,0,0.12); border: 1px solid rgba(204,255,0,0.35); color: #ccff00; text-decoration: none; padding: 10px 18px; border-radius: 10px; font-weight: 800; font-size: 0.85rem; display: inline-flex; align-items: center; gap: 6px;">
           <i class="fa-solid fa-bolt"></i> Mulai Top Up Sekarang
         </a>
       </div>
@@ -453,18 +457,18 @@
     <div class="modal-card-cyber">
       <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
         <div style="display: flex; align-items: center; gap: 10px;">
-          <div style="width: 38px; height: 38px; border-radius: 10px; background: rgba(230, 57, 70, 0.15); border: 1px solid rgba(230, 57, 70, 0.3); display: flex; align-items: center; justify-content: center; color: #e63946; font-size: 1.1rem;">
+          <div style="width: 38px; height: 38px; border-radius: 10px; background: rgba(204, 255, 0, 0.15); border: 1px solid rgba(204, 255, 0, 0.3); display: flex; align-items: center; justify-content: center; color: #ccff00; font-size: 1.1rem;">
             <i class="fa-solid fa-wallet"></i>
           </div>
           <div>
             <h3 style="margin: 0; font-size: 1.1rem; font-weight: 800; color: #fff;">Isi Saldo MGS</h3>
-            <span style="font-size: 0.75rem; color: #94a3b8;">Top up saldo instan & otomatis</span>
+            <span style="font-size: 0.75rem; color: #84889a;">Top up saldo instan & otomatis</span>
           </div>
         </div>
-        <button id="btnCloseDeposit" style="background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); color: #94a3b8; width: 32px; height: 32px; border-radius: 8px; font-size: 0.9rem; cursor: pointer; display: flex; align-items: center; justify-content: center;">✕</button>
+        <button id="btnCloseDeposit" style="background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); color: #84889a; width: 32px; height: 32px; border-radius: 8px; font-size: 0.9rem; cursor: pointer; display: flex; align-items: center; justify-content: center;">✕</button>
       </div>
 
-      <p style="color: #94a3b8; font-size: 0.82rem; margin: 0 0 12px;">Pilih nominal instan:</p>
+      <p style="color: #84889a; font-size: 0.82rem; margin: 0 0 12px;">Pilih nominal instan:</p>
       
       <div class="preset-amount-grid">
         <button type="button" class="btn-preset-val active" data-amount="10000">Rp 10.000</button>
@@ -476,14 +480,14 @@
       </div>
 
       <div style="margin-bottom: 20px;">
-        <label style="display: block; font-size: 0.8rem; font-weight: 700; color: #94a3b8; margin-bottom: 6px;">Atau Ketik Nominal Manual (Min. Rp 10.000)</label>
+        <label style="display: block; font-size: 0.8rem; font-weight: 700; color: #84889a; margin-bottom: 6px;">Atau Ketik Nominal Manual (Min. Rp 10.000)</label>
         <div style="position: relative;">
-          <span style="position: absolute; left: 14px; top: 50%; transform: translateY(-50%); color: #64748b; font-weight: 700; font-size: 0.9rem;">Rp</span>
-          <input type="number" id="inputDepositVal" value="10000" min="10000" placeholder="10000" style="width: 100%; background: #090a0e; border: 1px solid rgba(255,255,255,0.15); padding: 12px 14px 12px 40px; border-radius: 10px; color: #fff; font-size: 1rem; font-weight: 800; font-family: inherit;">
+          <span style="position: absolute; left: 14px; top: 50%; transform: translateY(-50%); color: #84889a; font-weight: 700; font-size: 0.9rem;">Rp</span>
+          <input type="number" id="inputDepositVal" value="10000" min="10000" placeholder="10000" style="width: 100%; background: #151821; border: 1px solid rgba(255,255,255,0.1); padding: 12px 14px 12px 40px; border-radius: 10px; color: #fff; font-size: 1rem; font-weight: 800; font-family: inherit; outline: none;">
         </div>
       </div>
 
-      <button type="button" id="btnSubmitDeposit" style="width: 100%; background: #e63946; color: #fff; border: none; padding: 14px; border-radius: 12px; font-weight: 800; font-size: 0.95rem; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; transition: background 0.2s; box-shadow: 0 4px 20px rgba(230, 57, 70, 0.4);">
+      <button type="button" id="btnSubmitDeposit" style="width: 100%; background: #ccff00; color: #08090d; border: none; padding: 14px; border-radius: 12px; font-weight: 800; font-size: 0.95rem; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; transition: background 0.2s; box-shadow: 0 4px 20px rgba(204, 255, 0, 0.3);">
         <i class="fa-solid fa-qrcode"></i> Lanjut Pilih Metode Pembayaran
       </button>
     </div>
