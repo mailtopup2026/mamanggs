@@ -46,17 +46,17 @@
 
 /* Desain Warna Slide */
 .slide-promo-1 {
-  background: linear-gradient(135deg, #2a080c 0%, #0c182b 60%, #111e33 100%);
+  background: linear-gradient(135deg, #2a080c 0%, #0f1016 60%, #111e33 100%);
   border-left: 6px solid var(--accent-red);
 }
 
 .slide-promo-2 {
-  background: linear-gradient(135deg, #082618 0%, #0c182b 60%, #111e33 100%);
+  background: linear-gradient(135deg, #082618 0%, #0f1016 60%, #111e33 100%);
   border-left: 6px solid #10b981;
 }
 
 .slide-promo-3 {
-  background: linear-gradient(135deg, #0a1b38 0%, #0c182b 60%, #111e33 100%);
+  background: linear-gradient(135deg, #0a1b38 0%, #0f1016 60%, #111e33 100%);
   border-left: 6px solid #3b82f6;
 }
 
