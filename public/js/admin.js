@@ -172,11 +172,35 @@ window.deleteBanner = async function(id) {
 
 // --- GAME CATEGORY MODAL & ACTIONS ---
 window.openGameModal = function() {
-  document.getElementById("gameCodeInput").value = "";
+  const codeInput = document.getElementById("gameCodeInput");
+  if (codeInput) {
+    codeInput.value = "";
+    codeInput.readOnly = false; // Buka kunci saat nambah baru
+    codeInput.style.opacity = "1";
+  }
   document.getElementById("gameTitleInput").value = "";
   document.getElementById("gameDevInput").value = "";
   document.getElementById("gameImgInput").value = "";
   document.getElementById("gameIsPopular").checked = false;
+  document.getElementById("gameModal")?.classList.add("show");
+};
+
+// BARU: Fungsi khusus edit cover game
+window.openEditGameModal = function(gameDataString) {
+  const game = JSON.parse(decodeURIComponent(gameDataString));
+  
+  const codeInput = document.getElementById("gameCodeInput");
+  if (codeInput) {
+    codeInput.value = game.game_code || '';
+    codeInput.readOnly = true; // Kunci kode game agar tidak rusak primary key-nya
+    codeInput.style.opacity = "0.6";
+  }
+  
+  if (document.getElementById("gameTitleInput")) document.getElementById("gameTitleInput").value = game.title || '';
+  if (document.getElementById("gameDevInput")) document.getElementById("gameDevInput").value = game.developer || '';
+  if (document.getElementById("gameImgInput")) document.getElementById("gameImgInput").value = game.image_url || '';
+  if (document.getElementById("gameIsPopular")) document.getElementById("gameIsPopular").checked = !!game.is_popular;
+  
   document.getElementById("gameModal")?.classList.add("show");
 };
 
@@ -203,7 +227,7 @@ window.submitGameCategory = async function() {
     ], { onConflict: 'game_code' });
 
     if (error) throw error;
-    alert("Cover katalog game berhasil disimpan!");
+    alert("Cover katalog game berhasil disimpan/diupdate!");
     window.closeGameModal();
     window.fetchAdminGames();
   } catch (err) {
@@ -851,6 +875,8 @@ document.addEventListener("DOMContentLoaded", async () => {
         const popBadge = g.is_popular 
           ? `<span class="badge-status success"><i class="fa-solid fa-fire"></i> POPULER</span>` 
           : `<span class="badge-status pending">BIASA</span>`;
+          
+        const safeEncodedGame = encodeURIComponent(JSON.stringify(g));
 
         return `
           <tr>
@@ -864,6 +890,12 @@ document.addEventListener("DOMContentLoaded", async () => {
                 <button class="btn-action-sm ${g.is_popular ? 'btn-adjust' : 'btn-success'}" onclick="toggleGamePopular('${g.id}', ${!g.is_popular})" title="Ubah Populer">
                   <i class="fa-solid fa-star"></i>
                 </button>
+                
+                <!-- TOMBOL EDIT COVER BARU -->
+                <button class="btn-action-sm btn-adjust" onclick="openEditGameModal('${safeEncodedGame}')" title="Edit Game">
+                  <i class="fa-solid fa-pen-to-square"></i>
+                </button>
+
                 <button class="btn-action-sm btn-cancel" onclick="deleteGameCategory('${g.id}')" title="Hapus Game">
                   <i class="fa-solid fa-trash-can"></i>
                 </button>
