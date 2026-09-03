@@ -31,12 +31,27 @@
   --transition: all 0.25s ease;
 }
 
-/* KUNCI FONT GLOBAL */
+/* ===================================================
+   RESET & ISOLASI TIPOGRAFI (IKON AMAN)
+   =================================================== */
 *, *::before, *::after {
   box-sizing: border-box;
   margin: 0;
   padding: 0;
-  font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif !important;
+}
+
+/* Terapkan font Plus Jakarta Sans HANYA ke teks, JANGAN timpa ::before global */
+html, body, input, button, select, textarea, p, h1, h2, h3, h4, h5, h6, span, a, li, label, td, th {
+  font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+}
+
+/* Lindungi dan pulihkan font FontAwesome secara mutlak */
+i, [class^="fa-"], [class*=" fa-"], .fa, .fa-solid, .fa-brands, .fa-regular {
+  font-family: "Font Awesome 6 Free", "Font Awesome 6 Brands", FontAwesome !important;
+}
+
+.fa-brands, [class*="fa-brands"] {
+  font-family: "Font Awesome 6 Brands" !important;
 }
 
 body {
@@ -63,14 +78,16 @@ body::after {
   pointer-events: none;
 }
 
+/* Kanvas Partikel Melayang */
 #bg-particles {
   position: fixed;
   top: 0;
   left: 0;
-  width: 100%;
-  height: 100%;
+  width: 100vw;
+  height: 100vh;
   z-index: -1;
   pointer-events: none;
+  opacity: 0.6;
 }
 
 a {
