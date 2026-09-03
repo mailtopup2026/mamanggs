@@ -431,3 +431,73 @@
   .btn-header-logout { width: 100%; justify-content: center; }
   .stats-grid { grid-template-columns: 1fr; }
 }
+/* =========================================
+   DASHBOARD CYBER MATTE BLACK x VOLT OVERRIDE
+   ========================================= */
+
+body {
+  background-color: #08090d !important;
+}
+
+/* 1. Header Profil */
+.profile-header-card,
+.dashboard-user-card,
+div[class*="user-card"] {
+  background: #11131a !important;
+  border: 1px solid rgba(255, 255, 255, 0.08) !important;
+}
+
+/* 2. Kartu Metrik Saldo, Pesanan, & Tier */
+.metric-card,
+.stat-card,
+.wallet-card,
+div[class*="metric"],
+div[class*="stat-box"] {
+  background: #151821 !important;
+  border: 1px solid rgba(255, 255, 255, 0.08) !important;
+  box-shadow: none !important;
+}
+
+/* Tombol Isi Saldo MGS */
+.btn-topup-wallet,
+a[href*="deposit"],
+.btn-action-primary {
+  background: #ccff00 !important;
+  color: #0b0c10 !important;
+  font-weight: 800 !important;
+  border: none !important;
+  box-shadow: 0 4px 14px rgba(204, 255, 0, 0.3) !important;
+}
+
+/* 3. Kotak Riwayat Transaksi */
+.history-section,
+.table-container,
+.transaction-card,
+div[class*="history"],
+div[class*="table-wrapper"] {
+  background: #11131a !important;
+  border: 1px solid rgba(255, 255, 255, 0.08) !important;
+}
+
+/* Baris & Teks Tabel Transaksi */
+table thead th {
+  background: #151821 !important;
+  color: #84889a !important;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06) !important;
+}
+
+table tbody tr {
+  border-bottom: 1px solid rgba(255, 255, 255, 0.04) !important;
+}
+
+table tbody tr:hover {
+  background: rgba(255, 255, 255, 0.02) !important;
+}
+
+/* Nilai Tagihan di Tabel */
+table td[class*="amount"],
+table td[class*="price"],
+.text-tagihan {
+  color: #ccff00 !important;
+  font-weight: 800 !important;
+}
