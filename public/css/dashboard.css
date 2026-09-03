@@ -1,5 +1,5 @@
 /* ===================================================
-   MAMANGGS - CYBER PREMIUM DASHBOARD
+   MAMANGGS - CYBER PREMIUM DASHBOARD (CLEAN THEME)
    =================================================== */
 
 .dashboard-wrapper {
@@ -11,16 +11,16 @@
 
 /* --- BANNER PROFIL MEMBER --- */
 .profile-banner-card {
-  background: linear-gradient(135deg, rgba(19, 36, 61, 0.75) 0%, rgba(12, 24, 43, 0.85) 100%);
+  background: #11131a;
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
-  border: 1px solid rgba(230, 57, 70, 0.25);
+  border: 1px solid rgba(255, 255, 255, 0.08);
   border-radius: 20px;
   padding: 24px 28px;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.08);
+  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.6);
   margin-bottom: 24px;
   position: relative;
   overflow: hidden;
@@ -33,7 +33,7 @@
   right: -50px;
   width: 150px;
   height: 150px;
-  background: radial-gradient(circle, rgba(230, 57, 70, 0.25) 0%, transparent 70%);
+  background: radial-gradient(circle, rgba(204, 255, 0, 0.12) 0%, transparent 70%);
   border-radius: 50%;
   pointer-events: none;
 }
@@ -48,13 +48,13 @@
   width: 68px;
   height: 68px;
   border-radius: 18px;
-  background: radial-gradient(circle at 30% 30%, #ff4d5e, #e63946 50%, #750f19 100%);
+  background: radial-gradient(circle at 30% 30%, #ccff00, #9ec700 70%, #688500 100%);
   display: flex;
   align-items: center;
   justify-content: center;
   font-size: 1.8rem;
-  color: #fff;
-  box-shadow: 0 0 22px rgba(230, 57, 70, 0.5), inset 0 0 10px rgba(255, 255, 255, 0.3);
+  color: #08090d;
+  box-shadow: 0 0 22px rgba(204, 255, 0, 0.35);
   border: 1px solid rgba(255, 255, 255, 0.2);
   flex-shrink: 0;
 }
@@ -71,7 +71,7 @@
 }
 
 .user-meta p {
-  color: var(--text-muted);
+  color: #84889a;
   font-size: 0.86rem;
   display: flex;
   align-items: center;
@@ -85,9 +85,9 @@
   border-radius: 50px;
   text-transform: uppercase;
   letter-spacing: 0.6px;
-  background: rgba(230, 57, 70, 0.15);
-  color: var(--accent-red);
-  border: 1px solid rgba(230, 57, 70, 0.4);
+  background: rgba(204, 255, 0, 0.12);
+  color: #ccff00;
+  border: 1px solid rgba(204, 255, 0, 0.3);
 }
 
 .role-pill.reseller {
@@ -112,10 +112,9 @@
 }
 
 .btn-header-logout:hover {
-  background: rgba(230, 57, 70, 0.2);
-  border-color: var(--accent-red);
-  color: var(--accent-red);
-  box-shadow: 0 0 14px var(--accent-glow);
+  background: rgba(239, 68, 68, 0.15);
+  border-color: #ef4444;
+  color: #ef4444;
 }
 
 /* --- STATS & WALLET GRID --- */
@@ -127,7 +126,7 @@
 }
 
 .card-stat {
-  background: rgba(12, 24, 43, 0.7);
+  background: #151821;
   backdrop-filter: blur(14px);
   -webkit-backdrop-filter: blur(14px);
   border: 1px solid rgba(255, 255, 255, 0.08);
@@ -141,14 +140,14 @@
 }
 
 .card-stat:hover {
-  border-color: rgba(230, 57, 70, 0.35);
+  border-color: rgba(204, 255, 0, 0.35);
   transform: translateY(-2px);
 }
 
 .card-stat.featured {
-  background: linear-gradient(135deg, rgba(230, 57, 70, 0.12) 0%, rgba(12, 24, 43, 0.85) 100%);
-  border-color: rgba(230, 57, 70, 0.35);
-  box-shadow: 0 10px 30px rgba(230, 57, 70, 0.15);
+  background: linear-gradient(135deg, rgba(204, 255, 0, 0.06) 0%, #151821 100%);
+  border-color: rgba(204, 255, 0, 0.3);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
 }
 
 .stat-top {
@@ -163,7 +162,7 @@
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.6px;
-  color: var(--text-muted);
+  color: #84889a;
 }
 
 .stat-icon {
@@ -175,7 +174,7 @@
   align-items: center;
   justify-content: center;
   font-size: 1rem;
-  color: var(--accent-red);
+  color: #ccff00;
 }
 
 .stat-number {
@@ -188,35 +187,35 @@
 
 .btn-topup-wallet {
   padding: 9px 16px;
-  background: var(--accent-red);
-  color: #fff;
+  background: #ccff00;
+  color: #08090d;
   border: none;
   border-radius: 10px;
   font-size: 0.82rem;
-  font-weight: 700;
+  font-weight: 800;
   cursor: pointer;
   transition: var(--transition);
   display: inline-flex;
   align-items: center;
   gap: 8px;
   align-self: flex-start;
-  box-shadow: 0 4px 15px var(--accent-glow);
+  box-shadow: 0 4px 15px rgba(204, 255, 0, 0.3);
 }
 
 .btn-topup-wallet:hover {
-  background: var(--accent-red-hover);
-  box-shadow: 0 6px 20px rgba(230, 57, 70, 0.5);
+  background: #b3e600;
+  box-shadow: 0 6px 20px rgba(204, 255, 0, 0.45);
   transform: translateY(-1px);
 }
 
 .stat-subtext {
   font-size: 0.78rem;
-  color: var(--text-muted);
+  color: #84889a;
 }
 
 /* --- RIWAYAT TRANSAKSI TABLE CARD --- */
 .history-card-wrapper {
-  background: rgba(12, 24, 43, 0.7);
+  background: #11131a;
   backdrop-filter: blur(14px);
   -webkit-backdrop-filter: blur(14px);
   border: 1px solid rgba(255, 255, 255, 0.08);
@@ -244,7 +243,7 @@
 }
 
 .history-title-row h3 i {
-  color: var(--accent-red);
+  color: #ccff00;
 }
 
 .table-responsive {
@@ -261,12 +260,13 @@
 
 .table-cyber th {
   padding: 12px 16px;
-  color: var(--text-muted);
+  color: #84889a;
   font-weight: 700;
   font-size: 0.75rem;
   text-transform: uppercase;
   letter-spacing: 0.5px;
   border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  background: #151821;
 }
 
 .table-cyber td {
@@ -282,7 +282,7 @@
 .empty-state-cyber {
   text-align: center;
   padding: 45px 20px;
-  color: var(--text-muted);
+  color: #84889a;
 }
 
 .empty-state-cyber i {
@@ -299,28 +299,28 @@
 
 .btn-empty-order {
   padding: 8px 18px;
-  background: rgba(230, 57, 70, 0.15);
-  border: 1px solid rgba(230, 57, 70, 0.4);
-  color: var(--accent-red);
+  background: rgba(204, 255, 0, 0.12);
+  border: 1px solid rgba(204, 255, 0, 0.35);
+  color: #ccff00;
   border-radius: 8px;
   font-size: 0.82rem;
-  font-weight: 700;
+  font-weight: 800;
   text-decoration: none;
   display: inline-block;
   transition: var(--transition);
 }
 
 .btn-empty-order:hover {
-  background: var(--accent-red);
-  color: #fff;
-  box-shadow: 0 0 12px var(--accent-glow);
+  background: #ccff00;
+  color: #08090d;
+  box-shadow: 0 0 12px rgba(204, 255, 0, 0.3);
 }
 
 /* --- CYBER CONFIRMATION MODAL --- */
 .mgs-modal-overlay {
   position: fixed;
   inset: 0;
-  background: rgba(4, 9, 20, 0.85);
+  background: rgba(8, 9, 13, 0.85);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
   display: flex;
@@ -341,9 +341,9 @@
 .mgs-cyber-modal {
   width: 100%;
   max-width: 380px;
-  background: rgba(12, 24, 43, 0.95);
-  border: 1px solid rgba(230, 57, 70, 0.35);
-  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.8), 0 0 30px rgba(230, 57, 70, 0.2);
+  background: #11131a;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.85);
   border-radius: 24px;
   padding: 28px 24px;
   text-align: center;
@@ -359,15 +359,14 @@
   width: 60px;
   height: 60px;
   border-radius: 50%;
-  background: rgba(230, 57, 70, 0.15);
-  border: 1px solid rgba(230, 57, 70, 0.4);
-  color: var(--accent-red, #e63946);
+  background: rgba(239, 68, 68, 0.15);
+  border: 1px solid rgba(239, 68, 68, 0.35);
+  color: #ef4444;
   font-size: 1.5rem;
   display: flex;
   align-items: center;
   justify-content: center;
   margin: 0 auto 16px;
-  box-shadow: 0 0 20px rgba(230, 57, 70, 0.35);
 }
 
 .mgs-cyber-modal h3 {
@@ -379,7 +378,7 @@
 
 .mgs-cyber-modal p {
   font-size: 0.85rem;
-  color: var(--text-muted, #94a3b8);
+  color: #84889a;
   line-height: 1.5;
   margin-bottom: 24px;
 }
@@ -404,100 +403,27 @@
 
 .btn-modal-cancel:hover {
   background: rgba(255, 255, 255, 0.1);
-  border-color: rgba(255, 255, 255, 0.2);
 }
 
 .btn-modal-confirm {
   padding: 12px;
-  background: var(--accent-red, #e63946);
+  background: #ef4444;
   border: none;
   border-radius: 12px;
   color: #fff;
   font-weight: 800;
   font-size: 0.88rem;
   cursor: pointer;
-  box-shadow: 0 4px 15px rgba(230, 57, 70, 0.4);
   transition: all 0.2s ease;
 }
 
 .btn-modal-confirm:hover {
-  background: var(--accent-red-hover, #d62828);
+  background: #dc2626;
   transform: translateY(-2px);
-  box-shadow: 0 6px 20px rgba(230, 57, 70, 0.6);
 }
 
 @media (max-width: 900px) {
   .profile-banner-card { flex-direction: column; align-items: flex-start; gap: 18px; }
   .btn-header-logout { width: 100%; justify-content: center; }
   .stats-grid { grid-template-columns: 1fr; }
-}
-/* =========================================
-   DASHBOARD CYBER MATTE BLACK x VOLT OVERRIDE
-   ========================================= */
-
-body {
-  background-color: #08090d !important;
-}
-
-/* 1. Header Profil */
-.profile-header-card,
-.dashboard-user-card,
-div[class*="user-card"] {
-  background: #11131a !important;
-  border: 1px solid rgba(255, 255, 255, 0.08) !important;
-}
-
-/* 2. Kartu Metrik Saldo, Pesanan, & Tier */
-.metric-card,
-.stat-card,
-.wallet-card,
-div[class*="metric"],
-div[class*="stat-box"] {
-  background: #151821 !important;
-  border: 1px solid rgba(255, 255, 255, 0.08) !important;
-  box-shadow: none !important;
-}
-
-/* Tombol Isi Saldo MGS */
-.btn-topup-wallet,
-a[href*="deposit"],
-.btn-action-primary {
-  background: #ccff00 !important;
-  color: #0b0c10 !important;
-  font-weight: 800 !important;
-  border: none !important;
-  box-shadow: 0 4px 14px rgba(204, 255, 0, 0.3) !important;
-}
-
-/* 3. Kotak Riwayat Transaksi */
-.history-section,
-.table-container,
-.transaction-card,
-div[class*="history"],
-div[class*="table-wrapper"] {
-  background: #11131a !important;
-  border: 1px solid rgba(255, 255, 255, 0.08) !important;
-}
-
-/* Baris & Teks Tabel Transaksi */
-table thead th {
-  background: #151821 !important;
-  color: #84889a !important;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.06) !important;
-}
-
-table tbody tr {
-  border-bottom: 1px solid rgba(255, 255, 255, 0.04) !important;
-}
-
-table tbody tr:hover {
-  background: rgba(255, 255, 255, 0.02) !important;
-}
-
-/* Nilai Tagihan di Tabel */
-table td[class*="amount"],
-table td[class*="price"],
-.text-tagihan {
-  color: #ccff00 !important;
-  font-weight: 800 !important;
 }
