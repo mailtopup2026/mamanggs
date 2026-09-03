@@ -176,7 +176,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     console.warn("Pengecekan manual game:", err);
   }
 
-  // Update Tampilan Informasi Game
+  // Update Tampilan Informasi Game Awal
   if (document.getElementById("gameTitle")) document.getElementById("gameTitle").innerText = currentGame.title;
   if (document.getElementById("gameDev")) document.getElementById("gameDev").innerText = currentGame.dev;
   if (document.getElementById("gameBanner")) document.getElementById("gameBanner").src = currentGame.banner;
@@ -443,17 +443,28 @@ document.addEventListener("DOMContentLoaded", async () => {
     // ALUR DIGIFLAZZ BIASA
     // ----------------------------------------------------
     try {
+      // SINKRONISASI COVER: Ambil dari game_categories (bukan game_covers)
       try {
-        const { data: dbCover } = await window.supabase
-          .from("game_covers")
-          .select("*")
+        const { data: dbCat } = await window.supabase
+          .from("game_categories")
+          .select("image_url, title, developer")
           .ilike("game_code", currentGame.code)
           .maybeSingle();
 
-        if (dbCover && dbCover.banner_url && document.getElementById("gameBanner")) {
-          document.getElementById("gameBanner").src = dbCover.banner_url;
+        if (dbCat) {
+          if (dbCat.image_url && document.getElementById("gameBanner")) {
+            document.getElementById("gameBanner").src = dbCat.image_url;
+          }
+          if (dbCat.title && document.getElementById("gameTitle")) {
+            document.getElementById("gameTitle").innerText = dbCat.title;
+          }
+          if (dbCat.developer && document.getElementById("gameDev")) {
+            document.getElementById("gameDev").innerText = dbCat.developer;
+          }
         }
-      } catch (coverErr) {}
+      } catch (coverErr) {
+        console.warn("Gagal load cover game_categories:", coverErr);
+      }
 
       let query = window.supabase
         .from("products")
@@ -550,7 +561,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   }
 
   // ==========================================
-  // CEK ID / NICKNAME & HINT BOX (GLOBAL UNTUK SEMUA GAME)
+  // CEK ID / NICKNAME & HINT BOX (GLOBAL SEMUA GAME)
   // ==========================================
   const userIdInput = document.getElementById("userIdInput");
   const zoneIdInput = document.getElementById("zoneIdInput");
@@ -559,7 +570,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   let checkTimeout = null;
 
-  // Fungsi merender hint box: OTOMATIS AKTIF DENGAN LINK IMSELA DI SEMUA GAME
+  // Fungsi merender hint box: LINK DIRECT KE TOOLS ID CHECKER IMSELA
   function renderDefaultAccountHint() {
     if (!nicknameBox || isManualGame) return;
 
@@ -568,14 +579,14 @@ document.addEventListener("DOMContentLoaded", async () => {
     nicknameBox.style.borderColor = "rgba(56, 189, 248, 0.3)";
     nicknameBox.style.color = "#94a3b8";
 
-    // Semua game tanpa terkecuali mendapatkan link bantuan checker Imsela
+    // Link langsung menuju tools pengecekan spesifik Imsela
     nicknameBox.innerHTML = `
       <i class="fa-solid fa-circle-info" style="color: #38bdf8; font-size: 1.1rem; margin-top: 2px; flex-shrink: 0;"></i>
       <div style="font-size: 0.83rem; line-height: 1.45;">
         <div>Pastikan <strong>User ID</strong> sudah benar sebelum checkout.</div>
         <div style="margin-top: 2px;">
           Kamu juga bisa cek nama akun di: 
-          <a href="https://imsela.com/checker" target="_blank" rel="noopener noreferrer" style="color: #38bdf8; text-decoration: underline; font-weight: 600;">
+          <a href="https://imsela.com/tools/gameidchecker/" target="_blank" rel="noopener noreferrer" style="color: #38bdf8; text-decoration: underline; font-weight: 600;">
             Imsela Game ID Checker <i class="fa-solid fa-arrow-up-right-from-square" style="font-size: 0.72rem;"></i>
           </a>
         </div>
@@ -585,10 +596,10 @@ document.addEventListener("DOMContentLoaded", async () => {
     nicknameBox.style.display = "flex";
   }
 
-  // Panggil langsung saat halaman dibuka (berlaku untuk semua game)
+  // Tampilkan langsung saat awal halaman dimuat
   renderDefaultAccountHint();
 
-  // Khusus game yang punya fitur auto-check API (seperti MLBB, FF, dll.)
+  // Khusus game dengan fitur auto-check API
   if (!isManualGame && currentGame.supportsCheck) {
     async function checkNickname() {
       const uid = userIdInput.value.trim();
