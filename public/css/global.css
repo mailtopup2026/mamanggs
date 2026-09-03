@@ -969,4 +969,137 @@ a {
     height: 32px;
     width: 115px;
   }
+
+  /* ===================================================
+   TOTAL THEME OVERRIDE: MATTE CYBER BLACK x VOLT LIME
+   =================================================== */
+
+/* 1. Body & Container Utama */
+body {
+  background-color: #0b0c10 !important;
+  color: #ffffff !important;
+}
+
+/* 2. Navbar & Input Search */
+.navbar, header {
+  background: #090a0e !important;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06) !important;
+}
+
+.nav-search, 
+.nav-search input,
+.search-box, 
+.search-box input {
+  background: #14161f !important;
+  border-color: rgba(255, 255, 255, 0.08) !important;
+  color: #fff !important;
+}
+
+.nav-search input::placeholder,
+.search-box input::placeholder {
+  color: #64748b !important;
+}
+
+/* 3. Section Flash Sale & Container Beranda */
+.flash-sale-wrapper,
+.flash-sale-box,
+.flash-sale-container,
+.section-card {
+  background: #12141c !important;
+  border: 1px solid rgba(255, 255, 255, 0.07) !important;
+}
+
+/* 4. Kartu Flash Sale & Item Game */
+.flash-item-card,
+.game-card,
+.catalog-card {
+  background: #171924 !important;
+  border: 1px solid rgba(255, 255, 255, 0.05) !important;
+}
+
+.flash-item-card:hover,
+.game-card:hover {
+  border-color: #ccff00 !important;
+  transform: translateY(-3px);
+}
+
+/* 5. Halaman Order: Sidebar & Step Cards */
+.game-info-sidebar,
+.step-card,
+.instruction-box {
+  background: #12141c !important;
+  border: 1px solid rgba(255, 255, 255, 0.07) !important;
+  box-shadow: none !important;
+}
+
+/* Input Form Data Akun */
+.form-group input {
+  background: #171924 !important;
+  border: 1px solid rgba(255, 255, 255, 0.08) !important;
+  color: #fff !important;
+}
+
+.form-group input:focus {
+  border-color: #ccff00 !important;
+  box-shadow: 0 0 10px rgba(204, 255, 0, 0.15) !important;
+}
+
+/* 6. Kartu Nominal Produk (Hapus Biru-birunya) */
+.nominal-card {
+  background: #171924 !important;
+  border: 1px solid rgba(255, 255, 255, 0.07) !important;
+  transition: all 0.2s ease !important;
+}
+
+.nominal-title {
+  color: #ffffff !important;
+  font-weight: 700 !important;
+}
+
+.nominal-price {
+  color: #ccff00 !important;
+  font-weight: 800 !important;
+}
+
+/* Saat Kartu Nominal Dipilih */
+.nominal-card.selected {
+  background: #1e2230 !important;
+  border: 1.5px solid #ccff00 !important;
+  box-shadow: 0 0 18px rgba(204, 255, 0, 0.18) !important;
+}
+
+/* 7. Kartu Metode Pembayaran */
+.payment-card {
+  background: #171924 !important;
+  border: 1px solid rgba(255, 255, 255, 0.07) !important;
+}
+
+.payment-card.selected {
+  background: #1e2230 !important;
+  border-color: #ccff00 !important;
+  box-shadow: 0 0 16px rgba(204, 255, 0, 0.16) !important;
+}
+
+/* 8. Tombol Aksi Utama (Volt Lime Kontras) */
+.btn-checkout,
+.btn-nav-register {
+  background: #ccff00 !important;
+  color: #0b0c10 !important;
+  font-weight: 800 !important;
+  border: none !important;
+  box-shadow: 0 4px 20px rgba(204, 255, 0, 0.3) !important;
+}
+
+.btn-checkout:hover,
+.btn-nav-register:hover {
+  background: #b3e600 !important;
+  box-shadow: 0 6px 25px rgba(204, 255, 0, 0.45) !important;
+}
+
+/* Aksen Nomor Step */
+.step-number {
+  background: #ccff00 !important;
+  color: #0b0c10 !important;
+  font-weight: 800 !important;
+}
 }
