@@ -475,7 +475,7 @@ a {
 }
 
 /* ===================================================
-   DESKTOP VS MOBILE NAV TOGGLE
+   DESKTOP VS MOBILE NAV TOGGLE & DROPDOWN
    =================================================== */
 @media (min-width: 769px) {
   .mobile-nav-toggle-group,
@@ -516,23 +516,77 @@ a {
     color: #ccff00 !important;
   }
 
-  .mobile-menu-drawer {
+  /* DRAWER DROPDOWN MOBILE (PRESISI DI BAWAH NAVBAR KANAN ATAS) */
+  .mobile-menu-drawer,
+  #mobileMenuDropdown {
     display: none !important;
-    position: absolute !important;
-    top: calc(100% + 4px) !important;
-    right: 14px !important;
-    width: 240px !important;
+    position: fixed !important;
+    top: 65px !important;
+    right: 16px !important;
+    left: auto !important;
+    width: 250px !important;
     background: #11131a !important;
     border: 1px solid rgba(255, 255, 255, 0.12) !important;
-    border-radius: 14px !important;
-    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.8) !important;
-    padding: 14px !important;
+    border-radius: 16px !important;
+    box-shadow: 0 16px 40px rgba(0, 0, 0, 0.85) !important;
+    padding: 16px !important;
     z-index: 99999 !important;
+    backdrop-filter: blur(12px) !important;
   }
 
-  .mobile-menu-drawer.show {
-    display: block !important;
+  .mobile-menu-drawer.show,
+  #mobileMenuDropdown.show {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 6px !important;
     animation: slideDownMenu 0.2s ease-out;
+  }
+
+  .mobile-menu-header {
+    display: flex !important;
+    justify-content: space-between !important;
+    align-items: center !important;
+    padding-bottom: 8px !important;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08) !important;
+    margin-bottom: 4px !important;
+  }
+
+  .mobile-menu-items {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 6px !important;
+    width: 100% !important;
+  }
+
+  /* Link item menu tersusun vertikal ke bawah */
+  .mobile-menu-link,
+  .mobile-menu-drawer a {
+    display: flex !important;
+    align-items: center !important;
+    gap: 10px !important;
+    padding: 9px 12px !important;
+    color: #cbd5e1 !important;
+    text-decoration: none !important;
+    font-size: 0.88rem !important;
+    font-weight: 600 !important;
+    border-radius: 8px !important;
+    background: rgba(255, 255, 255, 0.03) !important;
+    transition: all 0.2s ease !important;
+    white-space: nowrap !important;
+  }
+
+  .mobile-menu-link:hover,
+  .mobile-menu-drawer a:hover {
+    background: rgba(255, 255, 255, 0.08) !important;
+    color: #ccff00 !important;
+    transform: translateX(3px) !important;
+  }
+
+  #mobileAuthSlot {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 6px !important;
+    width: 100% !important;
   }
 
   .logo-video-wrap {
@@ -550,6 +604,90 @@ a {
 @keyframes slideDownMenu {
   from { opacity: 0; transform: translateY(-10px); }
   to { opacity: 1; transform: translateY(0); }
+}
+
+/* ===================================================
+   MODAL LOGOUT CYBER (GLOBAL)
+   =================================================== */
+.mgs-modal-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.75);
+  backdrop-filter: blur(6px);
+  z-index: 999999;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+}
+
+.mgs-modal-overlay.show {
+  display: flex !important;
+}
+
+.mgs-cyber-modal {
+  background: #0f172a;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 18px;
+  max-width: 360px;
+  width: 100%;
+  padding: 24px 20px;
+  text-align: center;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.8);
+}
+
+.modal-icon-glow {
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  background: rgba(239, 68, 68, 0.12);
+  color: #ef4444;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.4rem;
+  margin-bottom: 12px;
+  border: 1px solid rgba(239, 68, 68, 0.3);
+}
+
+.mgs-cyber-modal h3 {
+  color: #fff;
+  font-size: 1.15rem;
+  font-weight: 800;
+  margin: 0 0 6px;
+}
+
+.mgs-cyber-modal p {
+  color: #94a3b8;
+  font-size: 0.85rem;
+  line-height: 1.5;
+  margin: 0 0 20px;
+}
+
+.modal-actions-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+.btn-modal-cancel {
+  padding: 11px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: #cbd5e1;
+  border-radius: 10px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.btn-modal-confirm {
+  padding: 11px;
+  background: #ef4444;
+  border: none;
+  color: #fff;
+  border-radius: 10px;
+  font-weight: 800;
+  cursor: pointer;
 }
 
 /* ===================================================
