@@ -1,176 +1,182 @@
-/* ===================================================
-   MAMANGGS - GLOBAL NAVBAR, MOBILE MENU & MODAL LOGOUT
-   =================================================== */
-
-/* Container Menu Dropdown Mobile */
-#mobileMenuDropdown {
-  display: none;
-  position: fixed !important;
-  top: 65px !important;
-  right: 16px !important;
-  left: auto !important;
-  width: 250px !important;
-  background: #0d1527 !important;
-  border: 1px solid rgba(255, 255, 255, 0.12) !important;
-  border-radius: 16px !important;
-  padding: 16px !important;
-  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.8) !important;
-  z-index: 99999 !important;
-  flex-direction: column !important;
-  gap: 6px !important;
-  backdrop-filter: blur(12px) !important;
+/* ==========================================
+   NAVBAR STYLING - MAMANGGS
+   ========================================== */
+.navbar {
+  position: sticky;
+  top: 0;
+  left: 0;
+  right: 0;
+  background: rgba(9, 10, 15, 0.92);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  z-index: 999;
+  padding: 12px 0;
 }
 
-#mobileMenuDropdown.show {
-  display: flex !important;
-  animation: dropdownFade 0.2s ease-out forwards;
-}
-
-@keyframes dropdownFade {
-  from {
-    opacity: 0;
-    transform: translateY(-8px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-#mobileMenuDropdown > div:first-child,
-.mobile-menu-header {
-  display: flex !important;
-  justify-content: space-between !important;
-  align-items: center !important;
-  font-weight: 800 !important;
-  color: #ffffff !important;
-  font-size: 0.95rem !important;
-  padding-bottom: 8px !important;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.08) !important;
-  margin-bottom: 4px !important;
-}
-
-#btnCloseMobileMenu {
-  cursor: pointer;
-  color: #94a3b8;
-  font-size: 1.1rem;
-  transition: color 0.2s;
-}
-
-#btnCloseMobileMenu:hover {
-  color: #ef4444;
-}
-
-.mobile-menu-link,
-#mobileMenuDropdown a {
-  display: flex !important;
-  align-items: center !important;
-  gap: 10px !important;
-  padding: 9px 12px !important;
-  color: #cbd5e1 !important;
-  text-decoration: none !important;
-  font-size: 0.88rem !important;
-  font-weight: 600 !important;
-  border-radius: 8px !important;
-  background: rgba(255, 255, 255, 0.03) !important;
-  transition: all 0.2s ease !important;
-  white-space: nowrap !important;
-}
-
-.mobile-menu-link:hover,
-#mobileMenuDropdown a:hover {
-  background: rgba(255, 255, 255, 0.08) !important;
-  color: #38bdf8 !important;
-  transform: translateX(3px) !important;
-}
-
-#mobileAuthSlot {
-  display: flex !important;
-  flex-direction: column !important;
-  gap: 6px !important;
-  margin-top: 4px !important;
-  padding-top: 6px !important;
-  border-top: 1px solid rgba(255, 255, 255, 0.08) !important;
-}
-
-/* Modal Logout */
-.mgs-modal-overlay {
-  display: none;
-  position: fixed;
-  inset: 0;
-  background: rgba(0, 0, 0, 0.75);
-  backdrop-filter: blur(6px);
-  z-index: 999999;
+.navbar-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 16px;
+  display: flex;
+  justify-content: space-between;
   align-items: center;
-  justify-content: center;
-  padding: 16px;
 }
 
-.mgs-modal-overlay.show {
-  display: flex !important;
+.brand-logo {
+  display: flex;
+  align-items: center;
+  text-decoration: none;
 }
 
-.mgs-cyber-modal {
-  background: #0f172a;
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  border-radius: 18px;
-  max-width: 360px;
+.logo-video-wrap {
+  width: 140px;
+  height: 38px;
+  display: flex;
+  align-items: center;
+}
+
+.logo-video {
   width: 100%;
-  padding: 24px 20px;
-  text-align: center;
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.8);
+  height: 100%;
+  object-fit: contain;
 }
 
-.modal-icon-glow {
-  width: 52px;
-  height: 52px;
-  border-radius: 50%;
-  background: rgba(239, 68, 68, 0.12);
-  color: #ef4444;
-  display: inline-flex;
+/* Nav Actions Desktop */
+.nav-actions {
+  display: flex;
   align-items: center;
-  justify-content: center;
-  font-size: 1.4rem;
-  margin-bottom: 12px;
-  border: 1px solid rgba(239, 68, 68, 0.3);
-}
-
-.mgs-cyber-modal h3 {
-  color: #fff;
-  font-size: 1.15rem;
-  font-weight: 800;
-  margin: 0 0 6px;
-}
-
-.mgs-cyber-modal p {
-  color: #94a3b8;
-  font-size: 0.85rem;
-  line-height: 1.5;
-  margin: 0 0 20px;
-}
-
-.modal-actions-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
   gap: 10px;
 }
 
-.btn-modal-cancel {
-  padding: 11px;
+.btn-nav-login {
   background: rgba(255, 255, 255, 0.05);
   border: 1px solid rgba(255, 255, 255, 0.1);
   color: #cbd5e1;
+  padding: 8px 16px;
   border-radius: 10px;
+  font-size: 0.85rem;
   font-weight: 700;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  transition: all 0.2s ease;
+}
+
+.btn-nav-login:hover {
+  background: rgba(255, 255, 255, 0.1);
+  color: #fff;
+}
+
+.btn-nav-register {
+  background: #ccff00;
+  color: #000;
+  padding: 8px 16px;
+  border-radius: 10px;
+  font-size: 0.85rem;
+  font-weight: 800;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  transition: transform 0.15s ease, background 0.15s ease;
+}
+
+.btn-nav-register:hover {
+  background: #b8e600;
+  transform: translateY(-1px);
+}
+
+/* User Capsule */
+.user-nav-capsule {
+  display: inline-flex;
+  align-items: center;
+  background: rgba(15, 23, 42, 0.85);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 50px;
+  padding: 4px 6px 4px 5px;
+  gap: 8px;
+}
+
+/* Mobile Toggle */
+.mobile-only {
+  display: none;
+}
+
+.btn-icon {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: #fff;
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.1rem;
   cursor: pointer;
 }
 
-.btn-modal-confirm {
-  padding: 11px;
-  background: #ef4444;
-  border: none;
-  color: #fff;
-  border-radius: 10px;
+/* Mobile Drawer Dropdown */
+#mobileMenuDropdown {
+  display: none;
+  position: fixed;
+  top: 65px;
+  right: 16px;
+  width: 230px;
+  background: #111622;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 16px;
+  padding: 12px;
+  box-shadow: 0 16px 36px rgba(0, 0, 0, 0.7);
+  z-index: 99999;
+  flex-direction: column;
+  gap: 4px;
+}
+
+#mobileMenuDropdown.show {
+  display: flex;
+}
+
+.mobile-menu-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 4px 8px 8px;
+  font-size: 0.8rem;
   font-weight: 800;
-  cursor: pointer;
+  color: #8e9bb0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  margin-bottom: 6px;
+}
+
+.mobile-menu-link {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px;
+  color: #cbd5e1;
+  text-decoration: none;
+  font-size: 0.88rem;
+  font-weight: 700;
+  border-radius: 8px;
+  transition: background 0.15s ease;
+}
+
+.mobile-menu-link:hover {
+  background: rgba(255, 255, 255, 0.05);
+  color: #fff;
+}
+
+/* Sembunyikan elemen desktop di mode HP agar tidak melayang */
+@media (max-width: 768px) {
+  .desktop-only,
+  .nav-actions.desktop-only,
+  #desktopNavActions {
+    display: none !important;
+  }
+  .mobile-only {
+    display: flex;
+  }
 }
