@@ -54,7 +54,7 @@ document.addEventListener("DOMContentLoaded", async () => {
       let userPhone = null;
 
       if (profile) {
-        currentProfileData = profile; // Simpan data profil terbaru
+        currentProfileData = profile;
         userPhone = profile.whatsapp || null;
 
         if (profile.full_name && document.getElementById("profileName")) {
@@ -78,7 +78,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         if (dashboardBadges) {
           const favGames = Array.isArray(profile.favorite_games) ? profile.favorite_games : [];
           if (favGames.length > 0) {
-            dashboardBadges.innerHTML = favGames.map(code => {
+            dashboardBadges.innerHTML = favGames.map((code) => {
               const g = gameDictionary[code] || { name: code, icon: "fa-solid fa-gamepad" };
               return `
                 <span style="display: inline-flex; align-items: center; gap: 5px; background: rgba(30, 41, 59, 0.85); border: 1px solid rgba(245, 158, 11, 0.4); padding: 3px 10px; border-radius: 20px; font-size: 0.72rem; font-weight: 800; color: #fff;">
@@ -179,17 +179,35 @@ document.addEventListener("DOMContentLoaded", async () => {
   const btnSubmitDeposit = document.getElementById("btnSubmitDeposit");
   const presetButtons = document.querySelectorAll(".btn-preset-val");
 
+  // Fungsi helper untuk memulihkan tombol top up
+  function resetDepositBtn() {
+    if (btnSubmitDeposit) {
+      btnSubmitDeposit.disabled = false;
+      btnSubmitDeposit.innerHTML = '<i class="fa-solid fa-qrcode"></i> Lanjut Pilih Metode Pembayaran';
+    }
+  }
+
+  // Pulihkan status tombol jika user kembali lewat tombol back peramban
+  window.addEventListener("pageshow", () => {
+    resetDepositBtn();
+  });
+
   if (btnDeposit && depositModal) {
     btnDeposit.addEventListener("click", () => {
+      resetDepositBtn();
       depositModal.classList.add("show");
     });
 
     btnCloseDeposit?.addEventListener("click", () => {
+      resetDepositBtn();
       depositModal.classList.remove("show");
     });
 
     depositModal.addEventListener("click", (e) => {
-      if (e.target === depositModal) depositModal.classList.remove("show");
+      if (e.target === depositModal) {
+        resetDepositBtn();
+        depositModal.classList.remove("show");
+      }
     });
 
     presetButtons.forEach((btn) => {
@@ -226,7 +244,6 @@ document.addEventListener("DOMContentLoaded", async () => {
       const randomDigits = Math.floor(1000 + Math.random() * 9000);
       const invoiceNumber = `DEP-${dateStr}-${randomDigits}`;
 
-      // Ambil data pelanggan terbaru dari data profil yang tersinkron
       const customerName = currentProfileData?.full_name || user.user_metadata?.full_name || "Member MGS";
       const customerPhone = currentProfileData?.whatsapp || user.phone || "081234567890";
 
@@ -280,8 +297,7 @@ document.addEventListener("DOMContentLoaded", async () => {
       } catch (err) {
         console.error("Deposit Error:", err);
         alert(`Gagal memproses deposit: ${err.message}`);
-        btnSubmitDeposit.disabled = false;
-        btnSubmitDeposit.innerHTML = '<i class="fa-solid fa-qrcode"></i> Lanjut Pilih Metode Pembayaran';
+        resetDepositBtn();
       }
     });
   }
