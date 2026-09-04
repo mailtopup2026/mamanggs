@@ -61,7 +61,7 @@
       box-shadow: 0 12px 25px rgba(230, 57, 70, 0.6);
     }
 
-    /* CLEAN FILTER BAR (SEARCH + SORT ONLY) */
+    /* FILTER BAR */
     .filter-bar {
       display: flex;
       gap: 12px;
@@ -110,9 +110,6 @@
       cursor: pointer;
       box-sizing: border-box;
     }
-    .sort-select:focus {
-      border-color: #38bdf8;
-    }
 
     @media (max-width: 640px) {
       .sort-select {
@@ -120,14 +117,14 @@
       }
     }
 
-    /* POST GRID */
+    /* GRID POST */
     .posts-grid {
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
       gap: 20px;
     }
     .post-card {
-      background: rgba(15, 23, 42, 0.7);
+      background: rgba(15, 23, 42, 0.75);
       border: 1px solid rgba(255, 255, 255, 0.08);
       border-radius: 16px;
       overflow: hidden;
@@ -144,10 +141,53 @@
       box-shadow: 0 12px 30px rgba(0, 0, 0, 0.5);
     }
 
-    /* HOT CARD */
+    /* STYLING KHUSUS STATUS TERJUAL (SOLD) */
+    .post-card.status-sold {
+      opacity: 0.75;
+      border-color: rgba(239, 68, 68, 0.3);
+    }
+    .post-card.status-sold .card-thumb img {
+      filter: grayscale(80%);
+    }
+    .watermark-sold {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%) rotate(-12deg);
+      background: rgba(239, 68, 68, 0.92);
+      color: #ffffff;
+      padding: 6px 18px;
+      font-size: 1.1rem;
+      font-weight: 900;
+      letter-spacing: 2px;
+      border-radius: 8px;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.6);
+      z-index: 4;
+      border: 2px dashed #ffffff;
+    }
+
+    /* STYLING KHUSUS STATUS PROSES REKBER (HOLD) */
+    .post-card.status-hold {
+      border-color: rgba(245, 158, 11, 0.5);
+    }
+    .badge-hold-tag {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      background: rgba(245, 158, 11, 0.95);
+      color: #000;
+      padding: 4px 10px;
+      border-radius: 6px;
+      font-size: 0.72rem;
+      font-weight: 900;
+      z-index: 3;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.5);
+    }
+
+    /* EFEK MENYALA UNTUK HOT ITEM */
     .post-card.is-hot {
-      border: 1px solid #f59e0b;
-      box-shadow: 0 0 20px rgba(245, 158, 11, 0.2);
+      border: 1.5px solid #f59e0b;
+      box-shadow: 0 0 20px rgba(245, 158, 11, 0.3);
     }
     .badge-hot-tag {
       position: absolute;
@@ -160,8 +200,16 @@
       font-size: 0.72rem;
       font-weight: 900;
       letter-spacing: 0.5px;
-      z-index: 2;
-      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+      z-index: 3;
+      box-shadow: 0 4px 12px rgba(239, 68, 68, 0.5);
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      animation: pulseGlow 1.8s infinite alternate;
+    }
+    @keyframes pulseGlow {
+      from { box-shadow: 0 0 8px rgba(245, 158, 11, 0.4); }
+      to { box-shadow: 0 0 16px rgba(239, 68, 68, 0.8); }
     }
 
     .card-thumb {
@@ -187,6 +235,7 @@
       border-radius: 6px;
       font-size: 0.72rem;
       font-weight: 700;
+      z-index: 2;
     }
 
     .card-body {
@@ -262,7 +311,6 @@
       </a>
       
       <div class="nav-actions desktop-only" id="desktopNavActions">
-        <!-- Akan di-render secara dinamis oleh navbar.js -->
         <a href="/market.html" class="btn-nav-login" style="color: #38bdf8;"><i class="fa-solid fa-store"></i> FJB Akun</a>
         <a href="/order-status.html" class="btn-nav-login" style="color: #10b981;"><i class="fa-solid fa-receipt"></i> Lacak</a>
         <a href="/auth/login.html" class="btn-nav-login" id="navLoginBtn"><i class="fa-solid fa-right-to-bracket"></i> Masuk</a>
@@ -299,11 +347,11 @@
       </a>
     </div>
 
-    <!-- FILTER BAR RINGKAS -->
+    <!-- FILTER BAR -->
     <div class="filter-bar">
       <div class="search-input-wrap">
         <i class="fa-solid fa-magnifying-glass"></i>
-        <input type="text" id="searchKeyword" placeholder="Cari game (MLBB, Free Fire, Valorant) atau judul akun...">
+        <input type="text" id="searchKeyword" placeholder="Cari game (MLBB, Free Fire, Whiteout Survival) atau judul akun...">
       </div>
       <select id="sortOrder" class="sort-select">
         <option value="latest">Terbaru Ditambahkan</option>
@@ -322,7 +370,7 @@
 
   </main>
 
-  <!-- SKRIP HARUS BERURUTAN -->
+  <!-- SCRIPT KONEKSI & NAVBAR -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="/js/supabase.js"></script>
   <script src="/js/navbar.js"></script>
@@ -337,7 +385,7 @@
 
       searchInput.addEventListener("input", () => {
         clearTimeout(searchTimeout);
-        searchTimeout = setTimeout(loadMarketPosts, 350);
+        searchTimeout = setTimeout(loadMarketPosts, 300);
       });
 
       sortSelect.addEventListener("change", loadMarketPosts);
@@ -356,6 +404,7 @@
           const keyword = searchInput.value.trim();
           const sortVal = sortSelect.value;
 
+          // Ambil semua status (available, hold, sold) agar etalase terlihat aktif
           let query = window.supabase
             .from("market_posts")
             .select(`
@@ -365,16 +414,16 @@
               price,
               images,
               is_hot,
+              status,
               created_at,
               seller:seller_id (
                 username,
                 avatar_url,
                 is_trusted_seller
               )
-            `)
-            .eq("status", "available");
+            `);
 
-          // Universal Search (Game ATAU Judul Postingan)
+          // Universal Search (Game ATAU Judul)
           if (keyword) {
             query = query.or(`post_title.ilike.%${keyword}%,game_title.ilike.%${keyword}%`);
           }
@@ -424,11 +473,16 @@
           const sellerName = post.seller?.username || "Penjual";
           const isTrusted = post.seller?.is_trusted_seller;
           const formattedPrice = `Rp ${Number(post.price).toLocaleString("id-ID")}`;
+          const isSold = post.status === "sold";
+          const isHold = post.status === "hold";
 
           return `
-            <a href="/market-detail.html?id=${post.id}" class="post-card ${post.is_hot ? 'is-hot' : ''}">
-              ${post.is_hot ? '<div class="badge-hot-tag"><i class="fa-solid fa-fire"></i> HOT ITEM</div>' : ''}
+            <a href="/market-detail.html?id=${post.id}" class="post-card ${post.is_hot ? 'is-hot' : ''} ${isSold ? 'status-sold' : ''} ${isHold ? 'status-hold' : ''}">
+              ${post.is_hot ? '<div class="badge-hot-tag"><i class="fa-solid fa-fire"></i> HOT</div>' : ''}
+              ${isHold ? '<div class="badge-hold-tag"><i class="fa-solid fa-lock"></i> REKBER PROSES</div>' : ''}
+              
               <div class="card-thumb">
+                ${isSold ? '<div class="watermark-sold">TERJUAL</div>' : ''}
                 <img src="${coverImg}" alt="${post.post_title}" loading="lazy">
                 <span class="game-badge">${post.game_title}</span>
               </div>
