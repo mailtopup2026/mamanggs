@@ -258,22 +258,22 @@
             </div>
 
             <!-- DETAIL PESANAN GRID -->
-            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 12px; font-size: 0.9rem; margin-bottom: 20px;">
-              <div style="background: rgba(0,0,0,0.3); padding: 12px 14px; border-radius: 10px; border: 1px solid rgba(255,255,255,0.05);">
+            <div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; font-size: 0.9rem; margin-bottom: 20px;">
+              <div style="min-width: 0; background: rgba(0,0,0,0.3); padding: 12px 14px; border-radius: 10px; border: 1px solid rgba(255,255,255,0.05);">
                 <span style="color: #94a3b8; display: block; margin-bottom: 4px; font-size: 0.78rem;">Produk</span>
-                <strong style="color: #f8fafc; font-size: 0.95rem;">${order.item_name}</strong>
+                <strong style="color: #f8fafc; font-size: 0.95rem; display: block; word-break: break-word; overflow-wrap: anywhere;">${order.item_name}</strong>
               </div>
-              <div style="background: rgba(0,0,0,0.3); padding: 12px 14px; border-radius: 10px; border: 1px solid rgba(255,255,255,0.05);">
+              <div style="min-width: 0; background: rgba(0,0,0,0.3); padding: 12px 14px; border-radius: 10px; border: 1px solid rgba(255,255,255,0.05);">
                 <span style="color: #94a3b8; display: block; margin-bottom: 4px; font-size: 0.78rem;">Total Bayar</span>
-                <strong style="color: #38bdf8; font-size: 0.95rem;">${formattedPrice}</strong>
+                <strong style="color: #38bdf8; font-size: 0.95rem; display: block; word-break: break-word;">${formattedPrice}</strong>
               </div>
-              <div style="background: rgba(0,0,0,0.3); padding: 12px 14px; border-radius: 10px; border: 1px solid rgba(255,255,255,0.05);">
+              <div style="min-width: 0; background: rgba(0,0,0,0.3); padding: 12px 14px; border-radius: 10px; border: 1px solid rgba(255,255,255,0.05);">
                 <span style="color: #94a3b8; display: block; margin-bottom: 4px; font-size: 0.78rem;">Tujuan (User ID)</span>
-                <strong style="color: #f8fafc; font-size: 0.95rem;">${targetId}</strong>
+                <strong style="color: #f8fafc; font-size: 0.85rem; display: block; word-break: break-all; overflow-wrap: anywhere; line-height: 1.3;">${targetId}</strong>
               </div>
-              <div style="background: rgba(0,0,0,0.3); padding: 12px 14px; border-radius: 10px; border: 1px solid rgba(255,255,255,0.05);">
+              <div style="min-width: 0; background: rgba(0,0,0,0.3); padding: 12px 14px; border-radius: 10px; border: 1px solid rgba(255,255,255,0.05);">
                 <span style="color: #94a3b8; display: block; margin-bottom: 4px; font-size: 0.78rem;">Waktu Order</span>
-                <strong style="color: #f8fafc; font-size: 0.85rem;">${formattedDate}</strong>
+                <strong style="color: #f8fafc; font-size: 0.85rem; display: block; word-break: break-word; line-height: 1.3;">${formattedDate}</strong>
               </div>
             </div>
 
