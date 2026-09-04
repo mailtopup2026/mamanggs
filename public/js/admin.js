@@ -6,11 +6,12 @@ let allProducts = [];
 let allBanners = [];
 let allGameCategories = [];
 let allFlashSales = [];
-let allManualGames = []; // BARU
+let allManualGames = [];
+let allFjbPosts = []; // BARU: Penampung postingan FJB
 let selectedTargetUser = null;
 let selectedSku = null;
 let activeGameFilter = "ALL";
-let editingBannerId = null; // Penampung state edit banner
+let editingBannerId = null;
 
 // ==========================================
 // 1. GLOBAL ACTION HANDLERS & MODAL BINDINGS
@@ -164,7 +165,6 @@ window.submitBanner = async function() {
 
   try {
     if (editingBannerId) {
-      // MODE UPDATE (EDIT)
       const { error } = await window.supabase
         .from("banners")
         .update({ title, image_url, target_url, updated_at: new Date().toISOString() })
@@ -173,7 +173,6 @@ window.submitBanner = async function() {
       if (error) throw error;
       alert("Banner berhasil diperbarui!");
     } else {
-      // MODE TAMBAH BARU
       const { error } = await window.supabase
         .from("banners")
         .insert([{ title, image_url, target_url, is_active: true }]);
@@ -222,7 +221,6 @@ window.openGameModal = function() {
   document.getElementById("gameModal")?.classList.add("show");
 };
 
-// Fungsi Edit Cover Game
 window.openEditGameModal = function(gameDataString) {
   const game = JSON.parse(decodeURIComponent(gameDataString));
   
@@ -347,7 +345,7 @@ window.deleteFlashSale = async function(id) {
 };
 
 // ==========================================
-// 1.5. BARU: MANUAL GAMES & USD RATE ACTIONS
+// 1.5. MANUAL GAMES & USD RATE ACTIONS
 // ==========================================
 
 window.fetchUsdRate = async function() {
@@ -520,6 +518,249 @@ window.deleteManualGame = async function(id) {
 };
 
 // ==========================================
+// 1.8. BARU: MODERASI FJB & REKBER ACTIONS
+// ==========================================
+
+window.fetchAdminFjbPosts = async function() {
+  const tbody = document.getElementById("fjbTableBody");
+  if (!tbody) return;
+
+  tbody.innerHTML = `<tr><td colspan="7" style="text-align: center; padding: 25px;"><i class="fa-solid fa-spinner fa-spin"></i> Memuat postingan FJB...</td></tr>`;
+
+  try {
+    const { data: posts, error } = await window.supabase
+      .from("market_posts")
+      .select(`
+        *,
+        seller:seller_id (
+          id,
+          username,
+          full_name,
+          email,
+          is_trusted_seller
+        )
+      `)
+      .order("created_at", { ascending: false });
+
+    if (error) throw error;
+    allFjbPosts = posts || [];
+    renderFjbTable(allFjbPosts);
+  } catch (err) {
+    console.error(err);
+    tbody.innerHTML = `<tr><td colspan="7" style="text-align: center; color: var(--accent-red);">Gagal mengambil data FJB: ${err.message}</td></tr>`;
+  }
+};
+
+function renderFjbTable(posts) {
+  const tbody = document.getElementById("fjbTableBody");
+  if (!tbody) return;
+
+  const filterStatus = document.getElementById("filterFjbStatus")?.value || "ALL";
+  const keyword = (document.getElementById("searchFjbAdmin")?.value || "").toLowerCase().trim();
+
+  const filtered = posts.filter(p => {
+    const matchStatus = (filterStatus === "ALL") || (p.status === filterStatus);
+    const sellerName = p.seller?.username || p.seller?.full_name || "";
+    const matchKeyword = !keyword || 
+      p.post_title.toLowerCase().includes(keyword) || 
+      p.game_title.toLowerCase().includes(keyword) ||
+      sellerName.toLowerCase().includes(keyword);
+
+    return matchStatus && matchKeyword;
+  });
+
+  if (filtered.length === 0) {
+    tbody.innerHTML = `<tr><td colspan="7" style="text-align: center; padding: 25px; color: #94a3b8;">Tidak ada iklan akun FJB yang sesuai.</td></tr>`;
+    return;
+  }
+
+  tbody.innerHTML = filtered.map(p => {
+    const cover = (p.images && p.images.length > 0) ? p.images[0] : "/assets/images/default-game.jpg";
+    const sellerName = p.seller?.username || p.seller?.full_name || "Penjual";
+    const isTrusted = !!p.seller?.is_trusted_seller;
+    const sellerId = p.seller?.id;
+    const priceFormatted = Number(p.price || 0).toLocaleString("id-ID");
+
+    return `
+      <tr>
+        <td>
+          <a href="${cover}" target="_blank">
+            <img src="${cover}" alt="Cover" style="width: 55px; height: 40px; border-radius: 6px; object-fit: cover; background: #000;">
+          </a>
+        </td>
+        <td>
+          <span style="font-size: 0.72rem; color: #38bdf8; font-weight: 700; text-transform: uppercase;">${p.game_title}</span><br>
+          <strong style="color: #fff; font-size: 0.85rem;">${p.post_title}</strong><br>
+          <a href="/market-detail.html?id=${p.id}" target="_blank" style="font-size: 0.74rem; color: #94a3b8; text-decoration: underline;">
+            Lihat Iklan <i class="fa-solid fa-arrow-up-right-from-square"></i>
+          </a>
+        </td>
+        <td><strong style="color: #10b981;">Rp ${priceFormatted}</strong></td>
+        <td>
+          <span style="color: #fff; font-weight: 700;">${sellerName}</span><br>
+          ${isTrusted 
+            ? `<span style="color: #38bdf8; font-size: 0.75rem; font-weight: 700;"><i class="fa-solid fa-circle-check"></i> Trusted</span>` 
+            : `<span style="color: #64748b; font-size: 0.75rem;">Reguler</span>`
+          }
+        </td>
+        <td>
+          ${p.is_hot 
+            ? `<span class="badge-status" style="background: rgba(245, 158, 11, 0.2); color: #f59e0b; font-size: 0.72rem;"><i class="fa-solid fa-fire"></i> HOT</span>` 
+            : `<span style="color: #64748b; font-size: 0.75rem;">-</span>`
+          }
+        </td>
+        <td>
+          <select class="admin-select" style="font-size: 0.78rem; padding: 4px 8px; height: auto;" onchange="updateFjbStatus('${p.id}', this.value)">
+            <option value="available" ${p.status === 'available' ? 'selected' : ''}>Tersedia</option>
+            <option value="hold" ${p.status === 'hold' ? 'selected' : ''}>Proses Rekber</option>
+            <option value="sold" ${p.status === 'sold' ? 'selected' : ''}>Terjual</option>
+          </select>
+        </td>
+        <td>
+          <div class="btn-action-group">
+            ${sellerId ? `
+              <button class="btn-action-sm ${isTrusted ? 'btn-adjust' : 'btn-success'}" onclick="toggleTrustedSeller('${sellerId}', ${!isTrusted})" title="${isTrusted ? 'Cabut Trusted' : 'Beri Trusted'}">
+                <i class="fa-solid ${isTrusted ? 'fa-shield-halved' : 'fa-certificate'}"></i>
+              </button>
+            ` : ''}
+            <button class="btn-action-sm btn-adjust" onclick="openFjbCommentsModal('${p.id}', '${encodeURIComponent(p.post_title)}')" title="Moderasi Komentar">
+              <i class="fa-solid fa-comments"></i>
+            </button>
+            <button class="btn-action-sm btn-cancel" onclick="deleteFjbPost('${p.id}')" title="Hapus Iklan">
+              <i class="fa-solid fa-trash-can"></i>
+            </button>
+          </div>
+        </td>
+      </tr>
+    `;
+  }).join("");
+}
+
+window.updateFjbStatus = async function(postId, newStatus) {
+  try {
+    const { error } = await window.supabase
+      .from("market_posts")
+      .update({ status: newStatus, updated_at: new Date().toISOString() })
+      .eq("id", postId);
+
+    if (error) throw error;
+    alert(`Status postingan berhasil diubah ke: ${newStatus.toUpperCase()}`);
+    window.fetchAdminFjbPosts();
+  } catch (err) {
+    alert("Gagal memperbarui status FJB: " + err.message);
+  }
+};
+
+window.toggleTrustedSeller = async function(sellerId, makeTrusted) {
+  const confirmMsg = makeTrusted 
+    ? "Berikan badge 'Trusted Seller' kepada penjual ini?" 
+    : "Cabut badge 'Trusted Seller' dari penjual ini?";
+  
+  if (!confirm(confirmMsg)) return;
+
+  try {
+    const { error } = await window.supabase
+      .from("profiles")
+      .update({ is_trusted_seller: makeTrusted })
+      .eq("id", sellerId);
+
+    if (error) throw error;
+    alert("Status Trusted Seller berhasil diperbarui!");
+    window.fetchAdminFjbPosts();
+  } catch (err) {
+    alert("Gagal mengubah badge: " + err.message);
+  }
+};
+
+window.deleteFjbPost = async function(postId) {
+  if (!confirm("Apakah Anda yakin ingin MENGHAPUS iklan akun ini beserta seluruh foto dan komentarnya?")) return;
+
+  try {
+    const { error } = await window.supabase
+      .from("market_posts")
+      .delete()
+      .eq("id", postId);
+
+    if (error) throw error;
+    alert("Iklan akun berhasil dihapus.");
+    window.fetchAdminFjbPosts();
+  } catch (err) {
+    alert("Gagal menghapus postingan: " + err.message);
+  }
+};
+
+// MODERASI KOMENTAR FJB
+window.openFjbCommentsModal = async function(postId, encodedTitle) {
+  const modal = document.getElementById("fjbCommentsModal");
+  const titleEl = document.getElementById("modalFjbPostTitle");
+  const listEl = document.getElementById("modalFjbCommentsList");
+
+  if (titleEl) titleEl.innerText = decodeURIComponent(encodedTitle);
+  if (modal) modal.classList.add("show");
+  if (listEl) listEl.innerHTML = `<p style="text-align: center; color: #94a3b8; padding: 20px;"><i class="fa-solid fa-spinner fa-spin"></i> Memuat diskusi...</p>`;
+
+  try {
+    const { data: comments, error } = await window.supabase
+      .from("market_comments")
+      .select(`*, user:user_id (username, full_name)`)
+      .eq("post_id", postId)
+      .order("created_at", { ascending: false });
+
+    if (error) throw error;
+
+    if (!comments || comments.length === 0) {
+      listEl.innerHTML = `<p style="text-align: center; color: #64748b; padding: 20px;">Belum ada komentar atau tawaran pada postingan ini.</p>`;
+      return;
+    }
+
+    listEl.innerHTML = comments.map(c => {
+      const author = c.user?.username || c.user?.full_name || "User";
+      const time = new Date(c.created_at).toLocaleString("id-ID", { dateStyle: "short", timeStyle: "short" });
+      const offerBadge = c.is_offer 
+        ? `<span style="background: #f59e0b; color: #000; padding: 2px 6px; border-radius: 4px; font-size: 0.72rem; font-weight: 800;">Tawar Rp ${Number(c.offer_amount || 0).toLocaleString("id-ID")}</span>` 
+        : "";
+
+      return `
+        <div style="background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08); border-radius: 8px; padding: 10px 12px; display: flex; justify-content: space-between; align-items: flex-start; gap: 10px;">
+          <div>
+            <div style="display: flex; align-items: center; gap: 6px; margin-bottom: 4px;">
+              <strong style="color: #fff; font-size: 0.85rem;">${author}</strong>
+              ${offerBadge}
+              <span style="font-size: 0.72rem; color: #64748b;">${time}</span>
+            </div>
+            <p style="margin: 0; font-size: 0.85rem; color: #cbd5e1; line-height: 1.4;">${c.comment_text}</p>
+          </div>
+          <button class="btn-action-sm btn-cancel" onclick="deleteFjbComment('${c.id}', '${postId}', '${encodedTitle}')" title="Hapus Komentar">
+            <i class="fa-solid fa-trash-can"></i>
+          </button>
+        </div>
+      `;
+    }).join("");
+  } catch (err) {
+    listEl.innerHTML = `<p style="color: #ef4444; padding: 20px;">Gagal memuat komentar: ${err.message}</p>`;
+  }
+};
+
+window.closeFjbCommentsModal = function() {
+  document.getElementById("fjbCommentsModal")?.classList.remove("show");
+};
+
+window.deleteFjbComment = async function(commentId, postId, encodedTitle) {
+  if (!confirm("Hapus komentar/tawaran ini?")) return;
+  try {
+    const { error } = await window.supabase
+      .from("market_comments")
+      .delete()
+      .eq("id", commentId);
+
+    if (error) throw error;
+    window.openFjbCommentsModal(postId, encodedTitle);
+  } catch (err) {
+    alert("Gagal menghapus komentar: " + err.message);
+  }
+};
+
+// ==========================================
 // 2. MAIN DOM INITIALIZATION
 // ==========================================
 document.addEventListener("DOMContentLoaded", async () => {
@@ -597,6 +838,7 @@ document.addEventListener("DOMContentLoaded", async () => {
       if (btn.dataset.tab === "bannersTab") window.fetchAdminBanners();
       if (btn.dataset.tab === "gamesTab") window.fetchAdminGames();
       if (btn.dataset.tab === "flashSaleTab") window.fetchAdminFlashSale();
+      if (btn.dataset.tab === "fjbTab") window.fetchAdminFjbPosts(); // Trigger FJB fetch
       
       if (btn.dataset.tab === "manualGamesTab") {
         window.fetchUsdRate();
@@ -604,6 +846,11 @@ document.addEventListener("DOMContentLoaded", async () => {
       }
     });
   });
+
+  // Listener Filter & Search FJB Admin
+  document.getElementById("filterFjbStatus")?.addEventListener("change", () => renderFjbTable(allFjbPosts));
+  document.getElementById("searchFjbAdmin")?.addEventListener("input", () => renderFjbTable(allFjbPosts));
+  document.getElementById("btnRefreshFjb")?.addEventListener("click", () => window.fetchAdminFjbPosts());
 
   // ==========================================
   // FETCH STATISTIK & PESANAN
@@ -872,12 +1119,9 @@ document.addEventListener("DOMContentLoaded", async () => {
                 <button class="btn-action-sm ${b.is_active ? 'btn-adjust' : 'btn-success'}" onclick="toggleBannerStatus('${b.id}', ${!b.is_active})" title="${b.is_active ? 'Nonaktifkan' : 'Aktifkan'}">
                   <i class="fa-solid ${b.is_active ? 'fa-eye-slash' : 'fa-eye'}"></i>
                 </button>
-
-                <!-- TOMBOL EDIT BANNER -->
                 <button class="btn-action-sm btn-adjust" onclick="openEditBannerModal('${safeEncodedBanner}')" title="Edit Banner">
                   <i class="fa-solid fa-pen-to-square"></i>
                 </button>
-
                 <button class="btn-action-sm btn-cancel" onclick="deleteBanner('${b.id}')" title="Hapus Banner">
                   <i class="fa-solid fa-trash-can"></i>
                 </button>
@@ -929,12 +1173,9 @@ document.addEventListener("DOMContentLoaded", async () => {
                 <button class="btn-action-sm ${g.is_popular ? 'btn-adjust' : 'btn-success'}" onclick="toggleGamePopular('${g.id}', ${!g.is_popular})" title="Ubah Populer">
                   <i class="fa-solid fa-star"></i>
                 </button>
-                
-                <!-- TOMBOL EDIT COVER GAME -->
                 <button class="btn-action-sm btn-adjust" onclick="openEditGameModal('${safeEncodedGame}')" title="Edit Game">
                   <i class="fa-solid fa-pen-to-square"></i>
                 </button>
-
                 <button class="btn-action-sm btn-cancel" onclick="deleteGameCategory('${g.id}')" title="Hapus Game">
                   <i class="fa-solid fa-trash-can"></i>
                 </button>

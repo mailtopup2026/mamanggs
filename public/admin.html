@@ -44,6 +44,10 @@
         <button class="tab-btn" data-tab="balanceTab">
           <i class="fa-solid fa-wallet"></i> <span>Saldo Member</span>
         </button>
+        <!-- TAB FJB & REKBER -->
+        <button class="tab-btn" data-tab="fjbTab">
+          <i class="fa-solid fa-store" style="color: #10b981;"></i> <span>FJB & Rekber Akun</span>
+        </button>
         
         <div class="menu-label" style="margin-top: 14px;">Tampilan & Promosi</div>
         <button class="tab-btn" data-tab="bannersTab">
@@ -73,6 +77,9 @@
         </a>
         <a href="/blog.html" target="_blank" class="sidebar-link-btn">
           <i class="fa-solid fa-eye"></i> <span>Lihat Blog</span>
+        </a>
+        <a href="/market.html" target="_blank" class="sidebar-link-btn">
+          <i class="fa-solid fa-store"></i> <span>Lihat FJB</span>
         </a>
       </nav>
 
@@ -224,6 +231,47 @@
               </thead>
               <tbody id="usersTableBody">
                 <tr><td colspan="5" style="text-align: center; padding: 25px;">Memuat data member...</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- SECTION FJB & REKBER (BARU) -->
+      <section id="fjbTab" class="tab-content">
+        <div class="section-card">
+          <div class="table-header-bar" style="margin-bottom: 20px;">
+            <div>
+              <h3><i class="fa-solid fa-store" style="color: #10b981;"></i> Manajemen Iklan FJB & Rekber</h3>
+              <p style="margin: 4px 0 0; font-size: 0.8rem; color: #94a3b8;">Ubah status transaksi akun, verifikasi seller, dan moderasi komentar.</p>
+            </div>
+            <div class="filter-actions">
+              <select id="filterFjbStatus" class="admin-select" style="min-width: 160px;">
+                <option value="ALL">Semua Status</option>
+                <option value="available">Tersedia (Available)</option>
+                <option value="hold">Proses Rekber (Hold)</option>
+                <option value="sold">Terjual (Sold)</option>
+              </select>
+              <input type="text" id="searchFjbAdmin" class="admin-input-search" placeholder="Cari judul/game/seller..." style="width: 220px;">
+              <button id="btnRefreshFjb" class="btn-refresh"><i class="fa-solid fa-rotate-right"></i> Refresh</button>
+            </div>
+          </div>
+
+          <div class="table-responsive">
+            <table class="admin-table">
+              <thead>
+                <tr>
+                  <th>Cover</th>
+                  <th>Game & Judul</th>
+                  <th>Harga</th>
+                  <th>Penjual (Seller)</th>
+                  <th>Label HOT</th>
+                  <th>Status Akun</th>
+                  <th>Aksi Kontrol</th>
+                </tr>
+              </thead>
+              <tbody id="fjbTableBody">
+                <tr><td colspan="7" style="text-align: center; padding: 25px;">Memuat iklan FJB...</td></tr>
               </tbody>
             </table>
           </div>
@@ -425,6 +473,22 @@
     </main>
   </div>
 
+  <!-- MODAL MODERASI KOMENTAR FJB (BARU) -->
+  <div class="modal-backdrop" id="fjbCommentsModal">
+    <div class="modal-card" style="max-width: 650px;">
+      <div class="modal-header">
+        <h3><i class="fa-solid fa-comments" style="color: #38bdf8;"></i> Moderasi Diskusi & Nego FJB</h3>
+        <button class="btn-close-modal" onclick="closeFjbCommentsModal()"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+      <div class="modal-body">
+        <p style="font-size: 0.85rem; color: #94a3b8; margin-bottom: 12px;">Postingan: <strong id="modalFjbPostTitle" style="color: #fff;">-</strong></p>
+        <div id="modalFjbCommentsList" style="max-height: 380px; overflow-y: auto; display: flex; flex-direction: column; gap: 10px;">
+          <p style="text-align: center; color: #94a3b8; padding: 20px;">Memuat diskusi...</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <div class="modal-backdrop" id="balanceModal">
     <div class="modal-card">
       <div class="modal-header">
@@ -445,7 +509,7 @@
   <div class="modal-backdrop" id="priceModal">
     <div class="modal-card">
       <div class="modal-header">
-        <h3><i class="fa-solid fa-hand-holding-dollar"></i> Ubah Harga Jual</h3>
+        <h3><i class="fa-solid fa-handholding-dollar"></i> Ubah Harga Jual</h3>
         <button class="btn-close-modal" id="btnClosePriceModal"><i class="fa-solid fa-xmark"></i></button>
       </div>
       <div class="modal-body">
