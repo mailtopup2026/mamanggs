@@ -204,18 +204,37 @@
     <!-- FORM INPUT POSTINGAN -->
     <div class="panel-card">
       <form id="formMarketPost">
+        <!-- AUTOCOMPLETE KATEGORI GAME -->
         <div class="form-group">
           <label><i class="fa-solid fa-gamepad" style="color: #38bdf8;"></i> Kategori Game</label>
-          <select id="gameTitle" class="form-control" required>
-            <option value="">Pilih Game</option>
-            <option value="Mobile Legends">Mobile Legends</option>
-            <option value="Free Fire">Free Fire</option>
-            <option value="PUBG Mobile">PUBG Mobile</option>
-            <option value="Genshin Impact">Genshin Impact</option>
-            <option value="Valorant">Valorant</option>
-            <option value="Honor of Kings">Honor of Kings</option>
-            <option value="Lainnya">Game Lainnya</option>
-          </select>
+          <input 
+            type="text" 
+            id="gameTitle" 
+            list="gameSuggestions" 
+            class="form-control" 
+            placeholder="Ketik atau pilih game (contoh: Mobile Legends, Valorant, dll.)" 
+            autocomplete="off" 
+            required
+          >
+          <datalist id="gameSuggestions">
+            <option value="Mobile Legends"></option>
+            <option value="Free Fire"></option>
+            <option value="PUBG Mobile"></option>
+            <option value="Genshin Impact"></option>
+            <option value="Honkai: Star Rail"></option>
+            <option value="Valorant"></option>
+            <option value="Honor of Kings"></option>
+            <option value="Point Blank"></option>
+            <option value="Roblox"></option>
+            <option value="Growtopia"></option>
+            <option value="Steam / PC Game"></option>
+            <option value="Clash of Clans"></option>
+            <option value="Call of Duty Mobile"></option>
+            <option value="EA Sports FC Mobile"></option>
+          </datalist>
+          <p style="margin: 6px 0 0; font-size: 0.8rem; color: #94a3b8; line-height: 1.4;">
+            <i class="fa-solid fa-circle-info" style="color: #38bdf8;"></i> Tulis nama game lengkap untuk memudahkan pencarian buyer.
+          </p>
         </div>
 
         <div class="form-group">
@@ -469,12 +488,14 @@
 
         if (balErr) throw balErr;
 
-        // 5. Simpan Data ke Tabel market_posts
+        // 5. Simpan Data ke Tabel market_posts (dengan game_title ter-trim rapi)
+        const gameTitleValue = document.getElementById("gameTitle").value.trim();
+
         const { error: postErr } = await window.supabase
           .from("market_posts")
           .insert({
             seller_id: user.id,
-            game_title: document.getElementById("gameTitle").value,
+            game_title: gameTitleValue,
             post_title: document.getElementById("postTitle").value.trim(),
             description: document.getElementById("postDesc").value.trim(),
             price: Number(priceInput.value),
