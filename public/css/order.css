@@ -42,7 +42,8 @@
   margin-bottom: 6px;
 }
 
-.game-info-sidebar p {
+.game-info-sidebar p,
+#gameDev {
   color: var(--text-muted);
   font-size: 0.85rem;
   margin-bottom: 18px;
@@ -65,7 +66,8 @@
   color: var(--accent-red);
 }
 
-.instruction-box ol {
+.instruction-box ol,
+.instruction-box ul {
   padding-left: 18px;
   font-size: 0.8rem;
   color: var(--text-muted);
@@ -114,6 +116,7 @@
   font-weight: 800;
   color: var(--text-main);
   letter-spacing: -0.3px;
+  margin: 0;
 }
 
 /* --- FORM DATA AKUN --- */
@@ -133,7 +136,9 @@
 
 .form-group input,
 #userIdInput,
-#zoneIdInput {
+#zoneIdInput,
+#whatsappInput,
+#inputPromoCode {
   width: 100%;
   padding: 12px 16px;
   background: #11131a;
@@ -147,12 +152,14 @@
 
 .form-group input:focus,
 #userIdInput:focus,
-#zoneIdInput:focus {
+#zoneIdInput:focus,
+#whatsappInput:focus,
+#inputPromoCode:focus {
   border-color: var(--accent-red);
   box-shadow: 0 0 12px var(--accent-glow);
 }
 
-/* --- AUTO CHECK NICKNAME LOADER --- */
+/* --- AUTO CHECK NICKNAME & HINT BOX --- */
 .input-with-loader {
   position: relative;
   display: flex;
@@ -172,31 +179,27 @@
 }
 
 .nickname-result-box {
-  margin-top: 14px;
-  background: rgba(16, 185, 129, 0.12);
-  border: 1px solid rgba(16, 185, 129, 0.35);
-  padding: 10px 14px;
+  margin-top: 12px;
+  padding: 12px 14px;
   border-radius: 10px;
-  display: flex;
-  align-items: center;
+  display: none;
+  align-items: flex-start;
   gap: 10px;
-  font-size: 0.85rem;
-  color: #10b981;
-  box-shadow: 0 4px 15px rgba(16, 185, 129, 0.15);
+  font-size: 0.84rem;
+  line-height: 1.45;
+  transition: all 0.2s ease;
   animation: fadeInNick 0.3s ease-in-out;
 }
 
 .nickname-result-box.error {
-  background: rgba(239, 68, 68, 0.12);
-  border-color: rgba(239, 68, 68, 0.35);
-  color: #ef4444;
-  box-shadow: none;
+  background: rgba(239, 68, 68, 0.12) !important;
+  border: 1px solid rgba(239, 68, 68, 0.35) !important;
+  color: #ef4444 !important;
 }
 
 .nickname-result-box strong {
   color: #fff;
   font-weight: 800;
-  letter-spacing: 0.3px;
 }
 
 @keyframes fadeInNick {
@@ -298,10 +301,65 @@
   color: var(--text-muted);
 }
 
+/* --- SECTION PROMO & SUMMARY --- */
+.promo-input-group {
+  display: flex;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.btn-apply-promo {
+  padding: 12px 20px;
+  background: var(--accent-red);
+  color: #08090d;
+  font-weight: 800;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: var(--transition);
+  white-space: nowrap;
+}
+
+.btn-apply-promo:hover {
+  background: var(--accent-red-hover);
+}
+
+.checkout-summary-box {
+  background: #11131a;
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  padding: 16px;
+  margin-top: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.summary-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.88rem;
+  color: var(--text-muted);
+}
+
+.summary-row.total {
+  border-top: 1px solid var(--border-color);
+  padding-top: 10px;
+  margin-top: 4px;
+  font-size: 1.05rem;
+  font-weight: 800;
+  color: #fff;
+}
+
+.summary-row.total span:last-child {
+  color: var(--accent-red);
+}
+
 /* --- TOMBOL AKSI CHECKOUT --- */
 .btn-checkout {
   width: 100%;
-  padding: 14px;
+  padding: 15px;
   background: var(--accent-red);
   color: #08090d;
   border: none;
@@ -314,13 +372,65 @@
   align-items: center;
   justify-content: center;
   gap: 8px;
-  margin-top: 10px;
+  margin-top: 14px;
   box-shadow: 0 4px 18px var(--accent-glow);
 }
 
 .btn-checkout:hover {
   background: var(--accent-red-hover);
   box-shadow: 0 6px 24px rgba(204, 255, 0, 0.45);
+}
+
+.btn-checkout:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* ===================================================
+   MOBILE NAVIGATION DROPDOWN (MENU MAMANGGS)
+   =================================================== */
+div:has(> a[href*="leaderboard.html"]),
+.mobile-nav-popup,
+.mobile-menu-drawer,
+.nav-dropdown-menu {
+  position: fixed !important;
+  top: 65px !important;
+  right: 16px !important;
+  left: auto !important;
+  width: 250px !important;
+  background: #0f172a !important;
+  border: 1px solid rgba(255, 255, 255, 0.12) !important;
+  border-radius: 14px !important;
+  padding: 16px !important;
+  box-shadow: 0 16px 35px rgba(0, 0, 0, 0.75) !important;
+  z-index: 99999 !important;
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 8px !important;
+  backdrop-filter: blur(10px) !important;
+}
+
+div:has(> a[href*="leaderboard.html"]) a,
+.mobile-nav-popup a,
+.mobile-menu-drawer a {
+  display: flex !important;
+  align-items: center !important;
+  gap: 10px !important;
+  padding: 9px 12px !important;
+  color: #cbd5e1 !important;
+  text-decoration: none !important;
+  font-size: 0.88rem !important;
+  font-weight: 600 !important;
+  border-radius: 8px !important;
+  background: rgba(255, 255, 255, 0.03) !important;
+  transition: all 0.2s ease !important;
+}
+
+div:has(> a[href*="leaderboard.html"]) a:hover,
+.mobile-nav-popup a:hover,
+.mobile-menu-drawer a:hover {
+  background: rgba(255, 255, 255, 0.08) !important;
+  color: #38bdf8 !important;
 }
 
 /* --- RESPONSIF TABLET & MOBILE --- */
