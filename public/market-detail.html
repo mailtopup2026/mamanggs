@@ -12,6 +12,24 @@
   <link rel="stylesheet" href="/css/global.css">
 
   <style>
+    :root {
+      --bg-dark: #090a0f;
+      --card-dark: #161b26;
+      --card-inner: #0f141f;
+      --accent-volt: #ccff00;
+      --accent-volt-hover: #b8e600;
+      --gold-trusted: #fbbf24;
+      --border-subtle: rgba(255, 255, 255, 0.08);
+    }
+
+    body {
+      background-color: var(--bg-dark) !important;
+      color: #f8fafc;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      margin: 0;
+      padding: 0;
+    }
+
     .detail-wrapper {
       max-width: 1100px;
       margin: 30px auto 120px;
@@ -33,12 +51,11 @@
     }
 
     .card-box {
-      background: rgba(15, 23, 42, 0.75);
-      border: 1px solid rgba(255, 255, 255, 0.08);
-      border-radius: 18px;
-      padding: 22px;
-      backdrop-filter: blur(12px);
-      box-shadow: 0 16px 36px rgba(0, 0, 0, 0.4);
+      background: var(--card-dark);
+      border: 1px solid var(--border-subtle);
+      border-radius: 20px;
+      padding: 24px;
+      box-shadow: 0 16px 36px rgba(0, 0, 0, 0.5);
       margin-bottom: 20px;
     }
 
@@ -47,10 +64,10 @@
       position: relative;
       width: 100%;
       aspect-ratio: 16/10;
-      background: #020617;
-      border-radius: 14px;
+      background: #05070a;
+      border-radius: 16px;
       overflow: hidden;
-      border: 1px solid rgba(255, 255, 255, 0.1);
+      border: 1px solid var(--border-subtle);
       display: flex;
       align-items: center;
       justify-content: center;
@@ -76,7 +93,7 @@
       font-weight: 900;
       letter-spacing: 2px;
       border-radius: 10px;
-      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.7);
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.8);
       z-index: 6;
       border: 2px dashed #ffffff;
     }
@@ -93,7 +110,7 @@
       font-weight: 900;
       letter-spacing: 1px;
       border-radius: 10px;
-      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.7);
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.8);
       z-index: 6;
     }
 
@@ -102,7 +119,7 @@
       position: absolute;
       top: 14px;
       right: 14px;
-      background: rgba(15, 23, 42, 0.85);
+      background: rgba(15, 20, 31, 0.85);
       border: 1px solid rgba(255, 255, 255, 0.15);
       color: #94a3b8;
       padding: 8px 14px;
@@ -153,7 +170,7 @@
     }
 
     .thumb-btn.active {
-      border-color: #38bdf8;
+      border-color: var(--accent-volt);
     }
 
     .thumb-btn img {
@@ -164,28 +181,28 @@
 
     .badge-game-tag {
       display: inline-block;
-      background: rgba(56, 189, 248, 0.12);
-      border: 1px solid rgba(56, 189, 248, 0.35);
-      color: #38bdf8;
-      padding: 4px 10px;
-      border-radius: 6px;
+      background: rgba(204, 255, 0, 0.1);
+      border: 1px solid rgba(204, 255, 0, 0.3);
+      color: var(--accent-volt);
+      padding: 4px 12px;
+      border-radius: 8px;
       font-size: 0.8rem;
-      font-weight: 700;
+      font-weight: 800;
       margin-bottom: 10px;
     }
 
     .price-tag {
-      font-size: 1.8rem;
+      font-size: 2rem;
       font-weight: 900;
-      color: #10b981;
-      margin: 12px 0 16px;
+      color: var(--accent-volt);
+      margin: 10px 0 16px;
       letter-spacing: -0.5px;
     }
 
     .escrow-guarantee-box {
-      background: linear-gradient(135deg, rgba(16, 185, 129, 0.1), rgba(6, 78, 59, 0.2));
-      border: 1px solid rgba(16, 185, 129, 0.35);
-      border-radius: 12px;
+      background: rgba(204, 255, 0, 0.05);
+      border: 1px solid rgba(204, 255, 0, 0.25);
+      border-radius: 14px;
       padding: 14px 16px;
       margin-bottom: 18px;
       display: flex;
@@ -194,7 +211,7 @@
     }
 
     .escrow-guarantee-box i {
-      color: #10b981;
+      color: var(--accent-volt);
       font-size: 1.3rem;
       margin-top: 2px;
     }
@@ -205,11 +222,11 @@
       line-height: 1.45;
     }
 
-    /* TOMBOL AKSI REKBER */
+    /* TOMBOL AKSI REKBER TEMA VOLT GREEN */
     .btn-buy-rekber {
       width: 100%;
-      background: linear-gradient(135deg, #10b981, #059669);
-      color: #ffffff;
+      background: var(--accent-volt);
+      color: #000000;
       border: none;
       padding: 16px;
       border-radius: 14px;
@@ -221,16 +238,17 @@
       justify-content: center;
       gap: 10px;
       text-decoration: none;
-      box-shadow: 0 8px 24px rgba(16, 185, 129, 0.35);
-      transition: transform 0.15s;
+      box-shadow: 0 8px 24px rgba(204, 255, 0, 0.25);
+      transition: all 0.2s ease;
       box-sizing: border-box;
     }
 
-    .btn-buy-rekber:active {
-      transform: scale(0.98);
+    .btn-buy-rekber:hover {
+      background: var(--accent-volt-hover);
+      transform: translateY(-2px);
+      box-shadow: 0 12px 28px rgba(204, 255, 0, 0.35);
     }
 
-    /* TOMBOL AKSI KARANTINA */
     .btn-buy-disabled {
       width: 100%;
       padding: 16px;
@@ -243,23 +261,22 @@
       gap: 10px;
       text-decoration: none;
       cursor: not-allowed;
-      border: 1px solid rgba(255, 255, 255, 0.1);
+      border: 1px solid var(--border-subtle);
       box-sizing: border-box;
     }
 
     .btn-buy-disabled.sold {
-      background: #1e293b;
+      background: #111622;
       color: #ef4444;
       border-color: rgba(239, 68, 68, 0.3);
     }
 
     .btn-buy-disabled.hold {
-      background: #1e293b;
+      background: #111622;
       color: #f59e0b;
       border-color: rgba(245, 158, 11, 0.3);
     }
 
-    /* BANNER LOCKDOWN KOMENTAR */
     .comment-locked-banner {
       background: rgba(239, 68, 68, 0.08);
       border: 1px dashed rgba(239, 68, 68, 0.35);
@@ -275,6 +292,102 @@
       gap: 8px;
     }
 
+    /* KARTU PROFIL PENJUAL MODERN TEMA PROFILE */
+    .seller-card-modern {
+      background: var(--card-dark);
+      border: 1px solid var(--border-subtle);
+      border-radius: 20px;
+      padding: 22px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .seller-avatar-frame {
+      position: relative;
+      width: 60px;
+      height: 60px;
+      border-radius: 16px;
+      padding: 3px;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1.5px solid var(--border-subtle);
+      flex-shrink: 0;
+    }
+
+    .seller-avatar-frame.trusted-border {
+      border-color: var(--accent-volt);
+      box-shadow: 0 0 16px rgba(204, 255, 0, 0.25);
+    }
+
+    .seller-avatar-frame img {
+      width: 100%;
+      height: 100%;
+      border-radius: 12px;
+      object-fit: cover;
+      background: #000;
+    }
+
+    .badge-admin-tag {
+      background: rgba(204, 255, 0, 0.15);
+      border: 1px solid rgba(204, 255, 0, 0.4);
+      color: var(--accent-volt);
+      font-size: 0.68rem;
+      font-weight: 800;
+      padding: 2px 8px;
+      border-radius: 6px;
+      letter-spacing: 0.5px;
+    }
+
+    .badge-trusted-seller {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: linear-gradient(135deg, rgba(251, 191, 36, 0.15), rgba(217, 119, 6, 0.05));
+      border: 1px solid rgba(251, 191, 36, 0.4);
+      color: #fbbf24;
+      font-size: 0.78rem;
+      font-weight: 800;
+      padding: 4px 12px;
+      border-radius: 20px;
+      box-shadow: 0 0 12px rgba(251, 191, 36, 0.2);
+    }
+
+    .seller-quick-stats {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+      margin-top: 16px;
+      padding-top: 14px;
+      border-top: 1px solid var(--border-subtle);
+    }
+
+    .stat-pill {
+      background: var(--card-inner);
+      border: 1px solid var(--border-subtle);
+      border-radius: 10px;
+      padding: 8px 10px;
+      text-align: center;
+    }
+
+    .stat-pill span {
+      display: block;
+      font-size: 0.68rem;
+      color: #8e9bb0;
+    }
+
+    .stat-pill strong {
+      font-size: 0.82rem;
+      color: #fff;
+    }
+
+    /* CARD PEMBELI */
+    .buyer-card-modern {
+      background: rgba(204, 255, 0, 0.03);
+      border: 1px solid rgba(204, 255, 0, 0.2);
+      border-radius: 20px;
+      padding: 20px;
+    }
+
+    /* FORM KOMENTAR & EMOTICON */
     .emoticon-toolbar {
       display: flex;
       align-items: center;
@@ -285,8 +398,8 @@
     }
 
     .btn-emot-pill {
-      background: rgba(255, 255, 255, 0.05);
-      border: 1px solid rgba(255, 255, 255, 0.1);
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid var(--border-subtle);
       border-radius: 20px;
       padding: 4px 10px;
       font-size: 0.95rem;
@@ -296,7 +409,8 @@
     }
 
     .btn-emot-pill:hover {
-      background: rgba(255, 255, 255, 0.15);
+      background: rgba(204, 255, 0, 0.15);
+      border-color: rgba(204, 255, 0, 0.3);
       transform: scale(1.1);
     }
 
@@ -308,15 +422,15 @@
     }
 
     .comment-bubble {
-      background: rgba(0, 0, 0, 0.35);
-      border: 1px solid rgba(255, 255, 255, 0.06);
-      border-radius: 12px;
-      padding: 12px 14px;
+      background: var(--card-inner);
+      border: 1px solid var(--border-subtle);
+      border-radius: 14px;
+      padding: 14px;
     }
 
     .comment-bubble.is-offer {
-      border-color: rgba(245, 158, 11, 0.4);
-      background: rgba(245, 158, 11, 0.05);
+      border-color: rgba(204, 255, 0, 0.3);
+      background: rgba(204, 255, 0, 0.02);
     }
 
     .comment-author-row {
@@ -336,10 +450,10 @@
     }
 
     .offer-badge {
-      background: #f59e0b;
+      background: var(--accent-volt);
       color: #000;
       padding: 2px 8px;
-      border-radius: 4px;
+      border-radius: 6px;
       font-weight: 800;
       font-size: 0.72rem;
     }
@@ -351,10 +465,10 @@
       bottom: 0;
       left: 0;
       right: 0;
-      background: rgba(11, 17, 32, 0.95);
-      border-top: 1px solid rgba(255, 255, 255, 0.1);
+      background: rgba(9, 10, 15, 0.96);
+      border-top: 1px solid var(--border-subtle);
       padding: 12px 16px;
-      backdrop-filter: blur(10px);
+      backdrop-filter: blur(12px);
       z-index: 9999;
       justify-content: space-between;
       align-items: center;
@@ -371,16 +485,15 @@
     }
   </style>
 </head>
-<body style="background-color: #0b1120; color: #f8fafc; font-family: 'Plus Jakarta Sans', sans-serif; margin: 0; padding: 0;">
+<body>
 
-  <!-- NAVBAR -->
   <header class="navbar">
     <div class="navbar-container">
       <a href="/" class="brand-logo">
         <div class="logo-video-wrap"><video autoplay loop muted playsinline class="logo-video"><source src="/assets/images/logo.mp4" type="video/mp4"></video></div>
       </a>
       <div class="nav-actions desktop-only">
-        <a href="/market.html" class="btn-nav-login" style="color: #38bdf8;"><i class="fa-solid fa-arrow-left"></i> Kembali ke FJB</a>
+        <a href="/market.html" class="btn-nav-login" style="color: var(--accent-volt);"><i class="fa-solid fa-arrow-left"></i> Kembali ke FJB</a>
         <a href="/order-status.html" class="btn-nav-login" style="color: #10b981;"><i class="fa-solid fa-receipt"></i> Lacak</a>
       </div>
     </div>
@@ -388,16 +501,15 @@
 
   <main class="detail-wrapper" id="detailMainContent">
     <div style="text-align: center; padding: 60px 0;">
-      <i class="fa-solid fa-spinner fa-spin" style="font-size: 2.2rem; color: #38bdf8; margin-bottom: 12px;"></i>
-      <p style="color: #94a3b8;">Memuat data akun...</p>
+      <i class="fa-solid fa-spinner fa-spin" style="font-size: 2.2rem; color: var(--accent-volt); margin-bottom: 12px;"></i>
+      <p style="color: #8e9bb0;">Menyiapkan informasi akun...</p>
     </div>
   </main>
 
-  <!-- STICKY ACTION KHUSUS HP -->
-  <div class="mobile-sticky-bar" id="mobileStickyBar" style="display: none;">
+  <div class="mobile-sticky-bar" id="mobileStickyBar">
     <div>
-      <span style="display: block; font-size: 0.72rem; color: #94a3b8;">Harga Akun</span>
-      <strong id="stickyPriceText" style="color: #10b981; font-size: 1.15rem;">Rp 0</strong>
+      <span style="display: block; font-size: 0.72rem; color: #8e9bb0;">Harga Akun</span>
+      <strong id="stickyPriceText" style="color: var(--accent-volt); font-size: 1.15rem;">Rp 0</strong>
     </div>
     <div id="stickyActionContainer"></div>
   </div>
@@ -419,7 +531,7 @@
         mainEl.innerHTML = `
           <div style="text-align: center; padding: 60px 0;">
             <h3>Postingan tidak ditemukan</h3>
-            <a href="/market.html" style="color: #38bdf8;">Kembali ke FJB</a>
+            <a href="/market.html" style="color: var(--accent-volt);">Kembali ke FJB</a>
           </div>
         `;
         return;
@@ -428,7 +540,7 @@
       try {
         if (!window.supabase) throw new Error("Supabase client belum siap.");
 
-        // AMBIL DETAIL POST, PROFIL SELLER, DAN PROFIL BUYER (CARA A)
+        // 1. QUERY LENGKAP DETAIL AKUN, SELLER & BUYER
         const { data: post, error } = await window.supabase
           .from("market_posts")
           .select(`
@@ -436,12 +548,15 @@
             seller:seller_id (
               id,
               username,
+              full_name,
               avatar_url,
+              role,
               is_trusted_seller
             ),
             buyer:buyer_id (
               id,
               username,
+              full_name,
               avatar_url
             )
           `)
@@ -470,7 +585,7 @@
           `• ID Post: #${post.id.substring(0, 8)}\n` +
           `• Judul: ${post.post_title}\n` +
           `• Game: ${post.game_title}\n` +
-          `• Penjual: ${post.seller?.username || 'Seller'}\n` +
+          `• Penjual: ${post.seller?.username || post.seller?.full_name || 'Seller'}\n` +
           `• Harga: Rp ${price.toLocaleString('id-ID')}\n` +
           `• Fee Rekber (${feePercent}%): Rp ${feeAmount.toLocaleString('id-ID')}\n` +
           `• Total Transfer: Rp ${totalTransfer.toLocaleString('id-ID')}\n\n` +
@@ -481,6 +596,20 @@
         const images = post.images && post.images.length > 0 
           ? post.images 
           : ["/assets/images/default-game.jpg"];
+
+        // DATA PENJUAL (SINKRON DENGAN HALAMAN PROFIL)
+        const sellerName = post.seller?.username || post.seller?.full_name || "Penjual MamangGS";
+        const sellerAvatar = (post.seller?.avatar_url && post.seller.avatar_url.trim() !== "")
+          ? post.seller.avatar_url
+          : `https://api.dicebear.com/7.x/adventurer/svg?seed=${encodeURIComponent(sellerName)}&radius=50`;
+        const isSellerAdmin = post.seller?.role === "admin";
+        const isSellerTrusted = !!post.seller?.is_trusted_seller;
+
+        // DATA PEMBELI
+        const buyerName = post.buyer?.username || post.buyer?.full_name || "Member MamangGS";
+        const buyerAvatar = (post.buyer?.avatar_url && post.buyer.avatar_url.trim() !== "")
+          ? post.buyer.avatar_url
+          : `https://api.dicebear.com/7.x/adventurer/svg?seed=${encodeURIComponent(buyerName)}&radius=50`;
 
         // RENDER TOMBOL BELI BERDASARKAN STATUS
         let buyActionHtml = "";
@@ -521,10 +650,9 @@
           `;
         }
 
-        // RENDER HALAMAN UTUH
+        // RENDER TAMPILAN HALAMAN UTUH
         mainEl.innerHTML = `
           <div class="detail-grid">
-            <!-- KOLOM KIRI: FOTO & DESKRIPSI -->
             <div>
               <div class="card-box">
                 <div class="main-gallery-view">
@@ -532,7 +660,6 @@
                   ${isHold ? '<div class="watermark-overlay-hold"><i class="fa-solid fa-lock"></i> SEDANG PROSES REKBER</div>' : ''}
                   <img id="activeMainImg" src="${images[0]}" alt="${post.post_title}" style="${isSold ? 'filter: grayscale(70%);' : ''}">
                   
-                  <!-- TOMBOL LIKE -->
                   <button type="button" class="btn-floating-like" id="btnLikePost">
                     <i class="fa-solid fa-heart"></i>
                     <span id="likeCountText">0</span>
@@ -550,24 +677,21 @@
                 ` : ''}
               </div>
 
-              <!-- DESKRIPSI -->
               <div class="card-box">
-                <h3 style="font-size: 1.15rem; font-weight: 800; margin: 0 0 14px; color: #f8fafc;">
-                  <i class="fa-solid fa-align-left" style="color: #38bdf8;"></i> Spesifikasi & Catatan Penjual
+                <h3 style="font-size: 1.15rem; font-weight: 800; margin: 0 0 14px; color: #f8fafc; display: flex; align-items: center; gap: 8px;">
+                  <i class="fa-solid fa-align-left" style="color: var(--accent-volt);"></i> Spesifikasi & Catatan Penjual
                 </h3>
                 <div style="font-size: 0.92rem; color: #cbd5e1; line-height: 1.65; white-space: pre-line;">${post.description}</div>
               </div>
 
-              <!-- DISKUSI & NEGO PUBLIK -->
               <div class="card-box">
-                <h3 style="font-size: 1.15rem; font-weight: 800; margin: 0 0 6px; color: #f8fafc;">
-                  <i class="fa-solid fa-comments" style="color: #38bdf8;"></i> Diskusi & Nego Publik
+                <h3 style="font-size: 1.15rem; font-weight: 800; margin: 0 0 6px; color: #f8fafc; display: flex; align-items: center; gap: 8px;">
+                  <i class="fa-solid fa-comments" style="color: var(--accent-volt);"></i> Diskusi & Nego Publik
                 </h3>
-                <p style="font-size: 0.82rem; color: #94a3b8; margin: 0 0 14px;">
+                <p style="font-size: 0.82rem; color: #8e9bb0; margin: 0 0 14px;">
                   Ajukan pertanyaan atau tawar harga secara terbuka langsung di kolom ini.
                 </p>
 
-                <!-- KARANTINA FORM KOMENTAR JIKA TERJUAL/HOLD -->
                 ${isSold ? `
                   <div class="comment-locked-banner">
                     <i class="fa-solid fa-lock"></i>
@@ -580,10 +704,10 @@
                   </div>
                 ` : `
                   <form id="commentForm" style="display: flex; flex-direction: column; gap: 8px;">
-                    <textarea id="commentTextInput" class="form-control" rows="3" placeholder="Tulis komentar atau ajukan penawaran harga..." style="width: 100%; background: #0b1120; border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; padding: 12px; color: #fff; font-family: inherit; font-size: 0.9rem; outline: none; box-sizing: border-box;" required></textarea>
+                    <textarea id="commentTextInput" class="form-control" rows="3" placeholder="Tulis komentar atau ajukan penawaran harga..." style="width: 100%; background: var(--card-inner); border: 1px solid var(--border-subtle); border-radius: 12px; padding: 12px; color: #fff; font-family: inherit; font-size: 0.9rem; outline: none; box-sizing: border-box;" required></textarea>
 
                     <div class="emoticon-toolbar">
-                      <span style="font-size: 0.75rem; color: #64748b; margin-right: 4px;">Emoticon:</span>
+                      <span style="font-size: 0.75rem; color: #8e9bb0; margin-right: 4px;">Emoticon:</span>
                       <button type="button" class="btn-emot-pill" onclick="appendEmot('🔥')">🔥</button>
                       <button type="button" class="btn-emot-pill" onclick="appendEmot('🚀')">🚀</button>
                       <button type="button" class="btn-emot-pill" onclick="appendEmot('💎')">💎</button>
@@ -593,8 +717,8 @@
                     </div>
                     
                     <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px; margin-top: 6px;">
-                      <label style="display: flex; align-items: center; gap: 8px; font-size: 0.85rem; color: #f59e0b; cursor: pointer;">
-                        <input type="checkbox" id="checkIsOffer" style="accent-color: #f59e0b; width: 16px; height: 16px;">
+                      <label style="display: flex; align-items: center; gap: 8px; font-size: 0.85rem; color: var(--accent-volt); cursor: pointer;">
+                        <input type="checkbox" id="checkIsOffer" style="accent-color: var(--accent-volt); width: 16px; height: 16px;">
                         Kirim sebagai tawaran harga resmi
                       </label>
                       <input 
@@ -602,7 +726,7 @@
                         id="offerAmountInput" 
                         placeholder="Nominal tawaran (Rp)" 
                         inputmode="numeric" 
-                        style="display: none; background: #0b1120; border: 1px solid rgba(245,158,11,0.5); border-radius: 8px; padding: 8px 12px; color: #fff; font-size: 0.88rem; outline: none; width: 180px;"
+                        style="display: none; background: var(--card-inner); border: 1px solid rgba(204,255,0,0.4); border-radius: 8px; padding: 8px 12px; color: #fff; font-size: 0.88rem; outline: none; width: 180px;"
                       >
                       <button type="submit" id="btnPostComment" style="background: #e63946; color: #fff; border: none; padding: 10px 18px; border-radius: 10px; font-weight: 700; font-size: 0.88rem; cursor: pointer;">
                         Kirim
@@ -612,12 +736,11 @@
                 `}
 
                 <div class="comment-list" id="commentContainer">
-                  <p style="font-size: 0.85rem; color: #64748b; margin-top: 14px;">Memuat riwayat diskusi...</p>
+                  <p style="font-size: 0.85rem; color: #8e9bb0; margin-top: 14px;">Memuat riwayat diskusi...</p>
                 </div>
               </div>
             </div>
 
-            <!-- KOLOM KANAN: HARGA & SELLER -->
             <div>
               <div class="card-box desktop-rekber-card">
                 <span class="badge-game-tag">${post.game_title}</span>
@@ -627,64 +750,89 @@
                 <div class="escrow-guarantee-box">
                   <i class="fa-solid fa-shield-check"></i>
                   <div>
-                    <strong style="color: #10b981; display: block; margin-bottom: 2px;">Proteksi Rekber 3 Hari</strong>
+                    <strong style="color: var(--accent-volt); display: block; margin-bottom: 2px;">Proteksi Rekber 3 Hari</strong>
                     Uang ditahan sampai email login sepenuhnya diamankan di perangkat pembeli. Aman dari indikasi Hackback (HB).
                   </div>
                 </div>
 
-                <div style="background: #090d16; border-radius: 10px; padding: 12px 14px; margin-bottom: 18px; font-size: 0.84rem;">
-                  <div style="display: flex; justify-content: space-between; color: #94a3b8; margin-bottom: 6px;">
+                <div style="background: var(--card-inner); border: 1px solid var(--border-subtle); border-radius: 12px; padding: 12px 14px; margin-bottom: 18px; font-size: 0.84rem;">
+                  <div style="display: flex; justify-content: space-between; color: #8e9bb0; margin-bottom: 6px;">
                     <span>Estimasi Fee Rekber (${feePercent}%):</span>
                     <span>Rp ${feeAmount.toLocaleString('id-ID')}</span>
                   </div>
-                  <div style="display: flex; justify-content: space-between; color: #f8fafc; font-weight: 800; border-top: 1px solid rgba(255,255,255,0.08); padding-top: 6px;">
+                  <div style="display: flex; justify-content: space-between; color: #f8fafc; font-weight: 800; border-top: 1px solid var(--border-subtle); padding-top: 6px;">
                     <span>Total Transfer Pembeli:</span>
-                    <span style="color: #38bdf8;">Rp ${totalTransfer.toLocaleString('id-ID')}</span>
+                    <span style="color: var(--accent-volt);">Rp ${totalTransfer.toLocaleString('id-ID')}</span>
                   </div>
                 </div>
 
-                <!-- TOMBOL BELI / KARANTINA -->
                 ${buyActionHtml}
               </div>
 
-              <!-- CARD PROFIL PENJUAL -->
-              <div class="card-box">
-                <h4 style="margin: 0 0 14px; font-size: 0.95rem; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.5px;">Profil Penjual</h4>
-                <div style="display: flex; align-items: center; gap: 12px;">
-                  <div style="width: 46px; height: 46px; border-radius: 50%; background: #334155; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; color: #fff;">
-                    <i class="fa-solid fa-user"></i>
+              <div class="card-box seller-card-modern">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px;">
+                  <span style="font-size: 0.74rem; font-weight: 800; color: #8e9bb0; text-transform: uppercase; letter-spacing: 0.5px;">
+                    <i class="fa-solid fa-store" style="color: var(--accent-volt);"></i> Profil Penjual
+                  </span>
+                  ${isSellerAdmin ? '<span class="badge-admin-tag">ADMIN</span>' : ''}
+                </div>
+
+                <div style="display: flex; align-items: center; gap: 14px;">
+                  <div class="seller-avatar-frame ${isSellerTrusted ? 'trusted-border' : ''}">
+                    <img src="${sellerAvatar}" alt="${sellerName}">
                   </div>
-                  <div>
-                    <div style="font-weight: 800; font-size: 1rem; color: #fff; display: flex; align-items: center; gap: 6px;">
-                      ${post.seller?.username || 'Member MamangGS'}
-                      ${post.seller?.is_trusted_seller ? '<i class="fa-solid fa-circle-check" style="color: #38bdf8;" title="Verified Seller"></i>' : ''}
+                  
+                  <div style="flex: 1; min-width: 0;">
+                    <div style="display: flex; align-items: center; gap: 6px; margin-bottom: 4px;">
+                      <strong style="color: #fff; font-size: 1.05rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+                        ${sellerName}
+                      </strong>
+                      ${isSellerTrusted ? '<i class="fa-solid fa-circle-check" style="color: #38bdf8; font-size: 0.95rem;" title="Verified Account"></i>' : ''}
                     </div>
-                    <span style="font-size: 0.78rem; color: ${post.seller?.is_trusted_seller ? '#f59e0b' : '#94a3b8'}; font-weight: 600;">
-                      ${post.seller?.is_trusted_seller ? '★ Trusted Seller MamangGS' : 'Member Terdaftar'}
-                    </span>
+
+                    ${isSellerTrusted ? `
+                      <div class="badge-trusted-seller">
+                        <i class="fa-solid fa-shield-halved"></i>
+                        <span>Trusted Seller MamangGS</span>
+                      </div>
+                    ` : `
+                      <span style="font-size: 0.78rem; color: #8e9bb0;">
+                        <i class="fa-solid fa-user-check"></i> Member Terdaftar
+                      </span>
+                    `}
+                  </div>
+                </div>
+
+                <div class="seller-quick-stats">
+                  <div class="stat-pill">
+                    <span>Keamanan</span>
+                    <strong style="color: var(--accent-volt);"><i class="fa-solid fa-shield-check"></i> Rekber Escrow</strong>
+                  </div>
+                  <div class="stat-pill">
+                    <span>Garansi Akun</span>
+                    <strong style="color: #38bdf8;"><i class="fa-solid fa-clock-rotate-left"></i> 3 Hari Anti-HB</strong>
                   </div>
                 </div>
               </div>
 
-              <!-- CARD PROFIL PEMBELI RESMI (JIKA SUDAH SOLD & ADA BUYER) -->
               ${isSold && post.buyer ? `
-                <div class="card-box" style="border-color: rgba(16, 185, 129, 0.35); background: linear-gradient(135deg, rgba(16, 185, 129, 0.08), rgba(15, 23, 42, 0.75));">
+                <div class="card-box buyer-card-modern">
                   <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
-                    <h4 style="margin: 0; font-size: 0.88rem; color: #10b981; text-transform: uppercase; letter-spacing: 0.5px;">
+                    <h4 style="margin: 0; font-size: 0.85rem; color: var(--accent-volt); text-transform: uppercase; letter-spacing: 0.5px;">
                       <i class="fa-solid fa-award"></i> Pembeli Resmi (Buyer)
                     </h4>
-                    <span style="font-size: 0.72rem; color: #34d399; font-weight: 700; background: rgba(16,185,129,0.15); padding: 2px 8px; border-radius: 4px;">Rekber Sukses</span>
+                    <span style="font-size: 0.72rem; color: #000; font-weight: 800; background: var(--accent-volt); padding: 2px 8px; border-radius: 6px;">Rekber Sukses</span>
                   </div>
                   <div style="display: flex; align-items: center; gap: 12px;">
-                    <div style="width: 44px; height: 44px; border-radius: 50%; background: #064e3b; border: 1.5px solid #10b981; display: flex; align-items: center; justify-content: center; font-size: 1.1rem; color: #34d399;">
-                      <i class="fa-solid fa-user-check"></i>
+                    <div style="width: 44px; height: 44px; border-radius: 12px; overflow: hidden; border: 1.5px solid var(--accent-volt); flex-shrink: 0;">
+                      <img src="${buyerAvatar}" alt="${buyerName}" style="width: 100%; height: 100%; object-fit: cover;">
                     </div>
                     <div>
                       <div style="font-weight: 800; font-size: 0.95rem; color: #fff; display: flex; align-items: center; gap: 6px;">
-                        ${post.buyer.username || 'Member MamangGS'}
-                        <i class="fa-solid fa-circle-check" style="color: #10b981;" title="Verified Rekber Buyer"></i>
+                        ${buyerName}
+                        <i class="fa-solid fa-circle-check" style="color: var(--accent-volt);" title="Verified Rekber Buyer"></i>
                       </div>
-                      <span style="font-size: 0.76rem; color: #34d399; font-weight: 600;">
+                      <span style="font-size: 0.76rem; color: #8e9bb0; font-weight: 600;">
                         👑 Pemilik Sah Akun Ini
                       </span>
                     </div>
@@ -696,7 +844,7 @@
           </div>
         `;
 
-        // UPDATE STICKY BAR DI MOBILE
+        // UPDATE STICKY BAR DI HP
         stickyPrice.innerText = `Rp ${price.toLocaleString('id-ID')}`;
         stickyAction.innerHTML = stickyBuyHtml;
         if (window.innerWidth <= 868) {
@@ -713,8 +861,8 @@
           <div style="text-align: center; padding: 60px 0;">
             <i class="fa-solid fa-triangle-exclamation" style="font-size: 2.5rem; color: #ef4444; margin-bottom: 12px;"></i>
             <h3>Gagal Memuat Iklan</h3>
-            <p style="color: #94a3b8;">${err.message}</p>
-            <a href="/market.html" style="color: #38bdf8;">Kembali ke Katalog</a>
+            <p style="color: #8e9bb0;">${err.message}</p>
+            <a href="/market.html" style="color: var(--accent-volt);">Kembali ke Katalog</a>
           </div>
         `;
       }
@@ -845,7 +993,7 @@
         }
 
         if (!comments || comments.length === 0) {
-          commentContainer.innerHTML = `<p style="color: #64748b; font-size: 0.85rem; margin-top: 10px;">Belum ada penawaran atau diskusi terdahulu.</p>`;
+          commentContainer.innerHTML = `<p style="color: #8e9bb0; font-size: 0.85rem; margin-top: 10px;">Belum ada penawaran atau diskusi terdahulu.</p>`;
           return;
         }
 
@@ -857,10 +1005,10 @@
             <div class="comment-bubble ${c.is_offer ? 'is-offer' : ''}">
               <div class="comment-author-row">
                 <span class="comment-author">
-                  <i class="fa-solid fa-user-circle" style="color: #64748b;"></i> ${c.user?.username || 'User'}
+                  <i class="fa-solid fa-user-circle" style="color: #8e9bb0;"></i> ${c.user?.username || 'User'}
                   ${c.is_offer ? `<span class="offer-badge"><i class="fa-solid fa-tag"></i> Tawar Rp ${Number(c.offer_amount || 0).toLocaleString('id-ID')}</span>` : ''}
                 </span>
-                <span style="color: #64748b; font-size: 0.75rem;">${time}</span>
+                <span style="color: #8e9bb0; font-size: 0.75rem;">${time}</span>
               </div>
               <p style="margin: 0; font-size: 0.88rem; color: #cbd5e1; line-height: 1.4;">${c.comment_text}</p>
             </div>
