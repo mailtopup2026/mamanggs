@@ -1,0 +1,579 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Detail Akun - FJB MamangGS</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <link rel="stylesheet" href="/css/global.css">
+
+  <style>
+    .detail-wrapper {
+      max-width: 1100px;
+      margin: 30px auto 120px;
+      padding: 0 16px;
+    }
+
+    .detail-grid {
+      display: grid;
+      grid-template-columns: 1.15fr 0.85fr;
+      gap: 24px;
+      align-items: start;
+    }
+
+    @media (max-width: 868px) {
+      .detail-grid {
+        grid-template-columns: 1fr;
+        gap: 20px;
+      }
+    }
+
+    .card-box {
+      background: rgba(15, 23, 42, 0.75);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 18px;
+      padding: 22px;
+      backdrop-filter: blur(12px);
+      box-shadow: 0 16px 36px rgba(0, 0, 0, 0.4);
+      margin-bottom: 20px;
+    }
+
+    /* GALERI GAMBAR */
+    .main-gallery-view {
+      width: 100%;
+      aspect-ratio: 16/10;
+      background: #020617;
+      border-radius: 14px;
+      overflow: hidden;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .main-gallery-view img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      background: #000;
+    }
+
+    .thumb-strip {
+      display: flex;
+      gap: 10px;
+      overflow-x: auto;
+      margin-top: 12px;
+      padding-bottom: 6px;
+      scrollbar-width: thin;
+    }
+
+    .thumb-btn {
+      width: 70px;
+      height: 50px;
+      flex-shrink: 0;
+      border-radius: 8px;
+      overflow: hidden;
+      border: 2px solid transparent;
+      cursor: pointer;
+      background: #000;
+      padding: 0;
+    }
+
+    .thumb-btn.active {
+      border-color: #38bdf8;
+    }
+
+    .thumb-btn img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    /* BADGE STATUS */
+    .badge-game-tag {
+      display: inline-block;
+      background: rgba(56, 189, 248, 0.12);
+      border: 1px solid rgba(56, 189, 248, 0.35);
+      color: #38bdf8;
+      padding: 4px 10px;
+      border-radius: 6px;
+      font-size: 0.8rem;
+      font-weight: 700;
+      margin-bottom: 10px;
+    }
+
+    .price-tag {
+      font-size: 1.8rem;
+      font-weight: 900;
+      color: #10b981;
+      margin: 12px 0 16px;
+      letter-spacing: -0.5px;
+    }
+
+    .escrow-guarantee-box {
+      background: linear-gradient(135deg, rgba(16, 185, 129, 0.1), rgba(6, 78, 59, 0.2));
+      border: 1px solid rgba(16, 185, 129, 0.35);
+      border-radius: 12px;
+      padding: 14px 16px;
+      margin-bottom: 18px;
+      display: flex;
+      gap: 12px;
+      align-items: flex-start;
+    }
+
+    .escrow-guarantee-box i {
+      color: #10b981;
+      font-size: 1.3rem;
+      margin-top: 2px;
+    }
+
+    .escrow-guarantee-box div {
+      font-size: 0.82rem;
+      color: #cbd5e1;
+      line-height: 1.45;
+    }
+
+    /* TOMBOL AKSI REKBER */
+    .btn-buy-rekber {
+      width: 100%;
+      background: linear-gradient(135deg, #10b981, #059669);
+      color: #ffffff;
+      border: none;
+      padding: 16px;
+      border-radius: 14px;
+      font-weight: 800;
+      font-size: 1rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      text-decoration: none;
+      box-shadow: 0 8px 24px rgba(16, 185, 129, 0.35);
+      transition: transform 0.15s;
+      box-sizing: border-box;
+    }
+
+    .btn-buy-rekber:active {
+      transform: scale(0.98);
+    }
+
+    /* KOMENTAR / NEGO */
+    .comment-list {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      margin-top: 16px;
+    }
+
+    .comment-bubble {
+      background: rgba(0, 0, 0, 0.35);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      border-radius: 12px;
+      padding: 12px 14px;
+    }
+
+    .comment-bubble.is-offer {
+      border-color: rgba(245, 158, 11, 0.4);
+      background: rgba(245, 158, 11, 0.05);
+    }
+
+    .comment-author-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 6px;
+      font-size: 0.82rem;
+    }
+
+    .comment-author {
+      font-weight: 800;
+      color: #f8fafc;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .offer-badge {
+      background: #f59e0b;
+      color: #000;
+      padding: 2px 8px;
+      border-radius: 4px;
+      font-weight: 800;
+      font-size: 0.72rem;
+    }
+
+    /* MOBILE STICKY BAR */
+    .mobile-sticky-bar {
+      display: none;
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: rgba(11, 17, 32, 0.95);
+      border-top: 1px solid rgba(255, 255, 255, 0.1);
+      padding: 12px 16px;
+      backdrop-filter: blur(10px);
+      z-index: 9999;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+    }
+
+    @media (max-width: 868px) {
+      .mobile-sticky-bar {
+        display: flex;
+      }
+      .desktop-rekber-card {
+        display: none;
+      }
+    }
+  </style>
+</head>
+<body style="background-color: #0b1120; color: #f8fafc; font-family: 'Plus Jakarta Sans', sans-serif; margin: 0; padding: 0;">
+
+  <!-- NAVBAR -->
+  <header class="navbar">
+    <div class="navbar-container">
+      <a href="/" class="brand-logo">
+        <div class="logo-video-wrap"><video autoplay loop muted playsinline class="logo-video"><source src="/assets/images/logo.mp4" type="video/mp4"></video></div>
+      </a>
+      <div class="nav-actions desktop-only">
+        <a href="/market.html" class="btn-nav-login" style="color: #38bdf8;"><i class="fa-solid fa-arrow-left"></i> Kembali ke FJB</a>
+        <a href="/order-status.html" class="btn-nav-login" style="color: #10b981;"><i class="fa-solid fa-receipt"></i> Lacak</a>
+      </div>
+    </div>
+  </header>
+
+  <main class="detail-wrapper" id="detailMainContent">
+    <div style="text-align: center; padding: 60px 0;">
+      <i class="fa-solid fa-spinner fa-spin" style="font-size: 2.2rem; color: #38bdf8; margin-bottom: 12px;"></i>
+      <p style="color: #94a3b8;">Memuat data akun...</p>
+    </div>
+  </main>
+
+  <!-- STICKY ACTION KHUSUS HP -->
+  <div class="mobile-sticky-bar" id="mobileStickyBar" style="display: none;">
+    <div>
+      <span style="display: block; font-size: 0.72rem; color: #94a3b8;">Harga Akun</span>
+      <strong id="stickyPriceText" style="color: #10b981; font-size: 1.15rem;">Rp 0</strong>
+    </div>
+    <a href="#" id="stickyBuyBtn" class="btn-buy-rekber" style="width: auto; padding: 12px 20px; font-size: 0.88rem;">
+      <i class="fa-brands fa-whatsapp"></i> Beli Rekber
+    </a>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="/js/supabase.js"></script>
+
+  <script>
+    document.addEventListener("DOMContentLoaded", async () => {
+      const urlParams = new URLSearchParams(window.location.search);
+      const postId = urlParams.get("id");
+      const mainEl = document.getElementById("detailMainContent");
+      const stickyBar = document.getElementById("mobileStickyBar");
+      const stickyPrice = document.getElementById("stickyPriceText");
+      const stickyBuy = document.getElementById("stickyBuyBtn");
+
+      if (!postId) {
+        mainEl.innerHTML = `
+          <div style="text-align: center; padding: 60px 0;">
+            <h3>Postingan tidak ditemukan</h3>
+            <a href="/market.html" style="color: #38bdf8;">Kembali ke FJB</a>
+          </div>
+        `;
+        return;
+      }
+
+      try {
+        if (!window.supabase) throw new Error("Supabase client belum siap.");
+
+        // AMBIL DETAIL POST & PROFIL SELLER
+        const { data: post, error } = await window.supabase
+          .from("market_posts")
+          .select(`
+            *,
+            seller:seller_id (
+              id,
+              username,
+              avatar_url,
+              is_trusted_seller
+            )
+          `)
+          .eq("id", postId)
+          .single();
+
+        if (error || !post) throw new Error("Iklan tidak ditemukan atau sudah dihapus.");
+
+        // KALKULASI ESTIMASI FEE REKBER
+        const price = Number(post.price || 0);
+        let feePercent = 15;
+        if (price >= 5000000) feePercent = 5;
+        else if (price >= 1000000) feePercent = 10;
+
+        const feeAmount = Math.round((price * feePercent) / 100);
+        const totalTransfer = price + feeAmount;
+
+        // TEMPLATE PESAN WHATSAPP REKBER
+        const waNumber = "6282121616716";
+        const waText = encodeURIComponent(
+          `Halo Admin Rekber MamangGS, saya ingin membeli akun berikut:\n` +
+          `• ID Post: #${post.id.substring(0, 8)}\n` +
+          `• Judul: ${post.post_title}\n` +
+          `• Game: ${post.game_title}\n` +
+          `• Penjual: ${post.seller?.username || 'Seller'}\n` +
+          `• Harga: Rp ${price.toLocaleString('id-ID')}\n` +
+          `• Fee Rekber (${feePercent}%): Rp ${feeAmount.toLocaleString('id-ID')}\n` +
+          `• Total Transfer: Rp ${totalTransfer.toLocaleString('id-ID')}\n\n` +
+          `Mohon panduan rekening escrow dan proses serah terima akunnya. Terima kasih!`
+        );
+        const waUrl = `https://wa.me/${waNumber}?text=${waText}`;
+
+        // RENDER HALAMAN
+        const images = post.images && post.images.length > 0 
+          ? post.images 
+          : ["/assets/images/default-game.jpg"];
+
+        mainEl.innerHTML = `
+          <div class="detail-grid">
+            <!-- KOLOM KIRI: FOTO & DESKRIPSI -->
+            <div>
+              <div class="card-box">
+                <div class="main-gallery-view">
+                  <img id="activeMainImg" src="${images[0]}" alt="${post.post_title}">
+                </div>
+                ${images.length > 1 ? `
+                  <div class="thumb-strip">
+                    ${images.map((img, idx) => `
+                      <button class="thumb-btn ${idx === 0 ? 'active' : ''}" onclick="switchGalleryImg('${img}', this)">
+                        <img src="${img}" alt="Thumbnail ${idx + 1}">
+                      </button>
+                    `).join('')}
+                  </div>
+                ` : ''}
+              </div>
+
+              <!-- DESKRIPSI -->
+              <div class="card-box">
+                <h3 style="font-size: 1.15rem; font-weight: 800; margin: 0 0 14px; color: #f8fafc;">
+                  <i class="fa-solid fa-align-left" style="color: #38bdf8;"></i> Spesifikasi & Catatan Penjual
+                </h3>
+                <div style="font-size: 0.92rem; color: #cbd5e1; line-height: 1.65; white-space: pre-line;">${post.description}</div>
+              </div>
+
+              <!-- DISKUSI & NEGO KOMENTAR -->
+              <div class="card-box">
+                <h3 style="font-size: 1.15rem; font-weight: 800; margin: 0 0 6px; color: #f8fafc;">
+                  <i class="fa-solid fa-comments" style="color: #38bdf8;"></i> Diskusi & Nego Publik
+                </h3>
+                <p style="font-size: 0.82rem; color: #94a3b8; margin: 0 0 16px;">
+                  Ajukan pertanyaan atau tawar harga secara terbuka langsung di kolom ini.
+                </p>
+
+                <!-- FORM INPUT KOMENTAR -->
+                <form id="commentForm" style="display: flex; flex-direction: column; gap: 10px;">
+                  <textarea id="commentTextInput" class="form-control" rows="3" placeholder="Tulis komentar atau ajukan penawaran harga..." style="width: 100%; background: #0b1120; border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; padding: 12px; color: #fff; font-family: inherit; font-size: 0.9rem; outline: none; box-sizing: border-box;" required></textarea>
+                  
+                  <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px;">
+                    <label style="display: flex; align-items: center; gap: 8px; font-size: 0.85rem; color: #f59e0b; cursor: pointer;">
+                      <input type="checkbox" id="checkIsOffer" style="accent-color: #f59e0b;">
+                      Kirim sebagai tawaran harga resmi
+                    </label>
+                    <input type="number" id="offerAmountInput" placeholder="Nominal tawaran (Rp)" style="display: none; background: #0b1120; border: 1px solid rgba(245,158,11,0.4); border-radius: 8px; padding: 8px 12px; color: #fff; font-size: 0.85rem; outline: none; width: 170px;">
+                    <button type="submit" id="btnPostComment" style="background: #e63946; color: #fff; border: none; padding: 10px 18px; border-radius: 10px; font-weight: 700; font-size: 0.88rem; cursor: pointer;">
+                      Kirim
+                    </button>
+                  </div>
+                </form>
+
+                <div class="comment-list" id="commentContainer">
+                  <p style="font-size: 0.85rem; color: #64748b; margin-top: 14px;">Memuat komentar...</p>
+                </div>
+              </div>
+            </div>
+
+            <!-- KOLOM KANAN: HARGA & SELLER -->
+            <div>
+              <div class="card-box desktop-rekber-card">
+                <span class="badge-game-tag">${post.game_title}</span>
+                <h1 style="font-size: 1.4rem; font-weight: 900; line-height: 1.35; margin: 0 0 8px; color: #ffffff;">${post.post_title}</h1>
+                <div class="price-tag">Rp ${price.toLocaleString('id-ID')}</div>
+
+                <div class="escrow-guarantee-box">
+                  <i class="fa-solid fa-shield-check"></i>
+                  <div>
+                    <strong style="color: #10b981; display: block; margin-bottom: 2px;">Proteksi Rekber 3 Hari</strong>
+                    Uang ditahan sampai email login sepenuhnya diamankan di perangkat pembeli. Aman dari indikasi Hackback (HB).
+                  </div>
+                </div>
+
+                <div style="background: #090d16; border-radius: 10px; padding: 12px 14px; margin-bottom: 18px; font-size: 0.84rem;">
+                  <div style="display: flex; justify-content: space-between; color: #94a3b8; margin-bottom: 6px;">
+                    <span>Estimasi Fee Rekber (${feePercent}%):</span>
+                    <span>Rp ${feeAmount.toLocaleString('id-ID')}</span>
+                  </div>
+                  <div style="display: flex; justify-content: space-between; color: #f8fafc; font-weight: 800; border-top: 1px solid rgba(255,255,255,0.08); padding-top: 6px;">
+                    <span>Total Transfer Pembeli:</span>
+                    <span style="color: #38bdf8;">Rp ${totalTransfer.toLocaleString('id-ID')}</span>
+                  </div>
+                </div>
+
+                <a href="${waUrl}" target="_blank" rel="noopener noreferrer" class="btn-buy-rekber">
+                  <i class="fa-brands fa-whatsapp" style="font-size: 1.25rem;"></i> Beli via Rekber MamangGS
+                </a>
+              </div>
+
+              <!-- CARD PROFIL PENJUAL -->
+              <div class="card-box">
+                <h4 style="margin: 0 0 14px; font-size: 0.95rem; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.5px;">Profil Penjual</h4>
+                <div style="display: flex; align-items: center; gap: 12px;">
+                  <div style="width: 46px; height: 46px; border-radius: 50%; background: #334155; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; color: #fff;">
+                    <i class="fa-solid fa-user"></i>
+                  </div>
+                  <div>
+                    <div style="font-weight: 800; font-size: 1rem; color: #fff; display: flex; align-items: center; gap: 6px;">
+                      ${post.seller?.username || 'Member MamangGS'}
+                      ${post.seller?.is_trusted_seller ? '<i class="fa-solid fa-circle-check" style="color: #38bdf8;" title="Verified Seller"></i>' : ''}
+                    </div>
+                    <span style="font-size: 0.78rem; color: ${post.seller?.is_trusted_seller ? '#f59e0b' : '#94a3b8'}; font-weight: 600;">
+                      ${post.seller?.is_trusted_seller ? '★ Trusted Seller MamangGS' : 'Member Terdaftar'}
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        `;
+
+        // UPDATE STICKY BAR DI MOBILE
+        stickyPrice.innerText = `Rp ${price.toLocaleString('id-ID')}`;
+        stickyBuy.href = waUrl;
+        if (window.innerWidth <= 868) {
+          stickyBar.style.display = "flex";
+        }
+
+        // INIT FITUR KOMENTAR
+        setupComments(postId);
+
+      } catch (err) {
+        console.error(err);
+        mainEl.innerHTML = `
+          <div style="text-align: center; padding: 60px 0;">
+            <i class="fa-solid fa-triangle-exclamation" style="font-size: 2.5rem; color: #ef4444; margin-bottom: 12px;"></i>
+            <h3>Gagal Memuat Iklan</h3>
+            <p style="color: #94a3b8;">${err.message}</p>
+            <a href="/market.html" style="color: #38bdf8;">Kembali ke Katalog</a>
+          </div>
+        `;
+      }
+    });
+
+    // FUNGSI GANTI FOTO UTAMA DARI THUMBNAIL
+    window.switchGalleryImg = (src, btnEl) => {
+      document.getElementById("activeMainImg").src = src;
+      document.querySelectorAll(".thumb-btn").forEach(b => b.classList.remove("active"));
+      btnEl.classList.add("active");
+    };
+
+    // LOGIKA KOMENTAR & NEGO HARGA
+    async function setupComments(postId) {
+      const commentContainer = document.getElementById("commentContainer");
+      const commentForm = document.getElementById("commentForm");
+      const textInput = document.getElementById("commentTextInput");
+      const checkOffer = document.getElementById("checkIsOffer");
+      const offerInput = document.getElementById("offerAmountInput");
+
+      checkOffer.addEventListener("change", () => {
+        offerInput.style.display = checkOffer.checked ? "inline-block" : "none";
+        if (checkOffer.checked) offerInput.focus();
+      });
+
+      async function loadComments() {
+        const { data: comments, error } = await window.supabase
+          .from("market_comments")
+          .select(`
+            id,
+            comment_text,
+            is_offer,
+            offer_amount,
+            created_at,
+            user:user_id (username)
+          `)
+          .eq("post_id", postId)
+          .order("created_at", { ascending: true });
+
+        if (error) {
+          commentContainer.innerHTML = `<p style="color: #ef4444; font-size: 0.85rem;">Gagal memuat diskusi.</p>`;
+          return;
+        }
+
+        if (!comments || comments.length === 0) {
+          commentContainer.innerHTML = `<p style="color: #64748b; font-size: 0.85rem; margin-top: 10px;">Belum ada penawaran atau diskusi. Jadilah yang pertama!</p>`;
+          return;
+        }
+
+        commentContainer.innerHTML = comments.map(c => {
+          const time = new Date(c.created_at).toLocaleDateString("id-ID", {
+            day: "numeric", month: "short", hour: "2-digit", minute: "2-digit"
+          });
+          return `
+            <div class="comment-bubble ${c.is_offer ? 'is-offer' : ''}">
+              <div class="comment-author-row">
+                <span class="comment-author">
+                  <i class="fa-solid fa-user-circle" style="color: #64748b;"></i> ${c.user?.username || 'User'}
+                  ${c.is_offer ? `<span class="offer-badge"><i class="fa-solid fa-tag"></i> Tawar Rp ${Number(c.offer_amount || 0).toLocaleString('id-ID')}</span>` : ''}
+                </span>
+                <span style="color: #64748b; font-size: 0.75rem;">${time}</span>
+              </div>
+              <p style="margin: 0; font-size: 0.88rem; color: #cbd5e1; line-height: 1.4;">${c.comment_text}</p>
+            </div>
+          `;
+        }).join("");
+      }
+
+      commentForm.addEventListener("submit", async (e) => {
+        e.preventDefault();
+        const text = textInput.value.trim();
+        if (!text) return;
+
+        const { data: { user } } = await window.supabase.auth.getUser();
+        if (!user) {
+          alert("Silakan login terlebih dahulu untuk ikut berdiskusi atau menawar akun!");
+          window.location.href = "/auth/login.html";
+          return;
+        }
+
+        const isOffer = checkOffer.checked;
+        const offerAmount = isOffer ? Number(offerInput.value) || null : null;
+
+        const { error: insErr } = await window.supabase
+          .from("market_comments")
+          .insert({
+            post_id: postId,
+            user_id: user.id,
+            comment_text: text,
+            is_offer: isOffer,
+            offer_amount: offerAmount
+          });
+
+        if (insErr) {
+          alert("Gagal mengirim komentar: " + insErr.message);
+          return;
+        }
+
+        textInput.value = "";
+        offerInput.value = "";
+        checkOffer.checked = false;
+        offerInput.style.display = "none";
+        loadComments();
+      });
+
+      loadComments();
+    }
+  </script>
+</body>
+</html>

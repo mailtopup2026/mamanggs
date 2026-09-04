@@ -1,0 +1,501 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pasang Iklan Jual Akun - MamangGS</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <link rel="stylesheet" href="/css/global.css">
+
+  <style>
+    .market-container {
+      max-width: 880px;
+      margin: 40px auto 100px;
+      padding: 0 20px;
+    }
+    .panel-card {
+      background: rgba(15, 23, 42, 0.75);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 20px;
+      padding: 28px;
+      backdrop-filter: blur(12px);
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+      margin-bottom: 24px;
+    }
+    .guide-banner {
+      background: linear-gradient(135deg, rgba(99, 102, 241, 0.12), rgba(245, 158, 11, 0.12));
+      border: 1px solid rgba(99, 102, 241, 0.3);
+      border-radius: 16px;
+      padding: 20px;
+      margin-bottom: 24px;
+    }
+    .guide-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+      gap: 12px;
+      margin-top: 14px;
+    }
+    .guide-item {
+      background: rgba(0, 0, 0, 0.35);
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      border-radius: 10px;
+      padding: 12px;
+      font-size: 0.84rem;
+      color: #cbd5e1;
+    }
+    .guide-item strong {
+      color: #f8fafc;
+      display: block;
+      margin-bottom: 4px;
+      font-size: 0.88rem;
+    }
+    .form-group {
+      margin-bottom: 22px;
+    }
+    .form-group label {
+      display: block;
+      font-size: 0.9rem;
+      font-weight: 700;
+      color: #e2e8f0;
+      margin-bottom: 8px;
+    }
+    .form-control {
+      width: 100%;
+      background: #0b1120;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      padding: 14px 18px;
+      border-radius: 12px;
+      color: #ffffff;
+      font-size: 0.95rem;
+      font-family: inherit;
+      outline: none;
+      box-sizing: border-box;
+      transition: border-color 0.2s;
+    }
+    .form-control:focus {
+      border-color: #38bdf8;
+    }
+    .fee-calc-box {
+      background: #090d16;
+      border: 1px solid rgba(56, 189, 248, 0.25);
+      border-radius: 14px;
+      padding: 18px 20px;
+      margin-top: 12px;
+    }
+    .fee-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.88rem;
+      color: #94a3b8;
+      margin-bottom: 8px;
+    }
+    .fee-row.total {
+      border-top: 1px solid rgba(255, 255, 255, 0.1);
+      padding-top: 10px;
+      margin-bottom: 0;
+      font-weight: 800;
+      color: #10b981;
+      font-size: 1rem;
+    }
+    .hot-addon-box {
+      background: rgba(245, 158, 11, 0.08);
+      border: 1px dashed rgba(245, 158, 11, 0.45);
+      border-radius: 14px;
+      padding: 16px 18px;
+      margin-bottom: 22px;
+    }
+    .preview-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
+      gap: 12px;
+      margin-top: 16px;
+    }
+    .preview-item {
+      position: relative;
+      width: 100%;
+      aspect-ratio: 16/9;
+      border-radius: 8px;
+      overflow: hidden;
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      background: #000000;
+    }
+    .preview-item img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+    .preview-remove {
+      position: absolute;
+      top: 4px;
+      right: 4px;
+      background: rgba(239, 68, 68, 0.9);
+      border: none;
+      color: #ffffff;
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.75rem;
+    }
+  </style>
+</head>
+<body style="background-color: #0b1120; color: #f8fafc; font-family: 'Plus Jakarta Sans', sans-serif; margin: 0; padding: 0;">
+
+  <!-- NAVBAR -->
+  <header class="navbar">
+    <div class="navbar-container">
+      <a href="/" class="brand-logo">
+        <div class="logo-video-wrap"><video autoplay loop muted playsinline class="logo-video"><source src="/assets/images/logo.mp4" type="video/mp4"></video></div>
+      </a>
+      <div class="nav-actions desktop-only">
+        <a href="/market.html" class="btn-nav-login" style="color: #38bdf8;"><i class="fa-solid fa-store"></i> FJB Akun</a>
+        <a href="/order-status.html" class="btn-nav-login" style="color: #10b981;"><i class="fa-solid fa-receipt"></i> Lacak</a>
+        <a href="/auth/login.html" class="btn-nav-login" id="navLoginBtn"><i class="fa-solid fa-right-to-bracket"></i> Masuk</a>
+      </div>
+    </div>
+  </header>
+
+  <main class="market-container">
+    <div style="text-align: center; margin-bottom: 30px;">
+      <h1 style="font-size: 2.2rem; font-weight: 900; margin: 0 0 10px; letter-spacing: -0.5px;">
+        Pasang Iklan <span style="color: #38bdf8;">Jual Akun</span>
+      </h1>
+      <p style="color: #94a3b8; font-size: 0.95rem; margin: 0;">
+        Transaksi terproteksi penuh lewat Rekber MamangGS (Dana di-hold 3 hari anti Hackback).
+      </p>
+    </div>
+
+    <!-- PANDUAN SCREENSHOT WAJIB -->
+    <div class="guide-banner">
+      <div style="display: flex; align-items: center; gap: 10px; font-weight: 800; font-size: 1rem; color: #f59e0b;">
+        <i class="fa-solid fa-circle-info"></i> Panduan Foto & Informasi Wajib Penjual
+      </div>
+      <p style="color: #cbd5e1; font-size: 0.85rem; margin: 6px 0 0; line-height: 1.5;">
+        Sertakan tangkapan layar berikut agar akun lekas laku (Maksimal 20 foto, sistem otomatis mengompresi di bawah 500 KB):
+      </p>
+      <div class="guide-grid">
+        <div class="guide-item">
+          <strong>1. Lobby / Profil Utama</strong>
+          Menampilkan Nickname, Level, Rank tertinggi, dan ID Akun.
+        </div>
+        <div class="guide-item">
+          <strong>2. Menu Bind / Keamanan</strong>
+          Status keterkaitan platform (Moonton/Google/Apple/FB). Sensor email penting!
+        </div>
+        <div class="guide-item">
+          <strong>3. Koleksi Item Langka</strong>
+          Katalog skin tier tinggi, senjata eksklusif, atau inventaris penting.
+        </div>
+        <div class="guide-item">
+          <strong>4. Riwayat Top-up</strong>
+          Struk order perdana jika ada untuk memperkuat keaslian pemilik akun.
+        </div>
+      </div>
+    </div>
+
+    <!-- FORM INPUT POSTINGAN -->
+    <div class="panel-card">
+      <form id="formMarketPost">
+        <div class="form-group">
+          <label><i class="fa-solid fa-gamepad" style="color: #38bdf8;"></i> Kategori Game</label>
+          <select id="gameTitle" class="form-control" required>
+            <option value="">Pilih Game</option>
+            <option value="Mobile Legends">Mobile Legends</option>
+            <option value="Free Fire">Free Fire</option>
+            <option value="PUBG Mobile">PUBG Mobile</option>
+            <option value="Genshin Impact">Genshin Impact</option>
+            <option value="Valorant">Valorant</option>
+            <option value="Honor of Kings">Honor of Kings</option>
+            <option value="Lainnya">Game Lainnya</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label><i class="fa-solid fa-heading" style="color: #38bdf8;"></i> Judul Iklan</label>
+          <input type="text" id="postTitle" class="form-control" placeholder="Contoh: MLBB Sultan 150 Skin - Monsep All Unbind Aman" required maxlength="150">
+        </div>
+
+        <div class="form-group">
+          <label><i class="fa-solid fa-tag" style="color: #38bdf8;"></i> Harga Akun (Rp)</label>
+          <input type="number" id="accountPrice" class="form-control" placeholder="Masukkan harga, contoh: 750000" min="50000" required>
+        </div>
+
+        <!-- CHECKBOX ADD-ON HOT -->
+        <div class="hot-addon-box">
+          <label style="display: flex; align-items: center; gap: 12px; cursor: pointer; margin: 0;">
+            <input type="checkbox" id="checkIsHot" style="width: 20px; height: 20px; accent-color: #f59e0b; cursor: pointer;">
+            <div>
+              <span style="font-weight: 800; color: #fbbf24; font-size: 0.95rem;">
+                <i class="fa-solid fa-fire"></i> Pasang Label "HOT ITEM" (+ Rp 10.000)
+              </span>
+              <p style="margin: 3px 0 0; font-size: 0.82rem; color: #94a3b8; line-height: 1.4;">
+                Iklanmu diprioritaskan tampil paling atas di katalog dan diberi bingkai api menyala agar cepat laku!
+              </p>
+            </div>
+          </label>
+        </div>
+
+        <!-- KALKULATOR TIER FEE BERJENJANG -->
+        <div class="fee-calc-box">
+          <div class="fee-row">
+            <span>Biaya Pasang Iklan Dasar:</span>
+            <span style="color: #cbd5e1; font-weight: 600;">Rp 20.000</span>
+          </div>
+          <div class="fee-row" id="rowHotFee" style="display: none;">
+            <span>Add-on Label HOT:</span>
+            <span style="color: #f59e0b; font-weight: 700;">+ Rp 10.000</span>
+          </div>
+          <div class="fee-row" style="border-top: 1px solid rgba(255,255,255,0.08); padding-top: 8px;">
+            <span>Total Potong Saldo Akun:</span>
+            <strong id="totalListingFee" style="color: #38bdf8; font-size: 1rem;">Rp 20.000</strong>
+          </div>
+          <div class="fee-row">
+            <span>Tarif Komisi Rekber (<span id="feePercent">15%</span>):</span>
+            <span id="feeAmount">Rp 0</span>
+          </div>
+          <div class="fee-row total">
+            <span>Estimasi Dana Bersih Diterima Penjual:</span>
+            <span id="netProceeds">Rp 0</span>
+          </div>
+        </div>
+
+        <div class="form-group" style="margin-top: 22px;">
+          <label><i class="fa-solid fa-align-left" style="color: #38bdf8;"></i> Deskripsi & Spesifikasi Akun</label>
+          <textarea id="postDesc" class="form-control" rows="6" placeholder="Tuliskan spesifikasi detail akun, status login (unbind/monsep), dan rincian item..." required></textarea>
+        </div>
+
+        <div class="form-group">
+          <label><i class="fa-solid fa-images" style="color: #38bdf8;"></i> Foto Screenshot Akun (Maksimal 20 Gambar)</label>
+          <input type="file" id="imageInput" accept="image/*" multiple class="form-control">
+          <div id="previewContainer" class="preview-grid"></div>
+        </div>
+
+        <button type="submit" id="btnSubmitPost" style="width: 100%; background: #e63946; color: #ffffff; border: none; padding: 16px; border-radius: 12px; font-weight: 800; font-size: 1.05rem; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; margin-top: 10px;">
+          <i class="fa-solid fa-paper-plane"></i> Publikasikan Iklan
+        </button>
+      </form>
+    </div>
+  </main>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="/js/supabase.js"></script>
+
+  <script>
+    let selectedFiles = [];
+
+    // FUNGSI KOMPRESI GAMBAR (WEBP < 500KB)
+    async function compressImage(file) {
+      return new Promise((resolve) => {
+        const reader = new FileReader();
+        reader.readAsDataURL(file);
+        reader.onload = (event) => {
+          const img = new Image();
+          img.src = event.target.result;
+          img.onload = () => {
+            const canvas = document.createElement("canvas");
+            let width = img.width;
+            let height = img.height;
+            const maxDimension = 1280;
+
+            if (width > height && width > maxDimension) {
+              height = Math.round((height * maxDimension) / width);
+              width = maxDimension;
+            } else if (height > maxDimension) {
+              width = Math.round((width * maxDimension) / height);
+              height = maxDimension;
+            }
+
+            canvas.width = width;
+            canvas.height = height;
+            const ctx = canvas.getContext("2d");
+            ctx.drawImage(img, 0, 0, width, height);
+
+            canvas.toBlob(
+              (blob) => {
+                resolve(new File([blob], file.name.replace(/\.[^/.]+$/, "") + ".webp", {
+                  type: "image/webp"
+                }));
+              },
+              "image/webp",
+              0.78
+            );
+          };
+        };
+      });
+    }
+
+    // KALKULATOR TIER FEE & ADDON HOT
+    const priceInput = document.getElementById("accountPrice");
+    const checkHot = document.getElementById("checkIsHot");
+    const rowHotFee = document.getElementById("rowHotFee");
+    const totalListingFeeEl = document.getElementById("totalListingFee");
+    const feePercentEl = document.getElementById("feePercent");
+    const feeAmountEl = document.getElementById("feeAmount");
+    const netProceedsEl = document.getElementById("netProceeds");
+
+    function updateFeeCalculation() {
+      const price = Number(priceInput.value) || 0;
+      let percent = 15;
+
+      if (price >= 5000000) {
+        percent = 5;
+      } else if (price >= 1000000) {
+        percent = 10;
+      }
+
+      const fee = Math.round((price * percent) / 100);
+      const net = Math.max(0, price - fee);
+
+      const isHot = checkHot.checked;
+      const totalListing = isHot ? 30000 : 20000;
+
+      rowHotFee.style.display = isHot ? "flex" : "none";
+      totalListingFeeEl.innerText = `Rp ${totalListing.toLocaleString("id-ID")}`;
+      feePercentEl.innerText = `${percent}%`;
+      feeAmountEl.innerText = `Rp ${fee.toLocaleString("id-ID")}`;
+      netProceedsEl.innerText = `Rp ${net.toLocaleString("id-ID")}`;
+    }
+
+    priceInput.addEventListener("input", updateFeeCalculation);
+    checkHot.addEventListener("change", updateFeeCalculation);
+
+    // PREVIEW FOTO
+    const imageInput = document.getElementById("imageInput");
+    const previewContainer = document.getElementById("previewContainer");
+
+    imageInput.addEventListener("change", async (e) => {
+      const files = Array.from(e.target.files);
+      if (selectedFiles.length + files.length > 20) {
+        alert("Maksimal 20 foto tangkapan layar yang diperbolehkan!");
+        return;
+      }
+
+      for (const file of files) {
+        const compressed = await compressImage(file);
+        selectedFiles.push(compressed);
+      }
+      renderPreviews();
+      imageInput.value = "";
+    });
+
+    function renderPreviews() {
+      previewContainer.innerHTML = "";
+      selectedFiles.forEach((file, index) => {
+        const div = document.createElement("div");
+        div.className = "preview-item";
+        div.innerHTML = `
+          <img src="${URL.createObjectURL(file)}" alt="Preview">
+          <button type="button" class="preview-remove" onclick="removeImage(${index})">&times;</button>
+        `;
+        previewContainer.appendChild(div);
+      });
+    }
+
+    window.removeImage = (index) => {
+      selectedFiles.splice(index, 1);
+      renderPreviews();
+    };
+
+    // PROSES PUBLISH & POTONG SALDO
+    document.getElementById("formMarketPost").addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const btn = document.getElementById("btnSubmitPost");
+
+      try {
+        if (!window.supabase) throw new Error("Koneksi Supabase belum siap.");
+
+        // 1. Cek User Login
+        const { data: { user } } = await window.supabase.auth.getUser();
+        if (!user) {
+          alert("Silakan masuk (login) terlebih dahulu untuk memublikasikan iklan!");
+          window.location.href = "/auth/login.html";
+          return;
+        }
+
+        // 2. Cek Saldo User
+        const requiredFee = checkHot.checked ? 30000 : 20000;
+        const { data: profile, error: profErr } = await window.supabase
+          .from("profiles")
+          .select("balance")
+          .eq("id", user.id)
+          .single();
+
+        if (profErr) throw profErr;
+        const currentBalance = Number(profile?.balance || 0);
+
+        if (currentBalance < requiredFee) {
+          alert(`Saldo akunmu (Rp ${currentBalance.toLocaleString("id-ID")}) tidak mencukupi untuk biaya publikasi Rp ${requiredFee.toLocaleString("id-ID")}. Silakan deposit saldo terlebih dahulu.`);
+          return;
+        }
+
+        if (selectedFiles.length === 0) {
+          alert("Harap unggah minimal 1 foto tangkapan layar akun!");
+          return;
+        }
+
+        btn.disabled = true;
+        btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Mengompres & Mengunggah...';
+
+        // 3. Upload Gambar ke Bucket market_images
+        const uploadedUrls = [];
+        for (const file of selectedFiles) {
+          const fileName = `${user.id}/${Date.now()}_${Math.random().toString(36).substring(7)}.webp`;
+          const { error: upErr } = await window.supabase.storage
+            .from("market_images")
+            .upload(fileName, file);
+
+          if (upErr) throw upErr;
+
+          const { data: publicUrlData } = window.supabase.storage
+            .from("market_images")
+            .getPublicUrl(fileName);
+
+          uploadedUrls.push(publicUrlData.publicUrl);
+        }
+
+        // 4. Potong Saldo Listing
+        const { error: balErr } = await window.supabase
+          .from("profiles")
+          .update({ balance: currentBalance - requiredFee })
+          .eq("id", user.id);
+
+        if (balErr) throw balErr;
+
+        // 5. Simpan Data ke Tabel market_posts
+        const { error: postErr } = await window.supabase
+          .from("market_posts")
+          .insert({
+            seller_id: user.id,
+            game_title: document.getElementById("gameTitle").value,
+            post_title: document.getElementById("postTitle").value.trim(),
+            description: document.getElementById("postDesc").value.trim(),
+            price: Number(priceInput.value),
+            images: uploadedUrls,
+            is_hot: checkHot.checked,
+            status: "available"
+          });
+
+        if (postErr) throw postErr;
+
+        alert(`Iklan akun berhasil dipublikasikan! Saldo terpotong Rp ${requiredFee.toLocaleString("id-ID")}.`);
+        window.location.href = "/market.html";
+
+      } catch (err) {
+        console.error(err);
+        alert("Gagal memublikasikan iklan: " + err.message);
+      } finally {
+        btn.disabled = false;
+        btn.innerHTML = '<i class="fa-solid fa-paper-plane"></i> Publikasikan Iklan';
+      }
+    });
+  </script>
+</body>
+</html>
