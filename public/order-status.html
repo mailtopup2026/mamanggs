@@ -136,7 +136,7 @@
       btnTrack.addEventListener('click', () => {
         const orderId = inputId.value.trim();
         if (!orderId) {
-          alert('Masukkan nomor Invoice transaksi dulu bosku!');
+          alert('showToast("Masukkan nomor Invoice transaksi dulu bosku!", "warning");!');
           return;
         }
         fetchAndRenderOrder(orderId);

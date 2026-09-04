@@ -19,7 +19,11 @@ document.addEventListener("DOMContentLoaded", () => {
   checkBtn.addEventListener("click", () => {
     const invoice = invoiceInput.value.trim();
     if (!invoice) {
-      alert("Silakan masukkan nomor invoice transaksi kamu!");
+      if (typeof window.showToast === "function") {
+        window.showToast("Masukkan nomor Invoice transaksi dulu bosku!", "warning");
+      } else {
+        alert("Masukkan nomor Invoice transaksi dulu bosku!");
+      }
       return;
     }
     fetchOrderStatus(invoice);
@@ -68,13 +72,21 @@ document.addEventListener("DOMContentLoaded", () => {
 
         resultCard.classList.add("show");
       } else {
-        alert("Nomor invoice tidak ditemukan! Pastikan nomor invoice yang Anda masukkan benar.");
+        if (typeof window.showToast === "function") {
+          window.showToast("Nomor invoice tidak ditemukan! Pastikan nomor invoice benar.", "error");
+        } else {
+          alert("Nomor invoice tidak ditemukan! Pastikan nomor invoice yang Anda masukkan benar.");
+        }
         resultCard.classList.remove("show");
         if (paymentBox) paymentBox.style.display = "none";
       }
     } catch (err) {
       console.error(err);
-      alert("Terjadi kesalahan saat memeriksa transaksi: " + err.message);
+      if (typeof window.showToast === "function") {
+        window.showToast("Terjadi kesalahan saat memeriksa transaksi: " + err.message, "error");
+      } else {
+        alert("Terjadi kesalahan saat memeriksa transaksi: " + err.message);
+      }
     } finally {
       checkBtn.innerHTML = '<i class="fa-solid fa-magnifying-glass"></i> Cek Status';
       checkBtn.disabled = false;
@@ -141,7 +153,7 @@ document.addEventListener("DOMContentLoaded", () => {
         <div style="background: rgba(255,255,255,0.05); padding: 20px; border-radius: 12px; text-align: center; border: 1px solid rgba(255,255,255,0.1);">
           <h4 style="margin-bottom: 8px; color: #fff;">Nomor Virtual Account</h4>
           <div style="font-size: 22px; font-weight: bold; letter-spacing: 2px; color: #48cae4; margin: 10px 0;">${vaNumber}</div>
-          <button onclick="navigator.clipboard.writeText('${vaNumber}'); alert('Nomor VA berhasil disalin!');" style="background: rgba(255,255,255,0.15); color: #fff; border: none; padding: 6px 14px; border-radius: 6px; cursor: pointer;">
+          <button onclick="navigator.clipboard.writeText('${vaNumber}'); if(typeof window.showToast==='function'){window.showToast('Nomor VA berhasil disalin!','success');}else{alert('Nomor VA berhasil disalin!');}" style="background: rgba(255,255,255,0.15); color: #fff; border: none; padding: 6px 14px; border-radius: 6px; cursor: pointer;">
             <i class="fa-solid fa-copy"></i> Salin Nomor VA
           </button>
         </div>

@@ -260,3 +260,36 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
   }
 });
+
+// ==========================================
+// FUNGSI GLOBAL CYBER TOAST NOTIFICATION
+// ==========================================
+window.showToast = function (message, type = "warning") {
+  let container = document.getElementById("mgsToastContainer");
+  if (!container) {
+    container = document.createElement("div");
+    container.id = "mgsToastContainer";
+    container.className = "mgs-toast-container";
+    document.body.appendChild(container);
+  }
+
+  const iconMap = {
+    warning: "fa-triangle-exclamation",
+    error: "fa-circle-xmark",
+    success: "fa-circle-check"
+  };
+
+  const toast = document.createElement("div");
+  toast.className = `mgs-toast ${type}`;
+  toast.innerHTML = `
+    <i class="fa-solid ${iconMap[type] || iconMap.warning}"></i>
+    <div class="mgs-toast-msg">${message}</div>
+  `;
+
+  container.appendChild(toast);
+
+  setTimeout(() => {
+    toast.classList.add("hide");
+    setTimeout(() => toast.remove(), 300);
+  }, 3500);
+};
