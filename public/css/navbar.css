@@ -200,4 +200,78 @@
   .mobile-only {
     display: flex;
   }
+
+  /* ==========================================
+   PERBAIKAN TOTAL MOBILE MENU DROPDOWN
+   ========================================== */
+#mobileMenuDropdown.mobile-menu-drawer {
+  display: none;
+  position: fixed;
+  top: 72px;
+  right: 16px;
+  width: 250px;
+  background: #0d111a !important;
+  border: 1px solid rgba(255, 255, 255, 0.12) !important;
+  border-radius: 16px !important;
+  padding: 14px !important;
+  box-shadow: 0 20px 45px rgba(0, 0, 0, 0.85) !important;
+  z-index: 99999 !important;
+  flex-direction: column !important;
+  gap: 4px !important;
+}
+
+#mobileMenuDropdown.show {
+  display: flex !important;
+}
+
+.mobile-menu-header {
+  display: flex !important;
+  justify-content: space-between !important;
+  align-items: center !important;
+  padding-bottom: 8px !important;
+  margin-bottom: 4px !important;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08) !important;
+  color: #fff !important;
+  font-weight: 800 !important;
+  font-size: 0.88rem !important;
+}
+
+#btnCloseMobileMenu {
+  background: none !important;
+  border: none !important;
+  color: #94a3b8 !important;
+  font-size: 1.1rem !important;
+  cursor: pointer !important;
+}
+
+.mobile-menu-link {
+  display: flex !important;
+  align-items: center !important;
+  gap: 10px !important;
+  padding: 9px 12px !important;
+  color: #cbd5e1 !important;
+  text-decoration: none !important;
+  font-size: 0.85rem !important;
+  font-weight: 700 !important;
+  border-radius: 10px !important;
+  background: rgba(255, 255, 255, 0.02) !important;
+  border: none !important;
+  transition: all 0.2s ease !important;
+}
+
+.mobile-menu-link:hover {
+  background: rgba(204, 255, 0, 0.08) !important;
+  color: #ccff00 !important;
+}
+
+#mobileAuthSlot {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 4px !important;
+  margin-top: 6px !important;
+  padding-top: 6px !important;
+  border-top: 1px dashed rgba(255, 255, 255, 0.1) !important;
+  background: transparent !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
 }
