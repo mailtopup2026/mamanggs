@@ -11,7 +11,6 @@ function handleLogout() {
 
   let modal = document.getElementById("logoutModalOverlay");
 
-  // Jika modal belum ada di DOM dokumen, buat secara dinamis
   if (!modal) {
     const modalHTML = `
       <div class="mgs-modal-overlay" id="logoutModalOverlay">
@@ -31,17 +30,14 @@ function handleLogout() {
     document.body.insertAdjacentHTML("beforeend", modalHTML);
     modal = document.getElementById("logoutModalOverlay");
 
-    // Tutup modal via tombol Batal
     document.getElementById("btnCancelLogout")?.addEventListener("click", () => {
       modal.classList.remove("show");
     });
 
-    // Tutup jika area luar modal diklik
     modal.addEventListener("click", (e) => {
       if (e.target === modal) modal.classList.remove("show");
     });
 
-    // Eksekusi logout saat tombol konfirmasi diklik
     document.getElementById("btnConfirmLogout")?.addEventListener("click", async () => {
       const btn = document.getElementById("btnConfirmLogout");
       btn.disabled = true;
@@ -55,18 +51,14 @@ function handleLogout() {
       } catch (err) {
         console.warn("Error saat sign out Supabase:", err);
       } finally {
-        // Bersihkan semua local storage & cache session
         localStorage.removeItem("mgs_user");
         localStorage.clear();
         sessionStorage.clear();
-
-        // Arahkan ke beranda
         window.location.href = "/";
       }
     });
   }
 
-  // Tampilkan Cyber Modal
   modal.classList.add("show");
 }
 
@@ -97,7 +89,6 @@ document.addEventListener("DOMContentLoaded", async () => {
     const forwardSearchValue = () => {
       const query = mobileSearchInput.value;
       
-      // Sinkronkan ke input search desktop
       const desktopSearch = document.getElementById("searchInput") || document.getElementById("gameSearchInput");
       if (desktopSearch) {
         desktopSearch.value = query;
@@ -106,7 +97,6 @@ document.addEventListener("DOMContentLoaded", async () => {
         desktopSearch.dispatchEvent(new Event("change", { bubbles: true }));
       }
 
-      // Filter katalog kartu secara langsung jika elemen kartu ada di halaman
       const gameCards = document.querySelectorAll(".catalog-poster-card, .popular-compact-card, .game-card-item");
       if (gameCards.length > 0) {
         const cleanQuery = query.toLowerCase().trim();
@@ -120,7 +110,6 @@ document.addEventListener("DOMContentLoaded", async () => {
         });
       }
 
-      // Panggil fungsi filter katalog jika tersedia di window global
       if (typeof window.filterGamesCatalog === "function") {
         window.filterGamesCatalog(query);
       }
@@ -159,8 +148,12 @@ document.addEventListener("DOMContentLoaded", async () => {
     const desktopNav = document.getElementById("desktopNavActions") || document.querySelector(".nav-actions");
     const mobileAuthSlot = document.getElementById("mobileAuthSlot");
 
+    // Tombol Navigasi Umum
+    const fjbLink = `<a href="/market.html" class="btn-nav-login" style="background: rgba(16, 185, 129, 0.15); border-color: rgba(16, 185, 129, 0.4); color: #10b981;"><i class="fa-solid fa-store"></i> FJB Akun</a>`;
     const blogLink = `<a href="/blog.html" class="btn-nav-login" style="background: rgba(56, 189, 248, 0.15); border-color: rgba(56, 189, 248, 0.4); color: #38bdf8;"><i class="fa-solid fa-newspaper"></i> Blog</a>`;
     const leaderLink = `<a href="/leaderboard.html" class="btn-nav-login" style="background: rgba(245, 158, 11, 0.15); border-color: rgba(245, 158, 11, 0.4); color: #f59e0b;"><i class="fa-solid fa-crown"></i> Leaderboard</a>`;
+
+    const mobileFjbLink = `<a href="/market.html" class="mobile-menu-link" style="color: #10b981;"><i class="fa-solid fa-store" style="color: #10b981;"></i> FJB Jual Beli Akun</a>`;
 
     const isAdmin = profileData?.role === "admin";
     const adminLink = isAdmin
@@ -171,6 +164,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     if (!userData) {
       if (desktopNav) {
         desktopNav.innerHTML = `
+          ${fjbLink}
           ${blogLink}
           ${leaderLink}
           <a href="/auth/login.html" class="btn-nav-login" id="navLoginBtn"><i class="fa-solid fa-right-to-bracket"></i> Masuk</a>
@@ -179,6 +173,7 @@ document.addEventListener("DOMContentLoaded", async () => {
       }
       if (mobileAuthSlot) {
         mobileAuthSlot.innerHTML = `
+          ${mobileFjbLink}
           <a href="/auth/login.html" class="mobile-menu-link"><i class="fa-solid fa-right-to-bracket"></i> Masuk Akun</a>
           <a href="/auth/register.html" class="mobile-menu-link" style="color: #f59e0b;"><i class="fa-solid fa-user-plus"></i> Daftar Member</a>
         `;
@@ -195,6 +190,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     if (desktopNav) {
       desktopNav.innerHTML = `
         ${adminLink}
+        ${fjbLink}
         ${blogLink}
         ${leaderLink}
         <div class="user-nav-capsule" style="display: inline-flex; align-items: center; background: rgba(15, 23, 42, 0.85); border: 1px solid rgba(255, 255, 255, 0.12); border-radius: 50px; padding: 4px 6px 4px 5px; gap: 8px; backdrop-filter: blur(8px);">
@@ -214,6 +210,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         <div style="padding: 6px 10px; font-size: 0.82rem; color: #fbbf24; font-weight: 800; display: flex; align-items: center; gap: 8px;">
           <img src="${avatarUrl}" style="width: 24px; height: 24px; border-radius: 50%;"> ${name}
         </div>
+        ${mobileFjbLink}
         ${isAdmin ? `
           <a href="/admin.html" class="mobile-menu-link" style="color: #ef4444;">
             <i class="fa-solid fa-shield-halved"></i> Admin Panel
