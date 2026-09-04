@@ -73,7 +73,7 @@ document.addEventListener("DOMContentLoaded", () => {
       filter: brightness(1.15) !important;
     }
 
-    /* Posisi Rapi Melengkung di Sebelah Kiri-Atas (Pas & Nyaman Dilihat) */
+    /* Posisi Rapi Melengkung di Sebelah Kiri-Atas */
     .mgs-float-hub.open .mgs-hub-btn {
       opacity: 1 !important;
       pointer-events: auto !important;
@@ -121,24 +121,24 @@ document.addEventListener("DOMContentLoaded", () => {
   `;
   document.head.appendChild(styleEl);
 
-  // 3. Render Elemen Baru
+  // 3. Render Elemen Baru dengan Link Resmi
   const hub = document.createElement("div");
   hub.className = "mgs-float-hub";
   hub.innerHTML = `
     <!-- Tombol 1: WhatsApp -->
-    <a href="https://wa.me/6281234567890" target="_blank" class="mgs-hub-btn wa" title="WhatsApp CS">
+    <a href="https://wa.me/6282121616716" target="_blank" rel="noopener noreferrer" class="mgs-hub-btn wa" title="WhatsApp CS">
       <i class="fa-brands fa-whatsapp"></i>
       <span class="mgs-hub-tip">WhatsApp CS</span>
     </a>
 
     <!-- Tombol 2: TikTok -->
-    <a href="https://tiktok.com/@mamanggs" target="_blank" class="mgs-hub-btn tt" title="TikTok">
+    <a href="https://www.tiktok.com/@mamang.gs?_r=1&_t=ZS-99Q6oDNxOTt" target="_blank" rel="noopener noreferrer" class="mgs-hub-btn tt" title="TikTok">
       <i class="fa-brands fa-tiktok"></i>
       <span class="mgs-hub-tip">TikTok</span>
     </a>
 
     <!-- Tombol 3: Instagram -->
-    <a href="https://instagram.com/mamanggs" target="_blank" class="mgs-hub-btn ig" title="Instagram">
+    <a href="https://www.instagram.com/mamang.gs?igsi=ZG4zODZyeXh6YXg5" target="_blank" rel="noopener noreferrer" class="mgs-hub-btn ig" title="Instagram">
       <i class="fa-brands fa-instagram"></i>
       <span class="mgs-hub-tip">Instagram</span>
     </a>
