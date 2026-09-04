@@ -44,6 +44,7 @@
 
     /* GALERI GAMBAR */
     .main-gallery-view {
+      position: relative;
       width: 100%;
       aspect-ratio: 16/10;
       background: #020617;
@@ -60,6 +61,40 @@
       height: 100%;
       object-fit: contain;
       background: #000;
+    }
+
+    /* TOMBOL LIKE FLOATING */
+    .btn-floating-like {
+      position: absolute;
+      top: 14px;
+      right: 14px;
+      background: rgba(15, 23, 42, 0.85);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      color: #94a3b8;
+      padding: 8px 14px;
+      border-radius: 30px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.85rem;
+      font-weight: 700;
+      backdrop-filter: blur(8px);
+      transition: all 0.2s ease;
+      z-index: 5;
+    }
+
+    .btn-floating-like:hover {
+      background: rgba(239, 68, 68, 0.2);
+      border-color: #ef4444;
+      color: #ef4444;
+    }
+
+    .btn-floating-like.active {
+      background: #ef4444;
+      border-color: #ef4444;
+      color: #ffffff;
+      box-shadow: 0 4px 14px rgba(239, 68, 68, 0.4);
     }
 
     .thumb-strip {
@@ -160,6 +195,32 @@
 
     .btn-buy-rekber:active {
       transform: scale(0.98);
+    }
+
+    /* EMOTICON PICKER BAR */
+    .emoticon-toolbar {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      margin-top: 8px;
+      overflow-x: auto;
+      padding-bottom: 4px;
+    }
+
+    .btn-emot-pill {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 20px;
+      padding: 4px 10px;
+      font-size: 0.95rem;
+      cursor: pointer;
+      transition: background 0.2s, transform 0.1s;
+      line-height: 1;
+    }
+
+    .btn-emot-pill:hover {
+      background: rgba(255, 255, 255, 0.15);
+      transform: scale(1.1);
     }
 
     /* KOMENTAR / NEGO */
@@ -292,7 +353,7 @@
       try {
         if (!window.supabase) throw new Error("Supabase client belum siap.");
 
-        // AMBIL DETAIL POST & PROFIL SELLER
+        // 1. AMBIL DETAIL POST & PROFIL SELLER
         const { data: post, error } = await window.supabase
           .from("market_posts")
           .select(`
@@ -333,11 +394,11 @@
         );
         const waUrl = `https://wa.me/${waNumber}?text=${waText}`;
 
-        // RENDER HALAMAN
         const images = post.images && post.images.length > 0 
           ? post.images 
           : ["/assets/images/default-game.jpg"];
 
+        // RENDER HALAMAN
         mainEl.innerHTML = `
           <div class="detail-grid">
             <!-- KOLOM KIRI: FOTO & DESKRIPSI -->
@@ -345,7 +406,14 @@
               <div class="card-box">
                 <div class="main-gallery-view">
                   <img id="activeMainImg" src="${images[0]}" alt="${post.post_title}">
+                  
+                  <!-- TOMBOL LIKE -->
+                  <button type="button" class="btn-floating-like" id="btnLikePost">
+                    <i class="fa-solid fa-heart"></i>
+                    <span id="likeCountText">0</span>
+                  </button>
                 </div>
+
                 ${images.length > 1 ? `
                   <div class="thumb-strip">
                     ${images.map((img, idx) => `
@@ -370,20 +438,37 @@
                 <h3 style="font-size: 1.15rem; font-weight: 800; margin: 0 0 6px; color: #f8fafc;">
                   <i class="fa-solid fa-comments" style="color: #38bdf8;"></i> Diskusi & Nego Publik
                 </h3>
-                <p style="font-size: 0.82rem; color: #94a3b8; margin: 0 0 16px;">
+                <p style="font-size: 0.82rem; color: #94a3b8; margin: 0 0 14px;">
                   Ajukan pertanyaan atau tawar harga secara terbuka langsung di kolom ini.
                 </p>
 
                 <!-- FORM INPUT KOMENTAR -->
-                <form id="commentForm" style="display: flex; flex-direction: column; gap: 10px;">
+                <form id="commentForm" style="display: flex; flex-direction: column; gap: 8px;">
                   <textarea id="commentTextInput" class="form-control" rows="3" placeholder="Tulis komentar atau ajukan penawaran harga..." style="width: 100%; background: #0b1120; border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; padding: 12px; color: #fff; font-family: inherit; font-size: 0.9rem; outline: none; box-sizing: border-box;" required></textarea>
+
+                  <!-- QUICK EMOTICON BAR -->
+                  <div class="emoticon-toolbar">
+                    <span style="font-size: 0.75rem; color: #64748b; margin-right: 4px;">Emoticon:</span>
+                    <button type="button" class="btn-emot-pill" onclick="appendEmot('🔥')">🔥</button>
+                    <button type="button" class="btn-emot-pill" onclick="appendEmot('🚀')">🚀</button>
+                    <button type="button" class="btn-emot-pill" onclick="appendEmot('💎')">💎</button>
+                    <button type="button" class="btn-emot-pill" onclick="appendEmot('👀')">👀</button>
+                    <button type="button" class="btn-emot-pill" onclick="appendEmot('🤝')">🤝</button>
+                    <button type="button" class="btn-emot-pill" onclick="appendEmot('👍')">👍</button>
+                  </div>
                   
-                  <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px;">
+                  <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px; margin-top: 6px;">
                     <label style="display: flex; align-items: center; gap: 8px; font-size: 0.85rem; color: #f59e0b; cursor: pointer;">
-                      <input type="checkbox" id="checkIsOffer" style="accent-color: #f59e0b;">
+                      <input type="checkbox" id="checkIsOffer" style="accent-color: #f59e0b; width: 16px; height: 16px;">
                       Kirim sebagai tawaran harga resmi
                     </label>
-                    <input type="number" id="offerAmountInput" placeholder="Nominal tawaran (Rp)" style="display: none; background: #0b1120; border: 1px solid rgba(245,158,11,0.4); border-radius: 8px; padding: 8px 12px; color: #fff; font-size: 0.85rem; outline: none; width: 170px;">
+                    <input 
+                      type="text" 
+                      id="offerAmountInput" 
+                      placeholder="Nominal tawaran (Rp)" 
+                      inputmode="numeric" 
+                      style="display: none; background: #0b1120; border: 1px solid rgba(245,158,11,0.5); border-radius: 8px; padding: 8px 12px; color: #fff; font-size: 0.88rem; outline: none; width: 180px;"
+                    >
                     <button type="submit" id="btnPostComment" style="background: #e63946; color: #fff; border: none; padding: 10px 18px; border-radius: 10px; font-weight: 700; font-size: 0.88rem; cursor: pointer;">
                       Kirim
                     </button>
@@ -456,7 +541,8 @@
           stickyBar.style.display = "flex";
         }
 
-        // INIT FITUR KOMENTAR
+        // INISIALISASI FITUR LIKE & KOMENTAR
+        initLikeSystem(postId);
         setupComments(postId);
 
       } catch (err) {
@@ -472,20 +558,102 @@
       }
     });
 
-    // FUNGSI GANTI FOTO UTAMA DARI THUMBNAIL
+    // FUNGSI GANTI FOTO UTAMA
     window.switchGalleryImg = (src, btnEl) => {
       document.getElementById("activeMainImg").src = src;
       document.querySelectorAll(".thumb-btn").forEach(b => b.classList.remove("active"));
       btnEl.classList.add("active");
     };
 
-    // LOGIKA KOMENTAR & NEGO HARGA
+    // FUNGSI INSERSI EMOTICON KE TEXTAREA
+    window.appendEmot = (emot) => {
+      const textarea = document.getElementById("commentTextInput");
+      if (!textarea) return;
+      textarea.value += (textarea.value.length > 0 && !textarea.value.endsWith(" ") ? " " : "") + emot + " ";
+      textarea.focus();
+    };
+
+    // SISTEM LIKE POSTINGAN
+    async function initLikeSystem(postId) {
+      const btnLike = document.getElementById("btnLikePost");
+      const countEl = document.getElementById("likeCountText");
+      if (!btnLike) return;
+
+      const { data: { user } } = await window.supabase.auth.getUser();
+
+      // Hitung total like
+      async function refreshLikes() {
+        const { count, error } = await window.supabase
+          .from("market_likes")
+          .select("id", { count: "exact", head: true })
+          .eq("post_id", postId);
+
+        if (!error && count !== null) {
+          countEl.innerText = count.toLocaleString("id-ID");
+        }
+
+        if (user) {
+          const { data: userLike } = await window.supabase
+            .from("market_likes")
+            .select("id")
+            .eq("post_id", postId)
+            .eq("user_id", user.id)
+            .maybeSingle();
+
+          if (userLike) {
+            btnLike.classList.add("active");
+          } else {
+            btnLike.classList.remove("active");
+          }
+        }
+      }
+
+      await refreshLikes();
+
+      btnLike.addEventListener("click", async () => {
+        if (!user) {
+          alert("Silakan login terlebih dahulu untuk menyukai iklan ini!");
+          window.location.href = "/auth/login.html";
+          return;
+        }
+
+        const isLiked = btnLike.classList.contains("active");
+
+        if (isLiked) {
+          btnLike.classList.remove("active");
+          await window.supabase
+            .from("market_likes")
+            .delete()
+            .eq("post_id", postId)
+            .eq("user_id", user.id);
+        } else {
+          btnLike.classList.add("active");
+          await window.supabase
+            .from("market_likes")
+            .insert({ post_id: postId, user_id: user.id });
+        }
+
+        refreshLikes();
+      });
+    }
+
+    // SISTEM KOMENTAR & NEGO DENGAN FORMAT TITIK
     async function setupComments(postId) {
       const commentContainer = document.getElementById("commentContainer");
       const commentForm = document.getElementById("commentForm");
       const textInput = document.getElementById("commentTextInput");
       const checkOffer = document.getElementById("checkIsOffer");
       const offerInput = document.getElementById("offerAmountInput");
+
+      // Format ribuan titik pada kolom tawaran harga
+      offerInput.addEventListener("input", (e) => {
+        let rawVal = e.target.value.replace(/\D/g, "");
+        if (!rawVal) {
+          e.target.value = "";
+        } else {
+          e.target.value = Number(rawVal).toLocaleString("id-ID");
+        }
+      });
 
       checkOffer.addEventListener("change", () => {
         offerInput.style.display = checkOffer.checked ? "inline-block" : "none";
@@ -548,7 +716,7 @@
         }
 
         const isOffer = checkOffer.checked;
-        const offerAmount = isOffer ? Number(offerInput.value) || null : null;
+        const offerAmount = isOffer ? Number(offerInput.value.replace(/\./g, "")) || null : null;
 
         const { error: insErr } = await window.supabase
           .from("market_comments")
