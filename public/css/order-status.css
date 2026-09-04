@@ -108,11 +108,13 @@
   padding-bottom: 20px;
   border-bottom: 1px solid var(--border-color);
   margin-bottom: 20px;
+  gap: 12px;
 }
 
 .result-invoice-no {
   font-size: 1.1rem;
   font-weight: 800;
+  word-break: break-all;
 }
 
 .status-badge {
@@ -123,6 +125,7 @@
   display: inline-flex;
   align-items: center;
   gap: 6px;
+  white-space: nowrap;
 }
 
 .status-badge.pending {
@@ -139,9 +142,13 @@
 
 .detail-grid {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 16px;
   margin-bottom: 24px;
+}
+
+.detail-item {
+  min-width: 0; /* Mencegah item flex/grid jebol ke samping */
 }
 
 .detail-item span {
@@ -152,8 +159,13 @@
 }
 
 .detail-item strong {
+  display: block;
   font-size: 0.95rem;
   color: var(--text-main);
+  word-break: break-word;
+  overflow-wrap: anywhere;
+  white-space: normal;
+  line-height: 1.4;
 }
 
 .result-actions {
@@ -201,5 +213,6 @@
   .status-wrapper { margin-top: 20px; }
   .search-input-group { flex-direction: column; }
   .detail-grid { grid-template-columns: 1fr; }
+  .result-top { flex-direction: column; align-items: flex-start; }
   .result-actions { flex-direction: column; }
 }
