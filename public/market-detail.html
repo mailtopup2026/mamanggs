@@ -404,6 +404,7 @@
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="/js/supabase.js"></script>
+  <script src="/js/navbar.js"></script>
 
   <script>
     document.addEventListener("DOMContentLoaded", async () => {
@@ -427,7 +428,7 @@
       try {
         if (!window.supabase) throw new Error("Supabase client belum siap.");
 
-        // AMBIL DETAIL POST & PROFIL SELLER
+        // AMBIL DETAIL POST, PROFIL SELLER, DAN PROFIL BUYER (CARA A)
         const { data: post, error } = await window.supabase
           .from("market_posts")
           .select(`
@@ -437,6 +438,11 @@
               username,
               avatar_url,
               is_trusted_seller
+            ),
+            buyer:buyer_id (
+              id,
+              username,
+              avatar_url
             )
           `)
           .eq("id", postId)
@@ -476,7 +482,7 @@
           ? post.images 
           : ["/assets/images/default-game.jpg"];
 
-        // RENDER ELEMEN TOMBOL BELI BERDASARKAN STATUS
+        // RENDER TOMBOL BELI BERDASARKAN STATUS
         let buyActionHtml = "";
         let stickyBuyHtml = "";
 
@@ -515,7 +521,7 @@
           `;
         }
 
-        // RENDER HALAMAN
+        // RENDER HALAMAN UTUH
         mainEl.innerHTML = `
           <div class="detail-grid">
             <!-- KOLOM KIRI: FOTO & DESKRIPSI -->
@@ -573,7 +579,6 @@
                     Penawaran ditutup sementara karena akun sedang dalam proses transaksi Rekber.
                   </div>
                 ` : `
-                  <!-- FORM INPUT KOMENTAR JIKA TERSEDIA -->
                   <form id="commentForm" style="display: flex; flex-direction: column; gap: 8px;">
                     <textarea id="commentTextInput" class="form-control" rows="3" placeholder="Tulis komentar atau ajukan penawaran harga..." style="width: 100%; background: #0b1120; border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; padding: 12px; color: #fff; font-family: inherit; font-size: 0.9rem; outline: none; box-sizing: border-box;" required></textarea>
 
@@ -660,6 +665,33 @@
                   </div>
                 </div>
               </div>
+
+              <!-- CARD PROFIL PEMBELI RESMI (JIKA SUDAH SOLD & ADA BUYER) -->
+              ${isSold && post.buyer ? `
+                <div class="card-box" style="border-color: rgba(16, 185, 129, 0.35); background: linear-gradient(135deg, rgba(16, 185, 129, 0.08), rgba(15, 23, 42, 0.75));">
+                  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+                    <h4 style="margin: 0; font-size: 0.88rem; color: #10b981; text-transform: uppercase; letter-spacing: 0.5px;">
+                      <i class="fa-solid fa-award"></i> Pembeli Resmi (Buyer)
+                    </h4>
+                    <span style="font-size: 0.72rem; color: #34d399; font-weight: 700; background: rgba(16,185,129,0.15); padding: 2px 8px; border-radius: 4px;">Rekber Sukses</span>
+                  </div>
+                  <div style="display: flex; align-items: center; gap: 12px;">
+                    <div style="width: 44px; height: 44px; border-radius: 50%; background: #064e3b; border: 1.5px solid #10b981; display: flex; align-items: center; justify-content: center; font-size: 1.1rem; color: #34d399;">
+                      <i class="fa-solid fa-user-check"></i>
+                    </div>
+                    <div>
+                      <div style="font-weight: 800; font-size: 0.95rem; color: #fff; display: flex; align-items: center; gap: 6px;">
+                        ${post.buyer.username || 'Member MamangGS'}
+                        <i class="fa-solid fa-circle-check" style="color: #10b981;" title="Verified Rekber Buyer"></i>
+                      </div>
+                      <span style="font-size: 0.76rem; color: #34d399; font-weight: 600;">
+                        👑 Pemilik Sah Akun Ini
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              ` : ''}
+
             </div>
           </div>
         `;
@@ -671,7 +703,7 @@
           stickyBar.style.display = "flex";
         }
 
-        // INISIALISASI FITUR LIKE & KOMENTAR
+        // INISIALISASI LIKE & KOMENTAR
         initLikeSystem(postId);
         setupComments(postId, isSold || isHold);
 

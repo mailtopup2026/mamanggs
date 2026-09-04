@@ -473,7 +473,42 @@
     </main>
   </div>
 
-  <!-- MODAL MODERASI KOMENTAR FJB (BARU) -->
+  <!-- MODAL PILIH PEMBELI FJB (CARA A) -->
+  <div class="modal-backdrop" id="fjbBuyerModal">
+    <div class="modal-card" style="max-width: 480px;">
+      <div class="modal-header">
+        <h3><i class="fa-solid fa-handshake" style="color: #10b981;"></i> Selesaikan Rekber & Set Pembeli</h3>
+        <button class="btn-close-modal" onclick="closeFjbBuyerModal()"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+      <div class="modal-body">
+        <p style="font-size: 0.85rem; color: #94a3b8; margin-bottom: 14px;">
+          Pilih akun member MamangGS yang resmi membeli postingan ini:
+        </p>
+        
+        <input type="hidden" id="modalBuyerPostId">
+        
+        <div class="form-group" style="margin-bottom: 14px;">
+          <label style="font-size: 0.8rem; color: #cbd5e1; display: block; margin-bottom: 6px;">Pilih Akun Member Pembeli</label>
+          <select id="selectFjbBuyerUser" class="admin-select" style="width: 100%; box-sizing: border-box;">
+            <option value="">-- Pilih Pembeli Terdaftar --</option>
+          </select>
+        </div>
+
+        <p style="font-size: 0.78rem; color: #64748b; margin: 0 0 16px; line-height: 1.4;">
+          *Nama pembeli ini akan disematkan di profil postingan sebagai pembeli sah terverifikasi Rekber.
+        </p>
+
+        <div style="display: flex; gap: 10px;">
+          <button type="button" class="btn-cancel" style="flex: 1; padding: 10px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.1); background: rgba(255,255,255,0.05); color: #cbd5e1; cursor: pointer;" onclick="closeFjbBuyerModal()">Batal</button>
+          <button type="button" id="btnConfirmSoldBuyer" class="btn-submit-action" style="flex: 2; margin: 0; padding: 10px; background: #10b981;" onclick="submitFjbSoldWithBuyer()">
+            <i class="fa-solid fa-check"></i> Konfirmasi Terjual
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL MODERASI KOMENTAR FJB -->
   <div class="modal-backdrop" id="fjbCommentsModal">
     <div class="modal-card" style="max-width: 650px;">
       <div class="modal-header">
@@ -624,7 +659,8 @@
         <button class="btn-close-modal" onclick="closeManualGameModal()"><i class="fa-solid fa-xmark"></i></button>
       </div>
       <div class="modal-body">
-        <input type="hidden" id="manualGameIdInput"> <div class="form-group" style="margin-bottom: 12px;">
+        <input type="hidden" id="manualGameIdInput"> 
+        <div class="form-group" style="margin-bottom: 12px;">
           <label style="font-size: 0.8rem; color: #94a3b8;">Nama Game</label>
           <input type="text" id="manualGameNameInput" placeholder="Contoh: Whiteout Survival" class="admin-input" style="width: 100%; box-sizing: border-box; margin-top: 6px;">
         </div>

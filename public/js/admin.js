@@ -7,11 +7,12 @@ let allBanners = [];
 let allGameCategories = [];
 let allFlashSales = [];
 let allManualGames = [];
-let allFjbPosts = []; // BARU: Penampung postingan FJB
+let allFjbPosts = []; // Penampung postingan FJB
 let selectedTargetUser = null;
 let selectedSku = null;
 let activeGameFilter = "ALL";
 let editingBannerId = null;
+let pendingSoldPostId = null; // Penampung ID postingan saat proses Terjual
 
 // ==========================================
 // 1. GLOBAL ACTION HANDLERS & MODAL BINDINGS
@@ -518,7 +519,7 @@ window.deleteManualGame = async function(id) {
 };
 
 // ==========================================
-// 1.8. BARU: MODERASI FJB & REKBER ACTIONS
+// 1.8. MODERASI FJB & REKBER ACTIONS (CARA A)
 // ==========================================
 
 window.fetchAdminFjbPosts = async function() {
@@ -538,6 +539,12 @@ window.fetchAdminFjbPosts = async function() {
           full_name,
           email,
           is_trusted_seller
+        ),
+        buyer:buyer_id (
+          id,
+          username,
+          full_name,
+          email
         )
       `)
       .order("created_at", { ascending: false });
@@ -561,10 +568,12 @@ function renderFjbTable(posts) {
   const filtered = posts.filter(p => {
     const matchStatus = (filterStatus === "ALL") || (p.status === filterStatus);
     const sellerName = p.seller?.username || p.seller?.full_name || "";
+    const buyerName = p.buyer?.username || p.buyer?.full_name || "";
     const matchKeyword = !keyword || 
       p.post_title.toLowerCase().includes(keyword) || 
       p.game_title.toLowerCase().includes(keyword) ||
-      sellerName.toLowerCase().includes(keyword);
+      sellerName.toLowerCase().includes(keyword) ||
+      buyerName.toLowerCase().includes(keyword);
 
     return matchStatus && matchKeyword;
   });
@@ -577,6 +586,7 @@ function renderFjbTable(posts) {
   tbody.innerHTML = filtered.map(p => {
     const cover = (p.images && p.images.length > 0) ? p.images[0] : "/assets/images/default-game.jpg";
     const sellerName = p.seller?.username || p.seller?.full_name || "Penjual";
+    const buyerName = p.buyer?.username || p.buyer?.full_name || null;
     const isTrusted = !!p.seller?.is_trusted_seller;
     const sellerId = p.seller?.id;
     const priceFormatted = Number(p.price || 0).toLocaleString("id-ID");
@@ -615,6 +625,7 @@ function renderFjbTable(posts) {
             <option value="hold" ${p.status === 'hold' ? 'selected' : ''}>Proses Rekber</option>
             <option value="sold" ${p.status === 'sold' ? 'selected' : ''}>Terjual</option>
           </select>
+          ${buyerName ? `<div style="font-size: 0.72rem; color: #10b981; margin-top: 4px;"><i class="fa-solid fa-user-check"></i> ${buyerName}</div>` : ''}
         </td>
         <td>
           <div class="btn-action-group">
@@ -636,11 +647,23 @@ function renderFjbTable(posts) {
   }).join("");
 }
 
+// LOGIKA UPDATE STATUS & PEMILIHAN PEMBELI (CARA A)
 window.updateFjbStatus = async function(postId, newStatus) {
+  if (newStatus === "sold") {
+    // Buka modal pemilihan akun pembeli
+    openFjbBuyerModal(postId);
+    return;
+  }
+
+  // Jika kembali ke Tersedia / Hold, bersihkan kolom buyer_id
   try {
     const { error } = await window.supabase
       .from("market_posts")
-      .update({ status: newStatus, updated_at: new Date().toISOString() })
+      .update({ 
+        status: newStatus, 
+        buyer_id: null,
+        updated_at: new Date().toISOString() 
+      })
       .eq("id", postId);
 
     if (error) throw error;
@@ -648,6 +671,64 @@ window.updateFjbStatus = async function(postId, newStatus) {
     window.fetchAdminFjbPosts();
   } catch (err) {
     alert("Gagal memperbarui status FJB: " + err.message);
+    window.fetchAdminFjbPosts();
+  }
+};
+
+window.openFjbBuyerModal = function(postId) {
+  pendingSoldPostId = postId;
+  const selectEl = document.getElementById("selectFjbBuyerUser");
+  const modal = document.getElementById("fjbBuyerModal");
+
+  if (selectEl) {
+    if (allUsers.length > 0) {
+      selectEl.innerHTML = '<option value="">-- Pilih Akun Pembeli --</option>' +
+        allUsers.map(u => {
+          const name = u.username || u.full_name || u.email || "Member";
+          return `<option value="${u.id}">${name} (${u.email || '-'})</option>`;
+        }).join("");
+    } else {
+      selectEl.innerHTML = '<option value="">-- Data member belum termuat --</option>';
+    }
+  }
+
+  if (modal) modal.classList.add("show");
+};
+
+window.closeFjbBuyerModal = function() {
+  pendingSoldPostId = null;
+  document.getElementById("fjbBuyerModal")?.classList.remove("show");
+  window.fetchAdminFjbPosts(); // Kembalikan render dropdown jika dibatalkan
+};
+
+window.submitFjbSoldWithBuyer = async function() {
+  const buyerId = document.getElementById("selectFjbBuyerUser")?.value;
+  if (!buyerId) return alert("Pilih akun member pembeli terlebih dahulu!");
+  if (!pendingSoldPostId) return;
+
+  const btn = document.getElementById("btnConfirmSoldBuyer");
+  btn.disabled = true;
+  btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Menyimpan...';
+
+  try {
+    const { error } = await window.supabase
+      .from("market_posts")
+      .update({
+        status: "sold",
+        buyer_id: buyerId,
+        updated_at: new Date().toISOString()
+      })
+      .eq("id", pendingSoldPostId);
+
+    if (error) throw error;
+    alert("Transaksi Rekber selesai! Akun ditandai TERJUAL dan pembeli resmi telah disematkan.");
+    window.closeFjbBuyerModal();
+    window.fetchAdminFjbPosts();
+  } catch (err) {
+    alert("Gagal menyimpan pembeli: " + err.message);
+  } finally {
+    btn.disabled = false;
+    btn.innerHTML = '<i class="fa-solid fa-check"></i> Konfirmasi Terjual';
   }
 };
 
@@ -838,7 +919,7 @@ document.addEventListener("DOMContentLoaded", async () => {
       if (btn.dataset.tab === "bannersTab") window.fetchAdminBanners();
       if (btn.dataset.tab === "gamesTab") window.fetchAdminGames();
       if (btn.dataset.tab === "flashSaleTab") window.fetchAdminFlashSale();
-      if (btn.dataset.tab === "fjbTab") window.fetchAdminFjbPosts(); // Trigger FJB fetch
+      if (btn.dataset.tab === "fjbTab") window.fetchAdminFjbPosts(); // Fetch FJB Posts
       
       if (btn.dataset.tab === "manualGamesTab") {
         window.fetchUsdRate();
