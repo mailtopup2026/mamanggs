@@ -29,7 +29,7 @@
       align-items: center;
       flex-wrap: wrap;
       gap: 20px;
-      margin-bottom: 30px;
+      margin-bottom: 24px;
       box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
     }
     .hero-text h1 {
@@ -61,16 +61,11 @@
       box-shadow: 0 12px 25px rgba(230, 57, 70, 0.6);
     }
 
-    /* CONTROL BAR (SEARCH & SORT) */
+    /* CLEAN FILTER BAR (SEARCH + SORT ONLY) */
     .filter-bar {
       display: flex;
-      flex-direction: column;
-      gap: 16px;
-      margin-bottom: 28px;
-    }
-    .search-row {
-      display: flex;
       gap: 12px;
+      margin-bottom: 28px;
       flex-wrap: wrap;
     }
     .search-input-wrap {
@@ -110,34 +105,19 @@
       font-family: inherit;
       font-size: 0.9rem;
       outline: none;
-      min-width: 180px;
+      min-width: 200px;
+      height: 48px;
       cursor: pointer;
+      box-sizing: border-box;
+    }
+    .sort-select:focus {
+      border-color: #38bdf8;
     }
 
-    /* PILL BADGES */
-    .pill-list {
-      display: flex;
-      gap: 8px;
-      overflow-x: auto;
-      padding-bottom: 6px;
-      scrollbar-width: thin;
-    }
-    .pill-btn {
-      background: rgba(15, 23, 42, 0.8);
-      border: 1px solid rgba(255, 255, 255, 0.1);
-      color: #94a3b8;
-      padding: 8px 16px;
-      border-radius: 20px;
-      font-size: 0.82rem;
-      font-weight: 700;
-      cursor: pointer;
-      white-space: nowrap;
-      transition: all 0.2s;
-    }
-    .pill-btn:hover, .pill-btn.active {
-      background: #38bdf8;
-      border-color: #38bdf8;
-      color: #0b1120;
+    @media (max-width: 640px) {
+      .sort-select {
+        width: 100%;
+      }
     }
 
     /* POST GRID */
@@ -164,7 +144,7 @@
       box-shadow: 0 12px 30px rgba(0, 0, 0, 0.5);
     }
 
-    /* TAMPILAN HOT CARD */
+    /* HOT CARD */
     .post-card.is-hot {
       border: 1px solid #f59e0b;
       box-shadow: 0 0 20px rgba(245, 158, 11, 0.2);
@@ -279,7 +259,7 @@
       <a href="/" class="brand-logo">
         <div class="logo-video-wrap"><video autoplay loop muted playsinline class="logo-video"><source src="/assets/images/logo.mp4" type="video/mp4"></video></div>
       </a>
-      <div class="nav-actions desktop-only">
+      <div class="nav-actions desktop-only" id="desktopNavActions">
         <a href="/market.html" class="btn-nav-login" style="color: #38bdf8;"><i class="fa-solid fa-store"></i> FJB Akun</a>
         <a href="/order-status.html" class="btn-nav-login" style="color: #10b981;"><i class="fa-solid fa-receipt"></i> Lacak</a>
         <a href="/auth/login.html" class="btn-nav-login" id="navLoginBtn"><i class="fa-solid fa-right-to-bracket"></i> Masuk</a>
@@ -300,30 +280,17 @@
       </a>
     </div>
 
-    <!-- FILTER & SEARCH -->
+    <!-- FILTER BAR RINGKAS -->
     <div class="filter-bar">
-      <div class="search-row">
-        <div class="search-input-wrap">
-          <i class="fa-solid fa-magnifying-glass"></i>
-          <input type="text" id="searchKeyword" placeholder="Cari akun, skin, rank, atau kategori...">
-        </div>
-        <select id="sortOrder" class="sort-select">
-          <option value="latest">Terbaru Ditambahkan</option>
-          <option value="price_asc">Harga Terendah</option>
-          <option value="price_desc">Harga Tertinggi (Sultan)</option>
-        </select>
+      <div class="search-input-wrap">
+        <i class="fa-solid fa-magnifying-glass"></i>
+        <input type="text" id="searchKeyword" placeholder="Cari game (MLBB, Free Fire, Valorant) atau judul akun...">
       </div>
-
-      <!-- PILL CATEGORIES -->
-      <div class="pill-list" id="gamePills">
-        <button class="pill-btn active" data-game="all">Semua Game</button>
-        <button class="pill-btn" data-game="Mobile Legends">Mobile Legends</button>
-        <button class="pill-btn" data-game="Free Fire">Free Fire</button>
-        <button class="pill-btn" data-game="PUBG Mobile">PUBG Mobile</button>
-        <button class="pill-btn" data-game="Genshin Impact">Genshin Impact</button>
-        <button class="pill-btn" data-game="Valorant">Valorant</button>
-        <button class="pill-btn" data-game="Honor of Kings">Honor of Kings</button>
-      </div>
+      <select id="sortOrder" class="sort-select">
+        <option value="latest">Terbaru Ditambahkan</option>
+        <option value="price_asc">Harga Terendah</option>
+        <option value="price_desc">Harga Tertinggi (Sultan)</option>
+      </select>
     </div>
 
     <!-- GRID HASIL AKUN -->
@@ -341,22 +308,11 @@
 
   <script>
     document.addEventListener("DOMContentLoaded", () => {
-      let activeGame = "all";
       let searchTimeout = null;
 
       const gridEl = document.getElementById("marketPostsGrid");
       const searchInput = document.getElementById("searchKeyword");
       const sortSelect = document.getElementById("sortOrder");
-      const pills = document.querySelectorAll(".pill-btn");
-
-      pills.forEach((btn) => {
-        btn.addEventListener("click", () => {
-          pills.forEach((p) => p.classList.remove("active"));
-          btn.classList.add("active");
-          activeGame = btn.getAttribute("data-game");
-          loadMarketPosts();
-        });
-      });
 
       searchInput.addEventListener("input", () => {
         clearTimeout(searchTimeout);
@@ -397,19 +353,15 @@
             `)
             .eq("status", "available");
 
-          // Filter Game
-          if (activeGame !== "all") {
-            query = query.eq("game_title", activeGame);
-          }
-
-          // Pencarian Text
+          // Universal Search (Game ATAU Judul Postingan)
           if (keyword) {
             query = query.or(`post_title.ilike.%${keyword}%,game_title.ilike.%${keyword}%`);
           }
 
-          // Aturan Sorting (HOT selalu paling atas)
+          // Prioritaskan HOT selalu paling atas
           query = query.order("is_hot", { ascending: false });
 
+          // Filter Urutan Harga / Waktu
           if (sortVal === "price_asc") {
             query = query.order("price", { ascending: true });
           } else if (sortVal === "price_desc") {
