@@ -242,9 +242,10 @@
           <input type="text" id="postTitle" class="form-control" placeholder="Contoh: MLBB Sultan 150 Skin - Monsep All Unbind Aman" required maxlength="150">
         </div>
 
+        <!-- INPUT HARGA DENGAN TITIK OTOMATIS -->
         <div class="form-group">
           <label><i class="fa-solid fa-tag" style="color: #38bdf8;"></i> Harga Akun (Rp)</label>
-          <input type="number" id="accountPrice" class="form-control" placeholder="Masukkan harga, contoh: 750000" min="50000" required>
+          <input type="text" id="accountPrice" class="form-control" placeholder="Masukkan harga, contoh: 750.000" required inputmode="numeric">
         </div>
 
         <!-- CHECKBOX ADD-ON HOT -->
@@ -351,7 +352,7 @@
       });
     }
 
-    // KALKULATOR TIER FEE & ADDON HOT
+    // FORMAT TITIK DAN KALKULATOR TIER FEE
     const priceInput = document.getElementById("accountPrice");
     const checkHot = document.getElementById("checkIsHot");
     const rowHotFee = document.getElementById("rowHotFee");
@@ -360,18 +361,29 @@
     const feeAmountEl = document.getElementById("feeAmount");
     const netProceedsEl = document.getElementById("netProceeds");
 
+    // Event input untuk format ribuan titik otomatis
+    priceInput.addEventListener("input", (e) => {
+      let rawVal = e.target.value.replace(/\D/g, "");
+      if (!rawVal) {
+        e.target.value = "";
+      } else {
+        e.target.value = Number(rawVal).toLocaleString("id-ID");
+      }
+      updateFeeCalculation();
+    });
+
     function updateFeeCalculation() {
-      const price = Number(priceInput.value) || 0;
+      const cleanNumber = Number(priceInput.value.replace(/\./g, "")) || 0;
       let percent = 15;
 
-      if (price >= 5000000) {
+      if (cleanNumber >= 5000000) {
         percent = 5;
-      } else if (price >= 1000000) {
+      } else if (cleanNumber >= 1000000) {
         percent = 10;
       }
 
-      const fee = Math.round((price * percent) / 100);
-      const net = Math.max(0, price - fee);
+      const fee = Math.round((cleanNumber * percent) / 100);
+      const net = Math.max(0, cleanNumber - fee);
 
       const isHot = checkHot.checked;
       const totalListing = isHot ? 30000 : 20000;
@@ -383,7 +395,6 @@
       netProceedsEl.innerText = `Rp ${net.toLocaleString("id-ID")}`;
     }
 
-    priceInput.addEventListener("input", updateFeeCalculation);
     checkHot.addEventListener("change", updateFeeCalculation);
 
     // PREVIEW FOTO
@@ -460,6 +471,12 @@
           return;
         }
 
+        const rawPriceNumber = Number(priceInput.value.replace(/\./g, "")) || 0;
+        if (rawPriceNumber < 50000) {
+          alert("Harga akun minimal adalah Rp 50.000!");
+          return;
+        }
+
         btn.disabled = true;
         btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Mengompres & Mengunggah...';
 
@@ -488,7 +505,7 @@
 
         if (balErr) throw balErr;
 
-        // 5. Simpan Data ke Tabel market_posts (dengan game_title ter-trim rapi)
+        // 5. Simpan Data ke Tabel market_posts
         const gameTitleValue = document.getElementById("gameTitle").value.trim();
 
         const { error: postErr } = await window.supabase
@@ -498,7 +515,7 @@
             game_title: gameTitleValue,
             post_title: document.getElementById("postTitle").value.trim(),
             description: document.getElementById("postDesc").value.trim(),
-            price: Number(priceInput.value),
+            price: rawPriceNumber,
             images: uploadedUrls,
             is_hot: checkHot.checked,
             status: "available"
