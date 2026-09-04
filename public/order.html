@@ -5,12 +5,16 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Top Up Game - MamangGS</title>
   
+  <!-- Favicon Logo MamangGS -->
+  <link rel="icon" type="image/png" href="/assets/images/favicon.png?v=3">
+
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
   
   <link rel="stylesheet" href="/css/global.css?v=cyber99">
+  <link rel="stylesheet" href="/css/navbar.css?v=cyber99">
   <link rel="stylesheet" href="/css/order.css?v=cyber99">
 
   <style>
@@ -59,7 +63,11 @@
   <header class="navbar">
     <div class="navbar-container">
       <a href="/" class="brand-logo">
-        <div class="logo-video-wrap"><video autoplay loop muted playsinline class="logo-video"><source src="/assets/images/logo.mp4" type="video/mp4"></video></div>
+        <div class="logo-video-wrap">
+          <video autoplay loop muted playsinline class="logo-video">
+            <source src="/assets/images/logo.mp4" type="video/mp4">
+          </video>
+        </div>
       </a>
 
       <div class="nav-search desktop-only">
@@ -68,6 +76,9 @@
       </div>
 
       <div class="nav-actions desktop-only" id="desktopNavActions">
+        <a href="/market.html" class="btn-nav-login" style="background: rgba(204, 255, 0, 0.1); border-color: rgba(204, 255, 0, 0.3); color: #ccff00;">
+          <i class="fa-solid fa-store"></i> FJB Akun
+        </a>
         <a href="/blog.html" class="btn-nav-login" style="background: rgba(56, 189, 248, 0.12); border-color: rgba(56, 189, 248, 0.35); color: #38bdf8;">
           <i class="fa-solid fa-newspaper"></i> Blog
         </a>
@@ -85,29 +96,34 @@
       </div>
     </div>
 
+    <!-- MOBILE MENU DROPDOWN BERSIH (SATU WADAH UTUH) -->
     <div id="mobileMenuDropdown" class="mobile-menu-drawer">
       <div class="mobile-menu-header">
-        <span style="font-weight: 800; font-size: 0.88rem; color: #fff;">Menu MamangGS</span>
-        <button id="btnCloseMobileMenu" style="background: none; border: none; color: #94a3b8; font-size: 1.1rem; cursor: pointer;">✕</button>
+        <span>Menu MamangGS</span>
+        <button id="btnCloseMobileMenu" type="button" aria-label="Tutup Menu">✕</button>
       </div>
-      <div id="mobileMenuList" class="mobile-menu-items">
-        <a href="/" class="mobile-menu-link">
-          <i class="fa-solid fa-house" style="color: #38bdf8;"></i> Beranda
+      <a href="/" class="mobile-menu-link">
+        <i class="fa-solid fa-house" style="color: #38bdf8;"></i> Beranda
+      </a>
+      <a href="/leaderboard.html" class="mobile-menu-link">
+        <i class="fa-solid fa-crown" style="color: #facc15;"></i> Leaderboard Sultan
+      </a>
+      <a href="/blog.html" class="mobile-menu-link">
+        <i class="fa-solid fa-newspaper" style="color: #38bdf8;"></i> Blog & Tips Game
+      </a>
+      <a href="/order-status.html" class="mobile-menu-link" style="color: #10b981;">
+        <i class="fa-solid fa-receipt"></i> Lacak Pesanan
+      </a>
+      <div id="mobileAuthSlot">
+        <a href="/market.html" class="mobile-menu-link" style="color: #ccff00;">
+          <i class="fa-solid fa-store" style="color: #ccff00;"></i> FJB Jual Beli Akun
         </a>
-        <a href="/leaderboard.html" class="mobile-menu-link">
-          <i class="fa-solid fa-crown" style="color: #facc15;"></i> Leaderboard Sultan
+        <a href="/auth/login.html" class="mobile-menu-link">
+          <i class="fa-solid fa-right-to-bracket"></i> Masuk Akun
         </a>
-        <a href="/blog.html" class="mobile-menu-link">
-          <i class="fa-solid fa-newspaper" style="color: #38bdf8;"></i> Blog & Tips Game
+        <a href="/auth/register.html" class="mobile-menu-link" style="color: #ccff00; font-weight: 800;">
+          <i class="fa-solid fa-user-plus"></i> Daftar Member
         </a>
-        <a href="/order-status.html" class="mobile-menu-link" style="color: #10b981;">
-          <i class="fa-solid fa-receipt"></i> Lacak Pesanan
-        </a>
-        <hr style="border: none; border-top: 1px solid rgba(255,255,255,0.08); margin: 8px 0;">
-        <div id="mobileAuthSlot">
-          <a href="/auth/login.html" class="mobile-menu-link"><i class="fa-solid fa-right-to-bracket"></i> Masuk Akun</a>
-          <a href="/auth/register.html" class="mobile-menu-link" style="color: #ccff00; font-weight: 800;"><i class="fa-solid fa-user-plus"></i> Daftar Member</a>
-        </div>
       </div>
     </div>
   </header>
@@ -290,7 +306,11 @@
     <div class="footer-container">
       <div class="footer-brand">
         <div class="brand-logo">
-          <div class="logo-video-wrap"><video autoplay loop muted playsinline class="logo-video"><source src="/assets/images/logo.mp4" type="video/mp4"></video></div>
+          <div class="logo-video-wrap">
+            <video autoplay loop muted playsinline class="logo-video">
+              <source src="/assets/images/logo.mp4" type="video/mp4">
+            </video>
+          </div>
         </div>
         <p style="color: #84889a;">Platform top up game otomatis, murah, dan terpercaya 24 jam nonstop.</p>
       </div>
