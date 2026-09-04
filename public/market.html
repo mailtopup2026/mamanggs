@@ -260,13 +260,31 @@
       <a href="/" class="brand-logo">
         <div class="logo-video-wrap"><video autoplay loop muted playsinline class="logo-video"><source src="/assets/images/logo.mp4" type="video/mp4"></video></div>
       </a>
+      
       <div class="nav-actions desktop-only" id="desktopNavActions">
+        <!-- Akan di-render secara dinamis oleh navbar.js -->
         <a href="/market.html" class="btn-nav-login" style="color: #38bdf8;"><i class="fa-solid fa-store"></i> FJB Akun</a>
         <a href="/order-status.html" class="btn-nav-login" style="color: #10b981;"><i class="fa-solid fa-receipt"></i> Lacak</a>
         <a href="/auth/login.html" class="btn-nav-login" id="navLoginBtn"><i class="fa-solid fa-right-to-bracket"></i> Masuk</a>
       </div>
+
+      <div class="mobile-nav-toggle mobile-only">
+        <button id="btnMobileMenuToggle" class="btn-icon" aria-label="Menu"><i class="fa-solid fa-bars"></i></button>
+      </div>
     </div>
   </header>
+
+  <!-- MOBILE MENU DROPDOWN -->
+  <div id="mobileMenuDropdown">
+    <div class="mobile-menu-header">
+      <span>Menu MamangGS</span>
+      <i class="fa-solid fa-xmark" id="btnCloseMobileMenu"></i>
+    </div>
+    <a href="/" class="mobile-menu-link"><i class="fa-solid fa-house"></i> Beranda</a>
+    <a href="/market.html" class="mobile-menu-link" style="color: #10b981;"><i class="fa-solid fa-store"></i> FJB Jual Beli Akun</a>
+    <a href="/order-status.html" class="mobile-menu-link"><i class="fa-solid fa-receipt"></i> Lacak Pesanan</a>
+    <div id="mobileAuthSlot"></div>
+  </div>
 
   <main class="catalog-container">
 
@@ -304,8 +322,10 @@
 
   </main>
 
+  <!-- SKRIP HARUS BERURUTAN -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="/js/supabase.js"></script>
+  <script src="/js/navbar.js"></script>
 
   <script>
     document.addEventListener("DOMContentLoaded", () => {
