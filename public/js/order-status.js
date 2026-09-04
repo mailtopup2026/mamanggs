@@ -1,3 +1,78 @@
+// ==========================================
+// MANDIRI CYBER TOAST (TANPA DEPENDENSI)
+// ==========================================
+function triggerCyberToast(message, type = "warning") {
+  let container = document.getElementById("mgsToastContainer");
+  if (!container) {
+    container = document.createElement("div");
+    container.id = "mgsToastContainer";
+    container.style.cssText = `
+      position: fixed;
+      top: 24px;
+      right: 20px;
+      z-index: 9999999;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      pointer-events: none;
+    `;
+    document.body.appendChild(container);
+  }
+
+  const borderColors = {
+    warning: "rgba(245, 158, 11, 0.6)",
+    error: "rgba(239, 68, 68, 0.6)",
+    success: "rgba(16, 185, 129, 0.6)"
+  };
+
+  const iconClasses = {
+    warning: "fa-triangle-exclamation",
+    error: "fa-circle-xmark",
+    success: "fa-circle-check"
+  };
+
+  const iconColors = {
+    warning: "#f59e0b",
+    error: "#ef4444",
+    success: "#10b981"
+  };
+
+  const toast = document.createElement("div");
+  toast.style.cssText = `
+    pointer-events: auto;
+    min-width: 260px;
+    max-width: 350px;
+    background: #0f172a;
+    border: 1px solid ${borderColors[type] || borderColors.warning};
+    border-radius: 12px;
+    padding: 12px 16px;
+    color: #f8fafc;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    box-shadow: 0 12px 35px rgba(0, 0, 0, 0.85);
+    font-size: 0.85rem;
+    font-weight: 600;
+    transition: all 0.3s ease;
+  `;
+
+  toast.innerHTML = `
+    <i class="fa-solid ${iconClasses[type] || iconClasses.warning}" style="font-size: 1.2rem; color: ${iconColors[type] || iconColors.warning}; flex-shrink: 0;"></i>
+    <div style="line-height: 1.4;">${message}</div>
+  `;
+
+  container.appendChild(toast);
+
+  setTimeout(() => {
+    toast.style.opacity = "0";
+    toast.style.transform = "translateX(40px)";
+    setTimeout(() => toast.remove(), 300);
+  }, 3500);
+}
+
+// ==========================================
+// LOGIKA LACAK STATUS PESANAN
+// ==========================================
 document.addEventListener("DOMContentLoaded", () => {
   const checkBtn = document.getElementById("checkOrderBtn");
   const invoiceInput = document.getElementById("invoiceInput");
@@ -19,11 +94,7 @@ document.addEventListener("DOMContentLoaded", () => {
   checkBtn.addEventListener("click", () => {
     const invoice = invoiceInput.value.trim();
     if (!invoice) {
-      if (typeof window.showToast === "function") {
-        window.showToast("Masukkan nomor Invoice transaksi dulu bosku!", "warning");
-      } else {
-        alert("Masukkan nomor Invoice transaksi dulu bosku!");
-      }
+      triggerCyberToast("Masukkan nomor Invoice transaksi dulu bosku!", "warning");
       return;
     }
     fetchOrderStatus(invoice);
@@ -67,26 +138,16 @@ document.addEventListener("DOMContentLoaded", () => {
           detailItems[3].innerText = `Rp ${Number(order.price).toLocaleString("id-ID")}`;
         }
 
-        // Render instruksi pembayaran jika status masih PENDING
         renderPaymentInstruction(order);
-
         resultCard.classList.add("show");
       } else {
-        if (typeof window.showToast === "function") {
-          window.showToast("Nomor invoice tidak ditemukan! Pastikan nomor invoice benar.", "error");
-        } else {
-          alert("Nomor invoice tidak ditemukan! Pastikan nomor invoice yang Anda masukkan benar.");
-        }
+        triggerCyberToast("Nomor invoice tidak ditemukan! Pastikan nomornya benar.", "error");
         resultCard.classList.remove("show");
         if (paymentBox) paymentBox.style.display = "none";
       }
     } catch (err) {
       console.error(err);
-      if (typeof window.showToast === "function") {
-        window.showToast("Terjadi kesalahan saat memeriksa transaksi: " + err.message, "error");
-      } else {
-        alert("Terjadi kesalahan saat memeriksa transaksi: " + err.message);
-      }
+      triggerCyberToast("Terjadi kesalahan saat memeriksa transaksi: " + err.message, "error");
     } finally {
       checkBtn.innerHTML = '<i class="fa-solid fa-magnifying-glass"></i> Cek Status';
       checkBtn.disabled = false;
@@ -104,7 +165,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const payData = order.payment_data || {};
     const method = (order.payment_method || "").toLowerCase();
 
-    // 1. INSTRUKSI QRIS
+    // QRIS
     if (method.includes("qris")) {
       const qrContent =
         payData?.payment?.qr_content ||
@@ -129,7 +190,6 @@ document.addEventListener("DOMContentLoaded", () => {
           height: 200,
         });
       } else if (payData?.payment?.url || payData?.url) {
-        // Fallback jika berupa tautan pembayaran DOKU
         const payUrl = payData?.payment?.url || payData?.url;
         paymentBox.innerHTML = `
           <div style="text-align: center; margin-top: 15px;">
@@ -141,7 +201,7 @@ document.addEventListener("DOMContentLoaded", () => {
         paymentBox.style.display = "block";
       }
     }
-    // 2. INSTRUKSI VIRTUAL ACCOUNT
+    // VIRTUAL ACCOUNT
     else if (method.includes("virtual account") || method.includes("va")) {
       const vaNumber =
         payData?.payment?.va_number ||
@@ -153,12 +213,17 @@ document.addEventListener("DOMContentLoaded", () => {
         <div style="background: rgba(255,255,255,0.05); padding: 20px; border-radius: 12px; text-align: center; border: 1px solid rgba(255,255,255,0.1);">
           <h4 style="margin-bottom: 8px; color: #fff;">Nomor Virtual Account</h4>
           <div style="font-size: 22px; font-weight: bold; letter-spacing: 2px; color: #48cae4; margin: 10px 0;">${vaNumber}</div>
-          <button onclick="navigator.clipboard.writeText('${vaNumber}'); if(typeof window.showToast==='function'){window.showToast('Nomor VA berhasil disalin!','success');}else{alert('Nomor VA berhasil disalin!');}" style="background: rgba(255,255,255,0.15); color: #fff; border: none; padding: 6px 14px; border-radius: 6px; cursor: pointer;">
+          <button id="btnCopyVA" style="background: rgba(255,255,255,0.15); color: #fff; border: none; padding: 6px 14px; border-radius: 6px; cursor: pointer;">
             <i class="fa-solid fa-copy"></i> Salin Nomor VA
           </button>
         </div>
       `;
       paymentBox.style.display = "block";
+
+      document.getElementById("btnCopyVA")?.addEventListener("click", () => {
+        navigator.clipboard.writeText(vaNumber);
+        triggerCyberToast("Nomor VA berhasil disalin!", "success");
+      });
     }
   }
 });
