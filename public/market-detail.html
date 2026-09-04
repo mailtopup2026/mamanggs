@@ -18,7 +18,7 @@
       --card-inner: #0f141f;
       --accent-volt: #ccff00;
       --accent-volt-hover: #b8e600;
-      --gold-trusted: #fbbf24;
+      --gold-hot: #fbbf24;
       --border-subtle: rgba(255, 255, 255, 0.08);
     }
 
@@ -80,7 +80,7 @@
       background: #000;
     }
 
-    /* WATERMARK OVERLAY STATUS */
+    /* WATERMARK STATUS */
     .watermark-overlay-sold {
       position: absolute;
       top: 50%;
@@ -114,7 +114,7 @@
       z-index: 6;
     }
 
-    /* TOMBOL LIKE FLOATING */
+    /* LIKE BUTTON */
     .btn-floating-like {
       position: absolute;
       top: 14px;
@@ -222,7 +222,6 @@
       line-height: 1.45;
     }
 
-    /* TOMBOL AKSI REKBER TEMA VOLT GREEN */
     .btn-buy-rekber {
       width: 100%;
       background: var(--accent-volt);
@@ -292,7 +291,7 @@
       gap: 8px;
     }
 
-    /* KARTU PROFIL PENJUAL MODERN TEMA PROFILE */
+    /* KARTU PROFIL PENJUAL MODERN */
     .seller-card-modern {
       background: var(--card-dark);
       border: 1px solid var(--border-subtle);
@@ -379,7 +378,6 @@
       color: #fff;
     }
 
-    /* CARD PEMBELI */
     .buyer-card-modern {
       background: rgba(204, 255, 0, 0.03);
       border: 1px solid rgba(204, 255, 0, 0.2);
@@ -387,38 +385,46 @@
       padding: 20px;
     }
 
-    /* FORM KOMENTAR & EMOTICON */
-    .emoticon-toolbar {
+    /* PIN TAWARAN TERTINGGI (HIGHEST OFFER PIN) */
+    .top-offer-banner {
+      background: linear-gradient(135deg, rgba(251, 191, 36, 0.12), rgba(204, 255, 0, 0.05));
+      border: 1px solid rgba(251, 191, 36, 0.4);
+      border-radius: 14px;
+      padding: 12px 16px;
+      margin-bottom: 16px;
       display: flex;
       align-items: center;
-      gap: 6px;
-      margin-top: 8px;
-      overflow-x: auto;
-      padding-bottom: 4px;
+      justify-content: space-between;
+      gap: 10px;
+      box-shadow: 0 4px 18px rgba(0, 0, 0, 0.35);
     }
 
-    .btn-emot-pill {
-      background: rgba(255, 255, 255, 0.04);
-      border: 1px solid var(--border-subtle);
-      border-radius: 20px;
-      padding: 4px 10px;
-      font-size: 0.95rem;
-      cursor: pointer;
-      transition: background 0.2s, transform 0.1s;
-      line-height: 1;
+    .top-offer-left {
+      display: flex;
+      align-items: center;
+      gap: 10px;
     }
 
-    .btn-emot-pill:hover {
-      background: rgba(204, 255, 0, 0.15);
-      border-color: rgba(204, 255, 0, 0.3);
-      transform: scale(1.1);
+    .top-offer-icon {
+      width: 36px;
+      height: 36px;
+      border-radius: 10px;
+      background: #fbbf24;
+      color: #000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.1rem;
+      font-weight: 900;
+      flex-shrink: 0;
     }
 
+    /* SCROLLBOX KOMENTAR RAPI */
     .comment-list {
       display: flex;
       flex-direction: column;
-      gap: 14px;
-      margin-top: 16px;
+      gap: 12px;
+      margin-top: 14px;
     }
 
     .comment-bubble {
@@ -458,6 +464,57 @@
       font-size: 0.72rem;
     }
 
+    /* TOMBOL LOAD MORE KOMENTAR */
+    .btn-load-more-comments {
+      width: 100%;
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px dashed var(--border-subtle);
+      border-radius: 12px;
+      color: #cbd5e1;
+      padding: 11px;
+      font-size: 0.85rem;
+      font-weight: 700;
+      cursor: pointer;
+      margin-top: 14px;
+      transition: all 0.2s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+
+    .btn-load-more-comments:hover {
+      background: rgba(204, 255, 0, 0.08);
+      border-color: rgba(204, 255, 0, 0.4);
+      color: var(--accent-volt);
+    }
+
+    .emoticon-toolbar {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      margin-top: 8px;
+      overflow-x: auto;
+      padding-bottom: 4px;
+    }
+
+    .btn-emot-pill {
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid var(--border-subtle);
+      border-radius: 20px;
+      padding: 4px 10px;
+      font-size: 0.95rem;
+      cursor: pointer;
+      transition: background 0.2s, transform 0.1s;
+      line-height: 1;
+    }
+
+    .btn-emot-pill:hover {
+      background: rgba(204, 255, 0, 0.15);
+      border-color: rgba(204, 255, 0, 0.3);
+      transform: scale(1.1);
+    }
+
     /* MOBILE STICKY BAR */
     .mobile-sticky-bar {
       display: none;
@@ -487,6 +544,7 @@
 </head>
 <body>
 
+  <!-- NAVBAR -->
   <header class="navbar">
     <div class="navbar-container">
       <a href="/" class="brand-logo">
@@ -506,6 +564,7 @@
     </div>
   </main>
 
+  <!-- STICKY ACTION KHUSUS HP -->
   <div class="mobile-sticky-bar" id="mobileStickyBar">
     <div>
       <span style="display: block; font-size: 0.72rem; color: #8e9bb0;">Harga Akun</span>
@@ -540,7 +599,7 @@
       try {
         if (!window.supabase) throw new Error("Supabase client belum siap.");
 
-        // 1. QUERY LENGKAP DETAIL AKUN, SELLER & BUYER
+        // QUERY POST & SELLER & BUYER
         const { data: post, error } = await window.supabase
           .from("market_posts")
           .select(`
@@ -569,7 +628,7 @@
         const isHold = post.status === "hold";
         const isAvailable = post.status === "available";
 
-        // KALKULASI ESTIMASI FEE REKBER
+        // FEE ESTIMASI
         const price = Number(post.price || 0);
         let feePercent = 15;
         if (price >= 5000000) feePercent = 5;
@@ -578,7 +637,7 @@
         const feeAmount = Math.round((price * feePercent) / 100);
         const totalTransfer = price + feeAmount;
 
-        // TEMPLATE PESAN WHATSAPP REKBER
+        // WHATSAPP
         const waNumber = "6282121616716";
         const waText = encodeURIComponent(
           `Halo Admin Rekber MamangGS, saya ingin membeli akun berikut:\n` +
@@ -597,7 +656,7 @@
           ? post.images 
           : ["/assets/images/default-game.jpg"];
 
-        // DATA PENJUAL (SINKRON DENGAN HALAMAN PROFIL)
+        // PROFIL SELLER
         const sellerName = post.seller?.username || post.seller?.full_name || "Penjual MamangGS";
         const sellerAvatar = (post.seller?.avatar_url && post.seller.avatar_url.trim() !== "")
           ? post.seller.avatar_url
@@ -605,13 +664,13 @@
         const isSellerAdmin = post.seller?.role === "admin";
         const isSellerTrusted = !!post.seller?.is_trusted_seller;
 
-        // DATA PEMBELI
+        // PROFIL BUYER
         const buyerName = post.buyer?.username || post.buyer?.full_name || "Member MamangGS";
         const buyerAvatar = (post.buyer?.avatar_url && post.buyer.avatar_url.trim() !== "")
           ? post.buyer.avatar_url
           : `https://api.dicebear.com/7.x/adventurer/svg?seed=${encodeURIComponent(buyerName)}&radius=50`;
 
-        // RENDER TOMBOL BELI BERDASARKAN STATUS
+        // ACTION BUTTONS
         let buyActionHtml = "";
         let stickyBuyHtml = "";
 
@@ -650,9 +709,10 @@
           `;
         }
 
-        // RENDER TAMPILAN HALAMAN UTUH
+        // RENDER HALAMAN
         mainEl.innerHTML = `
           <div class="detail-grid">
+            <!-- KOLOM KIRI -->
             <div>
               <div class="card-box">
                 <div class="main-gallery-view">
@@ -677,6 +737,7 @@
                 ` : ''}
               </div>
 
+              <!-- DESKRIPSI -->
               <div class="card-box">
                 <h3 style="font-size: 1.15rem; font-weight: 800; margin: 0 0 14px; color: #f8fafc; display: flex; align-items: center; gap: 8px;">
                   <i class="fa-solid fa-align-left" style="color: var(--accent-volt);"></i> Spesifikasi & Catatan Penjual
@@ -684,14 +745,22 @@
                 <div style="font-size: 0.92rem; color: #cbd5e1; line-height: 1.65; white-space: pre-line;">${post.description}</div>
               </div>
 
+              <!-- DISKUSI & NEGO PUBLIK -->
               <div class="card-box">
-                <h3 style="font-size: 1.15rem; font-weight: 800; margin: 0 0 6px; color: #f8fafc; display: flex; align-items: center; gap: 8px;">
-                  <i class="fa-solid fa-comments" style="color: var(--accent-volt);"></i> Diskusi & Nego Publik
-                </h3>
-                <p style="font-size: 0.82rem; color: #8e9bb0; margin: 0 0 14px;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+                  <h3 style="font-size: 1.15rem; font-weight: 800; margin: 0; color: #f8fafc; display: flex; align-items: center; gap: 8px;">
+                    <i class="fa-solid fa-comments" style="color: var(--accent-volt);"></i> Diskusi & Nego Publik 
+                    <span id="commentCounterBadge" style="font-size: 0.8rem; background: rgba(255,255,255,0.08); padding: 2px 8px; border-radius: 20px; color: #8e9bb0;">0</span>
+                  </h3>
+                </div>
+                <p style="font-size: 0.82rem; color: #8e9bb0; margin: 0 0 16px;">
                   Ajukan pertanyaan atau tawar harga secara terbuka langsung di kolom ini.
                 </p>
 
+                <!-- PIN TAWARAN TERTINGGI (FITUR 3) -->
+                <div id="topOfferContainer"></div>
+
+                <!-- KARANTINA STATUS KOMENTAR -->
                 ${isSold ? `
                   <div class="comment-locked-banner">
                     <i class="fa-solid fa-lock"></i>
@@ -738,9 +807,15 @@
                 <div class="comment-list" id="commentContainer">
                   <p style="font-size: 0.85rem; color: #8e9bb0; margin-top: 14px;">Memuat riwayat diskusi...</p>
                 </div>
+
+                <!-- TOMBOL LOAD MORE (FITUR 2) -->
+                <button type="button" id="btnLoadMoreComments" class="btn-load-more-comments" style="display: none;">
+                  <i class="fa-solid fa-chevron-down"></i> Tampilkan Diskusi Sebelumnya (<span id="remainingCommentCount">0</span>)
+                </button>
               </div>
             </div>
 
+            <!-- KOLOM KANAN -->
             <div>
               <div class="card-box desktop-rekber-card">
                 <span class="badge-game-tag">${post.game_title}</span>
@@ -769,6 +844,7 @@
                 ${buyActionHtml}
               </div>
 
+              <!-- CARD PROFIL PENJUAL -->
               <div class="card-box seller-card-modern">
                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px;">
                   <span style="font-size: 0.74rem; font-weight: 800; color: #8e9bb0; text-transform: uppercase; letter-spacing: 0.5px;">
@@ -815,6 +891,7 @@
                 </div>
               </div>
 
+              <!-- CARD PROFIL PEMBELI -->
               ${isSold && post.buyer ? `
                 <div class="card-box buyer-card-modern">
                   <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
@@ -844,16 +921,15 @@
           </div>
         `;
 
-        // UPDATE STICKY BAR DI HP
+        // STICKY HP
         stickyPrice.innerText = `Rp ${price.toLocaleString('id-ID')}`;
         stickyAction.innerHTML = stickyBuyHtml;
         if (window.innerWidth <= 868) {
           stickyBar.style.display = "flex";
         }
 
-        // INISIALISASI LIKE & KOMENTAR
         initLikeSystem(postId);
-        setupComments(postId, isSold || isHold);
+        setupCommentsAndBidding(postId, isSold || isHold);
 
       } catch (err) {
         console.error(err);
@@ -868,14 +944,12 @@
       }
     });
 
-    // GANTI FOTO UTAMA
     window.switchGalleryImg = (src, btnEl) => {
       document.getElementById("activeMainImg").src = src;
       document.querySelectorAll(".thumb-btn").forEach(b => b.classList.remove("active"));
       btnEl.classList.add("active");
     };
 
-    // INSERSI EMOTICON KE TEXTAREA
     window.appendEmot = (emot) => {
       const textarea = document.getElementById("commentTextInput");
       if (!textarea) return;
@@ -883,7 +957,7 @@
       textarea.focus();
     };
 
-    // SISTEM LIKE POSTINGAN
+    // LIKE
     async function initLikeSystem(postId) {
       const btnLike = document.getElementById("btnLikePost");
       const countEl = document.getElementById("likeCountText");
@@ -946,23 +1020,26 @@
       });
     }
 
-    // SISTEM KOMENTAR & RIWAYAT DISKUSI
-    async function setupComments(postId, isLocked) {
+    // DISKUSI, LOAD MORE (NO 2) & PIN TAWARAN TERTINGGI (NO 3)
+    async function setupCommentsAndBidding(postId, isLocked) {
       const commentContainer = document.getElementById("commentContainer");
+      const topOfferContainer = document.getElementById("topOfferContainer");
+      const btnLoadMore = document.getElementById("btnLoadMoreComments");
+      const remainingCountEl = document.getElementById("remainingCommentCount");
+      const commentCounterBadge = document.getElementById("commentCounterBadge");
+      
       const commentForm = document.getElementById("commentForm");
       const textInput = document.getElementById("commentTextInput");
       const checkOffer = document.getElementById("checkIsOffer");
       const offerInput = document.getElementById("offerAmountInput");
 
-      // Format ribuan titik pada nominal tawaran
+      let allComments = [];
+      let displayLimit = 8; // Tampilkan 8 komentar pertama
+
       if (offerInput) {
         offerInput.addEventListener("input", (e) => {
           let rawVal = e.target.value.replace(/\D/g, "");
-          if (!rawVal) {
-            e.target.value = "";
-          } else {
-            e.target.value = Number(rawVal).toLocaleString("id-ID");
-          }
+          e.target.value = rawVal ? Number(rawVal).toLocaleString("id-ID") : "";
         });
       }
 
@@ -973,7 +1050,7 @@
         });
       }
 
-      async function loadComments() {
+      async function fetchAndRenderComments() {
         const { data: comments, error } = await window.supabase
           .from("market_comments")
           .select(`
@@ -982,30 +1059,72 @@
             is_offer,
             offer_amount,
             created_at,
-            user:user_id (username)
+            user:user_id (username, full_name, avatar_url)
           `)
           .eq("post_id", postId)
-          .order("created_at", { ascending: true });
+          .order("created_at", { ascending: false }); // Urutan dari yang paling baru
 
         if (error) {
           commentContainer.innerHTML = `<p style="color: #ef4444; font-size: 0.85rem;">Gagal memuat diskusi.</p>`;
           return;
         }
 
-        if (!comments || comments.length === 0) {
-          commentContainer.innerHTML = `<p style="color: #8e9bb0; font-size: 0.85rem; margin-top: 10px;">Belum ada penawaran atau diskusi terdahulu.</p>`;
+        allComments = comments || [];
+        if (commentCounterBadge) commentCounterBadge.innerText = allComments.length;
+
+        // 1. HITUNG & TAMPILKAN PIN TAWARAN TERTINGGI (IDE NO 3)
+        const offers = allComments.filter(c => c.is_offer && Number(c.offer_amount) > 0);
+        if (offers.length > 0) {
+          const topOffer = offers.reduce((max, current) => 
+            Number(current.offer_amount) > Number(max.offer_amount) ? current : max
+          );
+          const topAuthor = topOffer.user?.username || topOffer.user?.full_name || "User";
+          const formattedTopOffer = Number(topOffer.offer_amount).toLocaleString("id-ID");
+
+          topOfferContainer.innerHTML = `
+            <div class="top-offer-banner">
+              <div class="top-offer-left">
+                <div class="top-offer-icon"><i class="fa-solid fa-crown"></i></div>
+                <div>
+                  <span style="font-size: 0.72rem; color: #8e9bb0; text-transform: uppercase; font-weight: 800; letter-spacing: 0.5px;">Tawaran Tertinggi Saat Ini</span>
+                  <div style="font-size: 0.95rem; font-weight: 800; color: #fff;">
+                    oleh <strong style="color: var(--gold-hot);">@${topAuthor}</strong>
+                  </div>
+                </div>
+              </div>
+              <div style="font-size: 1.15rem; font-weight: 900; color: var(--accent-volt);">
+                Rp ${formattedTopOffer}
+              </div>
+            </div>
+          `;
+        } else {
+          topOfferContainer.innerHTML = "";
+        }
+
+        renderCommentList();
+      }
+
+      function renderCommentList() {
+        if (allComments.length === 0) {
+          commentContainer.innerHTML = `<p style="color: #8e9bb0; font-size: 0.85rem; margin-top: 10px;">Belum ada penawaran atau diskusi. Jadilah yang pertama!</p>`;
+          btnLoadMore.style.display = "none";
           return;
         }
 
-        commentContainer.innerHTML = comments.map(c => {
+        // Ambil sejumlah displayLimit
+        const slice = allComments.slice(0, displayLimit);
+
+        commentContainer.innerHTML = slice.map(c => {
+          const author = c.user?.username || c.user?.full_name || 'User';
           const time = new Date(c.created_at).toLocaleDateString("id-ID", {
             day: "numeric", month: "short", hour: "2-digit", minute: "2-digit"
           });
+
           return `
             <div class="comment-bubble ${c.is_offer ? 'is-offer' : ''}">
               <div class="comment-author-row">
                 <span class="comment-author">
-                  <i class="fa-solid fa-user-circle" style="color: #8e9bb0;"></i> ${c.user?.username || 'User'}
+                  <i class="fa-solid fa-circle-user" style="color: #8e9bb0;"></i> ${author}
                   ${c.is_offer ? `<span class="offer-badge"><i class="fa-solid fa-tag"></i> Tawar Rp ${Number(c.offer_amount || 0).toLocaleString('id-ID')}</span>` : ''}
                 </span>
                 <span style="color: #8e9bb0; font-size: 0.75rem;">${time}</span>
@@ -1014,8 +1133,24 @@
             </div>
           `;
         }).join("");
+
+        // LOGIKA TOMBOL MUAT LEBIH BANYAK (IDE NO 2)
+        const remaining = allComments.length - slice.length;
+        if (remaining > 0) {
+          btnLoadMore.style.display = "flex";
+          remainingCountEl.innerText = remaining;
+        } else {
+          btnLoadMore.style.display = "none";
+        }
       }
 
+      // EVENT LOAD MORE BUTTON
+      btnLoadMore.addEventListener("click", () => {
+        displayLimit += 8; // Tambah 8 komentar lagi setiap diklik
+        renderCommentList();
+      });
+
+      // SUBMIT KOMENTAR
       if (commentForm && !isLocked) {
         commentForm.addEventListener("submit", async (e) => {
           e.preventDefault();
@@ -1024,7 +1159,7 @@
 
           const { data: { user } } = await window.supabase.auth.getUser();
           if (!user) {
-            alert("Silakan login terlebih dahulu untuk ikut berdiskusi atau menawar akun!");
+            alert("Silakan login terlebih dahulu untuk berdiskusi atau menawar!");
             window.location.href = "/auth/login.html";
             return;
           }
@@ -1051,11 +1186,12 @@
           if (offerInput) offerInput.value = "";
           if (checkOffer) checkOffer.checked = false;
           if (offerInput) offerInput.style.display = "none";
-          loadComments();
+          
+          fetchAndRenderComments();
         });
       }
 
-      loadComments();
+      fetchAndRenderComments();
     }
   </script>
 </body>
