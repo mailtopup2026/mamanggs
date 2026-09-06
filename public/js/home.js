@@ -231,7 +231,7 @@ document.addEventListener("DOMContentLoaded", async function () {
   }
 
   // ==========================================
-  // 3. LOAD KATALOG GABUNGAN (DIGIFLAZZ + MANUAL)
+  // 3. LOAD KATALOG GABUNGAN (DIGIFLAZZ + MANUAL VIA ID + VIA LOGIN)
   // ==========================================
   async function loadGames() {
     try {
@@ -244,16 +244,48 @@ document.addEventListener("DOMContentLoaded", async function () {
 
       if (digiErr) throw digiErr;
 
-      // 2. Ambil game manual (Via Login)
-      const { data: manualGames, error: manualErr } = await window.supabase
+      // 2. Ambil game manual (Via Login / Jastip)
+      const { data: manualLoginGames, error: manualLoginErr } = await window.supabase
         .from('manual_games')
         .select('*')
         .eq('is_active', true)
-        .order('created_at', { ascending: false });
+        .order('id', { ascending: false });
 
-      if (manualErr) {
-        console.warn("Tabel manual_games belum terisi:", manualErr.message);
+      if (manualLoginErr) {
+        console.warn("Tabel manual_games belum terisi:", manualLoginErr.message);
       }
+
+      // 3. Ambil produk dari tabel mandiri manual_id_products
+      const { data: manualIdRows, error: manualIdErr } = await window.supabase
+        .from('manual_id_products')
+        .select('*')
+        .eq('is_active', true)
+        .order('id', { ascending: false });
+
+      if (manualIdErr) {
+        console.warn("Tabel manual_id_products:", manualIdErr.message);
+      }
+
+      // Kelompokkan manual_id_products per nama game (agar tiap game cuma 1 kartu di homepage)
+      const groupedManualIdGames = [];
+      const seenSlugs = new Set();
+
+      (manualIdRows || []).forEach(row => {
+        const slug = (row.game_slug || "").toLowerCase().trim();
+        if (slug && !seenSlugs.has(slug)) {
+          seenSlugs.add(slug);
+          groupedManualIdGames.push({
+            id: row.id,
+            game_code: row.game_slug,
+            title: row.game_name,
+            developer: "Official Partner",
+            image_url: row.game_image || "/assets/images/default-game.jpg",
+            is_popular: true, // Otomatis masuk barisan populer
+            item_type: 'direct', // Masuk filter Top Up Langsung (ID)
+            target_url: `/order.html?game=${row.game_slug}&type=manual_id`
+          });
+        }
+      });
 
       // Normalisasi format game Digiflazz
       const normalizedDigi = (digiGames || []).map(g => ({
@@ -263,24 +295,24 @@ document.addEventListener("DOMContentLoaded", async function () {
         developer: g.developer,
         image_url: g.image_url,
         is_popular: g.is_popular,
-        item_type: 'direct', // Tipe Top Up Otomatis (ID)
+        item_type: 'direct',
         target_url: `/order.html?game=${g.game_code}`
       }));
 
-      // Normalisasi format game Manual
-      const normalizedManual = (manualGames || []).map(m => ({
+      // Normalisasi format game Manual Via Login
+      const normalizedManualLogin = (manualLoginGames || []).map(m => ({
         id: m.id,
         game_code: m.slug,
         title: m.name,
         developer: m.publisher,
         image_url: m.image_url,
         is_popular: false,
-        item_type: 'via_login', // Tipe Manual / Jastip
+        item_type: 'via_login',
         target_url: `/order.html?game=${m.slug}&type=manual`
       }));
 
-      // Gabungkan kedua list data
-      allGamesData = [...normalizedManual, ...normalizedDigi];
+      // Gabungkan ketiga sumber (Manual ID ditaruh di depan agar prioritas terlihat)
+      allGamesData = [...groupedManualIdGames, ...normalizedManualLogin, ...normalizedDigi];
 
       renderPopularGames(allGamesData.filter(g => g.is_popular));
       renderMainCatalog(currentActiveFilter);
@@ -340,10 +372,12 @@ document.addEventListener("DOMContentLoaded", async function () {
     }
 
     container.innerHTML = list.map(game => {
-      const isManual = game.item_type === 'via_login';
-      const badgeHtml = isManual
-        ? `<span style="position: absolute; top: 10px; left: 10px; background: rgba(16, 185, 129, 0.9); color: #042f2e; font-size: 0.65rem; font-weight: 900; padding: 3px 8px; border-radius: 6px; text-transform: uppercase; letter-spacing: 0.5px; z-index: 2;">Via Login</span>`
-        : '';
+      let badgeHtml = '';
+      if (game.item_type === 'via_login') {
+        badgeHtml = `<span style="position: absolute; top: 10px; left: 10px; background: rgba(16, 185, 129, 0.9); color: #042f2e; font-size: 0.65rem; font-weight: 900; padding: 3px 8px; border-radius: 6px; text-transform: uppercase; letter-spacing: 0.5px; z-index: 2;">Via Login</span>`;
+      } else if (game.target_url.includes("type=manual_id")) {
+        badgeHtml = `<span style="position: absolute; top: 10px; left: 10px; background: #ccff00; color: #000; font-size: 0.65rem; font-weight: 900; padding: 3px 8px; border-radius: 6px; text-transform: uppercase; letter-spacing: 0.5px; z-index: 2;">Manual ID</span>`;
+      }
 
       return `
         <a href="${game.target_url}" class="catalog-poster-card" data-title="${game.title}" data-code="${game.game_code}" style="position: relative;">
@@ -364,7 +398,6 @@ document.addEventListener("DOMContentLoaded", async function () {
   window.filterGamesCatalog = function (query) {
     renderMainCatalog(currentActiveFilter, query);
 
-    // Filter juga section "Populer Sekarang" jika ada
     const popularCards = document.querySelectorAll(".popular-compact-card");
     popularCards.forEach(card => {
       const title = card.getAttribute("data-title") || "";
@@ -374,7 +407,6 @@ document.addEventListener("DOMContentLoaded", async function () {
     });
   };
 
-  // Listener input search desktop jika ada di index
   const desktopSearch = document.getElementById("searchInput");
   if (desktopSearch) {
     desktopSearch.addEventListener("input", (e) => {
@@ -382,7 +414,6 @@ document.addEventListener("DOMContentLoaded", async function () {
     });
   }
 
-  // Listener input search mobile
   const mobileSearch = document.getElementById("mobileSearchInput");
   if (mobileSearch) {
     mobileSearch.addEventListener("input", (e) => {
@@ -390,7 +421,6 @@ document.addEventListener("DOMContentLoaded", async function () {
     });
   }
 
-  // Event Listener Tab Filter Katalog
   const tabButtons = document.querySelectorAll(".catalog-tab-pill");
   tabButtons.forEach(btn => {
     btn.addEventListener("click", function () {
