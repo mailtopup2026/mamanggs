@@ -371,6 +371,47 @@
       color: #8e9bb0;
       grid-column: 1 / -1;
     }
+
+    /* Mobile Toggle Button Styling Reset */
+    .btn-mobile-icon,
+    .btn-icon {
+      -webkit-appearance: none !important;
+      appearance: none !important;
+      background: rgba(255, 255, 255, 0.05) !important;
+      border: 1px solid rgba(255, 255, 255, 0.12) !important;
+      color: #ffffff !important;
+      width: 40px !important;
+      height: 40px !important;
+      border-radius: 10px !important;
+      display: inline-flex !important;
+      align-items: center !important;
+      justify-content: center !important;
+      font-size: 1.1rem !important;
+      cursor: pointer !important;
+      outline: none !important;
+      box-shadow: none !important;
+      line-height: 1 !important;
+      transition: all 0.2s ease !important;
+    }
+
+    .btn-mobile-icon i,
+    .btn-icon i {
+      color: #ffffff !important;
+      font-size: 1.1rem !important;
+      line-height: 1 !important;
+    }
+
+    .btn-mobile-icon:hover,
+    .btn-icon:hover {
+      background: rgba(204, 255, 0, 0.1) !important;
+      border-color: rgba(204, 255, 0, 0.3) !important;
+      color: var(--accent-volt) !important;
+    }
+
+    .btn-mobile-icon:hover i,
+    .btn-icon:hover i {
+      color: var(--accent-volt) !important;
+    }
   </style>
 </head>
 <body>
@@ -388,7 +429,9 @@
       </div>
 
       <div class="mobile-nav-toggle mobile-only">
-        <button id="btnMobileMenuToggle" class="btn-icon" aria-label="Menu"><i class="fa-solid fa-bars"></i></button>
+        <button id="btnMobileMenuToggle" class="btn-mobile-icon" aria-label="Menu" type="button">
+          <i class="fa-solid fa-bars"></i>
+        </button>
       </div>
     </div>
   </header>
