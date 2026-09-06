@@ -529,14 +529,14 @@ window.fetchManualIdProducts = async function() {
   tbody.innerHTML = `<tr><td colspan="7" style="text-align: center; padding: 25px;"><i class="fa-solid fa-spinner fa-spin"></i> Memuat produk manual ID...</td></tr>`;
 
   try {
+    // Ambil produk dan saring yang bertipe manual tanpa mengharuskan kolom provider ada di awal
     const { data, error } = await window.supabase
       .from("products")
       .select("*")
-      .eq("provider", "manual")
       .order("created_at", { ascending: false });
 
     if (error) throw error;
-    allManualIdProducts = data || [];
+    allManualIdProducts = (data || []).filter(p => p.provider === "manual");
 
     if (allManualIdProducts.length === 0) {
       tbody.innerHTML = `<tr><td colspan="7" style="text-align: center; padding: 25px; color: #94a3b8;">Belum ada produk manual via ID. Klik "Tambah Game & Paket Manual".</td></tr>`;
@@ -1420,15 +1420,18 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
 
     try {
+      // Query langsung tanpa filter kolom provider untuk mencegah database crash
       const { data, error } = await window.supabase
         .from("products")
         .select("*")
-        .neq("provider", "manual")
         .order("brand", { ascending: true })
         .order("price_sell", { ascending: true });
 
       if (error) throw error;
-      allProducts = data || [];
+      
+      // Saring produk manual di sisi JS (jika kolom provider belum ada di Supabase, tidak akan error)
+      allProducts = (data || []).filter(p => p.provider !== "manual");
+
       if (renderTable) {
         populateGameFilters(allProducts);
         renderProductsTable(allProducts);
