@@ -934,7 +934,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         accountDisplay += ` [${verifiedNickname}]`;
       }
 
-      // 1. JIKA MANUAL VIA LOGIN -> POPUP SUKSES & DIRECT KE WA
+      // 1. JIKA MANUAL VIA LOGIN -> MODAL KARAKTER JEMPOL & DIRECT WA
       if (isManualLoginGame) {
         const waMsg = encodeURIComponent(
 `Halo Admin MamangGS! Saya baru saja melakukan pembayaran Top Up (Via Login).
@@ -952,15 +952,70 @@ Saya siap mengirimkan detail login dan screenshot bundle yang ingin dibeli.`
 
         if (window.Swal) {
           Swal.fire({
-            icon: "success",
-            title: "Pembayaran Berhasil!",
-            text: "Saldo berhasil dipotong. Kamu akan dialihkan ke WhatsApp Admin untuk proses pengisian bundle.",
-            background: "#0f172a",
-            color: "#f8fafc",
-            confirmButtonColor: "#10b981",
-            confirmButtonText: '<i class="fa-brands fa-whatsapp"></i> Chat WhatsApp Admin'
-          }).then(() => {
-            window.location.href = `https://api.whatsapp.com/send?phone=6282121616716&text=${waMsg}`;
+            html: `
+              <div class="mgs-modal-wrapper">
+                <!-- Karakter Maskot Jempol -->
+                <div class="mgs-mascot-container">
+                  <div class="mgs-mascot-glow"></div>
+                  <svg class="mgs-mascot-thumb" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <circle cx="50" cy="50" r="45" fill="#1e293b" stroke="#ccff00" stroke-width="3"/>
+                    <!-- Rambut & Topi Headset Gaming -->
+                    <path d="M28 42C28 28 72 28 72 42V56C72 68 60 76 50 76C40 76 28 68 28 56V42Z" fill="#0f172a"/>
+                    <path d="M22 45C22 40 26 40 26 55C26 65 22 65 22 55V45Z" fill="#10b981"/>
+                    <path d="M74 45C74 40 78 40 78 55C78 65 74 65 74 55V45Z" fill="#10b981"/>
+                    <path d="M24 45C24 22 76 22 76 45" stroke="#10b981" stroke-width="4" stroke-linecap="round"/>
+                    <!-- Wajah Tersenyum -->
+                    <circle cx="42" cy="50" r="4" fill="#ccff00"/>
+                    <circle cx="58" cy="50" r="4" fill="#ccff00"/>
+                    <path d="M44 60Q50 67 56 60" stroke="#fff" stroke-width="3" stroke-linecap="round" fill="none"/>
+                    <!-- Tangan Kasih Jempol -->
+                    <g transform="translate(62, 48)">
+                      <ellipse cx="14" cy="14" rx="14" ry="14" fill="#10b981"/>
+                      <path d="M12 20V12C12 9 14 7 16 7C17.5 7 19 8.5 19 10V14H21C22.5 14 23.5 15.5 23.5 17C23.5 18 22.8 19 22 19.5C22.5 20 22.5 21 22 21.8C21.5 22.5 20.5 23 19.5 23H15C13 23 12 21.5 12 20Z" fill="#fff"/>
+                    </g>
+                  </svg>
+                  <div class="mgs-speech-bubble">MANTAP BOSQ! 👍</div>
+                </div>
+
+                <h3 class="mgs-modal-title">Pembayaran Berhasil!</h3>
+                <p class="mgs-modal-sub">Saldo MGS telah dipotong untuk pesanan ini.</p>
+                
+                <!-- Receipt Struk -->
+                <div class="mgs-receipt-card">
+                  <div class="receipt-row">
+                    <span>Invoice</span>
+                    <strong style="color: #38bdf8; font-family: monospace;">${invoiceNumber}</strong>
+                  </div>
+                  <div class="receipt-row">
+                    <span>Game</span>
+                    <strong>${currentGame.title}</strong>
+                  </div>
+                  <div class="receipt-row">
+                    <span>Paket</span>
+                    <strong style="color: #ccff00;">${selectedItem.name}</strong>
+                  </div>
+                  <div class="receipt-row">
+                    <span>Akun</span>
+                    <strong>${accountDisplay}</strong>
+                  </div>
+                  <div class="receipt-divider"></div>
+                  <div class="receipt-row total">
+                    <span>Total Bayar</span>
+                    <strong style="color: #10b981; font-size: 1.1rem;">Rp ${totalToPay.toLocaleString("id-ID")}</strong>
+                  </div>
+                </div>
+
+                <a href="https://api.whatsapp.com/send?phone=6282121616716&text=${waMsg}" class="btn-mgs-modal-wa">
+                  <i class="fa-brands fa-whatsapp" style="font-size: 1.3rem;"></i> Kirim Detail ke WhatsApp
+                </a>
+              </div>
+            `,
+            background: "#090d16",
+            showConfirmButton: false,
+            showCloseButton: true,
+            customClass: {
+              popup: "mgs-custom-swal-box"
+            }
           });
         } else {
           window.location.href = `https://api.whatsapp.com/send?phone=6282121616716&text=${waMsg}`;
@@ -968,7 +1023,7 @@ Saya siap mengirimkan detail login dan screenshot bundle yang ingin dibeli.`
         return;
       }
 
-      // 2. JIKA MANUAL VIA ID -> POPUP SUKSES & DIRECT KE WA
+      // 2. JIKA MANUAL VIA ID -> MODAL KARAKTER JEMPOL & DIRECT WA
       if (isManualIdGame) {
         const waMsgId = encodeURIComponent(
 `Halo Admin MamangGS! Saya baru saja order Top Up Manual (Via ID).
@@ -981,44 +1036,78 @@ Saya siap mengirimkan detail login dan screenshot bundle yang ingin dibeli.`
 📱 *WhatsApp:* ${whatsapp}
 🆔 *User ID:* ${accountDisplay}
 
-Saldo akun saya sudah berhasil dipotong. Mohon segera diproses ya min. Terima kasih!`
+Saldo akun saya sudah berhasil dipotong. Mohon segera diproseskan ke supplier. Terima kasih!`
         );
 
         if (window.Swal) {
           Swal.fire({
-            icon: "success",
-            title: "Pembayaran Berhasil!",
-            text: "Saldo MGS berhasil dipotong. Klik tombol di bawah untuk konfirmasi pengisian cepat ke Admin.",
-            background: "#0f172a",
-            color: "#f8fafc",
-            confirmButtonColor: "#10b981",
-            confirmButtonText: '<i class="fa-brands fa-whatsapp"></i> Konfirmasi ke WhatsApp'
-          }).then(() => {
-            window.location.href = `https://api.whatsapp.com/send?phone=6282121616716&text=${waMsgId}`;
+            html: `
+              <div class="mgs-modal-wrapper">
+                <!-- Karakter Maskot Jempol -->
+                <div class="mgs-mascot-container">
+                  <div class="mgs-mascot-glow"></div>
+                  <svg class="mgs-mascot-thumb" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <circle cx="50" cy="50" r="45" fill="#1e293b" stroke="#ccff00" stroke-width="3"/>
+                    <!-- Rambut & Topi Headset Gaming -->
+                    <path d="M28 42C28 28 72 28 72 42V56C72 68 60 76 50 76C40 76 28 68 28 56V42Z" fill="#0f172a"/>
+                    <path d="M22 45C22 40 26 40 26 55C26 65 22 65 22 55V45Z" fill="#10b981"/>
+                    <path d="M74 45C74 40 78 40 78 55C78 65 74 65 74 55V45Z" fill="#10b981"/>
+                    <path d="M24 45C24 22 76 22 76 45" stroke="#10b981" stroke-width="4" stroke-linecap="round"/>
+                    <!-- Wajah Tersenyum -->
+                    <circle cx="42" cy="50" r="4" fill="#ccff00"/>
+                    <circle cx="58" cy="50" r="4" fill="#ccff00"/>
+                    <path d="M44 60Q50 67 56 60" stroke="#fff" stroke-width="3" stroke-linecap="round" fill="none"/>
+                    <!-- Tangan Kasih Jempol -->
+                    <g transform="translate(62, 48)">
+                      <ellipse cx="14" cy="14" rx="14" ry="14" fill="#10b981"/>
+                      <path d="M12 20V12C12 9 14 7 16 7C17.5 7 19 8.5 19 10V14H21C22.5 14 23.5 15.5 23.5 17C23.5 18 22.8 19 22 19.5C22.5 20 22.5 21 22 21.8C21.5 22.5 20.5 23 19.5 23H15C13 23 12 21.5 12 20Z" fill="#fff"/>
+                    </g>
+                  </svg>
+                  <div class="mgs-speech-bubble">MANTAP BOSQ! 👍</div>
+                </div>
+
+                <h3 class="mgs-modal-title">Pesanan Diterima!</h3>
+                <p class="mgs-modal-sub">Saldo MGS telah dipotong. Klik tombol di bawah untuk proses cepat ke Admin.</p>
+                
+                <!-- Receipt Struk -->
+                <div class="mgs-receipt-card">
+                  <div class="receipt-row">
+                    <span>Invoice</span>
+                    <strong style="color: #38bdf8; font-family: monospace;">${invoiceNumber}</strong>
+                  </div>
+                  <div class="receipt-row">
+                    <span>Game</span>
+                    <strong>${currentGame.title}</strong>
+                  </div>
+                  <div class="receipt-row">
+                    <span>Item</span>
+                    <strong style="color: #ccff00;">${selectedItem.name}</strong>
+                  </div>
+                  <div class="receipt-row">
+                    <span>User ID</span>
+                    <strong style="color: #fff;">${accountDisplay}</strong>
+                  </div>
+                  <div class="receipt-divider"></div>
+                  <div class="receipt-row total">
+                    <span>Total Tagihan</span>
+                    <strong style="color: #10b981; font-size: 1.1rem;">Rp ${totalToPay.toLocaleString("id-ID")}</strong>
+                  </div>
+                </div>
+
+                <a href="https://api.whatsapp.com/send?phone=6282121616716&text=${waMsgId}" class="btn-mgs-modal-wa">
+                  <i class="fa-brands fa-whatsapp" style="font-size: 1.3rem;"></i> Konfirmasi ke WhatsApp Admin
+                </a>
+              </div>
+            `,
+            background: "#090d16",
+            showConfirmButton: false,
+            showCloseButton: true,
+            customClass: {
+              popup: "mgs-custom-swal-box"
+            }
           });
         } else {
           window.location.href = `https://api.whatsapp.com/send?phone=6282121616716&text=${waMsgId}`;
-        }
-        return;
-      }
-
-      // 3. JIKA DIGIFLAZZ BIASA
-      if (isUsingWallet) {
-        if (window.Swal) {
-          Swal.fire({
-            icon: "success",
-            title: "Pembayaran Berhasil!",
-            text: "Pesananmu sedang otomatis diproses oleh sistem.",
-            background: "#0f172a",
-            color: "#f8fafc",
-            confirmButtonColor: "#10b981",
-            confirmButtonText: "Lihat Invoice",
-            timer: 2000
-          }).then(() => {
-            window.location.href = `/order-status.html?inv=${encodeURIComponent(invoiceNumber)}`;
-          });
-        } else {
-          window.location.href = `/order-status.html?inv=${encodeURIComponent(invoiceNumber)}`;
         }
         return;
       }
