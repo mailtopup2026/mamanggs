@@ -7,6 +7,7 @@ let allBanners = [];
 let allGameCategories = [];
 let allFlashSales = [];
 let allManualGames = [];
+let allManualIdProducts = []; // Penampung produk manual via ID
 let allFjbPosts = []; // Penampung postingan FJB
 let selectedTargetUser = null;
 let selectedSku = null;
@@ -43,7 +44,7 @@ Berikut adalah rincian pesanan Anda:
 📌 *Status Pesanan:* *${o.status}*
 
 Cek detail atau download invoice di:
-🔗 https://mamanggs.vercel.app/order-status.html?inv=${o.invoice}
+🔗 https://mamanggs.my.id/order-status.html?inv=${o.invoice}
 
 Pesanan Anda telah kami proses. Terima kasih dan selamat bermain! ✨`;
 
@@ -519,6 +520,89 @@ window.deleteManualGame = async function(id) {
 };
 
 // ==========================================
+// 1.6. KATALOG PRODUK MANUAL VIA ID (BARU)
+// ==========================================
+window.fetchManualIdProducts = async function() {
+  const tbody = document.getElementById("manualIdTableBody");
+  if (!tbody) return;
+
+  tbody.innerHTML = `<tr><td colspan="7" style="text-align: center; padding: 25px;"><i class="fa-solid fa-spinner fa-spin"></i> Memuat produk manual ID...</td></tr>`;
+
+  try {
+    const { data, error } = await window.supabase
+      .from("products")
+      .select("*")
+      .eq("provider", "manual")
+      .order("created_at", { ascending: false });
+
+    if (error) throw error;
+    allManualIdProducts = data || [];
+
+    if (allManualIdProducts.length === 0) {
+      tbody.innerHTML = `<tr><td colspan="7" style="text-align: center; padding: 25px; color: #94a3b8;">Belum ada produk manual via ID. Klik "Tambah Game & Paket Manual".</td></tr>`;
+      return;
+    }
+
+    tbody.innerHTML = allManualIdProducts.map((p) => {
+      const modal = Number(p.price_modal || p.price_original || 0);
+      const jual = Number(p.price_sell || 0);
+      const profit = Math.max(0, jual - modal);
+      const statusBadge = p.is_active
+        ? `<span class="badge-status success">ON</span>`
+        : `<span class="badge-status cancelled">OFF</span>`;
+
+      return `
+        <tr>
+          <td><strong style="color: #ccff00; font-size: 0.85rem; text-transform: uppercase;">${p.brand}</strong></td>
+          <td><strong style="color: #fff;">${p.product_name}</strong><br><code style="color: #64748b; font-size: 0.75rem;">${p.sku || p.buyer_sku_code}</code></td>
+          <td>Rp ${modal.toLocaleString("id-ID")}</td>
+          <td><strong style="color: #10b981;">Rp ${jual.toLocaleString("id-ID")}</strong></td>
+          <td><span style="color: #fbbf24; font-weight: 700;">+Rp ${profit.toLocaleString("id-ID")}</span></td>
+          <td>${statusBadge}</td>
+          <td>
+            <div class="btn-action-group">
+              <button class="btn-action-sm ${p.is_active ? 'btn-adjust' : 'btn-success'}" onclick="toggleManualIdStatus('${p.id}', ${!p.is_active})" title="Ubah Status">
+                <i class="fa-solid ${p.is_active ? 'fa-eye-slash' : 'fa-eye'}"></i>
+              </button>
+              <button class="btn-action-sm btn-cancel" onclick="deleteManualIdProduct('${p.id}')" title="Hapus Paket">
+                <i class="fa-solid fa-trash-can"></i>
+              </button>
+            </div>
+          </td>
+        </tr>
+      `;
+    }).join("");
+  } catch (err) {
+    console.error(err);
+    tbody.innerHTML = `<tr><td colspan="7" style="text-align: center; color: var(--accent-red);">${err.message}</td></tr>`;
+  }
+};
+
+window.toggleManualIdStatus = async function(id, status) {
+  try {
+    const { error } = await window.supabase.from("products").update({ is_active: status }).eq("id", id);
+    if (error) throw error;
+    window.fetchManualIdProducts();
+  } catch (err) {
+    alert("Gagal memperbarui status: " + err.message);
+  }
+};
+
+window.deleteManualIdProduct = async function(id) {
+  if (!confirm("Hapus paket manual ini dari katalog?")) return;
+  try {
+    const { error } = await window.supabase.from("products").delete().eq("id", id);
+    if (error) throw error;
+    window.fetchManualIdProducts();
+  } catch (err) {
+    alert("Gagal menghapus produk: " + err.message);
+  }
+};
+
+// Aliaskan untuk script HTML inline
+window.loadManualIdProducts = window.fetchManualIdProducts;
+
+// ==========================================
 // 1.8. MODERASI FJB & REKBER ACTIONS (CARA A)
 // ==========================================
 
@@ -650,12 +734,10 @@ function renderFjbTable(posts) {
 // LOGIKA UPDATE STATUS & PEMILIHAN PEMBELI (CARA A)
 window.updateFjbStatus = async function(postId, newStatus) {
   if (newStatus === "sold") {
-    // Buka modal pemilihan akun pembeli
     openFjbBuyerModal(postId);
     return;
   }
 
-  // Jika kembali ke Tersedia / Hold, bersihkan kolom buyer_id
   try {
     const { error } = await window.supabase
       .from("market_posts")
@@ -698,7 +780,7 @@ window.openFjbBuyerModal = function(postId) {
 window.closeFjbBuyerModal = function() {
   pendingSoldPostId = null;
   document.getElementById("fjbBuyerModal")?.classList.remove("show");
-  window.fetchAdminFjbPosts(); // Kembalikan render dropdown jika dibatalkan
+  window.fetchAdminFjbPosts();
 };
 
 window.submitFjbSoldWithBuyer = async function() {
@@ -916,10 +998,11 @@ document.addEventListener("DOMContentLoaded", async () => {
       if (btn.dataset.tab === "dashboardTab") window.loadDashboardData();
       if (btn.dataset.tab === "articlesTab") window.fetchAdminArticles();
       if (btn.dataset.tab === "productsTab") window.fetchAdminProducts();
+      if (btn.dataset.tab === "manualIdTab") window.fetchManualIdProducts();
       if (btn.dataset.tab === "bannersTab") window.fetchAdminBanners();
       if (btn.dataset.tab === "gamesTab") window.fetchAdminGames();
       if (btn.dataset.tab === "flashSaleTab") window.fetchAdminFlashSale();
-      if (btn.dataset.tab === "fjbTab") window.fetchAdminFjbPosts(); // Fetch FJB Posts
+      if (btn.dataset.tab === "fjbTab") window.fetchAdminFjbPosts();
       
       if (btn.dataset.tab === "manualGamesTab") {
         window.fetchUsdRate();
@@ -1340,6 +1423,7 @@ document.addEventListener("DOMContentLoaded", async () => {
       const { data, error } = await window.supabase
         .from("products")
         .select("*")
+        .neq("provider", "manual")
         .order("brand", { ascending: true })
         .order("price_sell", { ascending: true });
 
@@ -1357,20 +1441,22 @@ document.addEventListener("DOMContentLoaded", async () => {
   function populateGameFilters(products) {
     const filterSelect = document.getElementById("filterProductGame");
     const pillsContainer = document.getElementById("gameCategoryPills");
-    const uniqueGames = [...new Set(products.map(p => p.brand || p.game_code || "Lainnya"))].sort();
+    
+    // Mengelompokkan berdasarkan nama game yang unik (bukan total varian produk)
+    const uniqueGames = [...new Set(products.map(p => p.brand || p.game_code || "Lainnya"))].filter(Boolean).sort();
 
     if (filterSelect) {
-      filterSelect.innerHTML = `<option value="ALL">🎮 Semua Game (${products.length})</option>` +
+      filterSelect.innerHTML = `<option value="ALL">🎮 Semua Game (${uniqueGames.length})</option>` +
         uniqueGames.map(g => {
           const count = products.filter(p => (p.brand || p.game_code) === g).length;
-          return `<option value="${g}" ${activeGameFilter === g ? "selected" : ""}>${g.toUpperCase()} (${count})</option>`;
+          return `<option value="${g}" ${activeGameFilter === g ? "selected" : ""}>${g.toUpperCase()} (${count} Paket)</option>`;
         }).join("");
     }
 
     if (pillsContainer) {
       pillsContainer.innerHTML = `
         <button class="pill-btn ${activeGameFilter === 'ALL' ? 'active' : ''}" onclick="setGameFilter('ALL')">
-          Semua (${products.length})
+          Semua (${uniqueGames.length} Game)
         </button>
       ` + uniqueGames.map(g => {
         const count = products.filter(p => (p.brand || p.game_code) === g).length;

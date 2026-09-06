@@ -12,6 +12,7 @@
   
   <link rel="stylesheet" href="/css/global.css">
   <link rel="stylesheet" href="/css/admin.css">
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </head>
 <body class="admin-body">
 
@@ -63,6 +64,10 @@
         <div class="menu-label" style="margin-top: 14px;">Produk & Konten</div>
         <button class="tab-btn" data-tab="productsTab">
           <i class="fa-solid fa-tags"></i> <span>Katalog & Harga</span>
+        </button>
+        <!-- MENU KHUSUS MANUAL VIA ID / SELLER TEMAN -->
+        <button class="tab-btn" data-tab="manualIdTab">
+          <i class="fa-solid fa-id-card-clip" style="color: #ccff00;"></i> <span>Katalog Manual (Via ID)</span>
         </button>
         <button class="tab-btn" data-tab="manualGamesTab">
           <i class="fa-solid fa-handshake-angle" style="color: #10b981;"></i> <span>Katalog Manual (Login)</span>
@@ -237,7 +242,7 @@
         </div>
       </section>
 
-      <!-- SECTION FJB & REKBER (BARU) -->
+      <!-- SECTION FJB & REKBER -->
       <section id="fjbTab" class="tab-content">
         <div class="section-card">
           <div class="table-header-bar" style="margin-bottom: 20px;">
@@ -365,10 +370,11 @@
         </div>
       </section>
 
+      <!-- TAB 1: PRODUK OTOMATIS (DIGIFLAZZ) -->
       <section id="productsTab" class="tab-content">
         <div class="section-card">
           <div class="table-header-bar" style="margin-bottom: 20px;">
-            <h3><i class="fa-solid fa-tags"></i> Daftar Harga & Produk Jual</h3>
+            <h3><i class="fa-solid fa-tags"></i> Daftar Harga & Produk Jual (Otomatis Digiflazz)</h3>
             <div class="filter-actions">
               <select id="filterProductGame" class="admin-select" style="min-width: 180px;">
                 <option value="ALL">🎮 Semua Game / Brand</option>
@@ -399,8 +405,43 @@
         </div>
       </section>
 
+      <!-- TAB 2: KHUSUS MANUAL VIA ID / SELLER TEMAN (BARU) -->
+      <section id="manualIdTab" class="tab-content">
+        <div class="section-card">
+          <div class="table-header-bar" style="margin-bottom: 20px;">
+            <div>
+              <h3><i class="fa-solid fa-id-card-clip" style="color: #ccff00;"></i> Katalog Produk Manual (Via User ID)</h3>
+              <p style="margin: 4px 0 0; font-size: 0.8rem; color: #94a3b8;">Produk murah supplier teman (Whiteout Survival, dll.) tanpa proses login akun.</p>
+            </div>
+            <div class="filter-actions">
+              <button class="btn-submit-action" style="width: auto; margin: 0; padding: 9px 18px; font-size: 0.85rem; background: #ccff00; color: #000; font-weight: 800;" onclick="openManualIdModal()">
+                <i class="fa-solid fa-plus"></i> Tambah Game & Paket Manual
+              </button>
+            </div>
+          </div>
+
+          <div class="table-responsive">
+            <table class="admin-table">
+              <thead>
+                <tr>
+                  <th>Game</th>
+                  <th>Nama Paket / Nominal</th>
+                  <th>Modal Supplier</th>
+                  <th>Harga Jual Web</th>
+                  <th>Margin Profit</th>
+                  <th>Status</th>
+                  <th>Aksi</th>
+                </tr>
+              </thead>
+              <tbody id="manualIdTableBody">
+                <tr><td colspan="7" style="text-align: center; padding: 25px;">Memuat produk manual ID...</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
       <section id="manualGamesTab" class="tab-content">
-        
         <div class="section-card" style="margin-bottom: 20px; background: rgba(16, 185, 129, 0.05); border-color: rgba(16, 185, 129, 0.3);">
           <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
             <div>
@@ -471,6 +512,54 @@
         </div>
       </section>
     </main>
+  </div>
+
+  <!-- MODAL INPUT GAME & PAKET MANUAL VIA ID (BARU) -->
+  <div class="modal-backdrop" id="manualIdModal">
+    <div class="modal-card" style="max-width: 520px;">
+      <div class="modal-header">
+        <h3 style="color: #ccff00;"><i class="fa-solid fa-id-card-clip"></i> Tambah Game & Paket Manual (ID)</h3>
+        <button class="btn-close-modal" onclick="closeManualIdModal()"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+      <div class="modal-body">
+        <div class="form-group" style="margin-bottom: 12px;">
+          <label style="font-size: 0.8rem; color: #94a3b8;">Nama Game</label>
+          <input type="text" id="manualIdGameName" placeholder="Contoh: Whiteout Survival" class="admin-input" style="width: 100%; box-sizing: border-box; margin-top: 6px;">
+        </div>
+        <div class="form-group" style="margin-bottom: 12px;">
+          <label style="font-size: 0.8rem; color: #94a3b8;">Kode / Slug Game (Huruf kecil tanpa spasi)</label>
+          <input type="text" id="manualIdGameSlug" placeholder="Contoh: whiteout-survival" class="admin-input" style="width: 100%; box-sizing: border-box; margin-top: 6px;">
+        </div>
+        <div class="form-group" style="margin-bottom: 12px;">
+          <label style="font-size: 0.8rem; color: #94a3b8;">URL Cover Game (Tampil di Katalog Utama)</label>
+          <input type="url" id="manualIdGameImg" placeholder="https://... link poster game" class="admin-input" style="width: 100%; box-sizing: border-box; margin-top: 6px;">
+        </div>
+        
+        <div style="border-top: 1px dashed rgba(255,255,255,0.12); margin: 16px 0; padding-top: 12px;">
+          <strong style="font-size: 0.88rem; color: #ccff00;"><i class="fa-solid fa-cube"></i> Paket Nominal Pertama</strong>
+        </div>
+
+        <div class="form-group" style="margin-bottom: 12px;">
+          <label style="font-size: 0.8rem; color: #94a3b8;">Nama Paket / Nominal</label>
+          <input type="text" id="manualIdItemName" placeholder="Contoh: 1,000 + 50 Frost Star" class="admin-input" style="width: 100%; box-sizing: border-box; margin-top: 6px;">
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+          <div class="form-group">
+            <label style="font-size: 0.8rem; color: #94a3b8;">Modal Supplier (Rp)</label>
+            <input type="number" id="manualIdModalPrice" placeholder="140000" class="admin-input" style="width: 100%; box-sizing: border-box; margin-top: 6px;">
+          </div>
+          <div class="form-group">
+            <label style="font-size: 0.8rem; color: #94a3b8;">Harga Jual Web (Rp)</label>
+            <input type="number" id="manualIdSellPrice" placeholder="155000" class="admin-input" style="width: 100%; box-sizing: border-box; margin-top: 6px;">
+          </div>
+        </div>
+
+        <button type="button" class="btn-submit-action" style="background: #ccff00; color: #000; font-weight: 800; margin-top: 15px;" onclick="submitManualIdProduct()">
+          <i class="fa-solid fa-floppy-disk"></i> Simpan & Tayangkan di Katalog
+        </button>
+      </div>
+    </div>
   </div>
 
   <!-- MODAL PILIH PEMBELI FJB (CARA A) -->
@@ -655,7 +744,7 @@
   <div class="modal-backdrop" id="manualGameModal">
     <div class="modal-card">
       <div class="modal-header">
-        <h3 id="manualGameModalTitle"><i class="fa-solid fa-upload"></i> Tambah Game Manual</h3>
+        <h3 id="manualGameModalTitle"><i class="fa-solid fa-upload"></i> Tambah Game Manual (Jastip Login)</h3>
         <button class="btn-close-modal" onclick="closeManualGameModal()"><i class="fa-solid fa-xmark"></i></button>
       </div>
       <div class="modal-body">
@@ -684,5 +773,105 @@
   <script src="/js/supabase.js"></script>
   <script src="/js/whatsapp-notify.js"></script>
   <script src="/js/admin.js"></script>
+
+  <!-- SKRIP LOGIKA MODAL MANUAL VIA ID -->
+  <script>
+    function openManualIdModal() {
+      const modal = document.getElementById("manualIdModal");
+      if (modal) modal.style.display = "flex";
+    }
+
+    function closeManualIdModal() {
+      const modal = document.getElementById("manualIdModal");
+      if (modal) modal.style.display = "none";
+    }
+
+    // Auto-generate slug ketika nama game diketik
+    document.getElementById("manualIdGameName")?.addEventListener("input", (e) => {
+      const slugInput = document.getElementById("manualIdGameSlug");
+      if (slugInput) {
+        slugInput.value = e.target.value.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)+/g, "");
+      }
+    });
+
+    async function submitManualIdProduct() {
+      const gameName = document.getElementById("manualIdGameName")?.value.trim();
+      const gameSlug = document.getElementById("manualIdGameSlug")?.value.trim();
+      const gameImg = document.getElementById("manualIdGameImg")?.value.trim();
+      const itemName = document.getElementById("manualIdItemName")?.value.trim();
+      const modalPrice = Number(document.getElementById("manualIdModalPrice")?.value) || 0;
+      const sellPrice = Number(document.getElementById("manualIdSellPrice")?.value) || 0;
+
+      if (!gameName || !gameSlug || !itemName || !sellPrice) {
+        Swal.fire({
+          icon: "warning",
+          title: "Form Belum Lengkap",
+          text: "Nama game, kode slug, nama paket, dan harga jual wajib diisi!",
+          background: "#0f141f",
+          color: "#fff",
+          confirmButtonColor: "#ccff00",
+          confirmButtonText: '<span style="color: #000; font-weight: 800;">OK</span>'
+        });
+        return;
+      }
+
+      try {
+        if (!window.supabase) throw new Error("Koneksi Supabase belum siap.");
+
+        // 1. Simpan/Pastikan Game masuk ke katalog depan (tabel games / game_categories)
+        await window.supabase.from("games").upsert({
+          name: gameName,
+          slug: gameSlug,
+          image_url: gameImg || "/assets/images/default-game.jpg",
+          is_active: true
+        }, { onConflict: "slug" });
+
+        // 2. Simpan produk ke tabel produk dengan penanda provider manual
+        const { error: errProd } = await window.supabase.from("products").insert({
+          brand: gameName.toUpperCase(),
+          game_slug: gameSlug,
+          sku: `MANUAL-${gameSlug.toUpperCase()}-${Date.now().toString().slice(-4)}`,
+          product_name: itemName,
+          price_modal: modalPrice,
+          price_sell: sellPrice,
+          provider: "manual",
+          is_active: true
+        });
+
+        if (errProd) throw errProd;
+
+        Swal.fire({
+          icon: "success",
+          title: "Berhasil Disimpan!",
+          text: `Paket ${itemName} untuk ${gameName} berhasil ditambahkan dan langsung aktif di katalog web.`,
+          background: "#0f141f",
+          color: "#fff",
+          confirmButtonColor: "#ccff00",
+          confirmButtonText: '<span style="color: #000; font-weight: 800;">Selesai</span>'
+        });
+
+        closeManualIdModal();
+
+        // Kosongkan form input
+        document.getElementById("manualIdItemName").value = "";
+        document.getElementById("manualIdModalPrice").value = "";
+        document.getElementById("manualIdSellPrice").value = "";
+
+        if (typeof window.loadManualIdProducts === "function") {
+          window.loadManualIdProducts();
+        }
+      } catch (err) {
+        console.error(err);
+        Swal.fire({
+          icon: "error",
+          title: "Gagal Menyimpan",
+          text: err.message,
+          background: "#0f141f",
+          color: "#fff",
+          confirmButtonColor: "#ccff00"
+        });
+      }
+    }
+  </script>
 </body>
 </html>
