@@ -514,14 +514,14 @@
     </main>
   </div>
 
-  <!-- MODAL INPUT GAME & PAKET MANUAL VIA ID (BARU) -->
+  <!-- MODAL INPUT GAME & MULTI-PAKET MANUAL VIA ID -->
   <div class="modal-backdrop" id="manualIdModal">
-    <div class="modal-card" style="max-width: 520px;">
+    <div class="modal-card" style="max-width: 620px; max-height: 90vh; display: flex; flex-direction: column;">
       <div class="modal-header">
         <h3 style="color: #ccff00;"><i class="fa-solid fa-id-card-clip"></i> Tambah Game & Paket Manual (ID)</h3>
         <button class="btn-close-modal" onclick="closeManualIdModal()"><i class="fa-solid fa-xmark"></i></button>
       </div>
-      <div class="modal-body">
+      <div class="modal-body" style="overflow-y: auto; padding-right: 6px;">
         <div class="form-group" style="margin-bottom: 12px;">
           <label style="font-size: 0.8rem; color: #94a3b8;">Nama Game</label>
           <input type="text" id="manualIdGameName" placeholder="Contoh: Whiteout Survival" class="admin-input" style="width: 100%; box-sizing: border-box; margin-top: 6px;">
@@ -530,32 +530,26 @@
           <label style="font-size: 0.8rem; color: #94a3b8;">Kode / Slug Game (Huruf kecil tanpa spasi)</label>
           <input type="text" id="manualIdGameSlug" placeholder="Contoh: whiteout-survival" class="admin-input" style="width: 100%; box-sizing: border-box; margin-top: 6px;">
         </div>
-        <div class="form-group" style="margin-bottom: 12px;">
+        <div class="form-group" style="margin-bottom: 14px;">
           <label style="font-size: 0.8rem; color: #94a3b8;">URL Cover Game (Tampil di Katalog Utama)</label>
           <input type="url" id="manualIdGameImg" placeholder="https://... link poster game" class="admin-input" style="width: 100%; box-sizing: border-box; margin-top: 6px;">
         </div>
         
-        <div style="border-top: 1px dashed rgba(255,255,255,0.12); margin: 16px 0; padding-top: 12px;">
-          <strong style="font-size: 0.88rem; color: #ccff00;"><i class="fa-solid fa-cube"></i> Paket Nominal Pertama</strong>
-        </div>
-
-        <div class="form-group" style="margin-bottom: 12px;">
-          <label style="font-size: 0.8rem; color: #94a3b8;">Nama Paket / Nominal</label>
-          <input type="text" id="manualIdItemName" placeholder="Contoh: 1,000 + 50 Frost Star" class="admin-input" style="width: 100%; box-sizing: border-box; margin-top: 6px;">
-        </div>
-
-        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
-          <div class="form-group">
-            <label style="font-size: 0.8rem; color: #94a3b8;">Modal Supplier (Rp)</label>
-            <input type="number" id="manualIdModalPrice" placeholder="140000" class="admin-input" style="width: 100%; box-sizing: border-box; margin-top: 6px;">
+        <!-- BAGIAN DAFTAR PAKET MULTI-ROW -->
+        <div style="border-top: 1px dashed rgba(255,255,255,0.15); padding-top: 14px; margin-top: 6px;">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+            <strong style="font-size: 0.9rem; color: #ccff00;"><i class="fa-solid fa-cubes"></i> Daftar Pilihan Paket Nominal</strong>
+            <button type="button" onclick="addManualPackageRow()" style="background: rgba(204, 255, 0, 0.15); color: #ccff00; border: 1px solid #ccff00; border-radius: 8px; padding: 5px 12px; font-size: 0.78rem; font-weight: 700; cursor: pointer;">
+              <i class="fa-solid fa-plus"></i> Tambah Baris Paket
+            </button>
           </div>
-          <div class="form-group">
-            <label style="font-size: 0.8rem; color: #94a3b8;">Harga Jual Web (Rp)</label>
-            <input type="number" id="manualIdSellPrice" placeholder="155000" class="admin-input" style="width: 100%; box-sizing: border-box; margin-top: 6px;">
+
+          <div id="manualPackagesContainer" style="display: flex; flex-direction: column; gap: 10px;">
+            <!-- Baris paket diisi lewat JavaScript -->
           </div>
         </div>
 
-        <button type="button" class="btn-submit-action" style="background: #ccff00; color: #000; font-weight: 800; margin-top: 15px;" onclick="submitManualIdProduct()">
+        <button type="button" id="btnSaveManualId" class="btn-submit-action" style="background: #ccff00; color: #000; font-weight: 800; margin-top: 20px; width: 100%; justify-content: center; padding: 12px;" onclick="submitManualIdProduct()">
           <i class="fa-solid fa-floppy-disk"></i> Simpan & Tayangkan di Katalog
         </button>
       </div>
@@ -774,10 +768,70 @@
   <script src="/js/whatsapp-notify.js"></script>
   <script src="/js/admin.js"></script>
 
-  <!-- SKRIP LOGIKA MODAL MANUAL VIA ID -->
+  <!-- SKRIP LOGIKA MODAL MANUAL VIA ID (MULTI-ROW + FORMAT TITIK) -->
   <script>
+    // Fungsi format ribuan dengan titik secara real-time
+    function formatRupiahInput(input) {
+      let value = input.value.replace(/\D/g, "");
+      input.value = value ? Number(value).toLocaleString("id-ID") : "";
+    }
+
+    // Helper ambil angka murni dari input ber-titik
+    function getCleanNumber(str) {
+      return Number(String(str || "0").replace(/\./g, "").replace(/[^0-9]/g, "")) || 0;
+    }
+
+    function createPackageRowHtml(itemName = "", modal = "", sell = "") {
+      return `
+        <div class="manual-pkg-row" style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08); border-radius: 10px; padding: 10px; display: grid; grid-template-columns: 2fr 1.2fr 1.2fr auto; gap: 8px; align-items: center;">
+          <div>
+            <input type="text" class="admin-input pkg-name" placeholder="Nama Paket (e.g. 500 Frost Star)" value="${itemName}" style="width: 100%; box-sizing: border-box; font-size: 0.82rem;">
+          </div>
+          <div>
+            <input type="text" class="admin-input pkg-modal" placeholder="Modal (Rp)" value="${modal}" oninput="formatRupiahInput(this)" style="width: 100%; box-sizing: border-box; font-size: 0.82rem;">
+          </div>
+          <div>
+            <input type="text" class="admin-input pkg-sell" placeholder="Jual (Rp)" value="${sell}" oninput="formatRupiahInput(this)" style="width: 100%; box-sizing: border-box; font-size: 0.82rem;">
+          </div>
+          <div>
+            <button type="button" onclick="removePackageRow(this)" style="background: rgba(239, 68, 68, 0.15); color: #ef4444; border: none; border-radius: 6px; width: 32px; height: 32px; cursor: pointer; display: flex; align-items: center; justify-content: center;" title="Hapus Paket">
+              <i class="fa-solid fa-trash-can"></i>
+            </button>
+          </div>
+        </div>
+      `;
+    }
+
+    function addManualPackageRow(itemName = "", modal = "", sell = "") {
+      const container = document.getElementById("manualPackagesContainer");
+      if (container) {
+        container.insertAdjacentHTML("beforeend", createPackageRowHtml(itemName, modal, sell));
+      }
+    }
+
+    function removePackageRow(btn) {
+      const container = document.getElementById("manualPackagesContainer");
+      const rows = container.querySelectorAll(".manual-pkg-row");
+      if (rows.length <= 1) {
+        Swal.fire({
+          icon: "info",
+          title: "Minimal 1 Paket",
+          text: "Minimal harus ada satu paket nominal yang didaftarkan.",
+          background: "#0f141f",
+          color: "#fff",
+          confirmButtonColor: "#ccff00"
+        });
+        return;
+      }
+      btn.closest(".manual-pkg-row").remove();
+    }
+
     function openManualIdModal() {
       const modal = document.getElementById("manualIdModal");
+      const container = document.getElementById("manualPackagesContainer");
+      if (container && container.children.length === 0) {
+        container.innerHTML = createPackageRowHtml("", "", "") + createPackageRowHtml("", "", "");
+      }
       if (modal) modal.style.display = "flex";
     }
 
@@ -798,27 +852,57 @@
       const gameName = document.getElementById("manualIdGameName")?.value.trim();
       const gameSlug = document.getElementById("manualIdGameSlug")?.value.trim();
       const gameImg = document.getElementById("manualIdGameImg")?.value.trim();
-      const itemName = document.getElementById("manualIdItemName")?.value.trim();
-      const modalPrice = Number(document.getElementById("manualIdModalPrice")?.value) || 0;
-      const sellPrice = Number(document.getElementById("manualIdSellPrice")?.value) || 0;
 
-      if (!gameName || !gameSlug || !itemName || !sellPrice) {
+      if (!gameName || !gameSlug) {
         Swal.fire({
           icon: "warning",
-          title: "Form Belum Lengkap",
-          text: "Nama game, kode slug, nama paket, dan harga jual wajib diisi!",
+          title: "Data Belum Lengkap",
+          text: "Nama game dan kode slug wajib diisi!",
           background: "#0f141f",
           color: "#fff",
-          confirmButtonColor: "#ccff00",
-          confirmButtonText: '<span style="color: #000; font-weight: 800;">OK</span>'
+          confirmButtonColor: "#ccff00"
         });
         return;
       }
 
+      const rows = document.querySelectorAll("#manualPackagesContainer .manual-pkg-row");
+      const packages = [];
+
+      rows.forEach((row, idx) => {
+        const name = row.querySelector(".pkg-name")?.value.trim();
+        const modal = getCleanNumber(row.querySelector(".pkg-modal")?.value);
+        const sell = getCleanNumber(row.querySelector(".pkg-sell")?.value);
+
+        if (name && sell > 0) {
+          packages.push({
+            name,
+            modal,
+            sell,
+            sku: `MANUAL-${gameSlug.toUpperCase()}-${idx + 1}-${Date.now().toString().slice(-4)}`
+          });
+        }
+      });
+
+      if (packages.length === 0) {
+        Swal.fire({
+          icon: "warning",
+          title: "Paket Belum Diisi",
+          text: "Isi setidaknya satu baris nama paket dan harga jualnya!",
+          background: "#0f141f",
+          color: "#fff",
+          confirmButtonColor: "#ccff00"
+        });
+        return;
+      }
+
+      const btnSave = document.getElementById("btnSaveManualId");
+      btnSave.disabled = true;
+      btnSave.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Menyimpan...';
+
       try {
         if (!window.supabase) throw new Error("Koneksi Supabase belum siap.");
 
-        // 1. Simpan/Pastikan Game masuk ke katalog depan (tabel games / game_categories)
+        // 1. Simpan Game ke katalog game
         await window.supabase.from("games").upsert({
           name: gameName,
           slug: gameSlug,
@@ -826,36 +910,38 @@
           is_active: true
         }, { onConflict: "slug" });
 
-        // 2. Simpan produk ke tabel produk dengan penanda provider manual
-        const { error: errProd } = await window.supabase.from("products").insert({
+        // 2. Multi-insert paket ke tabel products
+        const productsPayload = packages.map(pkg => ({
           brand: gameName.toUpperCase(),
           game_slug: gameSlug,
-          sku: `MANUAL-${gameSlug.toUpperCase()}-${Date.now().toString().slice(-4)}`,
-          product_name: itemName,
-          price_modal: modalPrice,
-          price_sell: sellPrice,
+          sku: pkg.sku,
+          buyer_sku_code: pkg.sku,
+          product_name: pkg.name,
+          price_modal: pkg.modal,
+          price_sell: pkg.sell,
           provider: "manual",
           is_active: true
-        });
+        }));
 
+        const { error: errProd } = await window.supabase.from("products").insert(productsPayload);
         if (errProd) throw errProd;
 
         Swal.fire({
           icon: "success",
           title: "Berhasil Disimpan!",
-          text: `Paket ${itemName} untuk ${gameName} berhasil ditambahkan dan langsung aktif di katalog web.`,
+          text: `${packages.length} paket untuk game ${gameName} berhasil ditambahkan ke katalog.`,
           background: "#0f141f",
           color: "#fff",
-          confirmButtonColor: "#ccff00",
-          confirmButtonText: '<span style="color: #000; font-weight: 800;">Selesai</span>'
+          confirmButtonColor: "#ccff00"
         });
 
         closeManualIdModal();
 
-        // Kosongkan form input
-        document.getElementById("manualIdItemName").value = "";
-        document.getElementById("manualIdModalPrice").value = "";
-        document.getElementById("manualIdSellPrice").value = "";
+        // Reset form
+        document.getElementById("manualIdGameName").value = "";
+        document.getElementById("manualIdGameSlug").value = "";
+        document.getElementById("manualIdGameImg").value = "";
+        document.getElementById("manualPackagesContainer").innerHTML = "";
 
         if (typeof window.loadManualIdProducts === "function") {
           window.loadManualIdProducts();
@@ -870,6 +956,9 @@
           color: "#fff",
           confirmButtonColor: "#ccff00"
         });
+      } finally {
+        btnSave.disabled = false;
+        btnSave.innerHTML = '<i class="fa-solid fa-floppy-disk"></i> Simpan & Tayangkan di Katalog';
       }
     }
   </script>
