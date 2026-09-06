@@ -347,7 +347,7 @@ window.deleteFlashSale = async function(id) {
 };
 
 // ==========================================
-// 1.5. MANUAL GAMES & USD RATE ACTIONS
+// 1.5. MANUAL GAMES (VIA LOGIN) & USD RATE
 // ==========================================
 
 window.fetchUsdRate = async function() {
@@ -381,7 +381,12 @@ window.fetchManualGames = async function() {
   tbody.innerHTML = `<tr><td colspan="5" style="text-align: center; padding: 25px;"><i class="fa-solid fa-spinner fa-spin"></i> Memuat data...</td></tr>`;
 
   try {
-    const { data, error } = await window.supabase.from("manual_games").select("*").order("created_at", { ascending: false });
+    // Order pakai id (bukan created_at agar tidak error karena kolom tersebut belum tentu ada)
+    const { data, error } = await window.supabase
+      .from("manual_games")
+      .select("*")
+      .order("id", { ascending: false });
+
     if (error) throw error;
     allManualGames = data || [];
 
@@ -391,20 +396,21 @@ window.fetchManualGames = async function() {
     }
 
     tbody.innerHTML = allManualGames.map(g => {
-      const statusBadge = g.is_active 
+      const isAktif = g.is_active !== false;
+      const statusBadge = isAktif 
         ? `<span class="badge-status success">AKTIF</span>` 
         : `<span class="badge-status cancelled">NONAKTIF</span>`;
 
       return `
         <tr>
-          <td><img src="${g.image_url}" alt="${g.name}" style="width: 50px; height: 50px; border-radius: 10px; object-fit: cover; background: #0b1120;"></td>
+          <td><img src="${g.image_url || '/assets/images/default-game.jpg'}" alt="${g.name}" style="width: 50px; height: 50px; border-radius: 10px; object-fit: cover; background: #0b1120;"></td>
           <td><strong style="color: #fff;">${g.name}</strong><br><span style="font-size:0.75rem; color:#10b981;">ID: ${g.slug}</span></td>
-          <td><span style="color: #94a3b8;">${g.publisher}</span></td>
+          <td><span style="color: #94a3b8;">${g.publisher || '-'}</span></td>
           <td>${statusBadge}</td>
           <td>
             <div class="btn-action-group">
-              <button class="btn-action-sm ${g.is_active ? 'btn-adjust' : 'btn-success'}" onclick="toggleManualGameStatus('${g.id}', ${!g.is_active})" title="Ubah Status">
-                <i class="fa-solid ${g.is_active ? 'fa-eye-slash' : 'fa-eye'}"></i>
+              <button class="btn-action-sm ${isAktif ? 'btn-adjust' : 'btn-success'}" onclick="toggleManualGameStatus('${g.id}', ${!isAktif})" title="Ubah Status">
+                <i class="fa-solid ${isAktif ? 'fa-eye-slash' : 'fa-eye'}"></i>
               </button>
               <button class="btn-action-sm btn-adjust" onclick="openManualGameEdit('${g.id}')" title="Edit Game">
                 <i class="fa-solid fa-pen-to-square"></i>
@@ -418,6 +424,7 @@ window.fetchManualGames = async function() {
       `;
     }).join("");
   } catch (err) {
+    console.error("Gagal load manual games:", err);
     tbody.innerHTML = `<tr><td colspan="5" style="text-align: center; color: var(--accent-red);">${err.message}</td></tr>`;
   }
 };
@@ -454,7 +461,7 @@ window.submitManualGame = async function() {
   const name = document.getElementById("manualGameNameInput")?.value.trim();
   const publisher = document.getElementById("manualGamePubInput")?.value.trim();
   const fileInput = document.getElementById("manualGameFileInput");
-  const file = fileInput.files[0];
+  const file = fileInput?.files?.[0];
 
   if (!name || !publisher) return alert("Nama Game dan Publisher wajib diisi!");
   if (!editId && !file) return alert("Pilih file gambar poster terlebih dahulu untuk game baru!");
@@ -465,7 +472,7 @@ window.submitManualGame = async function() {
 
   try {
     let finalImageUrl = "";
-    const slug = name.toLowerCase().replace(/[^a-z0-9]+/g, '-');
+    const slug = name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, '');
 
     if (file) {
       const fileExt = file.name.split('.').pop();
@@ -489,11 +496,19 @@ window.submitManualGame = async function() {
       if (error) throw error;
       alert("Game manual berhasil diubah!");
     } else {
-      const { error } = await window.supabase.from("manual_games").insert([{
-        name, slug, publisher, image_url: finalImageUrl, category: 'via_login', is_active: true
-      }]);
+      // Menggunakan upsert agar tidak bentrok 'duplicate key slug'
+      const payload = {
+        name,
+        slug,
+        publisher,
+        category: 'via_login',
+        is_active: true
+      };
+      if (finalImageUrl) payload.image_url = finalImageUrl;
+
+      const { error } = await window.supabase.from("manual_games").upsert([payload], { onConflict: 'slug' });
       if (error) throw error;
-      alert("Game manual berhasil ditambahkan!");
+      alert("Game manual berhasil disimpan!");
     }
 
     window.closeManualGameModal();
@@ -529,7 +544,6 @@ window.fetchManualIdProducts = async function() {
   tbody.innerHTML = `<tr><td colspan="7" style="text-align: center; padding: 25px;"><i class="fa-solid fa-spinner fa-spin"></i> Memuat produk manual ID...</td></tr>`;
 
   try {
-    // Ambil produk dan saring yang bertipe manual tanpa mengharuskan kolom provider ada di awal
     const { data, error } = await window.supabase
       .from("products")
       .select("*")
@@ -1420,7 +1434,6 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
 
     try {
-      // Query langsung tanpa filter kolom provider untuk mencegah database crash
       const { data, error } = await window.supabase
         .from("products")
         .select("*")
@@ -1428,8 +1441,6 @@ document.addEventListener("DOMContentLoaded", async () => {
         .order("price_sell", { ascending: true });
 
       if (error) throw error;
-      
-      // Saring produk manual di sisi JS (jika kolom provider belum ada di Supabase, tidak akan error)
       allProducts = (data || []).filter(p => p.provider !== "manual");
 
       if (renderTable) {
@@ -1444,8 +1455,6 @@ document.addEventListener("DOMContentLoaded", async () => {
   function populateGameFilters(products) {
     const filterSelect = document.getElementById("filterProductGame");
     const pillsContainer = document.getElementById("gameCategoryPills");
-    
-    // Mengelompokkan berdasarkan nama game yang unik (bukan total varian produk)
     const uniqueGames = [...new Set(products.map(p => p.brand || p.game_code || "Lainnya"))].filter(Boolean).sort();
 
     if (filterSelect) {
