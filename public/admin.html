@@ -910,18 +910,20 @@
           is_active: true
         }, { onConflict: "slug" });
 
-        // 2. Multi-insert paket ke tabel products
-        const productsPayload = packages.map(pkg => ({
-          brand: gameName.toUpperCase(),
-          game_slug: gameSlug,
-          sku: pkg.sku,
-          buyer_sku_code: pkg.sku,
-          product_name: pkg.name,
-          price_modal: pkg.modal,
-          price_sell: pkg.sell,
-          provider: "manual",
-          is_active: true
-        }));
+        // MENJADI SEPERTI INI:
+const productsPayload = packages.map(pkg => ({
+  brand: gameName.toUpperCase(),
+  game_code: gameSlug,
+  game_slug: gameSlug,
+  sku: pkg.sku,
+  buyer_sku_code: pkg.sku,
+  product_name: pkg.name,
+  price_modal: pkg.modal,
+  price_sell: pkg.sell,
+  provider: "manual",
+  buyer_product_status: true,
+  is_active: true
+}));
 
         const { error: errProd } = await window.supabase.from("products").insert(productsPayload);
         if (errProd) throw errProd;
