@@ -381,7 +381,6 @@ window.fetchManualGames = async function() {
   tbody.innerHTML = `<tr><td colspan="5" style="text-align: center; padding: 25px;"><i class="fa-solid fa-spinner fa-spin"></i> Memuat data...</td></tr>`;
 
   try {
-    // Order pakai id (bukan created_at agar tidak error karena kolom tersebut belum tentu ada)
     const { data, error } = await window.supabase
       .from("manual_games")
       .select("*")
@@ -496,7 +495,6 @@ window.submitManualGame = async function() {
       if (error) throw error;
       alert("Game manual berhasil diubah!");
     } else {
-      // Menggunakan upsert agar tidak bentrok 'duplicate key slug'
       const payload = {
         name,
         slug,
@@ -535,7 +533,7 @@ window.deleteManualGame = async function(id) {
 };
 
 // ==========================================
-// 1.6. KATALOG PRODUK MANUAL VIA ID (BARU)
+// 1.6. KATALOG PRODUK MANUAL VIA ID (TABEL MANDIRI)
 // ==========================================
 window.fetchManualIdProducts = async function() {
   const tbody = document.getElementById("manualIdTableBody");
@@ -544,13 +542,14 @@ window.fetchManualIdProducts = async function() {
   tbody.innerHTML = `<tr><td colspan="7" style="text-align: center; padding: 25px;"><i class="fa-solid fa-spinner fa-spin"></i> Memuat produk manual ID...</td></tr>`;
 
   try {
+    // Membaca langsung dari tabel mandiri manual_id_products
     const { data, error } = await window.supabase
-      .from("products")
+      .from("manual_id_products")
       .select("*")
-      .order("created_at", { ascending: false });
+      .order("id", { ascending: false });
 
     if (error) throw error;
-    allManualIdProducts = (data || []).filter(p => p.provider === "manual");
+    allManualIdProducts = data || [];
 
     if (allManualIdProducts.length === 0) {
       tbody.innerHTML = `<tr><td colspan="7" style="text-align: center; padding: 25px; color: #94a3b8;">Belum ada produk manual via ID. Klik "Tambah Game & Paket Manual".</td></tr>`;
@@ -558,25 +557,25 @@ window.fetchManualIdProducts = async function() {
     }
 
     tbody.innerHTML = allManualIdProducts.map((p) => {
-      const modal = Number(p.price_modal || p.price_original || 0);
+      const modal = Number(p.price_modal || 0);
       const jual = Number(p.price_sell || 0);
       const profit = Math.max(0, jual - modal);
-      const statusBadge = p.is_active
+      const statusBadge = p.is_active !== false
         ? `<span class="badge-status success">ON</span>`
         : `<span class="badge-status cancelled">OFF</span>`;
 
       return `
         <tr>
-          <td><strong style="color: #ccff00; font-size: 0.85rem; text-transform: uppercase;">${p.brand}</strong></td>
-          <td><strong style="color: #fff;">${p.product_name}</strong><br><code style="color: #64748b; font-size: 0.75rem;">${p.sku || p.buyer_sku_code}</code></td>
+          <td><strong style="color: #ccff00; font-size: 0.85rem; text-transform: uppercase;">${p.game_name}</strong></td>
+          <td><strong style="color: #fff;">${p.package_name}</strong></td>
           <td>Rp ${modal.toLocaleString("id-ID")}</td>
           <td><strong style="color: #10b981;">Rp ${jual.toLocaleString("id-ID")}</strong></td>
           <td><span style="color: #fbbf24; font-weight: 700;">+Rp ${profit.toLocaleString("id-ID")}</span></td>
           <td>${statusBadge}</td>
           <td>
             <div class="btn-action-group">
-              <button class="btn-action-sm ${p.is_active ? 'btn-adjust' : 'btn-success'}" onclick="toggleManualIdStatus('${p.id}', ${!p.is_active})" title="Ubah Status">
-                <i class="fa-solid ${p.is_active ? 'fa-eye-slash' : 'fa-eye'}"></i>
+              <button class="btn-action-sm ${p.is_active !== false ? 'btn-adjust' : 'btn-success'}" onclick="toggleManualIdStatus('${p.id}', ${p.is_active === false})" title="Ubah Status">
+                <i class="fa-solid ${p.is_active !== false ? 'fa-eye-slash' : 'fa-eye'}"></i>
               </button>
               <button class="btn-action-sm btn-cancel" onclick="deleteManualIdProduct('${p.id}')" title="Hapus Paket">
                 <i class="fa-solid fa-trash-can"></i>
@@ -594,7 +593,7 @@ window.fetchManualIdProducts = async function() {
 
 window.toggleManualIdStatus = async function(id, status) {
   try {
-    const { error } = await window.supabase.from("products").update({ is_active: status }).eq("id", id);
+    const { error } = await window.supabase.from("manual_id_products").update({ is_active: status }).eq("id", id);
     if (error) throw error;
     window.fetchManualIdProducts();
   } catch (err) {
@@ -605,7 +604,7 @@ window.toggleManualIdStatus = async function(id, status) {
 window.deleteManualIdProduct = async function(id) {
   if (!confirm("Hapus paket manual ini dari katalog?")) return;
   try {
-    const { error } = await window.supabase.from("products").delete().eq("id", id);
+    const { error } = await window.supabase.from("manual_id_products").delete().eq("id", id);
     if (error) throw error;
     window.fetchManualIdProducts();
   } catch (err) {
@@ -613,7 +612,6 @@ window.deleteManualIdProduct = async function(id) {
   }
 };
 
-// Aliaskan untuk script HTML inline
 window.loadManualIdProducts = window.fetchManualIdProducts;
 
 // ==========================================
