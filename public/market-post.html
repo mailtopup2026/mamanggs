@@ -12,6 +12,9 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
   <link rel="stylesheet" href="/css/global.css">
 
+  <!-- SWEETALERT2 UNTUK POPUP MODERN BERKUALITAS -->
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
   <style>
     :root {
       --bg-dark: #090a0f;
@@ -217,6 +220,25 @@
       opacity: 0.6;
       cursor: not-allowed;
       transform: none;
+    }
+
+    /* CUSTOM POPUP SWEETALERT CYBER VOLT */
+    div:where(.swal2-container) .swal2-popup {
+      background: #0f141f !important;
+      border: 1px solid rgba(255, 255, 255, 0.15) !important;
+      border-radius: 20px !important;
+      color: #f8fafc !important;
+      font-family: 'Plus Jakarta Sans', sans-serif !important;
+      box-shadow: 0 25px 60px rgba(0, 0, 0, 0.85) !important;
+    }
+    div:where(.swal2-container) .swal2-title {
+      color: #ffffff !important;
+      font-weight: 800 !important;
+    }
+    div:where(.swal2-container) .swal2-html-container {
+      color: #94a3b8 !important;
+      font-size: 0.95rem !important;
+      line-height: 1.5 !important;
     }
   </style>
 </head>
@@ -478,7 +500,13 @@
     imageInput.addEventListener("change", async (e) => {
       const files = Array.from(e.target.files);
       if (selectedFiles.length + files.length > 20) {
-        alert("Maksimal 20 foto tangkapan layar yang diperbolehkan!");
+        Swal.fire({
+          icon: 'warning',
+          title: 'Batas Maksimal Foto',
+          text: 'Maksimal hanya 20 foto tangkapan layar yang diperbolehkan!',
+          confirmButtonColor: '#ccff00',
+          confirmButtonText: '<span style="color: #000; font-weight: 800;">Mengerti</span>'
+        });
         return;
       }
 
@@ -519,8 +547,20 @@
         // 1. Cek Login
         const { data: { user } } = await window.supabase.auth.getUser();
         if (!user) {
-          alert("Silakan masuk (login) terlebih dahulu untuk memublikasikan iklan!");
-          window.location.href = "/auth/login.html";
+          Swal.fire({
+            icon: 'warning',
+            title: 'Wajib Masuk Akun',
+            text: 'Silakan masuk (login) terlebih dahulu untuk memublikasikan iklan jual akun kamu!',
+            confirmButtonColor: '#ccff00',
+            confirmButtonText: '<span style="color: #000; font-weight: 800;"><i class="fa-solid fa-right-to-bracket"></i> Masuk Sekarang</span>',
+            showCancelButton: true,
+            cancelButtonText: 'Nanti Saja',
+            cancelButtonColor: 'rgba(255, 255, 255, 0.1)'
+          }).then((result) => {
+            if (result.isConfirmed) {
+              window.location.href = "/auth/login.html";
+            }
+          });
           return;
         }
 
@@ -536,18 +576,43 @@
         const currentBalance = Number(profile?.balance || 0);
 
         if (currentBalance < requiredFee) {
-          alert(`Saldo akunmu (Rp ${currentBalance.toLocaleString("id-ID")}) tidak mencukupi untuk biaya publikasi Rp ${requiredFee.toLocaleString("id-ID")}. Silakan deposit saldo terlebih dahulu.`);
+          Swal.fire({
+            icon: 'error',
+            title: 'Saldo Tidak Mencukupi',
+            html: `Saldo akunmu saat ini <b>Rp ${currentBalance.toLocaleString("id-ID")}</b>.<br>Biaya publikasi yang dibutuhkan adalah <b>Rp ${requiredFee.toLocaleString("id-ID")}</b>.`,
+            confirmButtonColor: '#ccff00',
+            confirmButtonText: '<span style="color: #000; font-weight: 800;"><i class="fa-solid fa-wallet"></i> Top Up Saldo</span>',
+            showCancelButton: true,
+            cancelButtonText: 'Batal',
+            cancelButtonColor: 'rgba(255, 255, 255, 0.1)'
+          }).then((result) => {
+            if (result.isConfirmed) {
+              window.location.href = "/dashboard.html";
+            }
+          });
           return;
         }
 
         if (selectedFiles.length === 0) {
-          alert("Harap unggah minimal 1 foto tangkapan layar akun!");
+          Swal.fire({
+            icon: 'info',
+            title: 'Foto Belum Ada',
+            text: 'Harap unggah minimal 1 foto tangkapan layar akun kamu!',
+            confirmButtonColor: '#ccff00',
+            confirmButtonText: '<span style="color: #000; font-weight: 800;">Siap</span>'
+          });
           return;
         }
 
         const rawPriceNumber = Number(priceInput.value.replace(/\./g, "")) || 0;
         if (rawPriceNumber < 50000) {
-          alert("Harga akun minimal adalah Rp 50.000!");
+          Swal.fire({
+            icon: 'warning',
+            title: 'Harga Terlalu Rendah',
+            text: 'Harga akun minimal adalah Rp 50.000!',
+            confirmButtonColor: '#ccff00',
+            confirmButtonText: '<span style="color: #000; font-weight: 800;">Ubah Harga</span>'
+          });
           return;
         }
 
@@ -597,12 +662,25 @@
 
         if (postErr) throw postErr;
 
-        alert(`Iklan akun berhasil dipublikasikan! Saldo terpotong Rp ${requiredFee.toLocaleString("id-ID")}.`);
+        await Swal.fire({
+          icon: 'success',
+          title: 'Iklan Berhasil Terbit!',
+          html: `Iklan akun berhasil dipublikasikan.<br>Saldo terpotong <b>Rp ${requiredFee.toLocaleString("id-ID")}</b>.`,
+          confirmButtonColor: '#ccff00',
+          confirmButtonText: '<span style="color: #000; font-weight: 800;">Lihat di FJB</span>'
+        });
+
         window.location.href = "/market.html";
 
       } catch (err) {
         console.error(err);
-        alert("Gagal memublikasikan iklan: " + err.message);
+        Swal.fire({
+          icon: 'error',
+          title: 'Gagal Memublikasikan',
+          text: err.message,
+          confirmButtonColor: '#ccff00',
+          confirmButtonText: '<span style="color: #000; font-weight: 800;">Coba Lagi</span>'
+        });
       } finally {
         btn.disabled = false;
         btn.innerHTML = '<i class="fa-solid fa-paper-plane"></i> Publikasikan Iklan';
