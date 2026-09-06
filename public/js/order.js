@@ -1036,7 +1036,7 @@ Saya siap mengirimkan detail login dan screenshot bundle yang ingin dibeli.`
 📱 *WhatsApp:* ${whatsapp}
 🆔 *User ID:* ${accountDisplay}
 
-Saldo akun saya sudah berhasil dipotong. Mohon segera diproseskan ke supplier. Terima kasih!`
+Saldo akun saya sudah berhasil dipotong. Mohon segera diproses ya min. Terima kasih!`
         );
 
         if (window.Swal) {
