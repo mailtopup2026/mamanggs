@@ -460,7 +460,7 @@
       const net = Math.max(0, cleanNumber - fee);
 
       const isHot = checkHot.checked;
-      const totalListing = isHot ? 30000 : 20000;
+      const totalListing = isHot ? 30000 : 10000;
 
       rowHotFee.style.display = isHot ? "flex" : "none";
       totalListingFeeEl.innerText = `Rp ${totalListing.toLocaleString("id-ID")}`;
@@ -525,7 +525,7 @@
         }
 
         // 2. Cek Saldo Listing
-        const requiredFee = checkHot.checked ? 30000 : 20000;
+        const requiredFee = checkHot.checked ? 30000 : 10000;
         const { data: profile, error: profErr } = await window.supabase
           .from("profiles")
           .select("balance")
