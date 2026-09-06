@@ -1,4 +1,23 @@
 document.addEventListener("DOMContentLoaded", async () => {
+  // Helper Notifikasi Cantik SweetAlert2
+  const showToast = (type, title, text, timer = 2500) => {
+    if (window.Swal) {
+      return Swal.fire({
+        icon: type,
+        title: title,
+        text: text,
+        background: "#0f172a",
+        color: "#f8fafc",
+        iconColor: type === "success" ? "#10b981" : (type === "warning" ? "#f59e0b" : "#ef4444"),
+        showConfirmButton: !timer,
+        confirmButtonColor: "#10b981",
+        timer: timer
+      });
+    } else {
+      alert(`${title}\n${text}`);
+    }
+  };
+
   // Metadata Game Default (Digiflazz)
   const gamesMeta = {
     mlbb: {
@@ -156,9 +175,8 @@ document.addEventListener("DOMContentLoaded", async () => {
     supportsCheck: false
   };
 
-  // 1. CEK IDENTIFIKASI TIPE GAME DARI DATABASE
+  // 1. CEK TIPE GAME DARI DATABASE
   try {
-    // A. Cek di tabel manual_id_products
     const { data: manualIdRows } = await window.supabase
       .from("manual_id_products")
       .select("*")
@@ -179,7 +197,6 @@ document.addEventListener("DOMContentLoaded", async () => {
         supportsCheck: false
       };
     } else if (!isManualIdGame) {
-      // B. Cek di tabel manual_games (Via Login)
       const { data: manualData } = await window.supabase
         .from("manual_games")
         .select("*")
@@ -223,9 +240,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   const isAnyManual = isManualLoginGame || isManualIdGame;
   const checkoutBtn = document.getElementById("checkoutBtn");
 
-  // ==========================================
-  // ATUR METODE PEMBAYARAN KHUSUS MANUAL (KUNCI SALDO MGS)
-  // ==========================================
+  // Atur Metode Pembayaran Khusus Manual
   if (isAnyManual) {
     selectedPayment = "Saldo MGS";
 
@@ -243,7 +258,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
   }
 
-  // Pengaturan instruksi untuk Via Login
+  // Petunjuk khusus manual
   if (isManualLoginGame) {
     const stepAccountTitle = document.getElementById("stepAccountTitle");
     if (stepAccountTitle) stepAccountTitle.innerText = "Informasi Akun Game";
@@ -271,7 +286,6 @@ document.addEventListener("DOMContentLoaded", async () => {
     if (rateNotice) rateNotice.style.display = "block";
   }
 
-  // Pengaturan instruksi untuk Manual Via ID
   if (isManualIdGame) {
     const instructionList = document.getElementById("instructionList");
     if (instructionList) {
@@ -284,9 +298,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
   }
 
-  // ==========================================
-  // SINKRONISASI SALDO USER
-  // ==========================================
+  // Sinkronisasi Saldo
   async function syncUserBalanceDisplay() {
     try {
       if (!window.supabase) return;
@@ -323,9 +335,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
   }, 100);
 
-  // ==========================================
-  // KALKULASI HARGA & PROMO
-  // ==========================================
+  // Kalkulasi Harga & Promo
   function updateCheckoutPricing() {
     if (!selectedItem) return;
 
@@ -426,16 +436,11 @@ document.addEventListener("DOMContentLoaded", async () => {
     });
   }
 
-  // ==========================================
-  // RENDER NOMINAL PRODUK
-  // ==========================================
+  // Render Produk Nominal
   const nominalContainer = document.getElementById("nominalContainer");
   nominalContainer.innerHTML = `<div style="grid-column: 1/-1; text-align: center; color: #888; padding: 20px;"><i class="fa-solid fa-spinner fa-spin"></i> Memuat katalog produk...</div>`;
 
   if (isManualIdGame) {
-    // ----------------------------------------------------
-    // ALUR PRODUK MANUAL VIA ID (manual_id_products)
-    // ----------------------------------------------------
     try {
       if (!manualIdProductList || manualIdProductList.length === 0) {
         const { data: refreshedProducts } = await window.supabase
@@ -489,9 +494,6 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
 
   } else if (isManualLoginGame) {
-    // ----------------------------------------------------
-    // ALUR TIER USD DINAMIS (MANUAL VIA LOGIN)
-    // ----------------------------------------------------
     try {
       const { data: rateData } = await window.supabase
         .from("app_settings")
@@ -554,9 +556,6 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
 
   } else {
-    // ----------------------------------------------------
-    // ALUR DIGIFLAZZ BIASA
-    // ----------------------------------------------------
     try {
       try {
         const { data: dbCat } = await window.supabase
@@ -636,10 +635,10 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
   }
 
-  // Handle Pilih Metode Bayar (Hanya aktif untuk Digiflazz)
+  // Pilih Metode Bayar (Digiflazz)
   document.querySelectorAll(".payment-card").forEach((card) => {
     card.addEventListener("click", () => {
-      if (isAnyManual) return; // Kunci permanen ke Saldo MGS
+      if (isAnyManual) return;
 
       document.querySelectorAll(".payment-card").forEach((c) => c.classList.remove("selected"));
       card.classList.add("selected");
@@ -654,30 +653,36 @@ document.addEventListener("DOMContentLoaded", async () => {
     });
   });
 
-  // Modal Saldo Tidak Cukup
+  // Modal Saldo Tidak Cukup (SweetAlert2)
   function showInsufficientBalanceModal(currentBal, totalPay) {
-    const modalEl = document.getElementById("insufficientBalanceModal");
-    const userBalEl = document.getElementById("modalUserBalanceText");
-    const reqAmountEl = document.getElementById("modalRequiredAmountText");
-    const btnClose = document.getElementById("btnCloseBalModal");
-
-    if (userBalEl) userBalEl.innerText = "Rp " + Number(currentBal || 0).toLocaleString("id-ID");
-    if (reqAmountEl) reqAmountEl.innerText = "Rp " + Number(totalPay || 0).toLocaleString("id-ID");
-
-    if (modalEl) {
-      modalEl.style.display = "flex";
-      if (btnClose) {
-        btnClose.onclick = () => { modalEl.style.display = "none"; };
-      }
-      modalEl.onclick = (e) => {
-        if (e.target === modalEl) modalEl.style.display = "none";
-      };
+    if (window.Swal) {
+      Swal.fire({
+        icon: "warning",
+        title: "Saldo MGS Tidak Cukup",
+        html: `
+          <div style="font-size: 0.9rem; line-height: 1.5; color: #cbd5e1;">
+            <p style="margin-bottom: 8px;">Total belanja: <strong style="color: #fff;">Rp ${Number(totalPay).toLocaleString("id-ID")}</strong></p>
+            <p style="margin-bottom: 14px;">Saldo akun saat ini: <strong style="color: #ef4444;">Rp ${Number(currentBal).toLocaleString("id-ID")}</strong></p>
+            <p style="font-size: 0.8rem; color: #94a3b8;">Silakan lakukan pengisian saldo akun terlebih dahulu di dashboard member.</p>
+          </div>
+        `,
+        background: "#0f172a",
+        confirmButtonColor: "#10b981",
+        confirmButtonText: '<i class="fa-solid fa-wallet"></i> Top Up Saldo',
+        showCancelButton: true,
+        cancelButtonColor: "#334155",
+        cancelButtonText: "Tutup"
+      }).then((result) => {
+        if (result.isConfirmed) {
+          window.location.href = "/dashboard.html";
+        }
+      });
+    } else {
+      alert(`Saldo tidak cukup!\nTotal: Rp ${Number(totalPay).toLocaleString("id-ID")}\nSaldo Anda: Rp ${Number(currentBal).toLocaleString("id-ID")}`);
     }
   }
 
-  // ==========================================
-  // CEK ID / NICKNAME & HINT BOX
-  // ==========================================
+  // ID / Nickname Check
   const userIdInput = document.getElementById("userIdInput");
   const zoneIdInput = document.getElementById("zoneIdInput");
   const idCheckSpinner = document.getElementById("idCheckSpinner");
@@ -783,10 +788,18 @@ document.addEventListener("DOMContentLoaded", async () => {
     const zoneId = (currentGame.hasZone && zoneIdInput) ? zoneIdInput.value.trim() : null;
     const whatsapp = document.getElementById("whatsappInput").value.trim();
 
-    if (!selectedItem) return alert("Harap pilih salah satu nominal produk!");
-    if (!userId) return alert(isManualLoginGame ? "Harap masukkan identitas/nama akun game kamu!" : "Harap masukkan User ID akun game kamu!");
-    if (!isManualLoginGame && !isManualIdGame && currentGame.hasZone && !zoneId) return alert("Harap masukkan Zone ID / Server game kamu!");
-    if (!whatsapp) return alert("Harap masukkan nomor WhatsApp aktif!");
+    if (!selectedItem) {
+      return showToast("warning", "Nominal Belum Dipilih", "Harap pilih salah satu nominal produk terlebih dahulu.");
+    }
+    if (!userId) {
+      return showToast("warning", "Data Akun Kosong", isManualLoginGame ? "Harap masukkan identitas atau nama akun game kamu!" : "Harap masukkan User ID akun game kamu!");
+    }
+    if (!isManualLoginGame && !isManualIdGame && currentGame.hasZone && !zoneId) {
+      return showToast("warning", "Zone ID Kosong", "Harap masukkan Zone ID / Server game kamu!");
+    }
+    if (!whatsapp) {
+      return showToast("warning", "WhatsApp Kosong", "Harap masukkan nomor WhatsApp aktif untuk konfirmasi pesanan!");
+    }
 
     checkoutBtn.disabled = true;
     checkoutBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Memproses Pesanan...';
@@ -821,10 +834,9 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     if (isUsingWallet) {
       if (!userUuid) {
-        alert(isAnyManual 
-          ? "Produk Manual wajib dibayar menggunakan Saldo MGS. Silakan login ke akun member Anda terlebih dahulu!" 
-          : "Metode Saldo MGS hanya berlaku untuk member yang sudah login."
-        );
+        showToast("warning", "Login Diperlukan", isAnyManual 
+          ? "Produk Manual wajib dibayar menggunakan Saldo MGS. Silakan login ke akun member terlebih dahulu!" 
+          : "Metode Saldo MGS hanya berlaku untuk member yang sudah login.", 3500);
         checkoutBtn.disabled = false;
         checkoutBtn.innerHTML = '<i class="fa-solid fa-bolt"></i> Bayar Pakai Saldo MGS';
         return;
@@ -856,13 +868,12 @@ document.addEventListener("DOMContentLoaded", async () => {
 
         orderStatus = "SUCCESS";
       } catch (err) {
-        alert(err.message);
+        showToast("error", "Transaksi Gagal", err.message);
         checkoutBtn.disabled = false;
         checkoutBtn.innerHTML = '<i class="fa-solid fa-bolt"></i> Bayar Pakai Saldo MGS';
         return;
       }
     } else {
-      // Pembayaran DOKU (Hanya untuk Digiflazz)
       try {
         const dokuRes = await fetch("/api/create-payment", {
           method: "POST",
@@ -881,7 +892,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
         dokuPaymentData = dokuResult.data;
       } catch (err) {
-        alert(`Gagal gateway: ${err.message}`);
+        showToast("error", "Gagal Gateway", err.message);
         checkoutBtn.disabled = false;
         checkoutBtn.innerHTML = '<i class="fa-solid fa-bolt"></i> Beli dan Pilih Cara Pembayaran';
         return;
@@ -914,9 +925,7 @@ document.addEventListener("DOMContentLoaded", async () => {
       const { error } = await window.supabase.from("orders").insert([orderPayload]);
       if (error) throw error;
 
-      // ==============================================================
-      // GENERATE FORMAT AKUN SECARA DINAMIS DARI DATA INPUT SISTEM
-      // ==============================================================
+      // Data Akun Dinamis
       let accountDisplay = userId;
       if (zoneId) {
         accountDisplay = `${userId} (${zoneId})`;
@@ -925,7 +934,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         accountDisplay += ` [${verifiedNickname}]`;
       }
 
-      // 1. JIKA MANUAL VIA LOGIN -> DIRECT KE WHATSAPP ADMIN
+      // 1. JIKA MANUAL VIA LOGIN -> POPUP SUKSES & DIRECT KE WA
       if (isManualLoginGame) {
         const waMsg = encodeURIComponent(
 `Halo Admin MamangGS! Saya baru saja melakukan pembayaran Top Up (Via Login).
@@ -941,12 +950,25 @@ document.addEventListener("DOMContentLoaded", async () => {
 Saya siap mengirimkan detail login dan screenshot bundle yang ingin dibeli.`
         );
 
-        alert("Pembayaran Berhasil! Mengalihkan ke WhatsApp Admin untuk proses pengisian...");
-        window.location.href = `https://api.whatsapp.com/send?phone=6282121616716&text=${waMsg}`;
+        if (window.Swal) {
+          Swal.fire({
+            icon: "success",
+            title: "Pembayaran Berhasil!",
+            text: "Saldo berhasil dipotong. Kamu akan dialihkan ke WhatsApp Admin untuk proses pengisian bundle.",
+            background: "#0f172a",
+            color: "#f8fafc",
+            confirmButtonColor: "#10b981",
+            confirmButtonText: '<i class="fa-brands fa-whatsapp"></i> Chat WhatsApp Admin'
+          }).then(() => {
+            window.location.href = `https://api.whatsapp.com/send?phone=6282121616716&text=${waMsg}`;
+          });
+        } else {
+          window.location.href = `https://api.whatsapp.com/send?phone=6282121616716&text=${waMsg}`;
+        }
         return;
       }
 
-      // 2. JIKA MANUAL VIA ID -> DIRECT KE WHATSAPP ADMIN
+      // 2. JIKA MANUAL VIA ID -> POPUP SUKSES & DIRECT KE WA
       if (isManualIdGame) {
         const waMsgId = encodeURIComponent(
 `Halo Admin MamangGS! Saya baru saja order Top Up Manual (Via ID).
@@ -962,15 +984,42 @@ Saya siap mengirimkan detail login dan screenshot bundle yang ingin dibeli.`
 Saldo akun saya sudah berhasil dipotong. Mohon segera diproseskan ke supplier. Terima kasih!`
         );
 
-        alert("Pembayaran Berhasil! Mengalihkan ke WhatsApp Admin untuk konfirmasi pesanan...");
-        window.location.href = `https://api.whatsapp.com/send?phone=6282121616716&text=${waMsgId}`;
+        if (window.Swal) {
+          Swal.fire({
+            icon: "success",
+            title: "Pembayaran Berhasil!",
+            text: "Saldo MGS berhasil dipotong. Klik tombol di bawah untuk konfirmasi pengisian cepat ke Admin.",
+            background: "#0f172a",
+            color: "#f8fafc",
+            confirmButtonColor: "#10b981",
+            confirmButtonText: '<i class="fa-brands fa-whatsapp"></i> Konfirmasi ke WhatsApp'
+          }).then(() => {
+            window.location.href = `https://api.whatsapp.com/send?phone=6282121616716&text=${waMsgId}`;
+          });
+        } else {
+          window.location.href = `https://api.whatsapp.com/send?phone=6282121616716&text=${waMsgId}`;
+        }
         return;
       }
 
       // 3. JIKA DIGIFLAZZ BIASA
       if (isUsingWallet) {
-        alert("Pembayaran Berhasil! Pesanan otomatis diproses.");
-        window.location.href = `/order-status.html?inv=${encodeURIComponent(invoiceNumber)}`;
+        if (window.Swal) {
+          Swal.fire({
+            icon: "success",
+            title: "Pembayaran Berhasil!",
+            text: "Pesananmu sedang otomatis diproses oleh sistem.",
+            background: "#0f172a",
+            color: "#f8fafc",
+            confirmButtonColor: "#10b981",
+            confirmButtonText: "Lihat Invoice",
+            timer: 2000
+          }).then(() => {
+            window.location.href = `/order-status.html?inv=${encodeURIComponent(invoiceNumber)}`;
+          });
+        } else {
+          window.location.href = `/order-status.html?inv=${encodeURIComponent(invoiceNumber)}`;
+        }
         return;
       }
 
@@ -988,7 +1037,7 @@ Saldo akun saya sudah berhasil dipotong. Mohon segera diproseskan ke supplier. T
       }
     } catch (err) {
       console.error("Error order:", err);
-      alert("Gagal membuat pesanan: " + err.message);
+      showToast("error", "Pesanan Gagal", err.message);
       checkoutBtn.disabled = false;
       checkoutBtn.innerHTML = isAnyManual
         ? '<i class="fa-solid fa-bolt"></i> Bayar Pakai Saldo MGS'
