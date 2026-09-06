@@ -142,7 +142,10 @@ document.addEventListener("DOMContentLoaded", async () => {
   const gameKey = (params.get("game") || "mlbb").toLowerCase();
   const urlType = params.get("type");
 
-  let isManualGame = (urlType === "manual");
+  let isManualLoginGame = (urlType === "manual");
+  let isManualIdGame = (urlType === "manual_id");
+  let manualIdProductList = [];
+
   let currentGame = gamesMeta[gameKey] || {
     code: gameKey,
     brandQuery: gameKey.toUpperCase(),
@@ -153,27 +156,50 @@ document.addEventListener("DOMContentLoaded", async () => {
     supportsCheck: false
   };
 
-  // 1. CEK APAKAH INI GAME MANUAL DARI DATABASE
+  // 1. CEK IDENTIFIKASI TIPE GAME SECARA CERDAS DARI SUPABASE
   try {
-    const { data: manualData } = await window.supabase
-      .from("manual_games")
+    // A. Cek apakah terdaftar di manual_id_products
+    const { data: manualIdRows } = await window.supabase
+      .from("manual_id_products")
       .select("*")
-      .eq("slug", gameKey)
-      .maybeSingle();
+      .eq("game_slug", gameKey)
+      .eq("is_active", true);
 
-    if (manualData) {
-      isManualGame = true;
+    if (manualIdRows && manualIdRows.length > 0) {
+      isManualIdGame = true;
+      isManualLoginGame = false;
+      manualIdProductList = manualIdRows;
+      const firstRow = manualIdRows[0];
       currentGame = {
-        code: manualData.slug,
-        title: manualData.name,
-        dev: manualData.publisher || "Official",
-        banner: manualData.image_url,
+        code: firstRow.game_slug,
+        title: firstRow.game_name,
+        dev: "Official Partner",
+        banner: firstRow.game_image || currentGame.banner,
         hasZone: false,
         supportsCheck: false
       };
+    } else if (!isManualIdGame) {
+      // B. Cek apakah game Jastip (Via Login)
+      const { data: manualData } = await window.supabase
+        .from("manual_games")
+        .select("*")
+        .eq("slug", gameKey)
+        .maybeSingle();
+
+      if (manualData) {
+        isManualLoginGame = true;
+        currentGame = {
+          code: manualData.slug,
+          title: manualData.name,
+          dev: manualData.publisher || "Official",
+          banner: manualData.image_url,
+          hasZone: false,
+          supportsCheck: false
+        };
+      }
     }
   } catch (err) {
-    console.warn("Pengecekan manual game:", err);
+    console.warn("Pengecekan database game:", err);
   }
 
   // Update Tampilan Informasi Game Awal
@@ -197,7 +223,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   // ==========================================
   // LOGIKA TAMPILAN JASTIP (MANUAL VIA LOGIN)
   // ==========================================
-  if (isManualGame) {
+  if (isManualLoginGame) {
     const stepAccountTitle = document.getElementById("stepAccountTitle");
     if (stepAccountTitle) stepAccountTitle.innerText = "Informasi Akun Game";
 
@@ -368,12 +394,68 @@ document.addEventListener("DOMContentLoaded", async () => {
   }
 
   // ==========================================
-  // RENDER NOMINAL PRODUK (DIGIFLAZZ VS JASTIP USD)
+  // RENDER NOMINAL PRODUK
   // ==========================================
   const nominalContainer = document.getElementById("nominalContainer");
   nominalContainer.innerHTML = `<div style="grid-column: 1/-1; text-align: center; color: #888; padding: 20px;"><i class="fa-solid fa-spinner fa-spin"></i> Memuat katalog produk...</div>`;
 
-  if (isManualGame) {
+  if (isManualIdGame) {
+    // ----------------------------------------------------
+    // ALUR PRODUK MANUAL VIA ID (DARI manual_id_products)
+    // ----------------------------------------------------
+    try {
+      if (!manualIdProductList || manualIdProductList.length === 0) {
+        const { data: refreshedProducts } = await window.supabase
+          .from("manual_id_products")
+          .select("*")
+          .eq("game_slug", currentGame.code)
+          .eq("is_active", true)
+          .order("price_sell", { ascending: true });
+
+        manualIdProductList = refreshedProducts || [];
+      }
+
+      if (manualIdProductList.length === 0) {
+        nominalContainer.innerHTML = `<div style="grid-column: 1/-1; text-align: center; color: #94a3b8; padding: 20px;">Belum ada paket produk manual untuk game ini.</div>`;
+      } else {
+        nominalContainer.innerHTML = "";
+
+        manualIdProductList.forEach((prod, index) => {
+          const itemObj = {
+            sku: `MANUAL-ID-${prod.id}`,
+            name: prod.package_name,
+            price: Number(prod.price_sell)
+          };
+
+          if (index === 0) selectedItem = itemObj;
+
+          const card = document.createElement("div");
+          card.className = "nominal-card" + (index === 0 ? " selected" : "");
+          const formattedPrice = Number(prod.price_sell).toLocaleString("id-ID");
+
+          card.innerHTML = `
+            <div class="nominal-title">${prod.package_name}</div>
+            <div class="nominal-price">Rp ${formattedPrice}</div>
+          `;
+
+          card.addEventListener("click", () => {
+            document.querySelectorAll(".nominal-card").forEach((c) => c.classList.remove("selected"));
+            card.classList.add("selected");
+            selectedItem = itemObj;
+            updateCheckoutPricing();
+          });
+
+          nominalContainer.appendChild(card);
+        });
+
+        updateCheckoutPricing();
+      }
+    } catch (err) {
+      console.error("Gagal load produk manual ID:", err);
+      nominalContainer.innerHTML = `<div style="grid-column: 1/-1; text-align: center; color: #e63946; padding: 20px;">Gagal memuat katalog produk manual ID.</div>`;
+    }
+
+  } else if (isManualLoginGame) {
     // ----------------------------------------------------
     // ALUR JASTIP USD DINAMIS (MANUAL VIA LOGIN)
     // ----------------------------------------------------
@@ -443,7 +525,6 @@ document.addEventListener("DOMContentLoaded", async () => {
     // ALUR DIGIFLAZZ BIASA
     // ----------------------------------------------------
     try {
-      // SINKRONISASI COVER: Ambil dari game_categories (bukan game_covers)
       try {
         const { data: dbCat } = await window.supabase
           .from("game_categories")
@@ -570,16 +651,14 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   let checkTimeout = null;
 
-  // Fungsi merender hint box: LINK DIRECT KE TOOLS ID CHECKER IMSELA
   function renderDefaultAccountHint() {
-    if (!nicknameBox || isManualGame) return;
+    if (!nicknameBox || isManualLoginGame) return;
 
     nicknameBox.className = "nickname-result-box";
     nicknameBox.style.background = "rgba(56, 189, 248, 0.08)";
     nicknameBox.style.borderColor = "rgba(56, 189, 248, 0.3)";
     nicknameBox.style.color = "#94a3b8";
 
-    // Link langsung menuju tools pengecekan spesifik Imsela
     nicknameBox.innerHTML = `
       <i class="fa-solid fa-circle-info" style="color: #38bdf8; font-size: 1.1rem; margin-top: 2px; flex-shrink: 0;"></i>
       <div style="font-size: 0.83rem; line-height: 1.45;">
@@ -596,11 +675,10 @@ document.addEventListener("DOMContentLoaded", async () => {
     nicknameBox.style.display = "flex";
   }
 
-  // Tampilkan langsung saat awal halaman dimuat
   renderDefaultAccountHint();
 
   // Khusus game dengan fitur auto-check API
-  if (!isManualGame && currentGame.supportsCheck) {
+  if (!isManualLoginGame && !isManualIdGame && currentGame.supportsCheck) {
     async function checkNickname() {
       const uid = userIdInput.value.trim();
       const zid = currentGame.hasZone ? (zoneIdInput ? zoneIdInput.value.trim() : "") : "";
@@ -669,12 +747,12 @@ document.addEventListener("DOMContentLoaded", async () => {
   // ==========================================
   checkoutBtn.addEventListener("click", async () => {
     const userId = userIdInput.value.trim();
-    const zoneId = (!isManualGame && currentGame.hasZone) ? zoneIdInput.value.trim() : null;
+    const zoneId = (!isManualLoginGame && currentGame.hasZone) ? zoneIdInput.value.trim() : null;
     const whatsapp = document.getElementById("whatsappInput").value.trim();
 
     if (!selectedItem) return alert("Harap pilih salah satu nominal produk!");
-    if (!userId) return alert(isManualGame ? "Harap masukkan identitas/nama akun game kamu!" : "Harap masukkan User ID akun game kamu!");
-    if (!isManualGame && currentGame.hasZone && !zoneId) return alert("Harap masukkan Zone ID / Server game kamu!");
+    if (!userId) return alert(isManualLoginGame ? "Harap masukkan identitas/nama akun game kamu!" : "Harap masukkan User ID akun game kamu!");
+    if (!isManualLoginGame && !isManualIdGame && currentGame.hasZone && !zoneId) return alert("Harap masukkan Zone ID / Server game kamu!");
     if (!whatsapp) return alert("Harap masukkan nomor WhatsApp aktif!");
 
     checkoutBtn.disabled = true;
@@ -774,6 +852,10 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
 
     try {
+      let orderProvider = "digiflazz";
+      if (isManualLoginGame) orderProvider = "manual_login";
+      else if (isManualIdGame) orderProvider = "manual_id";
+
       const orderPayload = {
         invoice: invoiceNumber,
         game_code: currentGame.code,
@@ -787,7 +869,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         whatsapp: whatsapp,
         status: orderStatus,
         payment_data: dokuPaymentData || null,
-        provider: isManualGame ? "manual" : "digiflazz"
+        provider: orderProvider
       };
 
       if (userUuid) orderPayload.user_id = userUuid;
@@ -795,7 +877,8 @@ document.addEventListener("DOMContentLoaded", async () => {
       const { error } = await window.supabase.from("orders").insert([orderPayload]);
       if (error) throw error;
 
-      if (isManualGame) {
+      // Pesan WhatsApp jika via Login
+      if (isManualLoginGame) {
         const waMsg = encodeURIComponent(
 `Halo Admin MamangGS! Saya baru saja melakukan pembayaran Top Up Jastip (Via Login).
 
@@ -830,6 +913,43 @@ Saya siap mengirimkan data login dan screenshot bundle yang ingin dibeli.`
         return;
       }
 
+      // Pesan WhatsApp jika Manual Via ID
+      if (isManualIdGame) {
+        const waMsgId = encodeURIComponent(
+`Halo Admin MamangGS! Saya baru saja order Top Up Manual Via ID.
+
+📄 *Invoice:* ${invoiceNumber}
+🎮 *Game:* ${currentGame.title}
+💎 *Item:* ${selectedItem.name}
+🆔 *User ID:* ${userId}
+💰 *Total Bayar:* Rp ${totalToPay.toLocaleString("id-ID")}
+📱 *WhatsApp:* ${whatsapp}
+
+Mohon bantuannya untuk diproseskan ke supplier/seller teman. Terima kasih!`
+        );
+
+        if (isUsingWallet) {
+          alert("Pembayaran Berhasil! Pesanan Manual ID Anda telah tercatat.");
+          window.location.href = `/order-status.html?inv=${encodeURIComponent(invoiceNumber)}`;
+          return;
+        }
+
+        const paymentUrl =
+          dokuPaymentData?.response?.payment?.url ||
+          dokuPaymentData?.payment?.url ||
+          dokuPaymentData?.response?.url ||
+          dokuPaymentData?.payment_url ||
+          dokuPaymentData?.url;
+
+        if (paymentUrl) {
+          window.location.href = paymentUrl;
+        } else {
+          window.location.href = `/order-status.html?inv=${encodeURIComponent(invoiceNumber)}`;
+        }
+        return;
+      }
+
+      // Untuk Digiflazz Otomatis
       if (isUsingWallet) {
         alert("Pembayaran Berhasil! Pesanan otomatis diproses.");
         window.location.href = `/order-status.html?inv=${encodeURIComponent(invoiceNumber)}`;
