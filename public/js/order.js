@@ -158,8 +158,33 @@ document.addEventListener("DOMContentLoaded", async () => {
   };
 
   const params = new URLSearchParams(window.location.search);
-  const gameKey = (params.get("game") || "mlbb").toLowerCase();
+  let rawGameParam = (params.get("game") || "mlbb").toLowerCase().trim();
   const urlType = params.get("type");
+
+  // Normalisasi kode slug jika yang dikirim adalah nama panjang atau format URL
+  const slugMapping = {
+    "mobile-legends": "mlbb",
+    "mobile-legend": "mlbb",
+    "mobilelegends": "mlbb",
+    "free-fire": "ff",
+    "freefire": "ff",
+    "pubg-mobile": "pubg",
+    "pubgm": "pubg",
+    "call-of-duty": "codm",
+    "call-of-duty-mobile": "codm",
+    "arena-of-valor": "aov",
+    "ragnarok-m": "ragnarok",
+    "whiteout-survival": "whiteout",
+    "lords-mobile": "lords",
+    "point-blank": "pb",
+    "laplace-m": "laplace",
+    "au2-mobile": "au2",
+    "garena-shell": "garena",
+    "genshin-impact": "genshin",
+    "honor-of-kings": "hok"
+  };
+
+  const gameKey = slugMapping[rawGameParam] || rawGameParam;
 
   let isManualLoginGame = (urlType === "manual");
   let isManualIdGame = (urlType === "manual_id");
@@ -167,8 +192,8 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   let currentGame = gamesMeta[gameKey] || {
     code: gameKey,
-    brandQuery: gameKey.toUpperCase(),
-    title: gameKey.toUpperCase(),
+    brandQuery: rawGameParam.replace(/-/g, " ").toUpperCase(),
+    title: rawGameParam.replace(/-/g, " ").toUpperCase(),
     dev: "Official",
     banner: "https://images.unsplash.com/photo-1542751371-adc38448a05e?auto=format&fit=crop&w=600&q=80",
     hasZone: false,
@@ -180,7 +205,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     const { data: manualIdRows } = await window.supabase
       .from("manual_id_products")
       .select("*")
-      .eq("game_slug", gameKey)
+      .or(`game_slug.eq.${gameKey},game_slug.eq.${rawGameParam}`)
       .eq("is_active", true);
 
     if (manualIdRows && manualIdRows.length > 0) {
@@ -200,7 +225,7 @@ document.addEventListener("DOMContentLoaded", async () => {
       const { data: manualData } = await window.supabase
         .from("manual_games")
         .select("*")
-        .eq("slug", gameKey)
+        .or(`slug.eq.${gameKey},slug.eq.${rawGameParam}`)
         .maybeSingle();
 
       if (manualData) {
@@ -446,7 +471,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         const { data: refreshedProducts } = await window.supabase
           .from("manual_id_products")
           .select("*")
-          .eq("game_slug", currentGame.code)
+          .or(`game_slug.eq.${currentGame.code},game_slug.eq.${rawGameParam}`)
           .eq("is_active", true)
           .order("price_sell", { ascending: true });
 
@@ -561,7 +586,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         const { data: dbCat } = await window.supabase
           .from("game_categories")
           .select("image_url, title, developer")
-          .ilike("game_code", currentGame.code)
+          .or(`game_code.ilike.%${currentGame.code}%,game_code.ilike.%${rawGameParam}%`)
           .maybeSingle();
 
         if (dbCat) {
@@ -584,11 +609,9 @@ document.addEventListener("DOMContentLoaded", async () => {
         .select("*")
         .eq("buyer_product_status", true);
 
-      if (currentGame.brandQuery) {
-        query = query.ilike("brand", `%${currentGame.brandQuery}%`);
-      } else {
-        query = query.ilike("game_code", `%${currentGame.code}%`);
-      }
+      // Cari berdasarkan brand (spasi dibersihkan agar cocok format Digiflazz)
+      const cleanBrandQuery = (currentGame.brandQuery || currentGame.code).replace(/-/g, " ");
+      query = query.or(`brand.ilike.%${cleanBrandQuery}%,game_code.ilike.%${currentGame.code}%,game_code.ilike.%${rawGameParam}%`);
 
       const { data: dbProducts, error: dbError } = await query.order("price_sell", { ascending: true });
 
