@@ -29,7 +29,7 @@
 
     html, body {
       width: 100%;
-      max-width: 100%;
+      max-width: 100vw;
       overflow-x: hidden;
       background-color: var(--bg-dark) !important;
       color: #f8fafc;
@@ -82,7 +82,7 @@
     .detail-wrapper {
       max-width: 1100px;
       width: 100%;
-      margin: 20px auto 120px;
+      margin: 20px auto 140px;
       padding: 0 16px;
     }
 
@@ -96,7 +96,7 @@
 
     @media (max-width: 868px) {
       .detail-wrapper {
-        margin: 14px auto 100px;
+        margin: 14px auto 130px;
         padding: 0 12px;
       }
       .detail-grid {
@@ -124,7 +124,7 @@
       }
     }
 
-    /* GALERI GAMBAR */
+    /* GALERI GAMBAR & ZOOM HINT */
     .main-gallery-view {
       position: relative;
       width: 100%;
@@ -136,6 +136,7 @@
       display: flex;
       align-items: center;
       justify-content: center;
+      cursor: zoom-in;
     }
 
     .main-gallery-view img {
@@ -143,6 +144,25 @@
       height: 100%;
       object-fit: contain;
       background: #000;
+    }
+
+    .zoom-badge-hint {
+      position: absolute;
+      bottom: 10px;
+      left: 10px;
+      background: rgba(15, 20, 31, 0.75);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      color: #cbd5e1;
+      padding: 4px 10px;
+      border-radius: 20px;
+      font-size: 0.72rem;
+      font-weight: 700;
+      backdrop-filter: blur(6px);
+      pointer-events: none;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      z-index: 4;
     }
 
     /* WATERMARK STATUS */
@@ -569,59 +589,161 @@
       color: var(--accent-volt);
     }
 
+    /* TOOLBAR EMOTIKON BEBAS OVERFLOW */
     .emoticon-toolbar {
       display: flex;
       align-items: center;
-      gap: 6px;
-      margin-top: 8px;
+      gap: 8px;
+      margin: 8px 0;
       overflow-x: auto;
       padding-bottom: 4px;
       width: 100%;
+      scrollbar-width: none;
+      -webkit-overflow-scrolling: touch;
+    }
+
+    .emoticon-toolbar::-webkit-scrollbar {
+      display: none;
     }
 
     .btn-emot-pill {
-      background: rgba(255, 255, 255, 0.04);
+      background: rgba(255, 255, 255, 0.05);
       border: 1px solid var(--border-subtle);
       border-radius: 20px;
-      padding: 4px 10px;
-      font-size: 0.95rem;
+      padding: 6px 12px;
+      font-size: 1rem;
       cursor: pointer;
       transition: background 0.2s, transform 0.1s;
       line-height: 1;
       flex-shrink: 0;
     }
 
-    .btn-emot-pill:hover {
+    .btn-emot-pill:hover, .btn-emot-pill:active {
       background: rgba(204, 255, 0, 0.15);
-      border-color: rgba(204, 255, 0, 0.3);
+      border-color: rgba(204, 255, 0, 0.4);
       transform: scale(1.1);
     }
 
-    /* FORM SUBMIT KOMENTAR MOBILE FIX */
+    /* TEXTAREA & INPUT FIX ANTI-MENGECIL DI MOBILE */
+    #commentTextInput {
+      width: 100% !important;
+      min-height: 90px;
+      background: var(--card-inner);
+      border: 1.5px solid var(--border-subtle);
+      border-radius: 12px;
+      padding: 14px;
+      color: #fff;
+      font-family: inherit;
+      font-size: 16px !important; /* 16px mencegah browser iOS & Android auto-zoom / mengecil */
+      line-height: 1.5;
+      outline: none;
+      box-sizing: border-box;
+      resize: none;
+      transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    #commentTextInput:focus {
+      border-color: var(--accent-volt);
+      box-shadow: 0 0 12px rgba(204, 255, 0, 0.2);
+    }
+
     .comment-action-bar {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      margin-top: 8px;
+      width: 100%;
+    }
+
+    .comment-action-top {
       display: flex;
       align-items: center;
       justify-content: space-between;
       flex-wrap: wrap;
       gap: 10px;
-      margin-top: 6px;
-      width: 100%;
     }
 
-    @media (max-width: 500px) {
-      .comment-action-bar {
-        flex-direction: column;
-        align-items: stretch;
-      }
-      .comment-action-bar label {
-        width: 100%;
-      }
-      #offerAmountInput {
-        width: 100% !important;
-      }
-      #btnPostComment {
-        width: 100%;
-      }
+    #offerAmountInput {
+      width: 100% !important;
+      background: var(--card-inner);
+      border: 1.5px solid rgba(204, 255, 0, 0.4);
+      border-radius: 10px;
+      padding: 12px;
+      color: #fff;
+      font-size: 16px !important;
+      font-weight: 700;
+      outline: none;
+      box-sizing: border-box;
+    }
+
+    #offerAmountInput:focus {
+      border-color: var(--accent-volt);
+      box-shadow: 0 0 12px rgba(204, 255, 0, 0.25);
+    }
+
+    #btnPostComment {
+      width: 100%;
+      background: #e63946;
+      color: #fff;
+      border: none;
+      padding: 14px;
+      border-radius: 12px;
+      font-weight: 800;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: transform 0.1s, background 0.2s;
+    }
+
+    #btnPostComment:active {
+      transform: scale(0.98);
+      background: #d62828;
+    }
+
+    /* FULLSCREEN IMAGE LIGHTBOX MODAL */
+    .img-lightbox-modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: rgba(0, 0, 0, 0.94);
+      z-index: 99999;
+      justify-content: center;
+      align-items: center;
+      padding: 16px;
+      backdrop-filter: blur(8px);
+    }
+
+    .img-lightbox-modal.active {
+      display: flex;
+    }
+
+    .lightbox-img {
+      max-width: 95vw;
+      max-height: 85vh;
+      object-fit: contain;
+      border-radius: 12px;
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.8);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .lightbox-close-btn {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      background: rgba(255, 255, 255, 0.15);
+      border: 1px solid rgba(255, 255, 255, 0.25);
+      color: #fff;
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.3rem;
+      cursor: pointer;
+      z-index: 100000;
     }
 
     /* MOBILE STICKY BAR */
@@ -681,6 +803,12 @@
       <strong id="stickyPriceText" style="color: var(--accent-volt); font-size: 1.15rem;">Rp 0</strong>
     </div>
     <div id="stickyActionContainer"></div>
+  </div>
+
+  <!-- LIGHTBOX IMAGE ZOOM MODAL -->
+  <div class="img-lightbox-modal" id="imageLightbox" onclick="closeLightbox(event)">
+    <button type="button" class="lightbox-close-btn" onclick="closeLightbox()">&times;</button>
+    <img id="lightboxActiveImg" class="lightbox-img" src="" alt="Zoom Foto Akun" onclick="event.stopPropagation()">
   </div>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -825,12 +953,16 @@
             <!-- KOLOM KIRI -->
             <div style="width: 100%;">
               <div class="card-box">
-                <div class="main-gallery-view">
+                <div class="main-gallery-view" onclick="openLightbox()">
                   ${isSold ? '<div class="watermark-overlay-sold">TERJUAL</div>' : ''}
                   ${isHold ? '<div class="watermark-overlay-hold"><i class="fa-solid fa-lock"></i> SEDANG PROSES REKBER</div>' : ''}
                   <img id="activeMainImg" src="${images[0]}" alt="${post.post_title}" style="${isSold ? 'filter: grayscale(70%);' : ''}">
                   
-                  <button type="button" class="btn-floating-like" id="btnLikePost">
+                  <div class="zoom-badge-hint">
+                    <i class="fa-solid fa-magnifying-glass-plus"></i> Tap untuk perbesar foto
+                  </div>
+
+                  <button type="button" class="btn-floating-like" id="btnLikePost" onclick="event.stopPropagation()">
                     <i class="fa-solid fa-heart"></i>
                     <span id="likeCountText">0</span>
                   </button>
@@ -839,7 +971,7 @@
                 ${images.length > 1 ? `
                   <div class="thumb-strip">
                     ${images.map((img, idx) => `
-                      <button class="thumb-btn ${idx === 0 ? 'active' : ''}" onclick="switchGalleryImg('${img}', this)">
+                      <button type="button" class="thumb-btn ${idx === 0 ? 'active' : ''}" onclick="switchGalleryImg('${img}', this)">
                         <img src="${img}" alt="Thumbnail ${idx + 1}">
                       </button>
                     `).join('')}
@@ -882,11 +1014,11 @@
                     Penawaran ditutup sementara karena akun sedang dalam proses transaksi Rekber.
                   </div>
                 ` : `
-                  <form id="commentForm" style="display: flex; flex-direction: column; gap: 8px; width: 100%;">
-                    <textarea id="commentTextInput" class="form-control" rows="3" placeholder="Tulis komentar atau ajukan penawaran harga..." style="width: 100%; background: var(--card-inner); border: 1px solid var(--border-subtle); border-radius: 12px; padding: 12px; color: #fff; font-family: inherit; font-size: 0.9rem; outline: none; box-sizing: border-box;" required></textarea>
+                  <form id="commentForm" style="display: flex; flex-direction: column; width: 100%;">
+                    <textarea id="commentTextInput" class="form-control" rows="3" placeholder="Tulis komentar atau ajukan penawaran harga..." required></textarea>
 
                     <div class="emoticon-toolbar">
-                      <span style="font-size: 0.75rem; color: #8e9bb0; margin-right: 4px; white-space: nowrap;">Emoticon:</span>
+                      <span style="font-size: 0.75rem; color: #8e9bb0; flex-shrink: 0;">Emoticon:</span>
                       <button type="button" class="btn-emot-pill" onclick="appendEmot('🔥')">🔥</button>
                       <button type="button" class="btn-emot-pill" onclick="appendEmot('🚀')">🚀</button>
                       <button type="button" class="btn-emot-pill" onclick="appendEmot('💎')">💎</button>
@@ -896,19 +1028,23 @@
                     </div>
                     
                     <div class="comment-action-bar">
-                      <label style="display: flex; align-items: center; gap: 8px; font-size: 0.85rem; color: var(--accent-volt); cursor: pointer;">
-                        <input type="checkbox" id="checkIsOffer" style="accent-color: var(--accent-volt); width: 16px; height: 16px;">
-                        Kirim sebagai tawaran harga resmi
-                      </label>
+                      <div class="comment-action-top">
+                        <label style="display: flex; align-items: center; gap: 8px; font-size: 0.88rem; color: var(--accent-volt); cursor: pointer; user-select: none;">
+                          <input type="checkbox" id="checkIsOffer" style="accent-color: var(--accent-volt); width: 18px; height: 18px;">
+                          Kirim sebagai tawaran harga resmi
+                        </label>
+                      </div>
+
                       <input 
                         type="text" 
                         id="offerAmountInput" 
-                        placeholder="Nominal tawaran (Rp)" 
+                        placeholder="Masukkan nominal tawaran (Rp)..." 
                         inputmode="numeric" 
-                        style="display: none; background: var(--card-inner); border: 1px solid rgba(204,255,0,0.4); border-radius: 8px; padding: 8px 12px; color: #fff; font-size: 0.88rem; outline: none; width: 180px;"
+                        style="display: none;"
                       >
-                      <button type="submit" id="btnPostComment" style="background: #e63946; color: #fff; border: none; padding: 10px 18px; border-radius: 10px; font-weight: 700; font-size: 0.88rem; cursor: pointer;">
-                        Kirim
+                      
+                      <button type="submit" id="btnPostComment">
+                        Kirim Komentar / Penawaran
                       </button>
                     </div>
                   </form>
@@ -1054,6 +1190,26 @@
       }
     });
 
+    // LIGHTBOX FUNCTIONS
+    window.openLightbox = () => {
+      const activeImg = document.getElementById("activeMainImg");
+      const lightbox = document.getElementById("imageLightbox");
+      const lightboxImg = document.getElementById("lightboxActiveImg");
+      if (activeImg && lightbox && lightboxImg) {
+        lightboxImg.src = activeImg.src;
+        lightbox.classList.add("active");
+        document.body.style.overflow = "hidden";
+      }
+    };
+
+    window.closeLightbox = () => {
+      const lightbox = document.getElementById("imageLightbox");
+      if (lightbox) {
+        lightbox.classList.remove("active");
+        document.body.style.overflow = "auto";
+      }
+    };
+
     window.switchGalleryImg = (src, btnEl) => {
       document.getElementById("activeMainImg").src = src;
       document.querySelectorAll(".thumb-btn").forEach(b => b.classList.remove("active"));
@@ -1067,7 +1223,7 @@
       textarea.focus();
     };
 
-    // LIKE
+    // LIKE SYSTEM
     async function initLikeSystem(postId) {
       const btnLike = document.getElementById("btnLikePost");
       const countEl = document.getElementById("likeCountText");
@@ -1130,7 +1286,7 @@
       });
     }
 
-    // DISKUSI, LOAD MORE & PIN TAWARAN TERTINGGI
+    // DISKUSI, BIDDING & ANTI-KEYBOARD BLOCKING
     async function setupCommentsAndBidding(postId, isLocked) {
       const commentContainer = document.getElementById("commentContainer");
       const topOfferContainer = document.getElementById("topOfferContainer");
@@ -1146,7 +1302,22 @@
       let allComments = [];
       let displayLimit = 8;
 
+      // PENGATURAN FOKUS ANTI TERHALANG KEYBOARD DI MOBILE
+      if (textInput) {
+        textInput.addEventListener("focus", () => {
+          setTimeout(() => {
+            textInput.scrollIntoView({ behavior: "smooth", block: "center" });
+          }, 350);
+        });
+      }
+
       if (offerInput) {
+        offerInput.addEventListener("focus", () => {
+          setTimeout(() => {
+            offerInput.scrollIntoView({ behavior: "smooth", block: "center" });
+          }, 350);
+        });
+
         offerInput.addEventListener("input", (e) => {
           let rawVal = e.target.value.replace(/\D/g, "");
           e.target.value = rawVal ? Number(rawVal).toLocaleString("id-ID") : "";
@@ -1155,8 +1326,10 @@
 
       if (checkOffer) {
         checkOffer.addEventListener("change", () => {
-          offerInput.style.display = checkOffer.checked ? "inline-block" : "none";
-          if (checkOffer.checked) offerInput.focus();
+          offerInput.style.display = checkOffer.checked ? "block" : "none";
+          if (checkOffer.checked) {
+            offerInput.focus();
+          }
         });
       }
 
