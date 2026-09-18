@@ -146,6 +146,7 @@
       gap: 10px;
       margin-bottom: 20px;
       flex-wrap: wrap;
+      align-items: center;
     }
 
     .search-input-wrap {
@@ -182,48 +183,11 @@
       box-shadow: 0 0 10px rgba(204, 255, 0, 0.15);
     }
 
-    /* MODERN CUSTOM SELECT FILTER */
-    .sort-select {
-      -webkit-appearance: none !important;
-      -moz-appearance: none !important;
-      appearance: none !important;
-      background-color: var(--card-dark) !important;
-      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23ccff00' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E") !important;
-      background-repeat: no-repeat !important;
-      background-position: right 14px center !important;
-      background-size: 16px !important;
-      border: 1px solid var(--border-subtle) !important;
-      border-radius: 14px !important;
-      padding: 0 42px 0 16px !important;
-      color: #f1f5f9 !important;
-      font-family: inherit;
-      font-size: 0.9rem !important;
-      font-weight: 700 !important;
-      outline: none;
-      min-width: 200px;
-      height: 48px;
-      cursor: pointer;
-      box-sizing: border-box;
-      box-shadow: 0 4px 14px rgba(0, 0, 0, 0.25);
-      transition: all 0.2s ease;
-    }
-
-    .sort-select:hover {
-      border-color: rgba(204, 255, 0, 0.4) !important;
-      background-color: rgba(22, 27, 38, 0.9) !important;
-    }
-
-    .sort-select:focus {
-      border-color: var(--accent-volt) !important;
-      box-shadow: 0 0 16px rgba(204, 255, 0, 0.2) !important;
-    }
-
-    .sort-select option {
-      background-color: #0f141f !important;
-      color: #f8fafc !important;
-      padding: 12px 16px !important;
-      font-size: 0.9rem !important;
-      font-weight: 600 !important;
+    /* CUSTOM UI DROPDOWN FILTER */
+    .custom-sort-wrap {
+      position: relative;
+      min-width: 220px;
+      user-select: none;
     }
 
     @media (max-width: 640px) {
@@ -235,12 +199,102 @@
         width: 100%;
         min-width: 100%;
       }
-      .sort-select {
-        width: 100% !important;
-        height: 46px !important;
-        font-size: 16px !important;
-        border-radius: 12px !important;
+      .custom-sort-wrap {
+        width: 100%;
       }
+    }
+
+    .custom-sort-btn {
+      width: 100%;
+      height: 46px;
+      background: var(--card-dark);
+      border: 1px solid var(--border-subtle);
+      border-radius: 12px;
+      padding: 0 14px;
+      color: #f1f5f9;
+      font-family: inherit;
+      font-size: 0.88rem;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      cursor: pointer;
+      box-shadow: 0 4px 14px rgba(0, 0, 0, 0.25);
+      transition: all 0.2s ease;
+    }
+
+    .custom-sort-btn:hover,
+    .custom-sort-wrap.active .custom-sort-btn {
+      border-color: rgba(204, 255, 0, 0.4);
+      background: rgba(22, 27, 38, 0.95);
+    }
+
+    .custom-sort-btn .chevron-icon {
+      font-size: 0.8rem;
+      color: var(--accent-volt);
+      transition: transform 0.2s ease;
+    }
+
+    .custom-sort-wrap.active .chevron-icon {
+      transform: rotate(180deg);
+    }
+
+    .custom-sort-options {
+      display: none;
+      position: absolute;
+      top: calc(100% + 8px);
+      left: 0;
+      right: 0;
+      background: var(--card-inner);
+      border: 1px solid rgba(204, 255, 0, 0.3);
+      border-radius: 14px;
+      padding: 6px;
+      box-shadow: 0 16px 36px rgba(0, 0, 0, 0.7);
+      z-index: 100;
+      backdrop-filter: blur(12px);
+    }
+
+    .custom-sort-wrap.active .custom-sort-options {
+      display: block;
+      animation: dropMenuAnim 0.15s ease-out;
+    }
+
+    @keyframes dropMenuAnim {
+      from { opacity: 0; transform: translateY(-6px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .custom-option {
+      padding: 11px 14px;
+      font-size: 0.86rem;
+      font-weight: 700;
+      color: #cbd5e1;
+      border-radius: 9px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+
+    .custom-option:hover {
+      background: rgba(204, 255, 0, 0.08);
+      color: var(--accent-volt);
+    }
+
+    .custom-option.selected {
+      background: rgba(204, 255, 0, 0.12);
+      color: var(--accent-volt);
+    }
+
+    .custom-option .check-icon {
+      font-size: 0.78rem;
+      color: var(--accent-volt);
+      display: none;
+    }
+
+    .custom-option.selected .check-icon {
+      display: inline-block;
     }
 
     /* GRID POST */
@@ -626,11 +680,28 @@
         <i class="fa-solid fa-magnifying-glass"></i>
         <input type="text" id="searchKeyword" placeholder="Cari game (MLBB, FF, dll) atau judul akun...">
       </div>
-      <select id="sortOrder" class="sort-select">
-        <option value="latest">⚡ Terbaru Ditambahkan</option>
-        <option value="price_asc">🏷️ Harga Terendah</option>
-        <option value="price_desc">👑 Harga Tertinggi (Sultan)</option>
-      </select>
+
+      <!-- CUSTOM DROPDOWN FILTER -->
+      <div class="custom-sort-wrap" id="customSortWrap">
+        <button type="button" class="custom-sort-btn" id="customSortBtn">
+          <span id="selectedSortLabel">⚡ Terbaru Ditambahkan</span>
+          <i class="fa-solid fa-chevron-down chevron-icon"></i>
+        </button>
+        <div class="custom-sort-options" id="customSortOptions">
+          <div class="custom-option selected" data-value="latest">
+            <span>⚡ Terbaru Ditambahkan</span>
+            <i class="fa-solid fa-check check-icon"></i>
+          </div>
+          <div class="custom-option" data-value="price_asc">
+            <span>🏷️ Harga Terendah</span>
+            <i class="fa-solid fa-check check-icon"></i>
+          </div>
+          <div class="custom-option" data-value="price_desc">
+            <span>👑 Harga Tertinggi (Sultan)</span>
+            <i class="fa-solid fa-check check-icon"></i>
+          </div>
+        </div>
+      </div>
     </div>
 
     <div class="posts-grid" id="marketPostsGrid">
@@ -649,17 +720,48 @@
   <script>
     document.addEventListener("DOMContentLoaded", () => {
       let searchTimeout = null;
+      let selectedSortValue = "latest";
 
       const gridEl = document.getElementById("marketPostsGrid");
       const searchInput = document.getElementById("searchKeyword");
-      const sortSelect = document.getElementById("sortOrder");
+      
+      // CUSTOM DROPDOWN ELEMENTS
+      const sortWrap = document.getElementById("customSortWrap");
+      const sortBtn = document.getElementById("customSortBtn");
+      const sortLabel = document.getElementById("selectedSortLabel");
+      const sortOptions = document.querySelectorAll(".custom-option");
+
+      // TOGGLE DROPDOWN OPEN/CLOSE
+      sortBtn.addEventListener("click", (e) => {
+        e.stopPropagation();
+        sortWrap.classList.toggle("active");
+      });
+
+      // SELECT OPTION
+      sortOptions.forEach((option) => {
+        option.addEventListener("click", () => {
+          sortOptions.forEach(opt => opt.classList.remove("selected"));
+          option.classList.add("selected");
+
+          selectedSortValue = option.getAttribute("data-value");
+          sortLabel.innerText = option.querySelector("span").innerText;
+          sortWrap.classList.remove("active");
+
+          loadMarketPosts();
+        });
+      });
+
+      // TUTUP JIKA KLIK DI LUAR
+      document.addEventListener("click", (e) => {
+        if (!sortWrap.contains(e.target)) {
+          sortWrap.classList.remove("active");
+        }
+      });
 
       searchInput.addEventListener("input", () => {
         clearTimeout(searchTimeout);
         searchTimeout = setTimeout(loadMarketPosts, 300);
       });
-
-      sortSelect.addEventListener("change", loadMarketPosts);
 
       async function loadMarketPosts() {
         if (!window.supabase) return;
@@ -673,7 +775,7 @@
 
         try {
           const keyword = searchInput.value.trim();
-          const sortVal = sortSelect.value;
+          const sortVal = selectedSortValue;
 
           let query = window.supabase
             .from("market_posts")
