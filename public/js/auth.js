@@ -37,7 +37,7 @@ function showToast(type, title, message) {
 // ==========================================
 // TOGGLE SHOW/HIDE PASSWORD + REAKSI MASKOT
 // ==========================================
-function togglePass(inputId, iconElement) {
+window.togglePass = function (inputId, iconElement) {
   const input = document.getElementById(inputId);
   const mascot = document.getElementById("mascotAvatar");
   if (!input) return;
@@ -61,7 +61,7 @@ function togglePass(inputId, iconElement) {
       mascot.classList.add("blindfold");
     }
   }
-}
+};
 
 // Trigger Maskot Sukses / Horay
 function triggerMascotSuccess() {
@@ -72,9 +72,9 @@ function triggerMascotSuccess() {
 }
 
 // ==========================================
-// LOGIN DENGAN GOOGLE OAUTH
+// LOGIN DENGAN GOOGLE OAUTH (WINDOW SCOPE & DYNAMIC REDIRECT)
 // ==========================================
-async function loginWithGoogle() {
+window.loginWithGoogle = async function () {
   if (!window.supabase || !window.supabase.auth) {
     showToast("error", "Koneksi Belum Siap", "Silakan refresh halaman terlebih dahulu.");
     return;
@@ -84,19 +84,20 @@ async function loginWithGoogle() {
     const { error } = await window.supabase.auth.signInWithOAuth({
       provider: "google",
       options: {
-        redirectTo: window.location.origin
+        // Otomatis mengikuti domain aktif saat ini tanpa hardcode URL lama
+        redirectTo: `${window.location.origin}/`
       }
     });
     if (error) throw error;
   } catch (err) {
     showToast("error", "Gagal Login Google", err.message);
   }
-}
+};
 
 // ==========================================
-// LOGIN DENGAN DISCORD OAUTH
+// LOGIN DENGAN DISCORD OAUTH (WINDOW SCOPE & DYNAMIC REDIRECT)
 // ==========================================
-async function loginWithDiscord() {
+window.loginWithDiscord = async function () {
   if (!window.supabase || !window.supabase.auth) {
     showToast("error", "Koneksi Belum Siap", "Silakan refresh halaman terlebih dahulu.");
     return;
@@ -106,14 +107,14 @@ async function loginWithDiscord() {
     const { error } = await window.supabase.auth.signInWithOAuth({
       provider: "discord",
       options: {
-        redirectTo: window.location.origin
+        redirectTo: `${window.location.origin}/`
       }
     });
     if (error) throw error;
   } catch (err) {
     showToast("error", "Gagal Login Discord", err.message);
   }
-}
+};
 
 // ==========================================
 // INITIALIZE INTERACTIVE MASCOT EVENTS
@@ -122,7 +123,6 @@ function initMascotEvents() {
   const mascot = document.getElementById("mascotAvatar");
   if (!mascot) return;
 
-  // Cari semua input password di form
   const passInputs = document.querySelectorAll('input[type="password"]');
   const otherInputs = document.querySelectorAll('input:not([type="password"])');
 
@@ -147,7 +147,6 @@ function initMascotEvents() {
 }
 
 document.addEventListener("DOMContentLoaded", () => {
-  // Inisialisasi event maskot
   initMascotEvents();
 
   const loginForm = document.getElementById("loginForm");
@@ -172,7 +171,6 @@ document.addEventListener("DOMContentLoaded", () => {
       const password = document.getElementById("regPassword").value;
       const btn = registerForm.querySelector('button[type="submit"]');
 
-      // Ambil token Turnstile jika form register ada widgetnya
       const captchaToken = registerForm.querySelector('[name="cf-turnstile-response"]')?.value;
 
       btn.disabled = true;
@@ -194,10 +192,10 @@ document.addEventListener("DOMContentLoaded", () => {
           return;
         }
 
-        // LAPIS 2: Lakukan pendaftaran via Supabase Auth
+        // LAPIS 2: Pendaftaran via Supabase Auth (Dynamic Redirect)
         const signUpOptions = {
           data: { full_name: name },
-          emailRedirectTo: "https://mamanggs.vercel.app/auth/login.html"
+          emailRedirectTo: `${window.location.origin}/auth/login.html`
         };
         if (captchaToken) {
           signUpOptions.captchaToken = captchaToken;
@@ -211,7 +209,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
         if (error) throw error;
 
-        // Cek keamanan Supabase: jika user terdaftar sebelumnya, identities array kosong
+        // Cek keamanan Supabase: jika user terdaftar sebelumnya
         if (data.user && Array.isArray(data.user.identities) && data.user.identities.length === 0) {
           showToast("error", "Email Sudah Terdaftar", "Email ini sudah terdaftar! Silakan langsung login.");
           btn.disabled = false;
@@ -232,9 +230,7 @@ document.addEventListener("DOMContentLoaded", () => {
           ]);
         }
 
-        // Maskot Horay!
         triggerMascotSuccess();
-
         showToast("success", "Pendaftaran Berhasil!", "Silakan login menggunakan akun baru Anda.");
         setTimeout(() => {
           window.location.href = "/auth/login.html";
@@ -269,7 +265,6 @@ document.addEventListener("DOMContentLoaded", () => {
       const password = document.getElementById("loginPassword").value;
       const btn = loginForm.querySelector('button[type="submit"]');
 
-      // Ambil token dari Turnstile Captcha
       const captchaToken = loginForm.querySelector('[name="cf-turnstile-response"]')?.value;
 
       if (!captchaToken) {
@@ -291,13 +286,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
         if (error) throw error;
 
-        // Simpan sesi user ke localStorage
         localStorage.setItem("mgs_user", JSON.stringify(data.user));
-
-        // Maskot Horay!
         triggerMascotSuccess();
 
-        // Cek Role apakah Admin atau Member
+        // Cek Role
         let redirectTarget = "/";
         try {
           const { data: profile } = await window.supabase
@@ -319,7 +311,6 @@ document.addEventListener("DOMContentLoaded", () => {
         }, 1200);
       } catch (err) {
         showToast("error", "Gagal Masuk", err.message);
-        // Reset captcha agar siap dicoba kembali
         if (window.turnstile) window.turnstile.reset();
       } finally {
         btn.disabled = false;
@@ -329,7 +320,7 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   // ==========================================
-  // HANDLER FORGOT PASSWORD
+  // HANDLER FORGOT PASSWORD (DYNAMIC REDIRECT)
   // ==========================================
   if (forgotForm) {
     forgotForm.addEventListener("submit", async (e) => {
@@ -343,7 +334,6 @@ document.addEventListener("DOMContentLoaded", () => {
       const email = document.getElementById("forgotEmail").value.trim();
       const btn = forgotForm.querySelector('button[type="submit"]');
 
-      // Ambil token Turnstile jika form forgot ada widgetnya
       const captchaToken = forgotForm.querySelector('[name="cf-turnstile-response"]')?.value;
 
       btn.disabled = true;
@@ -351,7 +341,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
       try {
         const resetOptions = {
-          redirectTo: "https://mamanggs.vercel.app/auth/reset-password.html"
+          redirectTo: `${window.location.origin}/auth/reset-password.html`
         };
         if (captchaToken) {
           resetOptions.captchaToken = captchaToken;

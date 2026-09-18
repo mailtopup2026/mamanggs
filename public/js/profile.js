@@ -1,4 +1,113 @@
 document.addEventListener("DOMContentLoaded", async () => {
+  // ==========================================
+  // HELPER TOAST NOTIFIKASI MODERN MAMANGGS
+  // ==========================================
+  function showToast(type, title, message) {
+    let container = document.querySelector(".mgs-toast-container");
+    if (!container) {
+      container = document.createElement("div");
+      container.className = "mgs-toast-container";
+      document.body.appendChild(container);
+
+      // Inject styling toast jika belum termuat dari global CSS
+      if (!document.getElementById("mgs-toast-style")) {
+        const style = document.createElement("style");
+        style.id = "mgs-toast-style";
+        style.textContent = `
+          .mgs-toast-container {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 999999;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            max-width: 90vw;
+            pointer-events: none;
+          }
+          .mgs-toast {
+            pointer-events: auto;
+            background: rgba(15, 23, 42, 0.95);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(12px);
+            border-radius: 14px;
+            padding: 12px 18px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.7);
+            color: #fff;
+            opacity: 0;
+            transform: translateY(-15px) scale(0.95);
+            transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+          }
+          .mgs-toast.show {
+            opacity: 1;
+            transform: translateY(0) scale(1);
+          }
+          .mgs-toast.success {
+            border-color: rgba(204, 255, 0, 0.4);
+            box-shadow: 0 8px 24px rgba(204, 255, 0, 0.15);
+          }
+          .mgs-toast.success .mgs-toast-icon {
+            color: #ccff00;
+          }
+          .mgs-toast.error {
+            border-color: rgba(239, 68, 68, 0.4);
+            box-shadow: 0 8px 24px rgba(239, 68, 68, 0.2);
+          }
+          .mgs-toast.error .mgs-toast-icon {
+            color: #ef4444;
+          }
+          .mgs-toast-icon {
+            font-size: 1.3rem;
+            flex-shrink: 0;
+          }
+          .mgs-toast-body h5 {
+            margin: 0 0 2px;
+            font-size: 0.88rem;
+            font-weight: 800;
+          }
+          .mgs-toast-body p {
+            margin: 0;
+            font-size: 0.78rem;
+            color: #94a3b8;
+            line-height: 1.35;
+          }
+          @media (max-width: 600px) {
+            .mgs-toast-container {
+              top: 14px;
+              left: 14px;
+              right: 14px;
+              max-width: none;
+            }
+          }
+        `;
+        document.head.appendChild(style);
+      }
+    }
+
+    const toast = document.createElement("div");
+    toast.className = `mgs-toast ${type}`;
+    const iconClass = type === "success" ? "fa-solid fa-circle-check" : "fa-solid fa-triangle-exclamation";
+
+    toast.innerHTML = `
+      <div class="mgs-toast-icon"><i class="${iconClass}"></i></div>
+      <div class="mgs-toast-body">
+        <h5>${title}</h5>
+        <p>${message}</p>
+      </div>
+    `;
+
+    container.appendChild(toast);
+    requestAnimationFrame(() => toast.classList.add("show"));
+
+    setTimeout(() => {
+      toast.classList.remove("show");
+      setTimeout(() => toast.remove(), 300);
+    }, 4000);
+  }
+
   function getClient() {
     if (window.supabaseClient) return window.supabaseClient;
     if (window.supabase && typeof window.supabase.from === "function") return window.supabase;
@@ -122,7 +231,7 @@ document.addEventListener("DOMContentLoaded", async () => {
           selectedGames = selectedGames.filter(c => c !== code);
         } else {
           if (selectedGames.length >= 3) {
-            alert("Kamu hanya bisa memilih maksimal 3 game favorit.");
+            showToast("error", "Batas Tercapai", "Kamu hanya bisa memilih maksimal 3 game favorit.");
             return;
           }
           selectedGames.push(code);
@@ -132,11 +241,10 @@ document.addEventListener("DOMContentLoaded", async () => {
     });
   }
 
-  // Jalankan render awal
   renderAvatarChoices("");
   renderGameChoices();
 
-  // Load Profil User dari Supabase / Local Storage
+  // Load Profil User dari Supabase
   async function initUserProfile() {
     const stored = localStorage.getItem("mgs_user");
     const localUser = stored ? JSON.parse(stored) : null;
@@ -178,7 +286,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         if (fullNameInput) fullNameInput.value = profile.full_name || "";
         if (whatsappInput) whatsappInput.value = profile.whatsapp || "";
         if (profileDisplayName) profileDisplayName.innerText = profile.full_name || "Gamers Sultan";
-        
+
         const activeUrl = profile.avatar_url || `https://api.dicebear.com/7.x/adventurer/svg?seed=Jordyn`;
         if (selectedAvatarInput) selectedAvatarInput.value = activeUrl;
         if (currentAvatarPreview) currentAvatarPreview.src = activeUrl;
@@ -194,41 +302,93 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   initUserProfile();
 
-  // Simpan Perubahan Profil
+  // ==========================================
+  // HANDLER SUBMIT PROFIL & CEK NOMOR GANDA
+  // ==========================================
   profileForm.addEventListener("submit", async (e) => {
     e.preventDefault();
     const client = getClient();
     if (!client || !currentUserId) return;
 
+    let cleanWA = whatsappInput.value.trim().replace(/[^0-9]/g, "");
+
+    // Validasi dasar nomor WA
+    if (!cleanWA) {
+      showToast("error", "Data Belum Lengkap", "Nomor WhatsApp wajib diisi untuk transaksi & Rekber!");
+      whatsappInput.focus();
+      return;
+    }
+
+    // Normalisasi format (08xx -> 628xx)
+    if (cleanWA.startsWith("0")) {
+      cleanWA = "62" + cleanWA.substring(1);
+    }
+
+    if (cleanWA.length < 10) {
+      showToast("error", "Format Tidak Valid", "Masukkan nomor WhatsApp yang aktif dan benar!");
+      whatsappInput.focus();
+      return;
+    }
+
     btnSaveProfile.disabled = true;
-    btnSaveProfile.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Menyimpan...`;
-    profileAlert.style.display = "none";
+    btnSaveProfile.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Memeriksa...`;
 
-    const updatePayload = {
-      full_name: fullNameInput.value.trim(),
-      whatsapp: whatsappInput.value.trim(),
-      avatar_url: selectedAvatarInput.value,
-      favorite_games: selectedGames
-    };
+    try {
+      // 1. Cek apakah nomor WA ini sudah pernah digunakan oleh user lain
+      const { data: duplicateWA, error: checkErr } = await client
+        .from("profiles")
+        .select("id")
+        .eq("whatsapp", cleanWA)
+        .neq("id", currentUserId)
+        .maybeSingle();
 
-    const { error } = await client
-      .from("profiles")
-      .update(updatePayload)
-      .eq("id", currentUserId);
+      if (checkErr) throw checkErr;
 
-    btnSaveProfile.disabled = false;
-    btnSaveProfile.innerHTML = `<i class="fa-solid fa-floppy-disk"></i> Simpan Perubahan Profil`;
+      if (duplicateWA) {
+        btnSaveProfile.disabled = false;
+        btnSaveProfile.innerHTML = `<i class="fa-solid fa-floppy-disk"></i> Simpan Perubahan Profil`;
+        showToast("error", "Nomor Sudah Digunakan", "Nomor WhatsApp ini sudah terdaftar di akun lain. Silakan pakai nomor lain!");
+        whatsappInput.focus();
+        return;
+      }
 
-    if (error) {
-      profileAlert.className = "alert-box alert-error";
-      profileAlert.innerText = `Gagal menyimpan: ${error.message}`;
-      profileAlert.style.display = "block";
-    } else {
+      // 2. Simpan data profil baru
+      btnSaveProfile.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Menyimpan...`;
+
+      const updatePayload = {
+        full_name: fullNameInput.value.trim(),
+        whatsapp: cleanWA,
+        avatar_url: selectedAvatarInput.value,
+        favorite_games: selectedGames
+      };
+
+      const { error: updateErr } = await client
+        .from("profiles")
+        .update(updatePayload)
+        .eq("id", currentUserId);
+
+      if (updateErr) {
+        // Tangkap jika terkena proteksi UNIQUE constraint database
+        if (updateErr.code === "23505" || updateErr.message.includes("unique")) {
+          throw new Error("Nomor WhatsApp ini sudah terdaftar di akun lain.");
+        }
+        throw updateErr;
+      }
+
+      // Update UI langsung
+      whatsappInput.value = cleanWA;
       if (profileDisplayName) profileDisplayName.innerText = updatePayload.full_name;
-      profileAlert.className = "alert-box alert-success";
-      profileAlert.innerText = "Profil, Avatar Karakter, & Game Favorit berhasil disimpan!";
-      profileAlert.style.display = "block";
+
+      btnSaveProfile.disabled = false;
+      btnSaveProfile.innerHTML = `<i class="fa-solid fa-floppy-disk"></i> Simpan Perubahan Profil`;
+
+      showToast("success", "Perubahan Disimpan!", "Profil, WhatsApp, Avatar & Game favorit berhasil diperbarui.");
       updateBadgeUI();
+
+    } catch (err) {
+      btnSaveProfile.disabled = false;
+      btnSaveProfile.innerHTML = `<i class="fa-solid fa-floppy-disk"></i> Simpan Perubahan Profil`;
+      showToast("error", "Gagal Menyimpan", err.message || "Terjadi kesalahan saat menyimpan profil.");
     }
   });
 });
