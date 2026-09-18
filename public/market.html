@@ -171,7 +171,7 @@
       padding: 12px 14px 12px 40px;
       color: #ffffff;
       font-family: inherit;
-      font-size: 16px !important; /* Mencegah auto-zoom di mobile */
+      font-size: 16px !important;
       outline: none;
       box-sizing: border-box;
       transition: border-color 0.2s, box-shadow 0.2s;
@@ -182,24 +182,48 @@
       box-shadow: 0 0 10px rgba(204, 255, 0, 0.15);
     }
 
+    /* MODERN CUSTOM SELECT FILTER */
     .sort-select {
-      background: var(--card-dark);
-      border: 1px solid var(--border-subtle);
-      border-radius: 12px;
-      padding: 0 14px;
-      color: #cbd5e1;
+      -webkit-appearance: none !important;
+      -moz-appearance: none !important;
+      appearance: none !important;
+      background-color: var(--card-dark) !important;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23ccff00' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E") !important;
+      background-repeat: no-repeat !important;
+      background-position: right 14px center !important;
+      background-size: 16px !important;
+      border: 1px solid var(--border-subtle) !important;
+      border-radius: 14px !important;
+      padding: 0 42px 0 16px !important;
+      color: #f1f5f9 !important;
       font-family: inherit;
-      font-size: 0.88rem;
+      font-size: 0.9rem !important;
+      font-weight: 700 !important;
       outline: none;
-      min-width: 180px;
-      height: 44px;
+      min-width: 200px;
+      height: 48px;
       cursor: pointer;
       box-sizing: border-box;
-      transition: border-color 0.2s;
+      box-shadow: 0 4px 14px rgba(0, 0, 0, 0.25);
+      transition: all 0.2s ease;
+    }
+
+    .sort-select:hover {
+      border-color: rgba(204, 255, 0, 0.4) !important;
+      background-color: rgba(22, 27, 38, 0.9) !important;
     }
 
     .sort-select:focus {
-      border-color: var(--accent-volt);
+      border-color: var(--accent-volt) !important;
+      box-shadow: 0 0 16px rgba(204, 255, 0, 0.2) !important;
+    }
+
+    .sort-select option {
+      background-color: #0f141f !important;
+      color: #f8fafc !important;
+      padding: 12px 16px !important;
+      font-size: 0.9rem !important;
+      font-weight: 600 !important;
     }
 
     @media (max-width: 640px) {
@@ -212,8 +236,10 @@
         min-width: 100%;
       }
       .sort-select {
-        width: 100%;
-        height: 42px;
+        width: 100% !important;
+        height: 46px !important;
+        font-size: 16px !important;
+        border-radius: 12px !important;
       }
     }
 
@@ -504,7 +530,7 @@
       }
 
       .trusted-tag span {
-        display: none; /* Hanya tampilkan ikon tameng di mobile agar muat */
+        display: none;
       }
     }
 
@@ -601,9 +627,9 @@
         <input type="text" id="searchKeyword" placeholder="Cari game (MLBB, FF, dll) atau judul akun...">
       </div>
       <select id="sortOrder" class="sort-select">
-        <option value="latest">Terbaru Ditambahkan</option>
-        <option value="price_asc">Harga Terendah</option>
-        <option value="price_desc">Harga Tertinggi (Sultan)</option>
+        <option value="latest">⚡ Terbaru Ditambahkan</option>
+        <option value="price_asc">🏷️ Harga Terendah</option>
+        <option value="price_desc">👑 Harga Tertinggi (Sultan)</option>
       </select>
     </div>
 
