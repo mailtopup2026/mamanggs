@@ -124,6 +124,40 @@
       }
     }
 
+    /* BANNER KHUSUS PEMILIK IKLAN */
+    .owner-action-banner {
+      background: rgba(204, 255, 0, 0.05);
+      border: 1px solid rgba(204, 255, 0, 0.3);
+      border-radius: 14px;
+      padding: 12px 16px;
+      margin-bottom: 18px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .btn-open-edit-modal {
+      background: var(--accent-volt);
+      color: #000;
+      border: none;
+      padding: 8px 16px;
+      border-radius: 10px;
+      font-weight: 800;
+      font-size: 0.85rem;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.2s ease;
+    }
+
+    .btn-open-edit-modal:hover {
+      background: var(--accent-volt-hover);
+      transform: translateY(-1px);
+    }
+
     /* GALERI GAMBAR & ZOOM HINT */
     .main-gallery-view {
       position: relative;
@@ -613,7 +647,7 @@
       padding: 14px 16px 8px;
       color: #f1f5f9;
       font-family: inherit;
-      font-size: 16px !important; /* Mencegah auto-zoom di mobile */
+      font-size: 16px !important;
       line-height: 1.5;
       outline: none;
       resize: none;
@@ -782,6 +816,53 @@
       }
     }
 
+    /* MODAL EDIT IKLAN */
+    .edit-modal-wrap {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.8);
+      backdrop-filter: blur(8px);
+      z-index: 100000;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+    }
+
+    .edit-modal-wrap.active {
+      display: flex;
+    }
+
+    .edit-modal-box {
+      background: var(--card-dark);
+      border: 1px solid var(--border-subtle);
+      border-radius: 20px;
+      width: 100%;
+      max-width: 540px;
+      padding: 24px;
+      max-height: 90vh;
+      overflow-y: auto;
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.8);
+    }
+
+    .edit-input-field {
+      width: 100%;
+      background: var(--card-inner);
+      border: 1px solid var(--border-subtle);
+      border-radius: 12px;
+      padding: 12px 14px;
+      color: #fff;
+      font-family: inherit;
+      font-size: 15px;
+      outline: none;
+      margin-top: 6px;
+      box-sizing: border-box;
+    }
+
+    .edit-input-field:focus {
+      border-color: var(--accent-volt);
+    }
+
     /* FULLSCREEN IMAGE LIGHTBOX MODAL */
     .img-lightbox-modal {
       display: none;
@@ -894,11 +975,57 @@
     <img id="lightboxActiveImg" class="lightbox-img" src="" alt="Zoom Foto Akun" onclick="event.stopPropagation()">
   </div>
 
+  <!-- MODAL EDIT IKLAN (KHUSUS PEMILIK) -->
+  <div class="edit-modal-wrap" id="editPostModal" onclick="closeEditModal(event)">
+    <div class="edit-modal-box" onclick="event.stopPropagation()">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+        <h3 style="margin: 0; font-size: 1.15rem; color: #fff; display: flex; align-items: center; gap: 8px;">
+          <i class="fa-solid fa-pen-to-square" style="color: var(--accent-volt);"></i> Kelola Iklan Akun
+        </h3>
+        <button type="button" onclick="closeEditModal()" style="background: none; border: none; color: #8e9bb0; font-size: 1.4rem; cursor: pointer;">&times;</button>
+      </div>
+
+      <form id="editPostForm" style="display: flex; flex-direction: column; gap: 14px;">
+        <div>
+          <label style="font-size: 0.82rem; color: #94a3b8; font-weight: 700;">Judul Iklan</label>
+          <input type="text" id="editTitleInput" class="edit-input-field" required>
+        </div>
+
+        <div>
+          <label style="font-size: 0.82rem; color: #94a3b8; font-weight: 700;">Harga (Rp)</label>
+          <input type="text" id="editPriceInput" class="edit-input-field" inputmode="numeric" required>
+        </div>
+
+        <div>
+          <label style="font-size: 0.82rem; color: #94a3b8; font-weight: 700;">Status Penjualan</label>
+          <select id="editStatusSelect" class="edit-input-field" style="cursor: pointer;">
+            <option value="available">Tersedia (Available)</option>
+            <option value="hold">Sedang Hold Rekber</option>
+            <option value="sold">Terjual (Sold)</option>
+          </select>
+        </div>
+
+        <div>
+          <label style="font-size: 0.82rem; color: #94a3b8; font-weight: 700;">Spesifikasi & Deskripsi</label>
+          <textarea id="editDescInput" class="edit-input-field" rows="4" style="resize: vertical;" required></textarea>
+        </div>
+
+        <div style="display: flex; gap: 10px; margin-top: 6px;">
+          <button type="button" onclick="closeEditModal()" style="flex: 1; padding: 12px; border-radius: 10px; background: rgba(255,255,255,0.06); color: #fff; border: 1px solid var(--border-subtle); font-weight: 700; cursor: pointer;">Batal</button>
+          <button type="submit" id="btnSavePostEdit" style="flex: 1; padding: 12px; border-radius: 10px; background: var(--accent-volt); color: #000; border: none; font-weight: 800; cursor: pointer;">Simpan Perubahan</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="/js/supabase.js"></script>
   <script src="/js/navbar.js"></script>
 
   <script>
+    let currentPostData = null;
+    let currentUserSession = null;
+
     document.addEventListener("DOMContentLoaded", async () => {
       const urlParams = new URLSearchParams(window.location.search);
       const postId = urlParams.get("id");
@@ -919,6 +1046,10 @@
 
       try {
         if (!window.supabase) throw new Error("Supabase client belum siap.");
+
+        // AMBIL USER SESSION
+        const { data: { user } } = await window.supabase.auth.getUser();
+        currentUserSession = user;
 
         // QUERY POST & SELLER & BUYER
         const { data: post, error } = await window.supabase
@@ -944,6 +1075,11 @@
           .single();
 
         if (error || !post) throw new Error("Iklan tidak ditemukan atau sudah dihapus.");
+        currentPostData = post;
+
+        // VALIDASI KEPEMILIKAN AKUN (HANYA PEMILIK / ADMIN)
+        const isPostOwner = currentUserSession && (currentUserSession.id === post.seller_id);
+        const isUserAdmin = currentUserSession?.user_metadata?.role === 'admin' || post.seller?.role === 'admin' && currentUserSession?.id === post.seller_id;
 
         const isSold = post.status === "sold";
         const isHold = post.status === "hold";
@@ -1030,8 +1166,29 @@
           `;
         }
 
+        // BANNER EDIT (HANYA MUNCUL UNTUK PEMILIK/ADMIN)
+        let ownerBannerHtml = "";
+        if (isPostOwner || isUserAdmin) {
+          ownerBannerHtml = `
+            <div class="owner-action-banner">
+              <div style="display: flex; align-items: center; gap: 8px;">
+                <i class="fa-solid fa-user-shield" style="color: var(--accent-volt); font-size: 1.1rem;"></i>
+                <div>
+                  <strong style="display: block; font-size: 0.86rem; color: #fff;">Anda adalah Pemilik Iklan Ini</strong>
+                  <span style="font-size: 0.74rem; color: #8e9bb0;">Anda memiliki izin untuk mengedit atau memperbarui status akun.</span>
+                </div>
+              </div>
+              <button type="button" class="btn-open-edit-modal" onclick="openEditModal()">
+                <i class="fa-solid fa-pen-to-square"></i> Kelola Iklan
+              </button>
+            </div>
+          `;
+        }
+
         // RENDER HALAMAN
         mainEl.innerHTML = `
+          ${ownerBannerHtml}
+
           <div class="detail-grid">
             <!-- KOLOM KIRI -->
             <div style="width: 100%;">
@@ -1264,6 +1421,7 @@
 
         initLikeSystem(postId);
         setupCommentsAndBidding(postId, isSold || isHold);
+        setupEditModalHandlers(post);
 
       } catch (err) {
         console.error(err);
@@ -1277,6 +1435,74 @@
         `;
       }
     });
+
+    // PENGATURAN MODAL EDIT
+    window.openEditModal = () => {
+      if (!currentPostData) return;
+      document.getElementById("editTitleInput").value = currentPostData.post_title || "";
+      document.getElementById("editPriceInput").value = Number(currentPostData.price || 0).toLocaleString("id-ID");
+      document.getElementById("editStatusSelect").value = currentPostData.status || "available";
+      document.getElementById("editDescInput").value = currentPostData.description || "";
+      document.getElementById("editPostModal").classList.add("active");
+      document.body.style.overflow = "hidden";
+    };
+
+    window.closeEditModal = () => {
+      document.getElementById("editPostModal").classList.remove("active");
+      document.body.style.overflow = "auto";
+    };
+
+    function setupEditModalHandlers(post) {
+      const form = document.getElementById("editPostForm");
+      const priceInput = document.getElementById("editPriceInput");
+
+      priceInput.addEventListener("input", (e) => {
+        let rawVal = e.target.value.replace(/\D/g, "");
+        e.target.value = rawVal ? Number(rawVal).toLocaleString("id-ID") : "";
+      });
+
+      form.addEventListener("submit", async (e) => {
+        e.preventDefault();
+        
+        // Cek lagi session user saat ini
+        const { data: { user } } = await window.supabase.auth.getUser();
+        if (!user || (user.id !== post.seller_id && user.user_metadata?.role !== 'admin')) {
+          alert("Izin ditolak! Anda bukan pemilik akun ini.");
+          return;
+        }
+
+        const title = document.getElementById("editTitleInput").value.trim();
+        const priceNum = Number(priceInput.value.replace(/\./g, ""));
+        const status = document.getElementById("editStatusSelect").value;
+        const desc = document.getElementById("editDescInput").value.trim();
+
+        const btnSave = document.getElementById("btnSavePostEdit");
+        btnSave.disabled = true;
+        btnSave.innerText = "Menyimpan...";
+
+        const { error: updErr } = await window.supabase
+          .from("market_posts")
+          .update({
+            post_title: title,
+            price: priceNum,
+            status: status,
+            description: desc,
+            updated_at: new Date().toISOString()
+          })
+          .eq("id", post.id)
+          .eq("seller_id", user.id); // Proteksi level database
+
+        if (updErr) {
+          alert("Gagal menyimpan perubahan: " + updErr.message);
+          btnSave.disabled = false;
+          btnSave.innerText = "Simpan Perubahan";
+          return;
+        }
+
+        alert("Perubahan postingan berhasil disimpan!");
+        window.location.reload();
+      });
+    }
 
     // LIGHTBOX FUNCTIONS
     window.openLightbox = () => {
@@ -1392,7 +1618,6 @@
       let allComments = [];
       let displayLimit = 8;
 
-      // ANTI TERHALANG KEYBOARD DI MOBILE
       if (textInput) {
         textInput.addEventListener("focus", () => {
           setTimeout(() => {
@@ -1414,7 +1639,6 @@
         });
       }
 
-      // CHIP TOGGLE NEGO RESMI
       if (checkOffer && offerChip && offerContainer) {
         checkOffer.addEventListener("change", () => {
           if (checkOffer.checked) {
