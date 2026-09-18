@@ -514,12 +514,12 @@
       flex-shrink: 0;
     }
 
-    /* KOMENTAR */
+    /* KOMENTAR LIST */
     .comment-list {
       display: flex;
       flex-direction: column;
       gap: 12px;
-      margin-top: 14px;
+      margin-top: 16px;
       width: 100%;
     }
 
@@ -589,114 +589,197 @@
       color: var(--accent-volt);
     }
 
-    /* TOOLBAR EMOTIKON BEBAS OVERFLOW */
-    .emoticon-toolbar {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      margin: 8px 0;
-      overflow-x: auto;
-      padding-bottom: 4px;
+    /* UNIFIED MODERN COMMENT COMPOSER */
+    .comment-composer {
+      background: var(--card-inner);
+      border: 1px solid var(--border-subtle);
+      border-radius: 16px;
+      overflow: hidden;
+      transition: all 0.25s ease;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
       width: 100%;
-      scrollbar-width: none;
-      -webkit-overflow-scrolling: touch;
     }
 
-    .emoticon-toolbar::-webkit-scrollbar {
+    .comment-composer:focus-within {
+      border-color: rgba(204, 255, 0, 0.4);
+      box-shadow: 0 0 20px rgba(204, 255, 0, 0.12);
+    }
+
+    .comment-composer textarea {
+      width: 100% !important;
+      min-height: 85px;
+      background: transparent;
+      border: none;
+      padding: 14px 16px 8px;
+      color: #f1f5f9;
+      font-family: inherit;
+      font-size: 16px !important; /* Mencegah auto-zoom di mobile */
+      line-height: 1.5;
+      outline: none;
+      resize: none;
+      box-sizing: border-box;
+      display: block;
+    }
+
+    .comment-composer textarea::placeholder {
+      color: #64748b;
+      font-size: 0.9rem;
+    }
+
+    .composer-footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 8px 12px 12px;
+      gap: 10px;
+      border-top: 1px solid rgba(255, 255, 255, 0.04);
+      flex-wrap: wrap;
+    }
+
+    .quick-emojis {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      overflow-x: auto;
+      scrollbar-width: none;
+      -webkit-overflow-scrolling: touch;
+      padding: 2px 0;
+    }
+
+    .quick-emojis::-webkit-scrollbar {
       display: none;
     }
 
-    .btn-emot-pill {
-      background: rgba(255, 255, 255, 0.05);
-      border: 1px solid var(--border-subtle);
-      border-radius: 20px;
-      padding: 6px 12px;
+    .btn-emoji-quick {
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 10px;
+      padding: 6px 10px;
       font-size: 1rem;
       cursor: pointer;
-      transition: background 0.2s, transform 0.1s;
+      transition: all 0.15s ease;
       line-height: 1;
       flex-shrink: 0;
     }
 
-    .btn-emot-pill:hover, .btn-emot-pill:active {
-      background: rgba(204, 255, 0, 0.15);
-      border-color: rgba(204, 255, 0, 0.4);
-      transform: scale(1.1);
+    .btn-emoji-quick:hover, .btn-emoji-quick:active {
+      background: rgba(204, 255, 0, 0.12);
+      border-color: rgba(204, 255, 0, 0.3);
+      transform: translateY(-1px);
     }
 
-    /* TEXTAREA & INPUT FIX ANTI-MENGECIL DI MOBILE */
-    #commentTextInput {
-      width: 100% !important;
-      min-height: 90px;
-      background: var(--card-inner);
-      border: 1.5px solid var(--border-subtle);
-      border-radius: 12px;
-      padding: 14px;
-      color: #fff;
-      font-family: inherit;
-      font-size: 16px !important; /* 16px mencegah browser iOS & Android auto-zoom / mengecil */
-      line-height: 1.5;
-      outline: none;
-      box-sizing: border-box;
-      resize: none;
-      transition: border-color 0.2s ease, box-shadow 0.2s ease;
-    }
-
-    #commentTextInput:focus {
-      border-color: var(--accent-volt);
-      box-shadow: 0 0 12px rgba(204, 255, 0, 0.2);
-    }
-
-    .comment-action-bar {
+    /* NEGO CHIP & SUBMIT ROW */
+    .bidding-control-row {
       display: flex;
       flex-direction: column;
-      gap: 12px;
-      margin-top: 8px;
+      gap: 10px;
+      margin-top: 10px;
       width: 100%;
     }
 
-    .comment-action-top {
-      display: flex;
+    .toggle-offer-chip {
+      display: inline-flex;
       align-items: center;
-      justify-content: space-between;
-      flex-wrap: wrap;
-      gap: 10px;
+      gap: 8px;
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      padding: 8px 14px;
+      border-radius: 12px;
+      font-size: 0.84rem;
+      font-weight: 700;
+      color: #94a3b8;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      user-select: none;
+      width: fit-content;
     }
 
-    #offerAmountInput {
+    .toggle-offer-chip input {
+      display: none;
+    }
+
+    .toggle-offer-chip.active {
+      background: rgba(204, 255, 0, 0.1);
+      border-color: var(--accent-volt);
+      color: var(--accent-volt);
+    }
+
+    .offer-input-wrap {
+      display: none;
+      position: relative;
+      width: 100%;
+    }
+
+    .offer-input-wrap span {
+      position: absolute;
+      left: 14px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--accent-volt);
+      font-weight: 800;
+      font-size: 0.9rem;
+    }
+
+    .offer-input-wrap input {
       width: 100% !important;
       background: var(--card-inner);
-      border: 1.5px solid rgba(204, 255, 0, 0.4);
-      border-radius: 10px;
-      padding: 12px;
-      color: #fff;
+      border: 1px solid rgba(204, 255, 0, 0.4);
+      border-radius: 12px;
+      padding: 12px 14px 12px 42px;
+      color: #ffffff;
       font-size: 16px !important;
-      font-weight: 700;
+      font-weight: 800;
       outline: none;
       box-sizing: border-box;
     }
 
-    #offerAmountInput:focus {
+    .offer-input-wrap input:focus {
       border-color: var(--accent-volt);
       box-shadow: 0 0 12px rgba(204, 255, 0, 0.25);
     }
 
-    #btnPostComment {
-      width: 100%;
-      background: #e63946;
-      color: #fff;
+    .btn-submit-comment {
+      background: linear-gradient(135deg, #f43f5e, #e11d48);
+      color: #ffffff;
       border: none;
-      padding: 14px;
-      border-radius: 12px;
+      padding: 10px 20px;
+      border-radius: 10px;
       font-weight: 800;
-      font-size: 1rem;
+      font-size: 0.88rem;
       cursor: pointer;
-      transition: transform 0.1s, background 0.2s;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      box-shadow: 0 4px 14px rgba(225, 29, 72, 0.3);
+      transition: all 0.2s ease;
     }
 
-    #btnPostComment:active {
-      transform: scale(0.98);
-      background: #d62828;
+    .btn-submit-comment:hover {
+      background: linear-gradient(135deg, #fb7185, #e11d48);
+      transform: translateY(-1px);
+    }
+
+    .btn-submit-comment:active {
+      transform: scale(0.97);
+    }
+
+    @media (max-width: 500px) {
+      .composer-footer {
+        flex-direction: column;
+        align-items: stretch;
+      }
+      .quick-emojis {
+        justify-content: flex-start;
+      }
+      .btn-submit-comment {
+        width: 100%;
+        justify-content: center;
+        padding: 12px;
+      }
+      .toggle-offer-chip {
+        width: 100%;
+        justify-content: center;
+      }
     }
 
     /* FULLSCREEN IMAGE LIGHTBOX MODAL */
@@ -1015,36 +1098,42 @@
                   </div>
                 ` : `
                   <form id="commentForm" style="display: flex; flex-direction: column; width: 100%;">
-                    <textarea id="commentTextInput" class="form-control" rows="3" placeholder="Tulis komentar atau ajukan penawaran harga..." required></textarea>
-
-                    <div class="emoticon-toolbar">
-                      <button type="button" class="btn-emot-pill" onclick="appendEmot('🔥')">🔥</button>
-                      <button type="button" class="btn-emot-pill" onclick="appendEmot('🚀')">🚀</button>
-                      <button type="button" class="btn-emot-pill" onclick="appendEmot('💎')">💎</button>
-                      <button type="button" class="btn-emot-pill" onclick="appendEmot('👀')">👀</button>
-                      <button type="button" class="btn-emot-pill" onclick="appendEmot('🤝')">🤝</button>
-                      <button type="button" class="btn-emot-pill" onclick="appendEmot('👍')">👍</button>
-                    </div>
-                    
-                    <div class="comment-action-bar">
-                      <div class="comment-action-top">
-                        <label style="display: flex; align-items: center; gap: 8px; font-size: 0.88rem; color: var(--accent-volt); cursor: pointer; user-select: none;">
-                          <input type="checkbox" id="checkIsOffer" style="accent-color: var(--accent-volt); width: 18px; height: 18px;">
-                          Kirim sebagai tawaran harga resmi
-                        </label>
-                      </div>
-
-                      <input 
-                        type="text" 
-                        id="offerAmountInput" 
-                        placeholder="Masukkan nominal tawaran (Rp)..." 
-                        inputmode="numeric" 
-                        style="display: none;"
-                      >
+                    <div class="comment-composer">
+                      <textarea id="commentTextInput" rows="3" placeholder="Tanyakan spesifikasi akun atau ajukan tawaran..." required></textarea>
                       
-                      <button type="submit" id="btnPostComment">
-                        Kirim Komentar / Penawaran
-                      </button>
+                      <div class="composer-footer">
+                        <div class="quick-emojis">
+                          <button type="button" class="btn-emoji-quick" onclick="appendEmot('🔥')">🔥</button>
+                          <button type="button" class="btn-emoji-quick" onclick="appendEmot('🚀')">🚀</button>
+                          <button type="button" class="btn-emoji-quick" onclick="appendEmot('💎')">💎</button>
+                          <button type="button" class="btn-emoji-quick" onclick="appendEmot('👀')">👀</button>
+                          <button type="button" class="btn-emoji-quick" onclick="appendEmot('🤝')">🤝</button>
+                          <button type="button" class="btn-emoji-quick" onclick="appendEmot('👍')">👍</button>
+                        </div>
+
+                        <button type="submit" id="btnPostComment" class="btn-submit-comment">
+                          <span>Kirim</span>
+                          <i class="fa-solid fa-paper-plane" style="font-size: 0.8rem;"></i>
+                        </button>
+                      </div>
+                    </div>
+
+                    <div class="bidding-control-row">
+                      <label class="toggle-offer-chip" id="offerChipLabel">
+                        <input type="checkbox" id="checkIsOffer">
+                        <i class="fa-solid fa-tag"></i>
+                        <span>Sertakan Tawaran Resmi (Nego)</span>
+                      </label>
+
+                      <div class="offer-input-wrap" id="offerInputContainer">
+                        <span>Rp</span>
+                        <input 
+                          type="text" 
+                          id="offerAmountInput" 
+                          placeholder="0" 
+                          inputmode="numeric" 
+                        >
+                      </div>
                     </div>
                   </form>
                 `}
@@ -1297,11 +1386,13 @@
       const textInput = document.getElementById("commentTextInput");
       const checkOffer = document.getElementById("checkIsOffer");
       const offerInput = document.getElementById("offerAmountInput");
+      const offerChip = document.getElementById("offerChipLabel");
+      const offerContainer = document.getElementById("offerInputContainer");
 
       let allComments = [];
       let displayLimit = 8;
 
-      // PENGATURAN FOKUS ANTI TERHALANG KEYBOARD DI MOBILE
+      // ANTI TERHALANG KEYBOARD DI MOBILE
       if (textInput) {
         textInput.addEventListener("focus", () => {
           setTimeout(() => {
@@ -1323,11 +1414,17 @@
         });
       }
 
-      if (checkOffer) {
+      // CHIP TOGGLE NEGO RESMI
+      if (checkOffer && offerChip && offerContainer) {
         checkOffer.addEventListener("change", () => {
-          offerInput.style.display = checkOffer.checked ? "block" : "none";
           if (checkOffer.checked) {
+            offerChip.classList.add("active");
+            offerContainer.style.display = "block";
             offerInput.focus();
+          } else {
+            offerChip.classList.remove("active");
+            offerContainer.style.display = "none";
+            offerInput.value = "";
           }
         });
       }
@@ -1464,7 +1561,8 @@
           textInput.value = "";
           if (offerInput) offerInput.value = "";
           if (checkOffer) checkOffer.checked = false;
-          if (offerInput) offerInput.style.display = "none";
+          if (offerChip) offerChip.classList.remove("active");
+          if (offerContainer) offerContainer.style.display = "none";
           
           fetchAndRenderComments();
         });
