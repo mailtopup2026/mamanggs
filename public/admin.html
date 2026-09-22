@@ -405,7 +405,7 @@
         </div>
       </section>
 
-      <!-- TAB 2: KHUSUS MANUAL VIA ID / SELLER TEMAN (BARU) -->
+      <!-- TAB 2: KHUSUS MANUAL VIA ID / SELLER TEMAN (LENGKAP DENGAN FILTER & EDIT) -->
       <section id="manualIdTab" class="tab-content">
         <div class="section-card">
           <div class="table-header-bar" style="margin-bottom: 20px;">
@@ -413,7 +413,11 @@
               <h3><i class="fa-solid fa-id-card-clip" style="color: #ccff00;"></i> Katalog Produk Manual (Via User ID)</h3>
               <p style="margin: 4px 0 0; font-size: 0.8rem; color: #94a3b8;">Produk murah supplier teman (Whiteout Survival, dll.) tanpa proses login akun.</p>
             </div>
-            <div class="filter-actions">
+            <div class="filter-actions" style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap;">
+              <!-- FILTER PER-GAME -->
+              <select id="filterManualGameSelect" class="admin-select" style="min-width: 200px; border-color: rgba(204, 255, 0, 0.4); color: #ccff00; font-weight: 700;">
+                <option value="ALL">🎮 Semua Game Manual</option>
+              </select>
               <button class="btn-submit-action" style="width: auto; margin: 0; padding: 9px 18px; font-size: 0.85rem; background: #ccff00; color: #000; font-weight: 800;" onclick="openManualIdModal()">
                 <i class="fa-solid fa-plus"></i> Tambah Game & Paket Manual
               </button>
@@ -512,6 +516,50 @@
         </div>
       </section>
     </main>
+  </div>
+
+  <!-- MODAL EDIT SATUAN PAKET MANUAL & FOTO GAME -->
+  <div class="modal-backdrop" id="editManualProductModal">
+    <div class="modal-card" style="max-width: 480px;">
+      <div class="modal-header">
+        <h3 style="color: #ccff00;"><i class="fa-solid fa-pen-to-square"></i> Edit Paket & Cover Game</h3>
+        <button class="btn-close-modal" onclick="closeEditManualModal()"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+      <div class="modal-body">
+        <input type="hidden" id="editManualProdId">
+        <input type="hidden" id="editManualProdSlug">
+
+        <div class="form-group" style="margin-bottom: 12px;">
+          <label style="font-size: 0.8rem; color: #94a3b8;">Nama Game</label>
+          <input type="text" id="editManualGameName" class="admin-input" style="width: 100%; box-sizing: border-box; margin-top: 6px;">
+        </div>
+
+        <div class="form-group" style="margin-bottom: 12px;">
+          <label style="font-size: 0.8rem; color: #94a3b8;">URL Cover / Poster Game</label>
+          <input type="url" id="editManualGameImg" placeholder="https://... link gambar poster" class="admin-input" style="width: 100%; box-sizing: border-box; margin-top: 6px;">
+        </div>
+
+        <div class="form-group" style="margin-bottom: 12px;">
+          <label style="font-size: 0.8rem; color: #94a3b8;">Nama Paket / Nominal</label>
+          <input type="text" id="editManualPackageName" class="admin-input" style="width: 100%; box-sizing: border-box; margin-top: 6px;">
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 14px;">
+          <div class="form-group">
+            <label style="font-size: 0.8rem; color: #94a3b8;">Modal Supplier (Rp)</label>
+            <input type="text" id="editManualModalPrice" class="admin-input" oninput="formatRupiahInput(this)" style="width: 100%; box-sizing: border-box; margin-top: 6px;">
+          </div>
+          <div class="form-group">
+            <label style="font-size: 0.8rem; color: #94a3b8;">Harga Jual Web (Rp)</label>
+            <input type="text" id="editManualSellPrice" class="admin-input" oninput="formatRupiahInput(this)" style="width: 100%; box-sizing: border-box; margin-top: 6px;">
+          </div>
+        </div>
+
+        <button type="button" id="btnSubmitEditManual" class="btn-submit-action" style="background: #ccff00; color: #000; font-weight: 800; width: 100%; justify-content: center; padding: 12px;" onclick="saveEditManualProduct()">
+          <i class="fa-solid fa-floppy-disk"></i> Simpan Perubahan
+        </button>
+      </div>
+    </div>
   </div>
 
   <!-- MODAL INPUT GAME & MULTI-PAKET MANUAL VIA ID -->
@@ -768,15 +816,17 @@
   <script src="/js/whatsapp-notify.js"></script>
   <script src="/js/admin.js"></script>
 
-  <!-- SKRIP LOGIKA MODAL MANUAL VIA ID (MULTI-ROW + FORMAT TITIK) -->
+  <!-- SKRIP LOGIKA MANUAL VIA ID LENGKAP: MULTI-ROW, FILTER GAME, & EDIT PRODUK -->
   <script>
-    // Format ribuan titik secara real-time
+    let globalManualIdProducts = [];
+
+    // Format ribuan titik real-time
     function formatRupiahInput(input) {
       let value = input.value.replace(/\D/g, "");
       input.value = value ? Number(value).toLocaleString("id-ID") : "";
     }
 
-    // Helper ambil angka murni dari input ber-titik
+    // Helper ambil integer bersih
     function getCleanNumber(str) {
       return Number(String(str || "0").replace(/\./g, "").replace(/[^0-9]/g, "")) || 0;
     }
@@ -840,7 +890,7 @@
       if (modal) modal.style.display = "none";
     }
 
-    // Auto-generate slug ketika nama game diketik
+    // Auto slug generator
     document.getElementById("manualIdGameName")?.addEventListener("input", (e) => {
       const slugInput = document.getElementById("manualIdGameSlug");
       if (slugInput) {
@@ -848,6 +898,7 @@
       }
     });
 
+    // Simpan Paket Multi-Row Baru
     async function submitManualIdProduct() {
       const gameName = document.getElementById("manualIdGameName")?.value.trim();
       const gameSlug = document.getElementById("manualIdGameSlug")?.value.trim();
@@ -874,11 +925,7 @@
         const sell = getCleanNumber(row.querySelector(".pkg-sell")?.value);
 
         if (name && sell > 0) {
-          packages.push({
-            name,
-            modal,
-            sell
-          });
+          packages.push({ name, modal, sell });
         }
       });
 
@@ -901,7 +948,7 @@
       try {
         if (!window.supabase) throw new Error("Koneksi Supabase belum siap.");
 
-        // 1. Simpan Game ke katalog game
+        // Simpan Cover Game
         await window.supabase.from("games").upsert({
           name: gameName,
           slug: gameSlug,
@@ -909,7 +956,7 @@
           is_active: true
         }, { onConflict: "slug" });
 
-        // 2. Simpan paket ke TABEL MANDIRI: manual_id_products
+        // Simpan Paket
         const productsPayload = packages.map(pkg => ({
           game_name: gameName,
           game_slug: gameSlug,
@@ -929,7 +976,7 @@
         Swal.fire({
           icon: "success",
           title: "Berhasil Disimpan!",
-          text: `${packages.length} paket untuk game ${gameName} berhasil ditambahkan ke katalog manual ID.`,
+          text: `${packages.length} paket untuk game ${gameName} berhasil ditambahkan.`,
           background: "#0f141f",
           color: "#fff",
           confirmButtonColor: "#ccff00"
@@ -937,15 +984,12 @@
 
         closeManualIdModal();
 
-        // Reset form
         document.getElementById("manualIdGameName").value = "";
         document.getElementById("manualIdGameSlug").value = "";
         document.getElementById("manualIdGameImg").value = "";
         document.getElementById("manualPackagesContainer").innerHTML = "";
 
-        if (typeof window.loadManualIdProducts === "function") {
-          window.loadManualIdProducts();
-        }
+        loadManualIdProducts();
       } catch (err) {
         console.error(err);
         Swal.fire({
@@ -961,6 +1005,255 @@
         btnSave.innerHTML = '<i class="fa-solid fa-floppy-disk"></i> Simpan & Tayangkan di Katalog';
       }
     }
+
+    // ========================================================
+    // LOGIKA RENDER TABEL & FILTER DROPDOWN PER-GAME
+    // ========================================================
+    async function loadManualIdProducts() {
+      const tbody = document.getElementById("manualIdTableBody");
+      const filterSelect = document.getElementById("filterManualGameSelect");
+      if (!tbody || !window.supabase) return;
+
+      tbody.innerHTML = `<tr><td colspan="7" style="text-align: center; padding: 25px;"><i class="fa-solid fa-spinner fa-spin"></i> Memuat katalog produk...</td></tr>`;
+
+      try {
+        const { data, error } = await window.supabase
+          .from("manual_id_products")
+          .select("*")
+          .order("game_name", { ascending: true })
+          .order("price_sell", { ascending: true });
+
+        if (error) throw error;
+        globalManualIdProducts = data || [];
+
+        // Isi Opsi Filter Dropdown Game
+        if (filterSelect) {
+          const currentFilter = filterSelect.value || "ALL";
+          const uniqueGames = [...new Set(globalManualIdProducts.map(p => p.game_name))];
+          filterSelect.innerHTML = `<option value="ALL">🎮 Semua Game Manual (${globalManualIdProducts.length} Paket)</option>` +
+            uniqueGames.map(g => `<option value="${g}">${g}</option>`).join("");
+          filterSelect.value = currentFilter;
+        }
+
+        renderFilteredManualTable();
+      } catch (err) {
+        console.error("Gagal load produk manual ID:", err);
+        tbody.innerHTML = `<tr><td colspan="7" style="text-align: center; color: #ef4444; padding: 25px;">Gagal memuat produk: ${err.message}</td></tr>`;
+      }
+    }
+
+    function renderFilteredManualTable() {
+      const tbody = document.getElementById("manualIdTableBody");
+      const filterSelect = document.getElementById("filterManualGameSelect");
+      if (!tbody) return;
+
+      const selectedGame = filterSelect ? filterSelect.value : "ALL";
+      const displayData = selectedGame === "ALL" 
+        ? globalManualIdProducts 
+        : globalManualIdProducts.filter(p => p.game_name === selectedGame);
+
+      if (displayData.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="7" style="text-align: center; padding: 25px; color: #94a3b8;">Tidak ada paket produk manual.</td></tr>`;
+        return;
+      }
+
+      tbody.innerHTML = displayData.map(item => {
+        const modal = Number(item.price_modal || 0);
+        const sell = Number(item.price_sell || 0);
+        const profit = sell - modal;
+
+        return `
+          <tr>
+            <td style="color: #ccff00; font-weight: 800;">${item.game_name}</td>
+            <td style="font-weight: 600; color: #fff;">${item.package_name}</td>
+            <td>Rp ${modal.toLocaleString("id-ID")}</td>
+            <td style="color: #38bdf8; font-weight: 700;">Rp ${sell.toLocaleString("id-ID")}</td>
+            <td style="color: ${profit >= 0 ? '#10b981' : '#ef4444'}; font-weight: 700;">
+              ${profit >= 0 ? '+' : ''}Rp ${profit.toLocaleString("id-ID")}
+            </td>
+            <td>
+              <span style="display: inline-block; padding: 3px 8px; border-radius: 6px; font-size: 0.75rem; font-weight: 800; background: ${item.is_active ? 'rgba(16,185,129,0.15)' : 'rgba(239,68,68,0.15)'}; color: ${item.is_active ? '#10b981' : '#ef4444'}; border: 1px solid ${item.is_active ? 'rgba(16,185,129,0.3)' : 'rgba(239,68,68,0.3)'};">
+                ${item.is_active ? 'ON' : 'OFF'}
+              </span>
+            </td>
+            <td>
+              <div style="display: flex; gap: 6px;">
+                <button onclick="toggleManualProductStatus('${item.id}', ${item.is_active})" style="background: #111827; border: 1px solid rgba(255,255,255,0.1); border-radius: 6px; width: 32px; height: 32px; color: ${item.is_active ? '#38bdf8' : '#94a3b8'}; cursor: pointer;" title="Toggle ON/OFF">
+                  <i class="fa-solid fa-eye${item.is_active ? '' : '-slash'}"></i>
+                </button>
+                <button onclick="openEditManualModal('${item.id}')" style="background: rgba(250, 204, 21, 0.15); border: 1px solid #facc15; border-radius: 6px; width: 32px; height: 32px; color: #facc15; cursor: pointer;" title="Edit Paket / Foto">
+                  <i class="fa-solid fa-pen-to-square"></i>
+                </button>
+                <button onclick="deleteManualProduct('${item.id}')" style="background: rgba(239, 68, 68, 0.15); border: 1px solid #ef4444; border-radius: 6px; width: 32px; height: 32px; color: #ef4444; cursor: pointer;" title="Hapus Paket">
+                  <i class="fa-solid fa-trash"></i>
+                </button>
+              </div>
+            </td>
+          </tr>
+        `;
+      }).join("");
+    }
+
+    // Event listener saat filter game dipilih
+    document.getElementById("filterManualGameSelect")?.addEventListener("change", renderFilteredManualTable);
+
+    // ========================================================
+    // MODAL EDIT DAN UPDATE KE SUPABASE
+    // ========================================================
+    window.openEditManualModal = function(id) {
+      const item = globalManualIdProducts.find(p => String(p.id) === String(id));
+      if (!item) return;
+
+      document.getElementById("editManualProdId").value = item.id;
+      document.getElementById("editManualProdSlug").value = item.game_slug || "";
+      document.getElementById("editManualGameName").value = item.game_name || "";
+      document.getElementById("editManualGameImg").value = item.game_image || "";
+      document.getElementById("editManualPackageName").value = item.package_name || "";
+      
+      const modalInput = document.getElementById("editManualModalPrice");
+      const sellInput = document.getElementById("editManualSellPrice");
+      modalInput.value = item.price_modal ? Number(item.price_modal).toLocaleString("id-ID") : "";
+      sellInput.value = item.price_sell ? Number(item.price_sell).toLocaleString("id-ID") : "";
+
+      const modal = document.getElementById("editManualProductModal");
+      if (modal) modal.style.display = "flex";
+    };
+
+    window.closeEditManualModal = function() {
+      const modal = document.getElementById("editManualProductModal");
+      if (modal) modal.style.display = "none";
+    };
+
+    window.saveEditManualProduct = async function() {
+      const id = document.getElementById("editManualProdId").value;
+      const gameSlug = document.getElementById("editManualProdSlug").value;
+      const gameName = document.getElementById("editManualGameName").value.trim();
+      const gameImg = document.getElementById("editManualGameImg").value.trim();
+      const packageName = document.getElementById("editManualPackageName").value.trim();
+      const modalPrice = getCleanNumber(document.getElementById("editManualModalPrice").value);
+      const sellPrice = getCleanNumber(document.getElementById("editManualSellPrice").value);
+
+      if (!gameName || !packageName || sellPrice <= 0) {
+        Swal.fire({
+          icon: "warning",
+          title: "Form Belum Lengkap",
+          text: "Nama game, paket, dan harga jual web wajib diisi!",
+          background: "#0f141f",
+          color: "#fff",
+          confirmButtonColor: "#ccff00"
+        });
+        return;
+      }
+
+      const btn = document.getElementById("btnSubmitEditManual");
+      btn.disabled = true;
+      btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Menyimpan...';
+
+      try {
+        // 1. Update paket di manual_id_products
+        const { error: errUpdate } = await window.supabase
+          .from("manual_id_products")
+          .update({
+            game_name: gameName,
+            game_image: gameImg || "/assets/images/default-game.jpg",
+            package_name: packageName,
+            price_modal: modalPrice,
+            price_sell: sellPrice
+          })
+          .eq("id", id);
+
+        if (errUpdate) throw errUpdate;
+
+        // 2. Jika cover atau nama game diganti, sinkronkan ke katalog utama games
+        if (gameSlug) {
+          await window.supabase
+            .from("games")
+            .update({
+              name: gameName,
+              image_url: gameImg || "/assets/images/default-game.jpg"
+            })
+            .eq("slug", gameSlug);
+        }
+
+        Swal.fire({
+          icon: "success",
+          title: "Berhasil Diperbarui!",
+          text: "Data paket dan cover game telah diperbarui.",
+          background: "#0f141f",
+          color: "#fff",
+          confirmButtonColor: "#ccff00"
+        });
+
+        closeEditManualModal();
+        loadManualIdProducts();
+      } catch (err) {
+        console.error(err);
+        Swal.fire({
+          icon: "error",
+          title: "Gagal Update",
+          text: err.message,
+          background: "#0f141f",
+          color: "#fff",
+          confirmButtonColor: "#ccff00"
+        });
+      } finally {
+        btn.disabled = false;
+        btn.innerHTML = '<i class="fa-solid fa-floppy-disk"></i> Simpan Perubahan';
+      }
+    };
+
+    // Toggle ON/OFF
+    window.toggleManualProductStatus = async function(id, currentStatus) {
+      try {
+        const { error } = await window.supabase
+          .from("manual_id_products")
+          .update({ is_active: !currentStatus })
+          .eq("id", id);
+
+        if (error) throw error;
+        loadManualIdProducts();
+      } catch (err) {
+        alert("Gagal ubah status: " + err.message);
+      }
+    };
+
+    // Hapus Produk
+    window.deleteManualProduct = async function(id) {
+      const confirm = await Swal.fire({
+        icon: "warning",
+        title: "Hapus Paket Ini?",
+        text: "Paket ini tidak akan muncul lagi di halaman order.",
+        showCancelButton: true,
+        confirmButtonText: "Ya, Hapus",
+        cancelButtonText: "Batal",
+        confirmButtonColor: "#ef4444",
+        cancelButtonColor: "#334155",
+        background: "#0f141f",
+        color: "#fff"
+      });
+
+      if (confirm.isConfirmed) {
+        try {
+          const { error } = await window.supabase
+            .from("manual_id_products")
+            .delete()
+            .eq("id", id);
+
+          if (error) throw error;
+          loadManualIdProducts();
+        } catch (err) {
+          alert("Gagal menghapus: " + err.message);
+        }
+      }
+    };
+
+    // Jalankan auto-load saat tab dibuka atau pertama kali load
+    window.addEventListener("DOMContentLoaded", () => {
+      setTimeout(loadManualIdProducts, 600);
+      document.querySelector('[data-tab="manualIdTab"]')?.addEventListener("click", () => {
+        setTimeout(loadManualIdProducts, 100);
+      });
+    });
   </script>
 </body>
 </html>
