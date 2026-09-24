@@ -86,9 +86,10 @@
       padding: 0 16px;
     }
 
+    /* GRID UTAMA (DILENGKAPI minmax AGAR ANTI JEBOL/OVERFLOW) */
     .detail-grid {
       display: grid;
-      grid-template-columns: 1.15fr 0.85fr;
+      grid-template-columns: minmax(0, 1.15fr) minmax(0, 0.85fr);
       gap: 24px;
       align-items: start;
       width: 100%;
@@ -100,7 +101,7 @@
         padding: 0 12px;
       }
       .detail-grid {
-        grid-template-columns: 100%;
+        grid-template-columns: minmax(0, 1fr);
         gap: 16px;
       }
     }
@@ -113,6 +114,8 @@
       box-shadow: 0 16px 36px rgba(0, 0, 0, 0.5);
       margin-bottom: 20px;
       width: 100%;
+      max-width: 100%;
+      min-width: 0; /* Cegah pembungkus ikut melar */
       overflow: hidden;
     }
 
@@ -279,14 +282,29 @@
       box-shadow: 0 4px 14px rgba(239, 68, 68, 0.4);
     }
 
+    /* DERETAN THUMBNAIL FOTO: KUNCI AGAR TIDAK MENDESAK LAYAR */
     .thumb-strip {
       display: flex;
       gap: 10px;
       overflow-x: auto;
+      overflow-y: hidden;
+      white-space: nowrap;
       margin-top: 12px;
-      padding-bottom: 6px;
+      padding-bottom: 8px;
       scrollbar-width: thin;
       width: 100%;
+      max-width: 100%;
+      min-width: 0; /* KUNCI ANTI OVERFLOW */
+      -webkit-overflow-scrolling: touch;
+    }
+
+    .thumb-strip::-webkit-scrollbar {
+      height: 6px;
+    }
+
+    .thumb-strip::-webkit-scrollbar-thumb {
+      background: rgba(255, 255, 255, 0.2);
+      border-radius: 4px;
     }
 
     .thumb-btn {
@@ -1267,7 +1285,7 @@
 
           <div class="detail-grid">
             <!-- KOLOM KIRI -->
-            <div style="width: 100%;">
+            <div style="width: 100%; min-width: 0;">
               <div class="card-box">
                 <div class="main-gallery-view" onclick="openLightbox()">
                   ${isSold ? '<div class="watermark-overlay-sold">TERJUAL</div>' : ''}
@@ -1391,7 +1409,7 @@
             </div>
 
             <!-- KOLOM KANAN -->
-            <div style="width: 100%;">
+            <div style="width: 100%; min-width: 0;">
               <div class="card-box desktop-rekber-card">
                 <span class="badge-game-tag">${post.game_title}</span>
                 <h1 style="font-size: 1.4rem; font-weight: 900; line-height: 1.35; margin: 0 0 8px; color: #ffffff; word-break: break-word;">${post.post_title}</h1>
