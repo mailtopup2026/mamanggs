@@ -60,7 +60,9 @@ Langkah kerja:
 2. Tema warna: **belum dipilih**. Rizki mau lihat dulu di **kanvas Design**.
 3. Fitur lama **tetap dipakai semua**: Saldo MGS (deposit), FJB Akun, Blog, Leaderboard, Login/daftar member.
    Catatan: deposit Saldo MGS sekarang juga manual (QRIS/transfer + bukti, admin yang menyetujui), bukan lewat DOKU.
-4. **Frost Star Whiteout Survival juga via login** (pelanggan sudah terbiasa). Jadi **semua pesanan via login**, tidak ada top up pakai ID.
+4. **Frost Star Whiteout Survival TIDAK via login**, cukup pakai **ID pemain**.
+   Paket Whiteout Survival lainnya dan **semua game lain via login** (pelanggan sudah terbiasa login).
+   Jadi form order punya 2 jenis: **via ID** (khusus Frost Star) dan **via login**.
    Kalau bayar pakai Saldo MGS, pesanan langsung masuk antrean admin tanpa upload bukti.
 
 ## Langkah berikutnya
