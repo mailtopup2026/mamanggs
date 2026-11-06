@@ -55,10 +55,15 @@ Langkah kerja:
 3. Gambar desain di kanvas Design: halaman utama, order, bayar, admin pesanan.
 4. Halaman admin: kelola game & paket + harga, ganti QRIS & rekening, kelola pesanan.
 
-## Pertanyaan yang BELUM dijawab Rizki
-1. Rencana di atas oke?
-2. Tema warna: **Candy Arcade** (pastel permen), **Sunny Pop** (kuning-oranye ceria), atau **Clay 3D** (efek tanah liat empuk)? Hijau stabilo lama bisa jadi aksen.
-3. Fitur lama mana yang tetap dipakai: Saldo MGS (deposit), FJB Akun, Blog, Leaderboard, Login/daftar member? (Opsi simpel: toko + cek pesanan saja, tanpa akun.)
-4. Frost Star Whiteout Survival cukup pakai ID pemain, atau perlu login ke akun pembeli?
+## Jawaban Rizki (6 Nov 2026)
+1. **Rencana di atas: OKE, disetujui.**
+2. Tema warna: **belum dipilih**. Rizki mau lihat dulu di **kanvas Design**.
+3. Fitur lama **tetap dipakai semua**: Saldo MGS (deposit), FJB Akun, Blog, Leaderboard, Login/daftar member.
+   Catatan: deposit Saldo MGS sekarang juga manual (QRIS/transfer + bukti, admin yang menyetujui), bukan lewat DOKU.
+4. **Frost Star Whiteout Survival juga via login** (pelanggan sudah terbiasa). Jadi **semua pesanan via login**, tidak ada top up pakai ID.
+   Kalau bayar pakai Saldo MGS, pesanan langsung masuk antrean admin tanpa upload bukti.
 
-**Mulai dari menanyakan 4 hal di atas.** Jangan ubah kode sebelum Rizki setuju.
+## Langkah berikutnya
+1. Buat **kanvas Design** berisi 3 pilihan tema (Candy Arcade, Sunny Pop, Clay 3D) untuk halaman utama, supaya Rizki bisa memilih.
+2. Setelah tema dipilih: gambar halaman order, halaman bayar, dan halaman admin pesanan di kanvas.
+3. Setelah desain disetujui: kerjakan langkah 1–4 di "Rencana" di branch `claude/...`, SQL di `supabase/`.
