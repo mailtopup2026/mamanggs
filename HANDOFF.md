@@ -66,6 +66,8 @@ Langkah kerja:
    Kalau bayar pakai Saldo MGS, pesanan langsung masuk antrean admin tanpa upload bukti.
 
 ## Langkah berikutnya
-1. Buat **kanvas Design** berisi 3 pilihan tema (Candy Arcade, Sunny Pop, Clay 3D) untuk halaman utama, supaya Rizki bisa memilih.
+1. ~~Buat kanvas Design~~ SUDAH: kanvas "MamangGS Redesign" https://claude.ai/artifact/HXompTgvVmNCVvNYD8qfka
+   berisi 2 pilihan halaman utama: **Tema A Candy Arcade** (pastel, font Baloo 2 + Nunito) dan **Tema B Sunny Pop** (kuning-oranye, garis tebal hitam, font Bricolage Grotesque + Plus Jakarta Sans).
+   Clay 3D **ditolak** Rizki. Tunggu Rizki memilih A atau B (atau campuran).
 2. Setelah tema dipilih: gambar halaman order, halaman bayar, dan halaman admin pesanan di kanvas.
 3. Setelah desain disetujui: kerjakan langkah 1–4 di "Rencana" di branch `claude/...`, SQL di `supabase/`.
